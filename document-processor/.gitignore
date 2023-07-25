@@ -1,0 +1,6 @@
+hotdir/*
+hotdir/failed/*
+hotdir/processed/*
+!hotdir/failed
+!hotdir/processed
+!hotdir/__HOTDIR__.md

@@ -1,0 +1,26 @@
+version: '3.9'
+
+networks:
+  vector-admin:
+    driver: bridge
+
+services:
+  vector-admin:
+    container_name: vector-admin
+    image: vector-admin:latest
+    platform: linux/amd64
+    build:
+      context: ../.
+      dockerfile: ./docker/Dockerfile
+      args:
+        ARG_UID: ${UID}
+        ARG_GID: ${GID}
+    user: "${UID}:${GID}"
+    ports:
+      - "3001:3001"
+      - "3355:3355"
+      - "8288:8288"
+    env_file:
+      - .env
+    networks:
+      - vector-admin

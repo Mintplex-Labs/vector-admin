@@ -1,0 +1,30 @@
+{
+  "name": "vector-data-management-system-background-workers",
+  "version": "0.0.1-beta",
+  "description": "",
+  "author": "Timothy Carambat (Mintplex Labs)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "NODE_ENV=development nodemon --trace-warnings index.js",
+    "start": "NODE_ENV=production node index.js",
+    "lint": "yarn prettier --write ./utils ./functions"
+  },
+  "private": false,
+  "devDependencies": {
+    "inngest-cli": "^0.14.6",
+    "nodemon": "^2.0.22",
+    "prettier": "^2.8.4",
+    "uuid": "^9.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "inngest": "^2.1.0",
+    "sqlite": "^4.2.1",
+    "sqlite3": "^5.1.6"
+  }
+}

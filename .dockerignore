@@ -1,0 +1,12 @@
+backend/storage/vector-cache/**
+**/*.db
+document-processor/hotdir/**
+document-processor/v-env/**
+**/node_modules/
+**/dist/
+**/v-env/
+**/__pycache__/
+**/.env
+**/.env.*
+!frontend/.env.production
+!**/*.placeholderdb

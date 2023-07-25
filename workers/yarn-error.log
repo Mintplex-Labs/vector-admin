@@ -1,0 +1,48 @@
+Arguments: 
+  /Users/tim/.nvm/versions/node/v18.13.0/bin/node /usr/local/Cellar/yarn/1.22.19/libexec/bin/yarn.js
+
+PATH: 
+  /Users/tim/.rvm/gems/ruby-2.7.3/bin:/Users/tim/.rvm/gems/ruby-2.7.3@global/bin:/Users/tim/.rvm/rubies/ruby-2.7.3/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/Users/tim/.local/share/solana/install/active_release/bin:/Users/tim/google-cloud-sdk/bin:/Users/tim/Library/Android/sdk/platform-tools:/Users/tim/.nvm/versions/node/v18.13.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/Users/tim/.rvm/bin:/Users/tim/.foundry/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  18.13.0
+
+Platform: 
+  darwin x64
+
+Trace: 
+  SyntaxError: /Users/tim/Documents/vdms/workers/package.json: Unexpected token } in JSON at position 385
+      at JSON.parse (<anonymous>)
+      at /usr/local/Cellar/yarn/1.22.19/libexec/lib/cli.js:1629:59
+      at Generator.next (<anonymous>)
+      at step (/usr/local/Cellar/yarn/1.22.19/libexec/lib/cli.js:310:30)
+      at /usr/local/Cellar/yarn/1.22.19/libexec/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "vector-data-management-system-background-workers",
+    "version": "0.0.1-beta",
+    "description": "",
+    "author": "Timothy Carambat (Mintplex Labs)",
+    "license": "MIT",
+    "engines": {
+      "node": ">=18"
+    },
+    "scripts": {
+      "start": "node devSetup.js",
+      "lint": "yarn prettier --write ./src"
+    },
+    "private": false,
+    "devDependencies": {
+      "prettier": "^2.8.4",
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
