@@ -25,12 +25,10 @@ app.use(
   })
 );
 
-authenticationEndpoints(app);
-apiRouter.use("/system/*", validatedRequest);
-systemEndpoints(app);
-
-apiRouter.use("/v1/*", validSessionForUser);
-v1Endpoints(app);
+app.use("/api", apiRouter);
+authenticationEndpoints(apiRouter);
+systemEndpoints(apiRouter);
+v1Endpoints(apiRouter);
 
 if (process.env.NODE_ENV !== "development") {
   app.use(

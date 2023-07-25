@@ -9,7 +9,11 @@ const {
 const { Queue } = require("../../../models/queue");
 const { User } = require("../../../models/user");
 const { WorkspaceDocument } = require("../../../models/workspaceDocument");
-const { reqBody, userFromSession } = require("../../../utils/http");
+const {
+  reqBody,
+  userFromSession,
+  validSessionForUser,
+} = require("../../../utils/http");
 const { createSyncJob } = require("../../../utils/jobs/createSyncJob");
 const { selectConnector } = require("../../../utils/vectordatabases/providers");
 const {
@@ -26,213 +30,242 @@ process.env.NODE_ENV === "development"
 function organizationEndpoints(app) {
   if (!app) return;
 
-  app.post("/v1/org/create", async function (request, response) {
-    try {
-      const { orgName } = reqBody(request);
-      const user = await userFromSession(request);
-      if (!user) {
-        response.sendStatus(403).end();
-        return;
-      }
+  app.post(
+    "/v1/org/create",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { orgName } = reqBody(request);
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
 
-      const { organization, message } = await Organization.create(
-        orgName,
-        user.id
-      );
-      if (!organization) {
-        response.status(200).json({
-          organization: null,
-          error: message ?? "Failed to create organization.",
-        });
-        return;
-      }
+        const { organization, message } = await Organization.create(
+          orgName,
+          user.id
+        );
+        if (!organization) {
+          response.status(200).json({
+            organization: null,
+            error: message ?? "Failed to create organization.",
+          });
+          return;
+        }
 
-      response.status(200).json({ organization, error: null });
-    } catch (e) {
-      console.log(e.message, e);
-      response.sendStatus(500).end();
+        response.status(200).json({ organization, error: null });
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
+      }
     }
-  });
+  );
 
-  app.get("/v1/orgs", async function (request, response) {
-    try {
-      const user = await userFromSession(request);
-      if (!user) {
-        response.sendStatus(403).end();
-        return;
+  app.get(
+    "/v1/orgs",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
+        const organizations = await Organization.whereWithOwner(
+          user.id,
+          null,
+          null,
+          "ORDER BY createdAt ASC"
+        );
+        response.status(200).json({ organizations, error: null });
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
       }
-      const organizations = await Organization.whereWithOwner(
-        user.id,
-        null,
-        null,
-        "ORDER BY createdAt ASC"
-      );
-      response.status(200).json({ organizations, error: null });
-    } catch (e) {
-      console.log(e.message, e);
-      response.sendStatus(500).end();
     }
-  });
+  );
 
-  app.get("/v1/orgs/all", async function (request, response) {
-    try {
-      const user = await userFromSession(request);
-      if (!user || user.role !== "admin") {
-        response.sendStatus(403).end();
-        return;
+  app.get(
+    "/v1/orgs/all",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const user = await userFromSession(request);
+        if (!user || user.role !== "admin") {
+          response.sendStatus(403).end();
+          return;
+        }
+        const organizations = await Organization.where(`id IS NOT NULL`);
+        response.status(200).json({ organizations, error: null });
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
       }
-      const organizations = await Organization.where(`id IS NOT NULL`);
-      response.status(200).json({ organizations, error: null });
-    } catch (e) {
-      console.log(e.message, e);
-      response.sendStatus(500).end();
     }
-  });
+  );
 
-  app.get("/v1/org/:slug", async function (request, response) {
-    try {
-      const { slug } = request.params;
-      const user = await userFromSession(request);
-      if (!user) {
-        response.sendStatus(403).end();
-        return;
-      }
-      const organization = await Organization.getWithOwner(
-        user.id,
-        `slug = '${slug}'`
-      );
-      if (!organization) {
-        response
-          .status(200)
-          .json({ organization: null, error: "No org by that slug." });
-        return;
-      }
+  app.get(
+    "/v1/org/:slug",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { slug } = request.params;
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
+        const organization = await Organization.getWithOwner(
+          user.id,
+          `slug = '${slug}'`
+        );
+        if (!organization) {
+          response
+            .status(200)
+            .json({ organization: null, error: "No org by that slug." });
+          return;
+        }
 
-      response.status(200).json({ organization, error: null });
-    } catch (e) {
-      console.log(e.message, e);
-      response.sendStatus(500).end();
+        response.status(200).json({ organization, error: null });
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
+      }
     }
-  });
+  );
 
-  app.get("/v1/org/:slug/api-key", async function (request, response) {
-    try {
-      const { slug } = request.params;
-      const user = await userFromSession(request);
-      if (!user) {
-        response.sendStatus(403).end();
-        return;
+  app.get(
+    "/v1/org/:slug/api-key",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { slug } = request.params;
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
+
+        const organization = await Organization.getWithOwner(
+          user.id,
+          `slug = '${slug}'`
+        );
+        if (!organization) {
+          response
+            .status(200)
+            .json({ organization: null, error: "No org by that slug." });
+          return;
+        }
+
+        const apiKey = await OrganizationApiKey.get(
+          `organization_id = ${organization.id}`
+        );
+        if (!apiKey) {
+          response.status(200).json({
+            organization: null,
+            error: "No api key for that organization.",
+          });
+          return;
+        }
+
+        response.status(200).json({ apiKey, error: null });
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
       }
-
-      const organization = await Organization.getWithOwner(
-        user.id,
-        `slug = '${slug}'`
-      );
-      if (!organization) {
-        response
-          .status(200)
-          .json({ organization: null, error: "No org by that slug." });
-        return;
-      }
-
-      const apiKey = await OrganizationApiKey.get(
-        `organization_id = ${organization.id}`
-      );
-      if (!apiKey) {
-        response.status(200).json({
-          organization: null,
-          error: "No api key for that organization.",
-        });
-        return;
-      }
-
-      response.status(200).json({ apiKey, error: null });
-    } catch (e) {
-      console.log(e.message, e);
-      response.sendStatus(500).end();
     }
-  });
+  );
 
-  app.get("/v1/org/:slug/connection", async function (request, response) {
-    try {
-      const { slug } = request.params;
-      const user = await userFromSession(request);
-      if (!user) {
-        response.sendStatus(403).end();
-        return;
+  app.get(
+    "/v1/org/:slug/connection",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { slug } = request.params;
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
+
+        const organization = await Organization.getWithOwner(
+          user.id,
+          `slug = '${slug}'`
+        );
+        if (!organization) {
+          response
+            .status(200)
+            .json({ organization: null, error: "No org by that slug." });
+          return;
+        }
+
+        const connector = await OrganizationConnection.get(
+          `organization_id = ${organization.id}`
+        );
+        if (!connector) {
+          response.status(200).json({
+            connector: null,
+            error: "No data connector for that organization.",
+          });
+          return;
+        }
+
+        response.status(200).json({ connector, error: null });
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
       }
-
-      const organization = await Organization.getWithOwner(
-        user.id,
-        `slug = '${slug}'`
-      );
-      if (!organization) {
-        response
-          .status(200)
-          .json({ organization: null, error: "No org by that slug." });
-        return;
-      }
-
-      const connector = await OrganizationConnection.get(
-        `organization_id = ${organization.id}`
-      );
-      if (!connector) {
-        response.status(200).json({
-          connector: null,
-          error: "No data connector for that organization.",
-        });
-        return;
-      }
-
-      response.status(200).json({ connector, error: null });
-    } catch (e) {
-      console.log(e.message, e);
-      response.sendStatus(500).end();
     }
-  });
+  );
 
-  app.post("/v1/org/:slug/add-connection", async function (request, response) {
-    try {
-      const { slug } = request.params;
-      const { config } = reqBody(request);
-      const user = await userFromSession(request);
-      if (!user) {
-        response.sendStatus(403).end();
-        return;
+  app.post(
+    "/v1/org/:slug/add-connection",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { slug } = request.params;
+        const { config } = reqBody(request);
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
+
+        const organization = await Organization.getWithOwner(
+          user.id,
+          `slug = '${slug}'`
+        );
+        if (!organization) {
+          response
+            .status(200)
+            .json({ organization: null, error: "No org by that slug." });
+          return;
+        }
+
+        const connector = await OrganizationConnection.get(
+          `organization_id = ${organization.id}`
+        );
+        if (!!connector) {
+          response.status(200).json({
+            connector: null,
+            error: "Vector database connector already exists for organization.",
+          });
+          return;
+        }
+
+        const result = await validateNewDatabaseConnector(organization, config);
+        response.status(200).json(result);
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
       }
-
-      const organization = await Organization.getWithOwner(
-        user.id,
-        `slug = '${slug}'`
-      );
-      if (!organization) {
-        response
-          .status(200)
-          .json({ organization: null, error: "No org by that slug." });
-        return;
-      }
-
-      const connector = await OrganizationConnection.get(
-        `organization_id = ${organization.id}`
-      );
-      if (!!connector) {
-        response.status(200).json({
-          connector: null,
-          error: "Vector database connector already exists for organization.",
-        });
-        return;
-      }
-
-      const result = await validateNewDatabaseConnector(organization, config);
-      response.status(200).json(result);
-    } catch (e) {
-      console.log(e.message, e);
-      response.sendStatus(500).end();
     }
-  });
+  );
 
   app.post(
     "/v1/org/:slug/update-connection",
+    [validSessionForUser],
     async function (request, response) {
       try {
         const { slug } = request.params;
@@ -279,6 +312,7 @@ function organizationEndpoints(app) {
 
   app.post(
     "/v1/org/:slug/connector/:command",
+    [validSessionForUser],
     async function (request, response) {
       try {
         const { slug, command } = request.params;
@@ -323,6 +357,7 @@ function organizationEndpoints(app) {
 
   app.get(
     "/v1/org/:slug/connector/:connectorId/sync",
+    [validSessionForUser],
     async function (request, response) {
       try {
         const { slug, connectorId } = request.params;
@@ -360,106 +395,119 @@ function organizationEndpoints(app) {
     }
   );
 
-  app.get("/v1/org/:slug/workspaces", async function (request, response) {
-    try {
-      const { slug } = request.params;
-      const user = await userFromSession(request);
-      if (!user) {
-        response.sendStatus(403).end();
-        return;
-      }
+  app.get(
+    "/v1/org/:slug/workspaces",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { slug } = request.params;
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
 
-      const organization = await Organization.getWithOwner(
-        user.id,
-        `slug = '${slug}'`
-      );
-      if (!organization) {
-        response
-          .status(200)
-          .json({ organization: null, error: "No  org found." });
-        return;
-      }
+        const organization = await Organization.getWithOwner(
+          user.id,
+          `slug = '${slug}'`
+        );
+        if (!organization) {
+          response
+            .status(200)
+            .json({ organization: null, error: "No  org found." });
+          return;
+        }
 
-      const workspaces = await OrganizationWorkspace.forOrganization(
-        organization.id
-      );
-      response.status(200).json({ workspaces });
-    } catch (e) {
-      console.log(e.message, e);
-      response.sendStatus(500).end();
+        const workspaces = await OrganizationWorkspace.forOrganization(
+          organization.id
+        );
+        response.status(200).json({ workspaces });
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
+      }
     }
-  });
+  );
 
-  app.get("/v1/org/:slug/jobs", async function (request, response) {
-    try {
-      const { slug } = request.params;
-      const user = await userFromSession(request);
-      if (!user) {
-        response.sendStatus(403).end();
-        return;
-      }
+  app.get(
+    "/v1/org/:slug/jobs",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { slug } = request.params;
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
 
-      const organization = await Organization.getWithOwner(
-        user.id,
-        `slug = '${slug}'`
-      );
-      if (!organization) {
-        response
-          .status(200)
-          .json({ organization: null, error: "No  org found." });
-        return;
-      }
+        const organization = await Organization.getWithOwner(
+          user.id,
+          `slug = '${slug}'`
+        );
+        if (!organization) {
+          response
+            .status(200)
+            .json({ organization: null, error: "No  org found." });
+          return;
+        }
 
-      const jobs = await Queue.where(
-        `organizationId = ${organization.id}`,
-        null,
-        "ORDER BY createdAt DESC"
-      );
-      for (const job of jobs) {
-        const { id, email, role } = await User.get(`id = ${job.runByUserId}`);
-        job.runByUser = { id, email, role };
+        const jobs = await Queue.where(
+          `organizationId = ${organization.id}`,
+          null,
+          "ORDER BY createdAt DESC"
+        );
+        for (const job of jobs) {
+          const { id, email, role } = await User.get(`id = ${job.runByUserId}`);
+          job.runByUser = { id, email, role };
+        }
+        response.status(200).json({ jobs });
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
       }
-      response.status(200).json({ jobs });
-    } catch (e) {
-      console.log(e.message, e);
-      response.sendStatus(500).end();
     }
-  });
+  );
 
-  app.get("/v1/org/:slug/documents", async function (request, response) {
-    try {
-      const { slug } = request.params;
-      const user = await userFromSession(request);
-      if (!user) {
-        response.sendStatus(403).end();
-        return;
+  app.get(
+    "/v1/org/:slug/documents",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { slug } = request.params;
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
+
+        const organization = await Organization.getWithOwner(
+          user.id,
+          `slug = '${slug}'`
+        );
+        if (!organization) {
+          response
+            .status(200)
+            .json({ organization: null, error: "No  org found." });
+          return;
+        }
+
+        const documents = await WorkspaceDocument.where(
+          `organization_id = ${organization.id}`,
+          null,
+          true
+        );
+        response.status(200).json({ documents });
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
       }
-
-      const organization = await Organization.getWithOwner(
-        user.id,
-        `slug = '${slug}'`
-      );
-      if (!organization) {
-        response
-          .status(200)
-          .json({ organization: null, error: "No  org found." });
-        return;
-      }
-
-      const documents = await WorkspaceDocument.where(
-        `organization_id = ${organization.id}`,
-        null,
-        true
-      );
-      response.status(200).json({ documents });
-    } catch (e) {
-      console.log(e.message, e);
-      response.sendStatus(500).end();
     }
-  });
+  );
 
   app.get(
     "/v1/org/:slug/statistics/:statistic",
+    [validSessionForUser],
     async function (request, response) {
       try {
         const { slug, statistic } = request.params;

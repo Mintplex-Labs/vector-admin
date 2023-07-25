@@ -6,7 +6,11 @@ const {
   OrganizationWorkspace,
 } = require("../../../models/organizationWorkspace");
 const { WorkspaceDocument } = require("../../../models/workspaceDocument");
-const { userFromSession, reqBody } = require("../../../utils/http");
+const {
+  userFromSession,
+  reqBody,
+  validSessionForUser,
+} = require("../../../utils/http");
 const { setupMulter } = require("../../..//utils/files/multer");
 const { DocumentProcessor } = require("../../../models/documentProcessor");
 const { addDocumentJob } = require("../../../utils/jobs/addDocumentsJob");
@@ -29,6 +33,7 @@ function workspaceEndpoints(app) {
 
   app.post(
     "/v1/org/:orgSlug/new-workspace",
+    [validSessionForUser],
     async function (request, response) {
       try {
         const { orgSlug } = request.params;
@@ -79,6 +84,7 @@ function workspaceEndpoints(app) {
 
   app.get(
     "/v1/org/:orgSlug/workspace/:wsSlug",
+    [validSessionForUser],
     async function (request, response) {
       try {
         const { orgSlug, wsSlug } = request.params;
@@ -110,6 +116,7 @@ function workspaceEndpoints(app) {
 
   app.delete(
     "/v1/org/:orgSlug/workspace/:wsSlug",
+    [validSessionForUser],
     async function (request, response) {
       try {
         const { orgSlug, wsSlug } = request.params;
@@ -163,6 +170,7 @@ function workspaceEndpoints(app) {
 
   app.get(
     "/v1/org/:orgSlug/workspace/:wsSlug/documents",
+    [validSessionForUser],
     async function (request, response) {
       try {
         const { orgSlug, wsSlug } = request.params;
@@ -201,6 +209,7 @@ function workspaceEndpoints(app) {
 
   app.get(
     "/v1/org/:slug/workspace/:workspaceSlug/statistics/:statistic",
+    [validSessionForUser],
     async function (request, response) {
       try {
         const { slug, workspaceSlug, statistic } = request.params;
@@ -339,6 +348,7 @@ function workspaceEndpoints(app) {
 
   app.get(
     "/v1/org/:slug/connector/:connectorId/sync/:workspaceSlug",
+    [validSessionForUser],
     async function (request, response) {
       try {
         const { slug, workspaceSlug, connectorId } = request.params;
