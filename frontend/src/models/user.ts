@@ -12,7 +12,6 @@ const User = {
       .then((res) => res.json())
       .then((res) => {
         error = res?.message || '[001] Failed to authenticate';
-        debugger
         return res;
       })
       .catch((e) => {
