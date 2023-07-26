@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-    <b>🤖 VectorAdmin: The universal interface for vector databases.</b>. <br />
+    <b>VectorAdmin: The universal interface for vector databases.</b>. <br />
     A production-ready vector database management system that doesn't hurt to use.
 </p>
 
