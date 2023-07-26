@@ -39,7 +39,7 @@ function setupDebugger(app) {
           settings: path.resolve(__dirname, "../../storage/settings.json"),
           layouts: false,
           languages: false,
-          favicon: path.resolve(__dirname, "../../public/favicon.ico"),
+          favicon: path.resolve(__dirname, "../../../frontend/public/favicon.ico"),
           root: "/api/debug/vdbms",
           footer: {
             text: 'Mintplex Labs Inc | Vector Admin',
@@ -72,7 +72,7 @@ function setupDebugger(app) {
           settings: path.resolve(__dirname, "../../storage/job_settings.json"),
           layouts: false,
           languages: false,
-          favicon: path.resolve(__dirname, "../../public/favicon.ico"),
+          favicon: path.resolve(__dirname, "../../../frontend/public/favicon.ico"),
           root: "/api/debug/jobs",
           footer: {
             text: 'Mintplex Labs Inc | Vector Admin',
