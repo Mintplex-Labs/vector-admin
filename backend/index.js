@@ -27,7 +27,6 @@ app.use("/api", apiRouter);
 authenticationEndpoints(apiRouter);
 systemEndpoints(apiRouter);
 v1Endpoints(apiRouter);
-setupDebugger(app);
 
 if (process.env.NODE_ENV !== "development") {
   app.use(
@@ -47,6 +46,7 @@ app
   .listen(process.env.SERVER_PORT || 3001, async () => {
     // await validateTablePragmas();
     await systemInit();
+    setupDebugger(app);
     console.log(
       `Example app listening on port ${process.env.SERVER_PORT || 3001}`
     );
