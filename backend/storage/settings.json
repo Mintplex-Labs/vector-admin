@@ -167,6 +167,106 @@
       "readonly": false
     }
   },
+  "organization_users": {
+    "slug": "organization_users",
+    "table": {
+      "name": "organization_users",
+      "pk": "id",
+      "verbose": "organization_users"
+    },
+    "columns": [
+      {
+        "name": "id",
+        "verbose": "id",
+        "control": {
+          "text": true
+        },
+        "type": "INTEGER",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "user_id",
+        "verbose": "user_id",
+        "control": {
+          "text": true
+        },
+        "type": "INTEGER",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "organization_id",
+        "verbose": "organization_id",
+        "control": {
+          "text": true
+        },
+        "type": "INTEGER",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "createdAt",
+        "verbose": "createdAt",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": true,
+        "defaultValue": "strftime('%s', 'now')",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "lastUpdatedAt",
+        "verbose": "lastUpdatedAt",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": true,
+        "defaultValue": "strftime('%s', 'now')",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      }
+    ],
+    "mainview": {
+      "show": true
+    },
+    "listview": {
+      "order": {},
+      "page": 25
+    },
+    "editview": {
+      "readonly": false
+    }
+  },
   "organization_api_keys": {
     "slug": "organization_api_keys",
     "table": {
@@ -922,106 +1022,6 @@
       {
         "name": "document_id",
         "verbose": "document_id",
-        "control": {
-          "text": true
-        },
-        "type": "INTEGER",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "createdAt",
-        "verbose": "createdAt",
-        "control": {
-          "text": true
-        },
-        "type": "TEXT",
-        "allowNull": true,
-        "defaultValue": "strftime('%s', 'now')",
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "lastUpdatedAt",
-        "verbose": "lastUpdatedAt",
-        "control": {
-          "text": true
-        },
-        "type": "TEXT",
-        "allowNull": true,
-        "defaultValue": "strftime('%s', 'now')",
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      }
-    ],
-    "mainview": {
-      "show": true
-    },
-    "listview": {
-      "order": {},
-      "page": 25
-    },
-    "editview": {
-      "readonly": false
-    }
-  },
-  "organization_users": {
-    "slug": "organization_users",
-    "table": {
-      "name": "organization_users",
-      "pk": "id",
-      "verbose": "organization_users"
-    },
-    "columns": [
-      {
-        "name": "id",
-        "verbose": "id",
-        "control": {
-          "text": true
-        },
-        "type": "INTEGER",
-        "allowNull": true,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "user_id",
-        "verbose": "user_id",
-        "control": {
-          "text": true
-        },
-        "type": "INTEGER",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "organization_id",
-        "verbose": "organization_id",
         "control": {
           "text": true
         },
