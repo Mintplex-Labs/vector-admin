@@ -59,7 +59,7 @@ const Queue = {
       });
 
     if (!success) {
-      db.close();
+      await db.close();
       console.error("FAILED TO CREATE JOB.", message);
       return { job: null, error: message };
     }
@@ -67,7 +67,7 @@ const Queue = {
     const job = await db.get(
       `SELECT * FROM ${this.tablename} WHERE id = ${id}`
     );
-    db.close();
+    await db.close();
 
     return { job, error: null };
   },
@@ -77,7 +77,7 @@ const Queue = {
       .get(`SELECT * FROM ${this.tablename} WHERE ${clause}`)
       .then((res) => res || null);
     if (!result) return null;
-    db.close();
+    await db.close();
 
     return result;
   },
@@ -88,7 +88,7 @@ const Queue = {
         !!limit ? `LIMIT ${limit}` : ""
       } ${orderBy ? orderBy : ""}`
     );
-    db.close();
+    await db.close();
 
     return results;
   },
@@ -99,7 +99,7 @@ const Queue = {
         clause ? `WHERE ${clause}` : ""
       }`
     );
-    db.close();
+    await db.close();
 
     return count;
   },
@@ -125,7 +125,7 @@ const Queue = {
         return { success: false, message: error.message };
       });
 
-    db.close();
+    await db.close();
     if (!success) {
       console.error(message);
       return null;

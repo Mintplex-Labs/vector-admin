@@ -51,7 +51,7 @@ const User = {
       });
 
     if (!success) {
-      db.close();
+      await db.close();
       console.error("FAILED TO CREATE USER.", message);
       return { user: null, message };
     }
@@ -59,7 +59,7 @@ const User = {
     const user = await db.get(
       `SELECT * FROM ${this.tablename} WHERE id = ${id} `
     );
-    db.close();
+    await db.close();
 
     return { user, message: null };
   },
@@ -69,7 +69,7 @@ const User = {
       .get(`SELECT * FROM ${this.tablename} WHERE ${clause} `)
       .then((res) => res || null);
     if (!result) return null;
-    db.close();
+    await db.close();
 
     return result;
   },
@@ -80,7 +80,7 @@ const User = {
         !!limit ? `LIMIT ${limit}` : ""
       } `
     );
-    db.close();
+    await db.close();
 
     return results;
   },
@@ -91,7 +91,7 @@ const User = {
         clause ? `WHERE ${clause}` : ""
       } `
     );
-    db.close();
+    await db.close();
 
     return count;
   },
@@ -185,7 +185,7 @@ const User = {
           return { success: false, message: error.message };
         });
 
-      db.close();
+      await db.close();
       if (!success) {
         console.error(message);
         return { success: false, error: message };

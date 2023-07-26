@@ -81,8 +81,8 @@
         "control": {
           "text": true
         },
-        "type": "TEXT",
-        "allowNull": true,
+        "type": "INTEGER",
+        "allowNull": false,
         "defaultValue": null,
         "listview": {
           "show": true
@@ -97,25 +97,9 @@
         "control": {
           "text": true
         },
-        "type": "TEXT",
+        "type": "INTEGER",
         "allowNull": false,
         "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "role",
-        "verbose": "role",
-        "control": {
-          "text": true
-        },
-        "type": "TEXT",
-        "allowNull": false,
-        "defaultValue": "\"default\"",
         "listview": {
           "show": true
         },
@@ -630,7 +614,7 @@
           "text": true
         },
         "type": "TEXT",
-        "allowNull": false,
+        "allowNull": true,
         "defaultValue": null,
         "listview": {
           "show": true
@@ -648,6 +632,22 @@
         "type": "TEXT",
         "allowNull": true,
         "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "role",
+        "verbose": "role",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": false,
+        "defaultValue": "\"default\"",
         "listview": {
           "show": true
         },

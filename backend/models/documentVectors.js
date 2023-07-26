@@ -55,12 +55,18 @@ const DocumentVectors = {
       `INSERT INTO ${this.tablename} (docId, vectorId, document_id) VALUES (?,?,?)`
     );
 
-    for (const vector of vectors) {
-      stmt.run([vector.docId, vector.vectorId, vector.documentId]);
+    await db.exec("BEGIN TRANSACTION");
+    try {
+      for (const vector of vectors) {
+        await stmt.run([vector.docId, vector.vectorId, vector.documentId]);
+      }
+      await db.exec("COMMIT");
+    } catch {
+      await db.exec("ROLLBACK");
     }
 
-    stmt.finalize();
-    db.close();
+    await stmt.finalize();
+    await db.close();
     return;
   },
   get: async function (clause = "") {
@@ -69,7 +75,7 @@ const DocumentVectors = {
       .get(`SELECT * FROM ${this.tablename} WHERE ${clause}`)
       .then((res) => res || null);
     if (!result) return null;
-    db.close();
+    await db.close();
 
     return result;
   },
@@ -80,7 +86,7 @@ const DocumentVectors = {
         !!limit ? `LIMIT ${limit}` : ""
       } ${orderBy ? orderBy : ""}`
     );
-    db.close();
+    await db.close();
 
     return results;
   },
@@ -91,14 +97,14 @@ const DocumentVectors = {
         clause ? `WHERE ${clause}` : ""
       }`
     );
-    db.close();
+    await db.close();
 
     return count;
   },
   delete: async function (id = null) {
     const db = await this.db();
     await db.get(`DELETE FROM ${this.tablename} WHERE id = ${id}`);
-    db.close();
+    await db.close();
     return;
   },
 };
