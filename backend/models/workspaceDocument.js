@@ -75,7 +75,7 @@ const WorkspaceDocument = {
       });
 
     if (!success) {
-      db.close();
+      await db.close();
       console.error("FAILED TO CREATE DOCUMENT.", message);
       return { document: null, message };
     }
@@ -83,7 +83,7 @@ const WorkspaceDocument = {
     const document = await db.get(
       `SELECT * FROM ${this.tablename} WHERE id = ${id}`
     );
-    db.close();
+    await db.close();
 
     return { document, message: null };
   },
@@ -97,17 +97,23 @@ const WorkspaceDocument = {
       `INSERT INTO ${this.tablename} (docId, name, workspace_id, organization_id) VALUES (?,?,?,?)`
     );
 
-    for (const document of documents) {
-      stmt.run([
-        document.documentId,
-        document.name,
-        document.workspaceId,
-        document.organizationId,
-      ]);
+    await db.exec("BEGIN TRANSACTION");
+    try {
+      for (const document of documents) {
+        await stmt.run([
+          document.documentId,
+          document.name,
+          document.workspaceId,
+          document.organizationId,
+        ]);
+      }
+      await db.exec("COMMIT");
+    } catch {
+      await db.exec("ROLLBACK");
     }
 
-    stmt.finalize();
-    db.close();
+    await stmt.finalize();
+    await db.close();
     return;
   },
   get: async function (clause = "", withReferences = false) {
@@ -117,7 +123,7 @@ const WorkspaceDocument = {
       .get(`SELECT * FROM ${this.tablename} WHERE ${clause}`)
       .then((res) => res || null);
     if (!result) return null;
-    db.close();
+    await db.close();
     if (!withReferences) return result;
 
     return {
@@ -132,7 +138,7 @@ const WorkspaceDocument = {
         !!limit ? `LIMIT ${limit}` : ""
       }`
     );
-    db.close();
+    await db.close();
     if (!withReferences) return results;
 
     const { OrganizationWorkspace } = require("./organizationWorkspace");
@@ -151,7 +157,7 @@ const WorkspaceDocument = {
         clause ? `WHERE ${clause}` : ""
       }`
     );
-    db.close();
+    await db.close();
 
     return count;
   },
@@ -194,13 +200,13 @@ const WorkspaceDocument = {
   deleteWhere: async function (clause = null) {
     const db = await this.db();
     await db.get(`DELETE FROM ${this.tablename} WHERE ${clause}`);
-    db.close();
+    await db.close();
     return;
   },
   delete: async function (id = null) {
     const db = await this.db();
     await db.get(`DELETE FROM ${this.tablename} WHERE id = ${id}`);
-    db.close();
+    await db.close();
     return;
   },
 };

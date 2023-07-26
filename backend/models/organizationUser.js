@@ -44,12 +44,18 @@ const OrganizationUser = {
       `INSERT INTO ${this.tablename} (user_id, organization_id) VALUES (?,?)`
     );
 
-    for (const orgId of organizationIds) {
-      stmt.run([userId, orgId]);
+    await db.exec("BEGIN TRANSACTION");
+    try {
+      for (const orgId of organizationIds) {
+        await stmt.run([userId, orgId]);
+      }
+      await db.exec("COMMIT");
+    } catch {
+      await db.exec("ROLLBACK");
     }
 
-    stmt.finalize();
-    db.close();
+    await stmt.finalize();
+    await db.close();
     return;
   },
   create: async function (userId = 0, organizationId = 0) {
@@ -67,7 +73,7 @@ const OrganizationUser = {
       });
 
     if (!success) {
-      db.close();
+      await db.close();
       console.error(
         "FAILED TO CREATE ORGANIZATION_USER RELATIONSHIP.",
         message
@@ -82,7 +88,7 @@ const OrganizationUser = {
       .get(`SELECT * FROM ${this.tablename} WHERE ${clause}`)
       .then((res) => res || null);
     if (!result) return null;
-    db.close();
+    await db.close();
 
     return result;
   },
@@ -93,7 +99,7 @@ const OrganizationUser = {
         !!limit ? `LIMIT ${limit}` : ""
       }`
     );
-    db.close();
+    await db.close();
 
     return results;
   },
@@ -104,7 +110,7 @@ const OrganizationUser = {
         clause ? `WHERE ${clause}` : ""
       }`
     );
-    db.close();
+    await db.close();
 
     return count;
   },

@@ -54,7 +54,7 @@ const OrganizationApiKey = {
       });
 
     if (!success) {
-      db.close();
+      await db.close();
       console.error(
         "FAILED TO CREATE ORGANIZATION_API_KEYS RELATIONSHIP.",
         message
@@ -69,7 +69,7 @@ const OrganizationApiKey = {
       .get(`SELECT * FROM ${this.tablename} WHERE ${clause}`)
       .then((res) => res || null);
     if (!result) return null;
-    db.close();
+    await db.close();
 
     return result;
   },
@@ -80,7 +80,7 @@ const OrganizationApiKey = {
         !!limit ? `LIMIT ${limit}` : ""
       }`
     );
-    db.close();
+    await db.close();
 
     return results;
   },
@@ -91,7 +91,7 @@ const OrganizationApiKey = {
         clause ? `WHERE ${clause}` : ""
       }`
     );
-    db.close();
+    await db.close();
 
     return count;
   },

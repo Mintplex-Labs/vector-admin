@@ -80,7 +80,7 @@ const OrganizationWorkspace = {
       });
 
     if (!success) {
-      db.close();
+      await db.close();
       console.error("FAILED TO CREATE WORKSPACE.", message);
       return { workspace: null, message };
     }
@@ -88,7 +88,7 @@ const OrganizationWorkspace = {
     const workspace = await db.get(
       `SELECT * FROM ${this.tablename} WHERE id = ${id}`
     );
-    db.close();
+    await db.close();
 
     return { workspace, message: null };
   },
@@ -117,7 +117,7 @@ const OrganizationWorkspace = {
       });
 
     if (!success) {
-      db.close();
+      await db.close();
       console.error("FAILED TO CREATE WORKSPACE.", message);
       return { workspace: null, message };
     }
@@ -125,7 +125,7 @@ const OrganizationWorkspace = {
     const workspace = await db.get(
       `SELECT * FROM ${this.tablename} WHERE id = ${id}`
     );
-    db.close();
+    await db.close();
 
     return { workspace, message: null };
   },
@@ -135,7 +135,7 @@ const OrganizationWorkspace = {
       .get(`SELECT * FROM ${this.tablename} WHERE ${clause}`)
       .then((res) => res || null);
     if (!result) return null;
-    db.close();
+    await db.close();
 
     return result;
   },
@@ -167,7 +167,7 @@ const OrganizationWorkspace = {
         !!limit ? `LIMIT ${limit}` : ""
       }`
     );
-    db.close();
+    await db.close();
 
     return results;
   },
@@ -178,7 +178,7 @@ const OrganizationWorkspace = {
         clause ? `WHERE ${clause}` : ""
       }`
     );
-    db.close();
+    await db.close();
 
     return count;
   },

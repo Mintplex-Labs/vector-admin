@@ -48,7 +48,7 @@ const SystemSettings = {
       .get(`SELECT * FROM ${this.tablename} WHERE ${clause}`)
       .then((res) => res || null);
     if (!result) return null;
-    db.close();
+    await db.close();
 
     return result;
   },
@@ -59,7 +59,7 @@ const SystemSettings = {
         !!limit ? `LIMIT ${limit}` : ""
       }`
     );
-    db.close();
+    await db.close();
 
     return results;
   },
@@ -83,7 +83,7 @@ const SystemSettings = {
           .catch((error) => {
             return { id: null, success: false, message: error.message };
           });
-        db.close();
+        await db.close();
         if (!success) {
           console.error("FAILED TO ADD SYSTEM CONFIG OPTION", message);
           return { success: false, error: message };
@@ -104,7 +104,7 @@ const SystemSettings = {
             return { success: false, message: error.message };
           });
 
-        db.close();
+        await db.close();
         if (!success) {
           console.error("FAILED TO UPDATE SYSTEM CONFIG OPTION", message);
           return { success: false, error: message };

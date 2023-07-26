@@ -60,7 +60,7 @@ const OrganizationConnection = {
         return { id: null, success: false, message: error.message };
       });
 
-    db.close();
+    await db.close();
     if (!success) {
       console.error(
         "FAILED TO CREATE ORGANIZATION_CONNECTION RELATIONSHIP.",
@@ -78,7 +78,7 @@ const OrganizationConnection = {
       .get(`SELECT * FROM ${this.tablename} WHERE ${clause}`)
       .then((res) => res || null);
     if (!result) return null;
-    db.close();
+    await db.close();
 
     return result;
   },
@@ -105,7 +105,7 @@ const OrganizationConnection = {
         return { success: false, message: error.message };
       });
 
-    db.close();
+    await db.close();
     if (!success) {
       console.error(message);
       return null;
@@ -121,7 +121,7 @@ const OrganizationConnection = {
         !!limit ? `LIMIT ${limit}` : ""
       }`
     );
-    db.close();
+    await db.close();
 
     return results;
   },
@@ -132,7 +132,7 @@ const OrganizationConnection = {
         clause ? `WHERE ${clause}` : ""
       }`
     );
-    db.close();
+    await db.close();
 
     return count;
   },

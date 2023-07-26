@@ -51,122 +51,6 @@
       "readonly": false
     }
   },
-  "users": {
-    "slug": "users",
-    "table": {
-      "name": "users",
-      "pk": "id",
-      "verbose": "users"
-    },
-    "columns": [
-      {
-        "name": "id",
-        "verbose": "id",
-        "control": {
-          "text": true
-        },
-        "type": "INTEGER",
-        "allowNull": true,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "email",
-        "verbose": "email",
-        "control": {
-          "text": true
-        },
-        "type": "TEXT",
-        "allowNull": true,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "password",
-        "verbose": "password",
-        "control": {
-          "text": true
-        },
-        "type": "TEXT",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "role",
-        "verbose": "role",
-        "control": {
-          "text": true
-        },
-        "type": "TEXT",
-        "allowNull": false,
-        "defaultValue": "\"default\"",
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "createdAt",
-        "verbose": "createdAt",
-        "control": {
-          "text": true
-        },
-        "type": "TEXT",
-        "allowNull": true,
-        "defaultValue": "strftime('%s', 'now')",
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "lastUpdatedAt",
-        "verbose": "lastUpdatedAt",
-        "control": {
-          "text": true
-        },
-        "type": "TEXT",
-        "allowNull": true,
-        "defaultValue": "strftime('%s', 'now')",
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      }
-    ],
-    "mainview": {
-      "show": true
-    },
-    "listview": {
-      "order": {},
-      "page": 25
-    },
-    "editview": {
-      "readonly": false
-    }
-  },
   "organization_api_keys": {
     "slug": "organization_api_keys",
     "table": {
@@ -330,122 +214,6 @@
           "text": true
         },
         "type": "INTEGER",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "createdAt",
-        "verbose": "createdAt",
-        "control": {
-          "text": true
-        },
-        "type": "TEXT",
-        "allowNull": true,
-        "defaultValue": "strftime('%s', 'now')",
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "lastUpdatedAt",
-        "verbose": "lastUpdatedAt",
-        "control": {
-          "text": true
-        },
-        "type": "TEXT",
-        "allowNull": true,
-        "defaultValue": "strftime('%s', 'now')",
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      }
-    ],
-    "mainview": {
-      "show": true
-    },
-    "listview": {
-      "order": {},
-      "page": 25
-    },
-    "editview": {
-      "readonly": false
-    }
-  },
-  "organizations": {
-    "slug": "organizations",
-    "table": {
-      "name": "organizations",
-      "pk": "id",
-      "verbose": "organizations"
-    },
-    "columns": [
-      {
-        "name": "id",
-        "verbose": "id",
-        "control": {
-          "text": true
-        },
-        "type": "INTEGER",
-        "allowNull": true,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "name",
-        "verbose": "name",
-        "control": {
-          "text": true
-        },
-        "type": "TEXT",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "slug",
-        "verbose": "slug",
-        "control": {
-          "text": true
-        },
-        "type": "TEXT",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "uuid",
-        "verbose": "uuid",
-        "control": {
-          "text": true
-        },
-        "type": "TEXT",
         "allowNull": false,
         "defaultValue": null,
         "listview": {
@@ -1028,6 +796,238 @@
         "type": "INTEGER",
         "allowNull": false,
         "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "createdAt",
+        "verbose": "createdAt",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": true,
+        "defaultValue": "strftime('%s', 'now')",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "lastUpdatedAt",
+        "verbose": "lastUpdatedAt",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": true,
+        "defaultValue": "strftime('%s', 'now')",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      }
+    ],
+    "mainview": {
+      "show": true
+    },
+    "listview": {
+      "order": {},
+      "page": 25
+    },
+    "editview": {
+      "readonly": false
+    }
+  },
+  "organizations": {
+    "slug": "organizations",
+    "table": {
+      "name": "organizations",
+      "pk": "id",
+      "verbose": "organizations"
+    },
+    "columns": [
+      {
+        "name": "id",
+        "verbose": "id",
+        "control": {
+          "text": true
+        },
+        "type": "INTEGER",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "name",
+        "verbose": "name",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "slug",
+        "verbose": "slug",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "uuid",
+        "verbose": "uuid",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "createdAt",
+        "verbose": "createdAt",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": true,
+        "defaultValue": "strftime('%s', 'now')",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "lastUpdatedAt",
+        "verbose": "lastUpdatedAt",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": true,
+        "defaultValue": "strftime('%s', 'now')",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      }
+    ],
+    "mainview": {
+      "show": true
+    },
+    "listview": {
+      "order": {},
+      "page": 25
+    },
+    "editview": {
+      "readonly": false
+    }
+  },
+  "users": {
+    "slug": "users",
+    "table": {
+      "name": "users",
+      "pk": "id",
+      "verbose": "users"
+    },
+    "columns": [
+      {
+        "name": "id",
+        "verbose": "id",
+        "control": {
+          "text": true
+        },
+        "type": "INTEGER",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "email",
+        "verbose": "email",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "password",
+        "verbose": "password",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "role",
+        "verbose": "role",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": false,
+        "defaultValue": "\"default\"",
         "listview": {
           "show": true
         },

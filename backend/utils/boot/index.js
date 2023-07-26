@@ -73,7 +73,7 @@ async function systemInit() {
       });
 
     if (!success) {
-      userDb.close();
+      await userDb.close();
       console.error("FAILED TO CREATE ROOT USER.", message);
     }
 
