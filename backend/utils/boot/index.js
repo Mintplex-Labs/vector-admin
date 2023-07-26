@@ -1,14 +1,18 @@
 process.env.NODE_ENV === "development"
   ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
   : require("dotenv").config();
+const { DocumentVectors } = require("../../models/documentVectors");
+const { Organization } = require("../../models/organization");
 const { OrganizationApiKey } = require("../../models/organizationApiKey");
 const {
   OrganizationConnection,
 } = require("../../models/organizationConnection");
 const { OrganizationUser } = require("../../models/organizationUser");
+const { OrganizationWorkspace } = require("../../models/organizationWorkspace");
 const { Queue } = require("../../models/queue");
 const { SystemSettings } = require("../../models/systemSettings");
 const { User } = require("../../models/user");
+const { WorkspaceDocument } = require("../../models/workspaceDocument");
 
 function findOrCreateDBFile() {
   const fs = require("fs");
@@ -45,14 +49,17 @@ function setupVectorCacheStorage() {
 }
 
 // Init all tables so to not try to reference foreign key
-// tables that may not exist
+// tables that may not exist and also have their schema available.
 async function initTables() {
   (await SystemSettings.db()).close();
   (await User.db()).close();
-  (await OrganizationUser.db()).close();
+  (await Organization.db()).close();
   (await OrganizationApiKey.db()).close();
-  (await OrganizationUser.db()).close();
   (await OrganizationConnection.db()).close();
+  (await OrganizationUser.db()).close();
+  (await OrganizationWorkspace.db()).close();
+  (await WorkspaceDocument.db()).close();
+  (await DocumentVectors.db()).close();
   (await Queue.db()).close();
 }
 
