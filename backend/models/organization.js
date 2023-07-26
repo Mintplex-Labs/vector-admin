@@ -67,7 +67,7 @@ const Organization = {
       });
 
     if (!success) {
-      db.close();
+      await db.close();
       console.error("FAILED TO CREATE ORGANIZATION.", message);
       return { organization: null, message };
     }
@@ -75,7 +75,7 @@ const Organization = {
     const organization = await db.get(
       `SELECT * FROM ${this.tablename} WHERE id = ${id}`
     );
-    db.close();
+    await db.close();
 
     await OrganizationUser.create(adminId, organization.id);
     await OrganizationApiKey.create(organization.id);
@@ -87,7 +87,7 @@ const Organization = {
       .get(`SELECT * FROM ${this.tablename} WHERE ${clause}`)
       .then((res) => res || null);
     if (!result) return null;
-    db.close();
+    await db.close();
 
     return result;
   },
@@ -102,7 +102,7 @@ const Organization = {
       )
       .then((res) => res || null);
     if (!result) return null;
-    db.close();
+    await db.close();
 
     return { ...result, id: result.organization_id };
   },
@@ -113,7 +113,7 @@ const Organization = {
         !!limit ? `LIMIT ${limit}` : ""
       } ${!!orderBy ? orderBy : ""}`
     );
-    db.close();
+    await db.close();
 
     return results;
   },
@@ -124,7 +124,7 @@ const Organization = {
         clause ? `WHERE ${clause}` : ""
       }`
     );
-    db.close();
+    await db.close();
 
     return count;
   },
@@ -143,7 +143,7 @@ const Organization = {
         !!limit ? `LIMIT ${limit}` : ""
       } ${!!orderBy ? orderBy : ""}`
     );
-    db.close();
+    await db.close();
 
     return results;
   },

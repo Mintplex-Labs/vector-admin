@@ -26,12 +26,6 @@ async function saveDebug(username, password) {
 function setupDebugger(app) {
   const username = generatePwd(12);
   const password = generatePwd(24);
-  if (process.env.NODE_ENV === "development") {
-    console.log("Debug credentials", {
-      DEBUG_USER: username,
-      DEBUG_PWD: password,
-    });
-  }
 
   app.use(
     "/debug/vdbms",
