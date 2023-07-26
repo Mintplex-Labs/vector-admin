@@ -47,11 +47,11 @@ const SignIn = () => {
       e.target.email.value,
       e.target.password.value
     );
-    if (!token) setStage('failed');
-    if (!!token) setStage('success');
+    if (!token || !user) setStage('failed');
+    if (!!token && !!user) setStage('success');
     setResults({ user, token, error });
 
-    if (!!token) {
+    if (!!token && !!user) {
       window.localStorage.setItem(STORE_USER, JSON.stringify(user));
       window.localStorage.setItem(STORE_TOKEN, token);
       window.location.replace(

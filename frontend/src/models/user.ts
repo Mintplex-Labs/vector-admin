@@ -12,6 +12,7 @@ const User = {
       .then((res) => res.json())
       .then((res) => {
         error = res?.message || '[001] Failed to authenticate';
+        debugger
         return res;
       })
       .catch((e) => {
@@ -21,6 +22,7 @@ const User = {
       });
 
     if (!valid) return { user: null, token: null, error };
+    debugger
     return { user, token, error: null };
   },
   createAccount: async (email: string, password: string) => {
