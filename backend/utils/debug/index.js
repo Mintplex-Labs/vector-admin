@@ -23,6 +23,7 @@ async function saveDebug(username, password) {
   return true;
 }
 
+// Docs: https://github.com/simov/express-admin
 function setupDebugger(app) {
   const username = generatePwd(12);
   const password = generatePwd(24);
@@ -38,8 +39,12 @@ function setupDebugger(app) {
           settings: path.resolve(__dirname, "../../storage/settings.json"),
           layouts: false,
           languages: false,
-          favicon: "/favicon.ico",
+          favicon: path.resolve(__dirname, "../../public/favicon.ico"),
           root: "/api/debug/vdbms",
+          footer: {
+            text: 'Mintplex Labs Inc | Vector Admin',
+            url: 'https://github.com/Mintplex-Labs/vector-admin'
+          }
         },
       },
       users: {
@@ -67,8 +72,12 @@ function setupDebugger(app) {
           settings: path.resolve(__dirname, "../../storage/job_settings.json"),
           layouts: false,
           languages: false,
-          favicon: "/favicon.ico",
+          favicon: path.resolve(__dirname, "../../public/favicon.ico"),
           root: "/api/debug/jobs",
+          footer: {
+            text: 'Mintplex Labs Inc | Vector Admin',
+            url: 'https://github.com/Mintplex-Labs/vector-admin'
+          }
         },
       },
       users: {
