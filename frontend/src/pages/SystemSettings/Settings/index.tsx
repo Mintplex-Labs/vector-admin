@@ -1,7 +1,8 @@
-import { memo, useState } from 'react';
-import moment from 'moment';
+import { useRef, useState } from 'react';
 import { APP_NAME } from '../../../utils/constants';
 import System from '../../../models/system';
+import { ExternalLink, Eye, EyeOff } from 'react-feather';
+import paths from '../../../utils/paths';
 
 export default function Settings({ settings }: { settings: any[] }) {
   const [result, setResult] = useState<{
@@ -127,7 +128,92 @@ export default function Settings({ settings }: { settings: any[] }) {
             </button>
           </div>
         </form>
+        <DebugCredentials settings={settings} />
       </div>
     </div>
+  );
+}
+
+function DebugCredentials({ settings }: { settings: {} }) {
+  const [showPwd, setShowPwd] = useState(false);
+  const getSetting = (label: string) => {
+    return settings.find((setting) => setting.label === label);
+  };
+
+  return (
+    <>
+      <div className="my-4 h-[1px] w-full bg-gray-400" />
+      <div className="flex w-full flex-col gap-y-2 rounded-lg border border-gray-500 bg-gray-100 p-4">
+        <div className="flex flex-col">
+          <p className="font-semibold text-gray-600">
+            Database Debug Credentials
+          </p>
+          <p className="text-sm text-gray-600">
+            Use these credentials to login for direct application database
+            access.
+            <br />
+            Changes done via the database admin UI will <b>not</b> impact
+            connected vector databases.
+            <br />
+            These credentials will change over time. Do not store them.
+            <br />
+            Use with caution.
+          </p>
+        </div>
+
+        <div className="relative w-1/3">
+          <input
+            type="text"
+            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            defaultValue={getSetting('debug_username')?.value}
+            placeholder="db username"
+            disabled={true}
+          />
+        </div>
+
+        <div className="relative w-1/3">
+          <input
+            type={showPwd ? 'text' : 'password'}
+            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            defaultValue={getSetting('debug_pwd')?.value}
+            placeholder="db password"
+            disabled={true}
+          />
+          <button
+            onClick={() => {
+              const newType = showPwd ? 'password' : 'text';
+              setShowPwd(newType === 'text');
+            }}
+            type="button"
+            className="absolute bottom-2.5 right-2.5 rounded-lg p-2 text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-0"
+          >
+            {!showPwd ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+          </button>
+        </div>
+
+        <div className="justify-left flex w-full items-center gap-4">
+          <a
+            href={paths.debug.vdbms()}
+            target="_blank"
+            className="flex items-center gap-x-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200"
+          >
+            Go to {APP_NAME} database manager
+            <ExternalLink className="h-4 w-4" />
+          </a>
+          <a
+            href={paths.debug.jobs()}
+            target="_blank"
+            className="flex items-center gap-x-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200"
+          >
+            Go to {APP_NAME} job database manager
+            <ExternalLink className="h-4 w-4" />
+          </a>
+        </div>
+      </div>
+    </>
   );
 }

@@ -7,6 +7,7 @@ import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
 import { FullScreenLoader } from './components/Preloader';
 import UserManagementView from './pages/UsersView';
+import AdminRoute from './components/AdminRoute';
 
 const OnboardingHome = lazy(() => import('./pages/Onboarding'));
 const OrganizationDashboard = lazy(() => import('./pages/Dashboard'));
@@ -65,7 +66,7 @@ function App() {
           <Route path="/system-setup" element={<SystemSetup />} />
           <Route
             path="/system-settings"
-            element={<PrivateRoute Component={SystemSettingsView} />}
+            element={<AdminRoute Component={SystemSettingsView} />}
           />
 
           <Route

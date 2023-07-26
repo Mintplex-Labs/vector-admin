@@ -1,0 +1,218 @@
+{
+  "sqlite_sequence": {
+    "slug": "sqlite_sequence",
+    "table": {
+      "name": "sqlite_sequence",
+      "pk": "",
+      "verbose": "sqlite_sequence"
+    },
+    "columns": [
+      {
+        "name": "name",
+        "verbose": "name",
+        "control": {
+          "text": true
+        },
+        "type": "",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "seq",
+        "verbose": "seq",
+        "control": {
+          "text": true
+        },
+        "type": "",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      }
+    ],
+    "mainview": {
+      "show": true
+    },
+    "listview": {
+      "order": {},
+      "page": 25
+    },
+    "editview": {
+      "readonly": false
+    }
+  },
+  "jobs": {
+    "slug": "jobs",
+    "table": {
+      "name": "jobs",
+      "pk": "id",
+      "verbose": "jobs"
+    },
+    "columns": [
+      {
+        "name": "id",
+        "verbose": "id",
+        "control": {
+          "text": true
+        },
+        "type": "INTEGER",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "taskName",
+        "verbose": "taskName",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "status",
+        "verbose": "status",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": false,
+        "defaultValue": "'pending'",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "data",
+        "verbose": "data",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "result",
+        "verbose": "result",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "runByUserId",
+        "verbose": "runByUserId",
+        "control": {
+          "text": true
+        },
+        "type": "INTEGER",
+        "allowNull": true,
+        "defaultValue": "NULL",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "organizationId",
+        "verbose": "organizationId",
+        "control": {
+          "text": true
+        },
+        "type": "INTEGER",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "createdAt",
+        "verbose": "createdAt",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": true,
+        "defaultValue": "strftime('%s', 'now')",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "lastUpdatedAt",
+        "verbose": "lastUpdatedAt",
+        "control": {
+          "text": true
+        },
+        "type": "TEXT",
+        "allowNull": true,
+        "defaultValue": "strftime('%s', 'now')",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      }
+    ],
+    "mainview": {
+      "show": true
+    },
+    "listview": {
+      "order": {},
+      "page": 25
+    },
+    "editview": {
+      "readonly": false
+    }
+  }
+}

@@ -6,13 +6,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
-const { validatedRequest } = require("./utils/middleware/validatedRequest");
-const { validSessionForUser } = require("./utils/http");
 const { systemEndpoints } = require("./endpoints/system");
 const { systemInit } = require("./utils/boot");
 const { authenticationEndpoints } = require("./endpoints/auth");
 const { v1Endpoints } = require("./endpoints/v1");
-// const { validateTablePragmas } = require("./utils/database");
+const { setupDebugger } = require("./utils/debug");
 const app = express();
 const apiRouter = express.Router();
 
@@ -29,6 +27,7 @@ app.use("/api", apiRouter);
 authenticationEndpoints(apiRouter);
 systemEndpoints(apiRouter);
 v1Endpoints(apiRouter);
+setupDebugger(app);
 
 if (process.env.NODE_ENV !== "development") {
   app.use(

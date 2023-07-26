@@ -290,21 +290,23 @@ const Sidebar = ({
                     </li>
                   )}
 
-                  <li>
-                    <div className={`translate transform overflow-hidden`}>
-                      <NavLink
-                        to={paths.settings()}
-                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === '/' ||
-                            pathname.includes('system-settings')) &&
-                          'bg-graydark dark:bg-meta-4'
-                        }`}
-                      >
-                        <Tool className="h-4 w-4" />
-                        System Settings
-                      </NavLink>
-                    </div>
-                  </li>
+                  {user?.role === 'admin' && (
+                    <li>
+                      <div className={`translate transform overflow-hidden`}>
+                        <NavLink
+                          to={paths.settings()}
+                          className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            (pathname === '/' ||
+                              pathname.includes('system-settings')) &&
+                            'bg-graydark dark:bg-meta-4'
+                          }`}
+                        >
+                          <Tool className="h-4 w-4" />
+                          System Settings
+                        </NavLink>
+                      </div>
+                    </li>
+                  )}
 
                   <li>
                     <div className={`translate transform overflow-hidden`}>

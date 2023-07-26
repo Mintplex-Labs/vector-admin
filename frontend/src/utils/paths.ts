@@ -1,3 +1,5 @@
+import { API_BASE } from './constants';
+
 const paths = {
   root: function () {
     return '/';
@@ -46,6 +48,24 @@ const paths = {
   jobs: function ({ slug }: { slug: string }) {
     return `/dashboard/${slug}/jobs`;
   },
+  debug: {
+    vdbms: function () {
+      const { origin } = getServerUrl();
+      return `${origin}/debug/vdbms/login`;
+    },
+    jobs: function () {
+      const { origin } = getServerUrl();
+      return `${origin}/debug/jobs/login`;
+    },
+  },
 };
+
+function getServerUrl() {
+  try {
+    return new URL(API_BASE);
+  } catch {
+    return new URL(window.location.origin);
+  }
+}
 
 export default paths;

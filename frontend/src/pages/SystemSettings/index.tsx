@@ -39,6 +39,12 @@ export default function SystemSettingsView() {
             resolve(result)
           );
         }),
+        new Promise((resolve) => {
+          System.getSetting('debug_username').then((result) => resolve(result));
+        }),
+        new Promise((resolve) => {
+          System.getSetting('debug_pwd').then((result) => resolve(result));
+        }),
       ]);
 
       setSettings(settingsResults);

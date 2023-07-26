@@ -44,6 +44,12 @@ function systemEndpoints(app) {
     [validatedRequest],
     async (request, response) => {
       try {
+        const user = await userFromSession(request);
+        if (!user || user.role !== "admin") {
+          response.sendStatus(403).end();
+          return;
+        }
+
         const { label } = request.params;
         if (!SystemSettings.supportedFields.includes(label)) {
           response.status(404).json({ label, value: null });

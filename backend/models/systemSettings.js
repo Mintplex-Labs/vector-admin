@@ -5,6 +5,8 @@ const SystemSettings = {
     "allow_account_creation",
     "account_creation_domain_scope",
     "open_ai_api_key",
+    "debug_username",
+    "debug_pwd",
   ],
   privateField: ["open_ai_api_key"],
   tablename: "system_settings",
