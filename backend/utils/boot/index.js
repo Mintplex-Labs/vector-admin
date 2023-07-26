@@ -6,6 +6,7 @@ const {
   OrganizationConnection,
 } = require("../../models/organizationConnection");
 const { OrganizationUser } = require("../../models/organizationUser");
+const { Queue } = require("../../models/queue");
 const { SystemSettings } = require("../../models/systemSettings");
 const { User } = require("../../models/user");
 
@@ -18,6 +19,18 @@ function findOrCreateDBFile() {
   if (fs.existsSync(dbPath)) return;
   fs.writeFileSync(dbPath, "");
   console.log("SQLite db created on boot.");
+  return;
+}
+
+function findOrCreateJobDBFile() {
+  const path = require("path");
+  const fs = require("fs");
+  const storageFolder = path.resolve(__dirname, `../../storage/`);
+  const dbPath = `${storageFolder}job_queue.db`;
+  if (!fs.existsSync(storageFolder)) fs.mkdirSync(storageFolder);
+  if (fs.existsSync(dbPath)) return;
+  fs.writeFileSync(dbPath, "");
+  console.log("SQLite jobs db created on boot.");
   return;
 }
 
@@ -40,11 +53,13 @@ async function initTables() {
   (await OrganizationApiKey.db()).close();
   (await OrganizationUser.db()).close();
   (await OrganizationConnection.db()).close();
+  (await Queue.db()).close();
 }
 
 async function systemInit() {
   try {
     await findOrCreateDBFile();
+    await findOrCreateJobDBFile();
     await setupVectorCacheStorage();
     await initTables();
     const completeSetup = (await User.count('role = "admin"')) > 0;

@@ -6,3 +6,5 @@ logs/server.log
 *.sqbpro
 node_modules
 storage/vector-cache/*.json
+storage/settings.json
+storage/job_settings.json
