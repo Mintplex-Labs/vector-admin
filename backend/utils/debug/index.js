@@ -39,7 +39,7 @@ function setupDebugger(app) {
           layouts: false,
           languages: false,
           favicon: "/favicon.ico",
-          root: "/debug/vdbms",
+          root: "/api/debug/vdbms",
         },
       },
       users: {
@@ -68,7 +68,7 @@ function setupDebugger(app) {
           layouts: false,
           languages: false,
           favicon: "/favicon.ico",
-          root: "/debug/jobs",
+          root: "/api/debug/jobs",
         },
       },
       users: {
