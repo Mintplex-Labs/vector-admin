@@ -40,7 +40,7 @@ VectorAdmin is a full capable multi-user product that you can run locally via Do
 
 VectorAdmin is more than a single tool. VectorAdmin is a **suite** of tools that make interacting with and understanding vectorized text easy without compromise for the controls you would expect from a traditional database management system.
 
-Some cool features of AnythingLLM
+Some cool features of VectorAdmin
 - Multi-user instance support and oversight
 - Atomically view, update, and delete singular text chunks of embeddings.
 - Copy entire documents or even whole namespaces and embeddings without paying to re-embed.
