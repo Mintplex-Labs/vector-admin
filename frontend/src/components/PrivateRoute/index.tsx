@@ -25,7 +25,8 @@ function useIsAuthenticated() {
         return;
       }
 
-      setIsAuthed(true);
+      const user = JSON.parse(localUser);
+      user.role === 'root' ? setIsAuthed(false) : setIsAuthed(true);
     };
     validateSession();
   }, []);

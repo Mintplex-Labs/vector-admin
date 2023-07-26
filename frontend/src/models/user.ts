@@ -21,7 +21,6 @@ const User = {
       });
 
     if (!valid) return { user: null, token: null, error };
-    debugger
     return { user, token, error: null };
   },
   createAccount: async (email: string, password: string) => {

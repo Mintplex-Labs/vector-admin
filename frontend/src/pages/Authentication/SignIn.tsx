@@ -54,9 +54,8 @@ const SignIn = () => {
     if (!!token && !!user) {
       window.localStorage.setItem(STORE_USER, JSON.stringify(user));
       window.localStorage.setItem(STORE_TOKEN, token);
-      debugger
       window.location.replace(
-        user?.role === 'root' ? paths.systemSetup() : paths.dashboard()
+        user.role === 'root' ? paths.systemSetup() : paths.dashboard()
       );
     }
   };
