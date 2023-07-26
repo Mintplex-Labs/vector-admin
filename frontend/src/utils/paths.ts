@@ -51,11 +51,11 @@ const paths = {
   debug: {
     vdbms: function () {
       const { origin } = getServerUrl();
-      return `${origin}/debug/vdbms/login`;
+      return `${origin}/api/debug/vdbms/login`;
     },
     jobs: function () {
       const { origin } = getServerUrl();
-      return `${origin}/debug/jobs/login`;
+      return `${origin}/api/debug/jobs/login`;
     },
   },
 };
