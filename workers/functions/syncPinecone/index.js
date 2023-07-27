@@ -63,6 +63,7 @@ const syncPineconeIndex = InngestClient.createFunction(
       return { result };
     } catch (e) {
       const result = {
+        canRetry: true,
         message: `Job failed with error`,
         error: e.message,
         details: e,
@@ -90,12 +91,19 @@ async function paginateAndStore(
       embeddings = [],
       metadatas = [],
       documents = [],
+      error = null,
     } = await pineconeClient.rawGet(
       pineconeIndex,
       collection.name,
       PAGE_SIZE,
       runId
     );
+
+    if (error !== null) {
+      syncing = false;
+      throw error;
+    }
+
     if (ids.length === 0) {
       syncing = false;
       continue;

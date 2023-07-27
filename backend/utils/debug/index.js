@@ -41,9 +41,9 @@ function setupDebugger(app) {
           languages: false,
           root: "/api/debug/vdbms",
           footer: {
-            text: 'Mintplex Labs Inc | Vector Admin',
-            url: 'https://github.com/Mintplex-Labs/vector-admin'
-          }
+            text: "Mintplex Labs Inc | Vector Admin",
+            url: "https://github.com/Mintplex-Labs/vector-admin",
+          },
         },
       },
       users: {
@@ -73,9 +73,9 @@ function setupDebugger(app) {
           languages: false,
           root: "/api/debug/jobs",
           footer: {
-            text: 'Mintplex Labs Inc | Vector Admin',
-            url: 'https://github.com/Mintplex-Labs/vector-admin'
-          }
+            text: "Mintplex Labs Inc | Vector Admin",
+            url: "https://github.com/Mintplex-Labs/vector-admin",
+          },
         },
       },
       users: {

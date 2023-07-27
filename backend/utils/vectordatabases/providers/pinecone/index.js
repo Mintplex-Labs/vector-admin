@@ -97,35 +97,47 @@ class Pinecone {
   }
 
   async rawGet(pineconeIndex, namespace, offset = 10, filterRunId = "") {
-    const data = {
-      ids: [],
-      embeddings: [],
-      metadatas: [],
-      documents: [],
-    };
-    const queryRequest = {
-      namespace,
-      topK: offset,
-      includeValues: true,
-      includeMetadata: true,
-      vector: Array.from({ length: 1536 }, () => 0),
-      filter: {
-        runId: { $ne: filterRunId },
-      },
-    };
+    try {
+      const data = {
+        ids: [],
+        embeddings: [],
+        metadatas: [],
+        documents: [],
+        error: null,
+      };
+      const queryRequest = {
+        namespace,
+        topK: offset,
+        includeValues: true,
+        includeMetadata: true,
+        vector: Array.from({ length: 1536 }, () => 0),
+        filter: {
+          runId: { $ne: filterRunId },
+        },
+      };
 
-    const queryResult = await pineconeIndex.query({ queryRequest });
-    if (!queryResult?.matches || queryResult.matches.length === 0) return data;
+      const queryResult = await pineconeIndex.query({ queryRequest });
+      if (!queryResult?.matches || queryResult.matches.length === 0)
+        return data;
 
-    queryResult.matches.forEach((match) => {
-      const { id, values, metadata } = match;
-      data.ids.push(id);
-      data.embeddings.push(values);
-      data.metadatas.push(metadata);
-      data.documents.push(metadata?.text ?? "");
-    });
-
-    return data;
+      queryResult.matches.forEach((match) => {
+        const { id, values = [], metadata = {} } = match;
+        data.ids.push(id);
+        data.embeddings.push(values);
+        data.metadatas.push(metadata);
+        data.documents.push(metadata?.text ?? "");
+      });
+      return data;
+    } catch (error) {
+      console.error("Pinecone::RawGet", e);
+      return {
+        ids: [],
+        embeddings: [],
+        metadatas: [],
+        documents: [],
+        error,
+      };
+    }
   }
 
   // Split, embed, and save a given document data that we get from the document processor

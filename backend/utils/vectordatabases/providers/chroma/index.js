@@ -108,9 +108,9 @@ class Chroma {
     )
       .then((res) => res.json())
       .then((res) => res)
-      .catch((e) => {
+      .catch((error) => {
         console.error(e.message);
-        return { ids: [], embeddings: [], metadatas: [], documents: [] };
+        return { ids: [], embeddings: [], metadatas: [], documents: [], error };
       });
   }
 

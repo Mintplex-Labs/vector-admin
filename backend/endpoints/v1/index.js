@@ -4,6 +4,7 @@ process.env.NODE_ENV === "development"
 const { userFromSession, validSessionForUser } = require("../../utils/http");
 const { documentProcessorEndpoints } = require("./document-processor");
 const { documentEndpoints } = require("./documents");
+const { jobEndpoints } = require("./jobs");
 const { organizationEndpoints } = require("./organizations");
 const { userEndpoints } = require("./users");
 const { workspaceEndpoints } = require("./workspaces");
@@ -34,6 +35,7 @@ function v1Endpoints(app) {
   workspaceEndpoints(app);
   documentEndpoints(app);
   documentProcessorEndpoints(app);
+  jobEndpoints(app);
 }
 
 module.exports = { v1Endpoints };
