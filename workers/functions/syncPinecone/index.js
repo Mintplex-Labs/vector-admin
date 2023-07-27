@@ -80,7 +80,7 @@ async function paginateAndStore(
   organization
 ) {
   const runId = v4();
-  const { pineconeIndex } = await pineconeClient.connect();
+  const { pineconeIndex, host } = await pineconeClient.connect();
   const PAGE_SIZE = 1_000;
   var syncing = true;
   const files = {};
@@ -92,12 +92,7 @@ async function paginateAndStore(
       metadatas = [],
       documents = [],
       error = null,
-    } = await pineconeClient.rawGet(
-      pineconeIndex,
-      collection.name,
-      PAGE_SIZE,
-      runId
-    );
+    } = await pineconeClient.rawGet(host, collection.name, PAGE_SIZE, runId);
 
     if (error !== null) {
       syncing = false;

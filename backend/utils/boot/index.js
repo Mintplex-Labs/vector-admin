@@ -18,7 +18,7 @@ function findOrCreateDBFile() {
   const fs = require("fs");
   const path = require("path");
   const storageFolder = path.resolve(__dirname, `../../storage/`);
-  const dbPath = `${storageFolder}vdbms.db`;
+  const dbPath = `${storageFolder}/vdbms.db`;
   if (!fs.existsSync(storageFolder)) fs.mkdirSync(storageFolder);
   if (fs.existsSync(dbPath)) return;
   fs.writeFileSync(dbPath, "");
@@ -30,7 +30,7 @@ function findOrCreateJobDBFile() {
   const path = require("path");
   const fs = require("fs");
   const storageFolder = path.resolve(__dirname, `../../storage/`);
-  const dbPath = `${storageFolder}job_queue.db`;
+  const dbPath = `${storageFolder}/job_queue.db`;
   if (!fs.existsSync(storageFolder)) fs.mkdirSync(storageFolder);
   if (fs.existsSync(dbPath)) return;
   fs.writeFileSync(dbPath, "");

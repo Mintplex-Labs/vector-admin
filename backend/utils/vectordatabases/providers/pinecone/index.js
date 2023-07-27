@@ -18,12 +18,6 @@ class Pinecone {
     return { type, settings };
   }
 
-  async indexDimensions() {
-    const { pineconeIndex } = await this.connect();
-    const description = await pineconeIndex.describeIndexStats1();
-    return Number(description?.dimension || 0);
-  }
-
   async connect() {
     const { PineconeClient } = require("@pinecone-database/pinecone");
     const { type, settings } = this.config;
@@ -38,12 +32,72 @@ class Pinecone {
     });
 
     const pineconeIndex = client.Index(settings.index);
-    const { status } = await client.describeIndex({
-      indexName: settings.index,
-    });
-    if (!status.ready) throw new Error("Pinecode::Index not ready.");
+    const {
+      status: { ready, host },
+    } = await this.describeIndexRaw();
+    if (!ready) throw new Error("Pinecone::Index not ready.");
 
-    return { client, pineconeIndex };
+    return { client, host, pineconeIndex };
+  }
+
+  async indexDimensions() {
+    const { pineconeIndex } = await this.connect();
+    const description = await pineconeIndex.describeIndexStats1();
+    return Number(description?.dimension || 0);
+  }
+
+  async describeIndexRaw() {
+    const { settings } = this.config;
+    // 200 OK Example
+    //   {
+    //     "database": {
+    //         "name": string,
+    //         "metric": "cosine",
+    //         "dimension": 1536,
+    //         "replicas": 1,
+    //         "shards": 1,
+    //         "pods": 1
+    //     },
+    //     "status": {
+    //         "waiting": [],
+    //         "crashed": [],
+    //         "host": URL without protocol,
+    //         "port": 433,
+    //         "state": "Ready",
+    //         "ready": true
+    //     }
+    // }
+    return await fetch(
+      `https://controller.${settings.environment}.pinecone.io/databases/${settings.index}`,
+      {
+        method: "GET",
+        headers: {
+          "Api-Key": settings.apiKey,
+        },
+      }
+    )
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+
+        const error = {
+          code: res?.status,
+          message: res?.statusText,
+          url: res?.url,
+        };
+        throw error;
+      })
+      .catch((e) => {
+        console.error("Pinecone.describeIndexRaw", e);
+        return {
+          database: {},
+          status: {
+            ready: false,
+            host: null,
+          },
+        };
+      });
   }
 
   async totalIndicies() {
@@ -96,7 +150,53 @@ class Pinecone {
     };
   }
 
-  async rawGet(pineconeIndex, namespace, offset = 10, filterRunId = "") {
+  async rawQuery(host = "", queryParams = {}) {
+    const { settings } = this.config;
+    // 200OK
+    // {
+    //   "results": [],
+    //   "matches": [
+    //       {
+    //           "id": string,
+    //           "score": number,
+    //           "values": number[],
+    //           "metadata": object
+    //       },
+    //       ...
+    //     ]
+    // }
+    return await fetch(`https://${host}/query`, {
+      method: "POST",
+      headers: {
+        "Api-Key": settings.apiKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(queryParams),
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+
+        const { vector, ...params } = queryParams;
+        const error = {
+          code: res?.status,
+          message: res?.statusText,
+          url: res?.url,
+          failedWith: JSON.stringify(params),
+        };
+        throw error;
+      })
+      .catch((e) => {
+        console.error("Pinecone.rawQuery", e);
+        return {
+          matches: [],
+          error: e,
+        };
+      });
+  }
+
+  async rawGet(host, namespace, offset = 10, filterRunId = "") {
     try {
       const data = {
         ids: [],
@@ -116,9 +216,10 @@ class Pinecone {
         },
       };
 
-      const queryResult = await pineconeIndex.query({ queryRequest });
-      if (!queryResult?.matches || queryResult.matches.length === 0)
-        return data;
+      const queryResult = await this.rawQuery(host, queryRequest);
+      if (!queryResult?.matches || queryResult.matches.length === 0) {
+        return { ...data, error: queryResult?.error || null };
+      }
 
       queryResult.matches.forEach((match) => {
         const { id, values = [], metadata = {} } = match;
