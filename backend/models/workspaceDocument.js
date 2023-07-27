@@ -146,7 +146,12 @@ const WorkspaceDocument = {
     const { OrganizationWorkspace } = require("./organizationWorkspace");
     const db = await this.db();
     const results = await db.all(
-      `SELECT *, wd.id as document_id, ow.slug as workspace_slug, ow.name as workspace_name
+      `SELECT *, 
+      wd.id as document_id, 
+      wd.name as document_name, 
+      wd.createdAt as document_createdAt, 
+      ow.slug as workspace_slug, 
+      ow.name as workspace_name
       FROM ${this.tablename} as wd
       LEFT JOIN ${
         OrganizationWorkspace.tablename
@@ -156,10 +161,19 @@ const WorkspaceDocument = {
     await db.close();
 
     const completeResults = results.map((res) => {
-      const { workspace_slug, document_id, workspace_name, ...rest } = res;
+      const {
+        workspace_slug,
+        document_createdAt,
+        document_name,
+        document_id,
+        workspace_name,
+        ...rest
+      } = res;
       return {
         ...rest,
         id: document_id,
+        name: document_name,
+        createdAt: document_createdAt,
         workspace: {
           slug: workspace_slug,
           name: workspace_name,
