@@ -129,7 +129,7 @@ class Pinecone {
       });
       return data;
     } catch (error) {
-      console.error("Pinecone::RawGet", e);
+      console.error("Pinecone::RawGet", error);
       return {
         ids: [],
         embeddings: [],
