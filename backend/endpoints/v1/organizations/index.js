@@ -494,7 +494,7 @@ function organizationEndpoints(app) {
 
         const documents = await WorkspaceDocument.where(
           `organization_id = ${organization.id}`,
-          null,
+          100,
           true
         );
         response.status(200).json({ documents });

@@ -132,29 +132,44 @@ const WorkspaceDocument = {
     };
   },
   where: async function (clause = null, limit = null, withReferences = false) {
+    if (!withReferences) {
+      const db = await this.db();
+      const results = await db.all(
+        `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${!!limit ? `LIMIT ${limit}` : ""
+        }`
+      );
+      await db.close();
+      return results;
+    }
+
+    const { OrganizationWorkspace } = require("./organizationWorkspace");
     const db = await this.db();
     const results = await db.all(
-      `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${
-        !!limit ? `LIMIT ${limit}` : ""
+      `SELECT *, ow.slug as workspace_slug, ow.name as workspace_name
+      FROM ${this.tablename} as wd
+      LEFT JOIN ${OrganizationWorkspace.tablename} as ow ON ow.id = wd.workspace_id
+       ${clause ? `WHERE wd.${clause}` : ""} ${!!limit ? `LIMIT ${limit}` : ""
       }`
     );
     await db.close();
-    if (!withReferences) return results;
 
-    const { OrganizationWorkspace } = require("./organizationWorkspace");
-    for (const res of results) {
-      res.workspace = await OrganizationWorkspace.get(
-        `id = ${res.workspace_id}`
-      );
-    }
+    const completeResults = results.map((res) => {
+      const { workspace_slug, workspace_name, ...rest } = res
+      return {
+        ...rest,
+        workspace: {
+          slug: workspace_slug,
+          name: workspace_name,
+        }
+      }
+    })
 
-    return results;
+    return completeResults;
   },
   count: async function (clause = null) {
     const db = await this.db();
     const { count } = await db.get(
-      `SELECT COUNT(*) as count FROM ${this.tablename} ${
-        clause ? `WHERE ${clause}` : ""
+      `SELECT COUNT(*) as count FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""
       }`
     );
     await db.close();
@@ -169,7 +184,9 @@ const WorkspaceDocument = {
       const documents = await this.where(`${field} = ${value}`);
       if (documents.length === 0) return 0;
 
-      const docIds = documents.map((doc) => doc.id);
+      const docIdSet = new Set();
+      documents.forEach((doc) => docIdSet.add(doc.id));
+      const docIds = Array.from(docIdSet);
       const vectorCount = await DocumentVectors.count(
         `document_id IN (${docIds.join(",")})`
       );
