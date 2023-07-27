@@ -31,7 +31,6 @@ const User = {
     await db.exec(
       `PRAGMA foreign_keys = ON; CREATE TABLE IF NOT EXISTS ${this.tablename} (${this.colsInit})`
     );
-    await db.close();
 
     if (tracing) db.on("trace", (sql) => console.log(sql));
     return db;
