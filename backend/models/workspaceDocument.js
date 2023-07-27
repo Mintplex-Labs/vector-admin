@@ -135,7 +135,8 @@ const WorkspaceDocument = {
     if (!withReferences) {
       const db = await this.db();
       const results = await db.all(
-        `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${!!limit ? `LIMIT ${limit}` : ""
+        `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${
+          !!limit ? `LIMIT ${limit}` : ""
         }`
       );
       await db.close();
@@ -147,29 +148,31 @@ const WorkspaceDocument = {
     const results = await db.all(
       `SELECT *, ow.slug as workspace_slug, ow.name as workspace_name
       FROM ${this.tablename} as wd
-      LEFT JOIN ${OrganizationWorkspace.tablename} as ow ON ow.id = wd.workspace_id
-       ${clause ? `WHERE wd.${clause}` : ""} ${!!limit ? `LIMIT ${limit}` : ""
-      }`
+      LEFT JOIN ${
+        OrganizationWorkspace.tablename
+      } as ow ON ow.id = wd.workspace_id
+       ${clause ? `WHERE wd.${clause}` : ""} ${!!limit ? `LIMIT ${limit}` : ""}`
     );
     await db.close();
 
     const completeResults = results.map((res) => {
-      const { workspace_slug, workspace_name, ...rest } = res
+      const { workspace_slug, workspace_name, ...rest } = res;
       return {
         ...rest,
         workspace: {
           slug: workspace_slug,
           name: workspace_name,
-        }
-      }
-    })
+        },
+      };
+    });
 
     return completeResults;
   },
   count: async function (clause = null) {
     const db = await this.db();
     const { count } = await db.get(
-      `SELECT COUNT(*) as count FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""
+      `SELECT COUNT(*) as count FROM ${this.tablename} ${
+        clause ? `WHERE ${clause}` : ""
       }`
     );
     await db.close();
@@ -214,13 +217,13 @@ const WorkspaceDocument = {
   },
   deleteWhere: async function (clause = null) {
     const db = await this.db();
-    await db.get(`DELETE FROM ${this.tablename} WHERE ${clause}`);
+    await db.exec(`DELETE FROM ${this.tablename} WHERE ${clause}`);
     await db.close();
     return;
   },
   delete: async function (id = null) {
     const db = await this.db();
-    await db.get(`DELETE FROM ${this.tablename} WHERE id = ${id}`);
+    await db.exec(`DELETE FROM ${this.tablename} WHERE id = ${id}`);
     await db.close();
     return;
   },

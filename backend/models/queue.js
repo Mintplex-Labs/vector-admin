@@ -73,9 +73,9 @@ const Queue = {
   },
   get: async function (clause = "") {
     const db = await this.db();
-    const result = await db
-      .get(`SELECT * FROM ${this.tablename} WHERE ${clause}`)
-      .then((res) => res || null);
+    const result = await db.get(
+      `SELECT * FROM ${this.tablename} WHERE ${clause}`
+    );
     if (!result) return null;
     await db.close();
 

@@ -184,14 +184,16 @@ const OrganizationWorkspace = {
   },
   deleteAllForOrganization: async function (organizationId = "") {
     const db = await this.db();
-    await db.get(
+    await db.exec(
       `DELETE FROM ${this.tablename} WHERE organization_id = ${organizationId}`
     );
+    await db.close();
     return;
   },
   delete: async function (clause = null) {
     const db = await this.db();
-    await db.get(`DELETE FROM ${this.tablename} WHERE ${clause}`);
+    await db.exec(`DELETE FROM ${this.tablename} WHERE ${clause}`);
+    await db.close();
     return;
   },
 };

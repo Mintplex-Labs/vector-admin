@@ -116,7 +116,8 @@ const OrganizationUser = {
   },
   delete: async function (clause = null) {
     const db = await this.db();
-    await db.get(`DELETE FROM ${this.tablename} WHERE ${clause}`);
+    await db.exec(`DELETE FROM ${this.tablename} WHERE ${clause}`);
+    await db.close();
     return;
   },
   updateOrgPermissions: async function (userId, _orgIds = []) {

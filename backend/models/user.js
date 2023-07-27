@@ -131,7 +131,8 @@ const User = {
   },
   delete: async function (clause = null) {
     const db = await this.db();
-    await db.get(`DELETE FROM ${this.tablename} WHERE ${clause}`);
+    await db.exec(`DELETE FROM ${this.tablename} WHERE ${clause}`);
+    await db.close();
     return;
   },
   update: async function (userId, updates = {}) {

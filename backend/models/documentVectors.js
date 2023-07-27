@@ -103,7 +103,7 @@ const DocumentVectors = {
   },
   delete: async function (id = null) {
     const db = await this.db();
-    await db.get(`DELETE FROM ${this.tablename} WHERE id = ${id}`);
+    await db.exec(`DELETE FROM ${this.tablename} WHERE id = ${id}`);
     await db.close();
     return;
   },

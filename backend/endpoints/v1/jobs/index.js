@@ -1,10 +1,5 @@
 const { Queue } = require("../../../models/queue");
-const { User } = require("../../../models/user");
-const {
-  userFromSession,
-  reqBody,
-  validSessionForUser,
-} = require("../../../utils/http");
+const { userFromSession, validSessionForUser } = require("../../../utils/http");
 
 process.env.NODE_ENV === "development"
   ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
