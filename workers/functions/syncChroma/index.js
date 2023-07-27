@@ -20,6 +20,7 @@ const syncChromaInstance = InngestClient.createFunction(
     var result = {};
     const { organization, connector, jobId } = event.data;
     try {
+      const failedToSync = [];
       const chromaClient = new Chroma(connector);
       const collections = await chromaClient.collections();
 
@@ -47,17 +48,31 @@ const syncChromaInstance = InngestClient.createFunction(
         logger.info(
           `Working on ${collection.count} embeddings of ${collection.name}`
         );
-        await paginateAndStore(
-          chromaClient,
-          collection,
-          workspace,
-          organization
-        );
+
+        try {
+          await paginateAndStore(
+            chromaClient,
+            collection,
+            workspace,
+            organization
+          );
+        } catch (e) {
+          logger.error(
+            `Failed to paginate records for ${collection.name} - workspace will remain in db but may be incomplete.`,
+            e
+          );
+          failedToSync.push({
+            namespace: collection.name,
+            reason: e.message,
+          });
+        }
       }
 
       result = {
-        message:
-          'Chroma instance vector data has been synced. Previous workspaces were deleted.',
+        message: `Chroma instance vector data has been synced for ${
+          collections.length
+        } of ${collections.length - failedToSync.length} collections.`,
+        failedToSync,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
       return { result };

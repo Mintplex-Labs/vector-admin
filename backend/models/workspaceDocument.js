@@ -165,21 +165,19 @@ const WorkspaceDocument = {
     return await this.count(`${field} = ${value}`);
   },
   calcVectors: async function (field = "organization_id", value = null) {
-    const documents = await this.where(`${field} = ${value}`);
+    try {
+      const documents = await this.where(`${field} = ${value}`);
+      if (documents.length === 0) return 0;
 
-    var vectorCount = 0;
-    for (const document of documents) {
-      try {
-        const _count = await DocumentVectors.count(
-          `document_id = ${document.id}`
-        );
-        vectorCount += _count || 0;
-      } catch (e) {
-        console.error(e);
-      }
+      const docIds = documents.map((doc) => doc.id);
+      const vectorCount = await DocumentVectors.count(
+        `document_id IN (${docIds.join(",")})`
+      );
+      return vectorCount;
+    } catch (e) {
+      console.error(e);
+      return 0;
     }
-
-    return vectorCount;
   },
   calcVectorCache: async function (field = "organization_id", value = null) {
     const documents = await this.where(`${field} = ${value}`);

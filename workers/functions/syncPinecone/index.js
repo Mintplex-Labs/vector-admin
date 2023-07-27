@@ -20,6 +20,7 @@ const syncPineconeIndex = InngestClient.createFunction(
     var result = {};
     const { organization, connector, jobId } = event.data;
     try {
+      const failedToSync = [];
       const pineconeClient = new Pinecone(connector);
       const collections = await pineconeClient.collections();
 
@@ -47,17 +48,31 @@ const syncPineconeIndex = InngestClient.createFunction(
         logger.info(
           `Working on ${collection.count} embeddings of ${collection.name}`
         );
-        await paginateAndStore(
-          pineconeClient,
-          collection,
-          workspace,
-          organization
-        );
+
+        try {
+          await paginateAndStore(
+            pineconeClient,
+            collection,
+            workspace,
+            organization
+          );
+        } catch (e) {
+          logger.error(
+            `Failed to paginate records for ${collection.name} - workspace will remain in db but may be incomplete.`,
+            e
+          );
+          failedToSync.push({
+            namespace: collection.name,
+            reason: e.message,
+          });
+        }
       }
 
       result = {
-        message:
-          'Pinecone instance vector data has been synced. Previous workspaces were deleted.',
+        message: `Pinecone instance vector data has been synced for ${
+          collections.length
+        } of ${collections.length - failedToSync.length} namespaces.`,
+        failedToSync,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
       return { result };

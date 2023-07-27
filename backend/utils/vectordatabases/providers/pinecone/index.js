@@ -150,21 +150,22 @@ class Pinecone {
     };
   }
 
-  async rawQuery(host = "", queryParams = {}) {
+  // 200OK
+  // {
+  //   "results": [],
+  //   "matches": [
+  //       {
+  //           "id": string,
+  //           "score": number,
+  //           "values": number[],
+  //           "metadata": object
+  //       },
+  //       ...
+  //     ],
+  //   "error": // only present if there was an error
+  // }
+  async _rawQuery(host, queryParams = {}) {
     const { settings } = this.config;
-    // 200OK
-    // {
-    //   "results": [],
-    //   "matches": [
-    //       {
-    //           "id": string,
-    //           "score": number,
-    //           "values": number[],
-    //           "metadata": object
-    //       },
-    //       ...
-    //     ]
-    // }
     return await fetch(`https://${host}/query`, {
       method: "POST",
       headers: {
@@ -194,6 +195,39 @@ class Pinecone {
           error: e,
         };
       });
+  }
+
+  // 3-try topK progressive backoff when 500 error. This would be because the associated text/metadata
+  // exceeds the max POST response size Pinecone is willing to send.
+  // default topK is 1000, which is the max Pinecone allows.
+  // So first we try the given topK, then half, lastly quarter.
+  // Nothing fancy like an expo-backoff because we need to make sure we don't rate-limit ourselves.
+  async rawQuery(host = "", queryParams = {}) {
+    var queryResponse;
+    const initialPageSize = queryParams?.topK || 1_000;
+
+    queryResponse = await this._rawQuery(host, queryParams);
+    if (
+      !queryResponse.hasOwnProperty("error") ||
+      queryResponse?.error?.code !== 500
+    )
+      return queryResponse;
+
+    queryResponse = await this._rawQuery(host, {
+      ...queryParams,
+      topK: Math.floor(initialPageSize / 2),
+    });
+    if (
+      !queryResponse.hasOwnProperty("error") ||
+      queryResponse?.error?.code !== 500
+    )
+      return queryResponse;
+
+    queryResponse = await this._rawQuery(host, {
+      ...queryParams,
+      topK: Math.floor(initialPageSize / 4),
+    });
+    return queryResponse;
   }
 
   async rawGet(host, namespace, offset = 10, filterRunId = "") {
