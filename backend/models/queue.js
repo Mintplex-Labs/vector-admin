@@ -40,6 +40,7 @@ const Queue = {
     await db.exec(
       `PRAGMA foreign_keys = ON;CREATE TABLE IF NOT EXISTS ${this.tablename} (${this.colsInit})`
     );
+    await db.close();
 
     if (tracing) db.on("trace", (sql) => console.log(sql));
     return db;
@@ -84,8 +85,7 @@ const Queue = {
   where: async function (clause = null, limit = null, orderBy = null) {
     const db = await this.db();
     const results = await db.all(
-      `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${
-        !!limit ? `LIMIT ${limit}` : ""
+      `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${!!limit ? `LIMIT ${limit}` : ""
       } ${orderBy ? orderBy : ""}`
     );
     await db.close();
@@ -95,8 +95,7 @@ const Queue = {
   count: async function (clause = null) {
     const db = await this.db();
     const { count } = await db.get(
-      `SELECT COUNT(*) as count FROM ${this.tablename} ${
-        clause ? `WHERE ${clause}` : ""
+      `SELECT COUNT(*) as count FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""
       }`
     );
     await db.close();

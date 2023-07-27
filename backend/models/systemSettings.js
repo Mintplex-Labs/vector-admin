@@ -38,6 +38,7 @@ const SystemSettings = {
     await db.exec(
       `PRAGMA foreign_keys = ON;CREATE TABLE IF NOT EXISTS ${this.tablename} (${this.colsInit})`
     );
+    await db.close();
 
     if (tracing) db.on("trace", (sql) => console.log(sql));
     return db;
@@ -55,8 +56,7 @@ const SystemSettings = {
   where: async function (clause = null, limit = null) {
     const db = await this.db();
     const results = await db.all(
-      `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${
-        !!limit ? `LIMIT ${limit}` : ""
+      `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${!!limit ? `LIMIT ${limit}` : ""
       }`
     );
     await db.close();
