@@ -163,7 +163,8 @@ const OrganizationWorkspace = {
   where: async function (clause = null, limit = null) {
     const db = await this.db();
     const results = await db.all(
-      `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${!!limit ? `LIMIT ${limit}` : ""
+      `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${
+        !!limit ? `LIMIT ${limit}` : ""
       }`
     );
     await db.close();
@@ -173,7 +174,8 @@ const OrganizationWorkspace = {
   count: async function (clause = null) {
     const db = await this.db();
     const { count } = await db.get(
-      `SELECT COUNT(*) as count FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""
+      `SELECT COUNT(*) as count FROM ${this.tablename} ${
+        clause ? `WHERE ${clause}` : ""
       }`
     );
     await db.close();

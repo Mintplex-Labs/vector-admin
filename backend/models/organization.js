@@ -109,7 +109,8 @@ const Organization = {
   where: async function (clause = null, limit = null, orderBy = null) {
     const db = await this.db();
     const results = await db.all(
-      `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${!!limit ? `LIMIT ${limit}` : ""
+      `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${
+        !!limit ? `LIMIT ${limit}` : ""
       } ${!!orderBy ? orderBy : ""}`
     );
     await db.close();
@@ -119,7 +120,8 @@ const Organization = {
   count: async function (clause = null) {
     const db = await this.db();
     const { count } = await db.get(
-      `SELECT COUNT(*) as count FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""
+      `SELECT COUNT(*) as count FROM ${this.tablename} ${
+        clause ? `WHERE ${clause}` : ""
       }`
     );
     await db.close();
@@ -137,7 +139,8 @@ const Organization = {
       `SELECT * FROM ${this.tablename} as org 
       LEFT JOIN organization_users as org_users 
       ON org_users.organization_id = org.id 
-      WHERE org_users.user_id = ${userId} ${clause ? `AND ${clause}` : ""} ${!!limit ? `LIMIT ${limit}` : ""
+      WHERE org_users.user_id = ${userId} ${clause ? `AND ${clause}` : ""} ${
+        !!limit ? `LIMIT ${limit}` : ""
       } ${!!orderBy ? orderBy : ""}`
     );
     await db.close();

@@ -117,7 +117,6 @@ const WorkspaceDocument = {
     return;
   },
   get: async function (clause = "", withReferences = false) {
-    const { OrganizationWorkspace } = require("./organizationWorkspace");
     const db = await this.db();
     const result = await db
       .get(`SELECT * FROM ${this.tablename} WHERE ${clause}`)
@@ -126,6 +125,7 @@ const WorkspaceDocument = {
     await db.close();
     if (!withReferences) return result;
 
+    const { OrganizationWorkspace } = require("./organizationWorkspace");
     return {
       ...result,
       workspace: await OrganizationWorkspace.get(`id = ${result.workspace_id}`),
@@ -135,7 +135,8 @@ const WorkspaceDocument = {
     if (!withReferences) {
       const db = await this.db();
       const results = await db.all(
-        `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${!!limit ? `LIMIT ${limit}` : ""
+        `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${
+          !!limit ? `LIMIT ${limit}` : ""
         }`
       );
       await db.close();
@@ -145,18 +146,20 @@ const WorkspaceDocument = {
     const { OrganizationWorkspace } = require("./organizationWorkspace");
     const db = await this.db();
     const results = await db.all(
-      `SELECT *, ow.slug as workspace_slug, ow.name as workspace_name
+      `SELECT *, wd.id as document_id, ow.slug as workspace_slug, ow.name as workspace_name
       FROM ${this.tablename} as wd
-      LEFT JOIN ${OrganizationWorkspace.tablename
+      LEFT JOIN ${
+        OrganizationWorkspace.tablename
       } as ow ON ow.id = wd.workspace_id
        ${clause ? `WHERE wd.${clause}` : ""} ${!!limit ? `LIMIT ${limit}` : ""}`
     );
     await db.close();
 
     const completeResults = results.map((res) => {
-      const { workspace_slug, workspace_name, ...rest } = res;
+      const { workspace_slug, document_id, workspace_name, ...rest } = res;
       return {
         ...rest,
+        id: document_id,
         workspace: {
           slug: workspace_slug,
           name: workspace_name,
@@ -169,7 +172,8 @@ const WorkspaceDocument = {
   count: async function (clause = null) {
     const db = await this.db();
     const { count } = await db.get(
-      `SELECT COUNT(*) as count FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""
+      `SELECT COUNT(*) as count FROM ${this.tablename} ${
+        clause ? `WHERE ${clause}` : ""
       }`
     );
     await db.close();

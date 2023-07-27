@@ -55,7 +55,8 @@ const SystemSettings = {
   where: async function (clause = null, limit = null) {
     const db = await this.db();
     const results = await db.all(
-      `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${!!limit ? `LIMIT ${limit}` : ""
+      `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${
+        !!limit ? `LIMIT ${limit}` : ""
       }`
     );
     await db.close();
