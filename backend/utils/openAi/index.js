@@ -17,6 +17,19 @@ class OpenAi {
       ? data[0].embedding
       : null;
   }
+
+  async embedTextChunks(chunks = []) {
+    const {
+      data: { data },
+    } = await this.openai.createEmbedding({
+      model: "text-embedding-ada-002",
+      input: chunks,
+    });
+    return data.length > 0 &&
+      data.every((embd) => embd.hasOwnProperty("embedding"))
+      ? data.map((embd) => embd.embedding)
+      : null;
+  }
 }
 
 module.exports = {

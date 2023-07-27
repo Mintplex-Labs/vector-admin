@@ -135,7 +135,7 @@ class Chroma {
       const documentVectors = [];
       const cacheInfo = [];
       const vectors = [];
-
+      const vectorValues = await openai.embedTextChunks(textChunks);
       const submission = {
         ids: [],
         embeddings: [],
@@ -143,23 +143,21 @@ class Chroma {
         documents: [],
       };
 
-      for (const textChunk of textChunks) {
-        const vectorValues = await openai.embedTextChunk(textChunk);
-
-        if (!!vectorValues) {
+      if (!!vectorValues && vectorValues.length > 0) {
+        for (const [i, vector] of vectorValues.entries()) {
           const vectorRecord = {
             id: v4(),
-            values: vectorValues,
+            values: vector,
             // [DO NOT REMOVE]
             // LangChain will be unable to find your text if you embed manually and dont include the `text` key.
             // https://github.com/hwchase17/langchainjs/blob/2def486af734c0ca87285a48f1a04c057ab74bdf/langchain/src/vectorstores/pinecone.ts#L64
-            metadata: { ...metadata, text: textChunk },
+            metadata: { ...metadata, text: textChunks[i] },
           };
 
           submission.ids.push(vectorRecord.id);
           submission.embeddings.push(vectorRecord.values);
           submission.metadatas.push(metadata);
-          submission.documents.push(textChunk);
+          submission.documents.push(textChunks[i]);
 
           vectors.push(vectorRecord);
           documentVectors.push({
@@ -172,11 +170,11 @@ class Chroma {
             values: vectorValues,
             metadata: vectorRecord.metadata,
           });
-        } else {
-          console.error(
-            "Could not use OpenAI to embed document chunk! This document will not be recorded."
-          );
         }
+      } else {
+        console.error(
+          "Could not use OpenAI to embed document chunk! This document will not be recorded."
+        );
       }
 
       const { client } = await this.connect();
