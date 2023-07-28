@@ -78,14 +78,14 @@ This monorepo consists of three main sections:
 The below instructions will **not** work on Windows.
 
 - `yarn dev:setup` from the project root directory.
-- `cd document-collector && python3.9 -m virtual-env v-env && source v-env/bin/activate && pip install -r requirements.txt`
+- `cd document-processor && python3.9 -m virtual-env v-env && source v-env/bin/activate && pip install -r requirements.txt`
 
 In separate terminal windows from project root:
   - `yarn dev:server`
   - `yarn dev:frontend`
   - `yarn dev:workers`
-  - `cd document-collector && flask run --host '0.0.0.0' --port 8888`
- 
+  - `cd document-processor && flask run --host '0.0.0.0' --port 8888`
+
 On first boot of the system you will be prompted to login. Consult the `backend/.env.development` and set or use the `SYS_EMAIL` and `SYS_PASSWORD` values. Once your new account is setup the root credentials will no longer work and you can use your admin account.
 
 ### Contributing
