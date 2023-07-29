@@ -174,6 +174,8 @@ function workspaceEndpoints(app) {
     async function (request, response) {
       try {
         const { orgSlug, wsSlug } = request.params;
+        const page = parseInt(request.query.page) || 1;
+        const pageSize = parseInt(request.query.pageSize) || 10;
         const user = await userFromSession(request);
         if (!user) {
           response.sendStatus(403).end();
@@ -196,10 +198,14 @@ function workspaceEndpoints(app) {
 
         const documents = await WorkspaceDocument.where(
           `organization_id = ${organization.id} AND workspace_id = ${workspace.id}`,
-          null,
+          pageSize,
+          (page - 1) * pageSize,
           true
         );
-        response.status(200).json({ documents });
+        const totalDocuments = await WorkspaceDocument.count(
+          `organization_id = ${organization.id} AND workspace_id = ${workspace.id}`
+        );
+        response.status(200).json({ documents, totalDocuments });
       } catch (e) {
         console.log(e.message, e);
         response.sendStatus(500).end();

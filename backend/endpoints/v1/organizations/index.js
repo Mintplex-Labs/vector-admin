@@ -504,7 +504,9 @@ function organizationEndpoints(app) {
           true
         );
 
-        const totalDocuments = await WorkspaceDocument.count(`organization_id = ${organization.id}`);
+        const totalDocuments = await WorkspaceDocument.count(
+          `organization_id = ${organization.id}`
+        );
         response.status(200).json({ documents, totalDocuments });
       } catch (e) {
         console.log(e.message, e);

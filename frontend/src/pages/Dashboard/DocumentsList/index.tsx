@@ -9,6 +9,8 @@ import truncate from 'truncate';
 import System from '../../../models/system';
 import UploadDocumentModal from './UploadModal';
 import UploadModalNoKey from './UploadModal/UploadModalNoKey';
+import DocumentListPagination from '../../../components/DocumentPaginator';
+import useQuery from '../../../hooks/useQuery';
 
 export default function DocumentsList({
   organization,
@@ -19,12 +21,25 @@ export default function DocumentsList({
   workspaces: any;
   knownConnector: any;
 }) {
+  const query = useQuery();
   const [loading, setLoading] = useState(true);
   const [documents, setDocuments] = useState([]);
-  const [totalDocuments, setTotalDocuments] = useState();
+  const [totalDocuments, setTotalDocuments] = useState(0);
   const [canUpload, setCanUpload] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10;
+  const [currentPage, setCurrentPage] = useState(
+    Number(query.get('docPage')) || 1
+  );
+
+  function updatePage(pgNum: number) {
+    const setTo = pgNum <= 0 ? 1 : pgNum;
+    query.set('docPage', setTo.toString());
+    window.history.replaceState(
+      {},
+      '',
+      `${location.pathname}?${query.toString()}`
+    );
+    setCurrentPage(setTo);
+  }
 
   useEffect(() => {
     async function getDocs(slug?: string) {
@@ -131,7 +146,8 @@ export default function DocumentsList({
               {documents.map((document) => {
                 return (
                   <div
-                    key={document.uid}
+                    id={`document-row-${document.id}`}
+                    key={document.id}
                     className="flex w-full items-center gap-5 px-7.5 py-3 text-gray-600 hover:bg-gray-3 dark:hover:bg-meta-4"
                   >
                     <div className="flex w-full items-center gap-3">
@@ -144,42 +160,40 @@ export default function DocumentsList({
                         </div>
                       </div>
                       <div className="w-6/12 2xsm:w-5/12 md:w-3/12">
-                        <span className="font-medium text-slate-700">
-                          {truncate(document.workspace.name, 20)}
-                        </span>
+                        <a
+                          href={paths.workspace(
+                            organization.slug,
+                            document.workspace.slug
+                          )}
+                          className="hover:text-blue-500 hover:underline"
+                        >
+                          <span className="font-medium">
+                            {document.workspace.name || ''}
+                          </span>
+                        </a>
                       </div>
-                      <div className="hidden w-4/12 md:block xl:w-3/12">
-                        <span>
-                          {moment(document.created_at).format('MMM D, YYYY')}
+                      <div className="hidden w-3/12 overflow-x-scroll md:block xl:w-3/12">
+                        <span className="font-medium">
+                          {moment.unix(document.createdAt).format('lll')}
                         </span>
                       </div>
                       <div className="w-5/12 2xsm:w-4/12 md:w-3/12 xl:w-2/12">
-                        <div className="flex items-center gap-x-1">
-                          <span className="font-medium text-slate-700">
-                            {document.status}
-                          </span>
-                        </div>
+                        <span className="inline-block rounded bg-green-500 bg-opacity-25 px-2.5 py-0.5 text-sm font-medium text-green-500">
+                          Cached
+                        </span>
                       </div>
-                      <div className="hidden w-2/12 text-center 2xsm:block md:w-1/12">
-                        <Link
-                          to={paths.document(organization.slug, document.uid)}
-                          className="h-6 w-6"
+
+                      <div className=" flex items-center gap-x-2">
+                        <a
+                          href={paths.document(
+                            organization.slug,
+                            document.workspace.slug,
+                            document.id
+                          )}
+                          className="rounded-lg px-2 py-1 text-blue-400 transition-all duration-300 hover:bg-blue-50 hover:text-blue-600"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            className="h-6 w-6"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5l7 7-7 7"
-                            />
-                          </svg>
-                        </Link>
+                          Details
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -188,38 +202,30 @@ export default function DocumentsList({
             </>
           </div>
         ) : (
-          <div className="flex h-60 w-full items-center justify-center px-7.5">
-            <div className="text-center">
-              <p className="mb-4 text-lg font-semibold text-black dark:text-white">
-                No documents found
-              </p>
-              <p className="mb-6 text-sm font-medium text-black dark:text-white">
-                Once you upload a document, you'll see it here.
-              </p>
+          <div>
+            <div className="flex min-h-[40vh] w-full px-8">
+              <div className="flex flex h-auto w-full flex-col items-center justify-center gap-y-2 rounded-lg bg-slate-50">
+                <p>You have no documents in any workspaces!</p>
+                <p>
+                  Get started managing documents by adding them to workspaces
+                  via the UI or code.
+                </p>
+                <button
+                  type="button"
+                  className="text-xl text-blue-500 underline"
+                >
+                  Show code example (coming soon)
+                </button>
+              </div>
             </div>
           </div>
         )}
       </div>
-
-      <div className="my-4 flex justify-center">
-        {Array.from(
-          { length: Math.ceil(totalDocuments! / pageSize) },
-          (_, i) => i + 1
-        ).map((page) => (
-          <button
-            key={page}
-            className={`border px-3 py-2 text-sm ${
-              currentPage === page
-                ? 'border-blue-500 text-blue-500'
-                : 'border-gray-300 text-gray-500'
-            }`}
-            onClick={() => setCurrentPage(page)}
-          >
-            {page}
-          </button>
-        ))}
-      </div>
-
+      <DocumentListPagination
+        pageCount={Math.ceil(totalDocuments! / Organization.documentPageSize)}
+        currentPage={currentPage}
+        gotoPage={updatePage}
+      />
       {canUpload ? (
         <UploadDocumentModal workspaces={workspaces} />
       ) : (

@@ -134,16 +134,25 @@ const WorkspaceDocument = {
   count: async function (clause = null) {
     const db = await this.db();
     const result = await db.get(
-        `SELECT COUNT(*) as total FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""}`
+      `SELECT COUNT(*) as total FROM ${this.tablename} ${
+        clause ? `WHERE ${clause}` : ""
+      }`
     );
     await db.close();
     return result.total;
   },
-  where: async function (clause = null, limit = null, offset = null, withReferences = false) {
+  where: async function (
+    clause = null,
+    limit = null,
+    offset = null,
+    withReferences = false
+  ) {
     if (!withReferences) {
       const db = await this.db();
       const results = await db.all(
-          `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${offset ? `OFFSET ${offset}` : ""} ${limit ? `LIMIT ${limit}` : ""}`
+        `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${
+          offset ? `OFFSET ${offset}` : ""
+        } ${limit ? `LIMIT ${limit}` : ""}`
       );
       await db.close();
       return results;
@@ -162,7 +171,9 @@ const WorkspaceDocument = {
       LEFT JOIN ${
         OrganizationWorkspace.tablename
       } as ow ON ow.id = wd.workspace_id
-       ${clause ? `WHERE wd.${clause}` : ""} ${limit ? `LIMIT ${limit}` : ""} ${offset ? `OFFSET ${offset}` : ""}`
+       ${clause ? `WHERE wd.${clause}` : ""} ${limit ? `LIMIT ${limit}` : ""} ${
+        offset ? `OFFSET ${offset}` : ""
+      }`
     );
     await db.close();
 

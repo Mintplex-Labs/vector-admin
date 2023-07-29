@@ -2,6 +2,7 @@ import { API_BASE } from '../utils/constants';
 import { baseHeaders } from '../utils/request';
 
 const Organization = {
+  documentPageSize: 25,
   create: async (orgName: string) => {
     let error;
     const organization = await fetch(`${API_BASE}/v1/org/create`, {
@@ -58,20 +59,24 @@ const Organization = {
       headers: baseHeaders(),
     }).then((res) => res.json());
   },
-  documents: async (slug: string, page: number = 1) => {
-    return fetch(`${API_BASE}/v1/org/${slug}/documents?page=${page}`, {
-      method: 'GET',
-      cache: 'no-cache',
-      headers: baseHeaders(),
-    })
+  documents: async (slug: string, page: number = 1, pageSize?: number) => {
+    return fetch(
+      `${API_BASE}/v1/org/${slug}/documents?page=${page}&pageSize=${
+        pageSize || Organization.documentPageSize
+      }`,
+      {
+        method: 'GET',
+        cache: 'no-cache',
+        headers: baseHeaders(),
+      }
+    )
       .then((res) => {
         console.log('Response:', res);
         return res.json();
       })
-
       .catch((e) => {
         console.error(e);
-        return {documents: [], totalDocuments: 0};
+        return { documents: [], totalDocuments: 0 };
       });
   },
   workspaces: async (slug: string) => {

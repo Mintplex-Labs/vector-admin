@@ -10,8 +10,10 @@ import System from '../../../models/system';
 import UploadDocumentModal from './UploadModal';
 import UploadModalNoKey from './UploadModal/UploadModalNoKey';
 import Document from '../../../models/document';
+import useQuery from '../../../hooks/useQuery';
 import { APP_NAME } from '../../../utils/constants';
 import { useParams } from 'react-router-dom';
+import DocumentListPagination from '../../../components/DocumentPaginator';
 
 export default function DocumentsList({
   knownConnector,
@@ -24,9 +26,26 @@ export default function DocumentsList({
   workspace: any;
   workspaces: any[];
 }) {
+  const query = useQuery();
   const [loading, setLoading] = useState(true);
   const [documents, setDocuments] = useState([]);
+  const [totalDocuments, setTotalDocuments] = useState(0);
   const [canUpload, setCanUpload] = useState(false);
+  const [currentPage, setCurrentPage] = useState(
+    Number(query.get('docPage')) || 1
+  );
+
+  function updatePage(pgNum: number) {
+    const setTo = pgNum <= 0 ? 1 : pgNum;
+    query.set('docPage', setTo.toString());
+    window.history.replaceState(
+      {},
+      '',
+      `${location.pathname}?${query.toString()}`
+    );
+    setCurrentPage(setTo);
+  }
+
   const deleteDocument = async (documentId: number) => {
     if (
       !confirm(
@@ -42,11 +61,13 @@ export default function DocumentsList({
   useEffect(() => {
     async function getDocs(orgSlug: string, wsSlug?: string) {
       if (!orgSlug || !wsSlug) return false;
-      const documents = await Workspace.documents(orgSlug, wsSlug);
+      const response = await Workspace.documents(orgSlug, wsSlug, currentPage);
       const { exists: hasOpenAIKey } = await System.hasSetting(
         'open_ai_api_key'
       );
-      setDocuments(documents);
+
+      setTotalDocuments(response.totalDocuments);
+      setDocuments(response.documents);
       setCanUpload(hasOpenAIKey);
       setLoading(false);
     }
@@ -221,6 +242,11 @@ export default function DocumentsList({
           </>
         )}
       </div>
+      <DocumentListPagination
+        pageCount={Math.ceil(totalDocuments! / Workspace.documentPageSize)}
+        currentPage={currentPage}
+        gotoPage={updatePage}
+      />
       {canUpload ? (
         <UploadDocumentModal workspace={workspace} />
       ) : (
