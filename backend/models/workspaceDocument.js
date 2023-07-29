@@ -131,13 +131,19 @@ const WorkspaceDocument = {
       workspace: await OrganizationWorkspace.get(`id = ${result.workspace_id}`),
     };
   },
-  where: async function (clause = null, limit = null, withReferences = false) {
+  count: async function (clause = null) {
+    const db = await this.db();
+    const result = await db.get(
+        `SELECT COUNT(*) as total FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""}`
+    );
+    await db.close();
+    return result.total;
+  },
+  where: async function (clause = null, limit = null, offset = null, withReferences = false) {
     if (!withReferences) {
       const db = await this.db();
       const results = await db.all(
-        `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${
-          !!limit ? `LIMIT ${limit}` : ""
-        }`
+          `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${offset ? `OFFSET ${offset}` : ""} ${limit ? `LIMIT ${limit}` : ""}`
       );
       await db.close();
       return results;
@@ -146,17 +152,17 @@ const WorkspaceDocument = {
     const { OrganizationWorkspace } = require("./organizationWorkspace");
     const db = await this.db();
     const results = await db.all(
-      `SELECT *, 
-      wd.id as document_id, 
-      wd.name as document_name, 
-      wd.createdAt as document_createdAt, 
-      ow.slug as workspace_slug, 
+      `SELECT *,
+      wd.id as document_id,
+      wd.name as document_name,
+      wd.createdAt as document_createdAt,
+      ow.slug as workspace_slug,
       ow.name as workspace_name
       FROM ${this.tablename} as wd
       LEFT JOIN ${
         OrganizationWorkspace.tablename
       } as ow ON ow.id = wd.workspace_id
-       ${clause ? `WHERE wd.${clause}` : ""} ${!!limit ? `LIMIT ${limit}` : ""}`
+       ${clause ? `WHERE wd.${clause}` : ""} ${limit ? `LIMIT ${limit}` : ""} ${offset ? `OFFSET ${offset}` : ""}`
     );
     await db.close();
 
@@ -183,17 +189,7 @@ const WorkspaceDocument = {
 
     return completeResults;
   },
-  count: async function (clause = null) {
-    const db = await this.db();
-    const { count } = await db.get(
-      `SELECT COUNT(*) as count FROM ${this.tablename} ${
-        clause ? `WHERE ${clause}` : ""
-      }`
-    );
-    await db.close();
 
-    return count;
-  },
   countForEntity: async function (field = "organization_id", value = null) {
     return await this.count(`${field} = ${value}`);
   },

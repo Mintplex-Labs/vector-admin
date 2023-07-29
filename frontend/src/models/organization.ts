@@ -58,17 +58,20 @@ const Organization = {
       headers: baseHeaders(),
     }).then((res) => res.json());
   },
-  documents: async (slug: string) => {
-    return fetch(`${API_BASE}/v1/org/${slug}/documents`, {
+  documents: async (slug: string, page: number = 1) => {
+    return fetch(`${API_BASE}/v1/org/${slug}/documents?page=${page}`, {
       method: 'GET',
       cache: 'no-cache',
       headers: baseHeaders(),
     })
-      .then((res) => res.json())
-      .then((res) => res?.documents || [])
+      .then((res) => {
+        console.log('Response:', res);
+        return res.json();
+      })
+
       .catch((e) => {
         console.error(e);
-        return [];
+        return {documents: [], totalDocuments: 0};
       });
   },
   workspaces: async (slug: string) => {

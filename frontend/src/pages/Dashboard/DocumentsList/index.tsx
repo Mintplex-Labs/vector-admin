@@ -21,21 +21,30 @@ export default function DocumentsList({
 }) {
   const [loading, setLoading] = useState(true);
   const [documents, setDocuments] = useState([]);
+  const [totalDocuments, setTotalDocuments] = useState();
   const [canUpload, setCanUpload] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   useEffect(() => {
     async function getDocs(slug?: string) {
       if (!slug) return false;
-      const documents = await Organization.documents(slug);
+      const response = await Organization.documents(slug, currentPage);
       const { exists: hasOpenAIKey } = await System.hasSetting(
         'open_ai_api_key'
       );
-      setDocuments(documents);
+
+      console.log('response count', response.totalDocuments);
+      console.log('response documents', response.documents);
+
+      setTotalDocuments(response.totalDocuments);
+      setDocuments(response.documents);
       setCanUpload(hasOpenAIKey);
       setLoading(false);
     }
+    console.log('organization.slug', organization.slug);
     getDocs(organization.slug);
-  }, [organization.slug]);
+  }, [organization.slug, currentPage]);
 
   if (loading) {
     return (
@@ -60,7 +69,7 @@ export default function DocumentsList({
         <div className="flex items-start justify-between px-4">
           <div>
             <h4 className="mb-6 px-4 text-xl font-semibold text-black dark:text-white">
-              Documents {documents.length > 0 ? `(${documents.length})` : ''}
+              Documents {totalDocuments! > 0 ? `(${totalDocuments})` : ''}
             </h4>
           </div>
           {workspaces.length > 0 ? (
@@ -135,38 +144,41 @@ export default function DocumentsList({
                         </div>
                       </div>
                       <div className="w-6/12 2xsm:w-5/12 md:w-3/12">
-                        <Link
-                          to={paths.workspace(
-                            organization.slug,
-                            document.workspace.slug
-                          )}
-                          className="group"
-                        >
-                          <span className="font-medium group-hover:text-blue-600">
-                            {document.workspace.name || ''}
-                          </span>
-                        </Link>
+                        <span className="font-medium text-slate-700">
+                          {truncate(document.workspace.name, 20)}
+                        </span>
                       </div>
-                      <div className="hidden w-3/12 overflow-x-scroll md:block xl:w-3/12">
-                        <span className="font-medium">
-                          {moment.unix(document.createdAt).format('lll')}
+                      <div className="hidden w-4/12 md:block xl:w-3/12">
+                        <span>
+                          {moment(document.created_at).format('MMM D, YYYY')}
                         </span>
                       </div>
                       <div className="w-5/12 2xsm:w-4/12 md:w-3/12 xl:w-2/12">
-                        <span className="inline-block rounded bg-green-500 bg-opacity-25 px-2.5 py-0.5 text-sm font-medium text-green-500">
-                          Cached
-                        </span>
+                        <div className="flex items-center gap-x-1">
+                          <span className="font-medium text-slate-700">
+                            {document.status}
+                          </span>
+                        </div>
                       </div>
-                      <div className="hidden w-2/12 2xsm:block md:w-1/12">
+                      <div className="hidden w-2/12 text-center 2xsm:block md:w-1/12">
                         <Link
-                          to={paths.document(
-                            organization.slug,
-                            document.workspace.slug,
-                            document.id
-                          )}
-                          className="mx-auto block hover:text-blue-500"
+                          to={paths.document(organization.slug, document.uid)}
+                          className="h-6 w-6"
                         >
-                          Details
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            className="h-6 w-6"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
                         </Link>
                       </div>
                     </div>
@@ -176,44 +188,38 @@ export default function DocumentsList({
             </>
           </div>
         ) : (
-          <>
-            {workspaces.length === 0 ? (
-              <div>
-                <div className="flex min-h-[40vh] w-full px-8">
-                  <div className="flex flex h-auto w-full flex-col items-center justify-center gap-y-2 rounded-lg bg-slate-50">
-                    <p>You have no documents or workspaces available!</p>
-                    <p>
-                      Get started by creating a workspace, then you can start
-                      adding documents via the UI or code.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <>
-                <div>
-                  <div className="flex min-h-[40vh] w-full px-8">
-                    <div className="flex flex h-auto w-full flex-col items-center justify-center gap-y-2 rounded-lg bg-slate-50">
-                      <p>You have no documents in any workspaces!</p>
-                      <p>
-                        Get started managing documents by adding them to
-                        workspaces via the UI or code.
-                      </p>
-                      <button
-                        type="button"
-                        className="text-xl text-blue-500 underline"
-                      >
-                        Show code example (coming soon)
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                {/* <CodeExampleModal organization={organization} /> */}
-              </>
-            )}
-          </>
+          <div className="flex h-60 w-full items-center justify-center px-7.5">
+            <div className="text-center">
+              <p className="mb-4 text-lg font-semibold text-black dark:text-white">
+                No documents found
+              </p>
+              <p className="mb-6 text-sm font-medium text-black dark:text-white">
+                Once you upload a document, you'll see it here.
+              </p>
+            </div>
+          </div>
         )}
       </div>
+
+      <div className="my-4 flex justify-center">
+        {Array.from(
+          { length: Math.ceil(totalDocuments! / pageSize) },
+          (_, i) => i + 1
+        ).map((page) => (
+          <button
+            key={page}
+            className={`border px-3 py-2 text-sm ${
+              currentPage === page
+                ? 'border-blue-500 text-blue-500'
+                : 'border-gray-300 text-gray-500'
+            }`}
+            onClick={() => setCurrentPage(page)}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
+
       {canUpload ? (
         <UploadDocumentModal workspaces={workspaces} />
       ) : (
