@@ -1,0 +1,16 @@
+{
+  "manifest_version": 2,
+  "name": "Chrome Extension Interface",
+  "version": "1.0.0",
+  "description": "A simple interface for a Chrome extension",
+  "icons": {
+    "16": "logo192.png",
+    "48": "logo192.png",
+    "128": "logo192.png"
+  },
+  "browser_action": {
+    "default_popup": "index.html"
+  },
+  "permissions": ["activeTab", "storage", "fileSystem"],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+}
