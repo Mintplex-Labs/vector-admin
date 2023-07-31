@@ -18,9 +18,9 @@ from langchain.tools import Tool
 from langchain.utilities import GoogleSearchAPIWrapper
 
 
-openai.api_key ='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'
-os.environ["GOOGLE_CSE_ID"] = "820064ab8c5c840be"
-os.environ["GOOGLE_API_KEY"] = "AIzaSyBefX8RYhH5m-UtfSIck9NkLqy2rAN2vyk"
+openai.api_key =''
+os.environ["GOOGLE_CSE_ID"] = ""
+os.environ["GOOGLE_API_KEY"] = ""
 
 from flask_cors import CORS
 
