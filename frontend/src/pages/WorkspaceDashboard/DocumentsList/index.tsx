@@ -72,7 +72,7 @@ export default function DocumentsList({
       setLoading(false);
     }
     getDocs(organization.slug, workspace.slug);
-  }, [organization.slug, workspace.slug]);
+  }, [organization.slug, workspace.slug, currentPage]);
 
   if (loading) {
     return (
@@ -80,7 +80,7 @@ export default function DocumentsList({
         <div className="flex items-start justify-between px-4">
           <div>
             <h4 className="mb-6 px-4 text-xl font-semibold text-black dark:text-white">
-              Documents {documents.length > 0 ? `(${documents.length})` : ''}
+              Documents {totalDocuments! > 0 ? `(${totalDocuments})` : ''}
             </h4>
           </div>
         </div>
@@ -97,7 +97,7 @@ export default function DocumentsList({
         <div className="flex items-start justify-between px-4">
           <div>
             <h4 className="mb-6 px-4 text-xl font-semibold text-black dark:text-white">
-              Documents {documents.length > 0 ? `(${documents.length})` : ''}
+              Documents {totalDocuments! > 0 ? `(${totalDocuments})` : ''}
             </h4>
           </div>
           {!!knownConnector ? (

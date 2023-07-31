@@ -2,7 +2,7 @@ import { API_BASE } from '../utils/constants';
 import { baseHeaders } from '../utils/request';
 
 const Organization = {
-  documentPageSize: 25,
+  documentPageSize: 10,
   create: async (orgName: string) => {
     let error;
     const organization = await fetch(`${API_BASE}/v1/org/create`, {
@@ -71,7 +71,6 @@ const Organization = {
       }
     )
       .then((res) => {
-        console.log('Response:', res);
         return res.json();
       })
       .catch((e) => {

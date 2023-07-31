@@ -49,15 +49,11 @@ export default function DocumentsList({
         'open_ai_api_key'
       );
 
-      console.log('response count', response.totalDocuments);
-      console.log('response documents', response.documents);
-
       setTotalDocuments(response.totalDocuments);
       setDocuments(response.documents);
       setCanUpload(hasOpenAIKey);
       setLoading(false);
     }
-    console.log('organization.slug', organization.slug);
     getDocs(organization.slug);
   }, [organization.slug, currentPage]);
 
@@ -67,7 +63,7 @@ export default function DocumentsList({
         <div className="flex items-start justify-between px-4">
           <div>
             <h4 className="mb-6 px-4 text-xl font-semibold text-black dark:text-white">
-              Documents {documents.length > 0 ? `(${documents.length})` : ''}
+              Documents {totalDocuments! > 0 ? `(${totalDocuments})` : ''}
             </h4>
           </div>
         </div>

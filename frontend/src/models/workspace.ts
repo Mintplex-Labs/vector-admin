@@ -2,7 +2,7 @@ import { API_BASE } from '../utils/constants';
 import { baseHeaders } from '../utils/request';
 
 const Workspace = {
-  documentPageSize: 100,
+  documentPageSize: 10,
   createNew: async (orgSlug: string, workspaceName: string) => {
     let error;
     const workspace = await fetch(
