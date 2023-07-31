@@ -134,12 +134,12 @@ const WorkspaceDocument = {
   count: async function (clause = null) {
     const db = await this.db();
     const result = await db.get(
-      `SELECT COUNT(*) as total FROM ${this.tablename} ${
+      `SELECT COUNT(*) FROM ${this.tablename} ${
         clause ? `WHERE ${clause}` : ""
       }`
     );
     await db.close();
-    return result.total;
+    return result["COUNT(*)"];
   },
   where: async function (
     clause = null,

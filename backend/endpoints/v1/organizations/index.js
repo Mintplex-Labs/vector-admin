@@ -495,8 +495,6 @@ function organizationEndpoints(app) {
           return;
         }
 
-        console.log("(page - 1) * pageSize", (page - 1) * pageSize);
-
         const documents = await WorkspaceDocument.where(
           `organization_id = ${organization.id}`,
           pageSize,
