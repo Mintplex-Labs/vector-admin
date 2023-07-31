@@ -133,13 +133,13 @@ const WorkspaceDocument = {
   },
   count: async function (clause = null) {
     const db = await this.db();
-    const result = await db.get(
-      `SELECT COUNT(*) FROM ${this.tablename} ${
+    const { count } = await db.get(
+      `SELECT COUNT(*) as count FROM ${this.tablename} ${
         clause ? `WHERE ${clause}` : ""
       }`
     );
     await db.close();
-    return result["COUNT(*)"];
+    return count;
   },
   where: async function (
     clause = null,
