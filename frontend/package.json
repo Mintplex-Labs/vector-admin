@@ -30,6 +30,7 @@
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-feather": "^2.0.10",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-loading-icons": "^1.1.0",
     "react-router-dom": "^6.8.1",
     "sort-by": "^0.0.2",

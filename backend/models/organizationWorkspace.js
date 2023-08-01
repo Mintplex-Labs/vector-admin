@@ -139,9 +139,10 @@ const OrganizationWorkspace = {
 
     return result;
   },
-  forOrganization: async function (organizationId) {
+  forOrganization: async function (organizationId, page = 1, pageSize = 10) {
+    const offset = (page - 1) * pageSize;
     const orgWorkspaces = await this.where(
-      `organization_id = ${organizationId}`
+      `organization_id = ${organizationId} LIMIT ${pageSize} OFFSET ${offset}`
     );
     const workspaces = [];
     for (const workspace of orgWorkspaces) {

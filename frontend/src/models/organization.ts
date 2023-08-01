@@ -2,6 +2,11 @@ import { API_BASE } from '../utils/constants';
 import { baseHeaders } from '../utils/request';
 
 const Organization = {
+<<<<<<< HEAD
+=======
+  documentPageSize: 10,
+  workspacePageSize: 10,
+>>>>>>> d6edf57 (WIP infinite scroll for workspaces, backend complete)
   create: async (orgName: string) => {
     let error;
     const organization = await fetch(`${API_BASE}/v1/org/create`, {
@@ -71,8 +76,8 @@ const Organization = {
         return [];
       });
   },
-  workspaces: async (slug: string) => {
-    return fetch(`${API_BASE}/v1/org/${slug}/workspaces`, {
+  workspaces: async (slug: string, page: number, pageSize?: number) => {
+    return fetch(`${API_BASE}/v1/org/${slug}/workspaces?page=${page}&pageSize=${pageSize || Organization.workspacePageSize}`, {
       method: 'GET',
       cache: 'no-cache',
       headers: baseHeaders(),
