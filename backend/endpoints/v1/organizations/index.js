@@ -433,8 +433,6 @@ function organizationEndpoints(app) {
           `organization_id = ${organization.id}`
         );
 
-        // TODO REMOVE DELAY - ONLY FOR TESTING LOADING ANIMATION
-        await new Promise((r) => setTimeout(r, 3_500));
         response.status(200).json({ workspaces, totalWorkspaces });
       } catch (e) {
         console.log(e.message, e);
