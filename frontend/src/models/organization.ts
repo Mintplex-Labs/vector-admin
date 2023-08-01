@@ -2,11 +2,8 @@ import { API_BASE } from '../utils/constants';
 import { baseHeaders } from '../utils/request';
 
 const Organization = {
-<<<<<<< HEAD
-=======
   documentPageSize: 10,
   workspacePageSize: 10,
->>>>>>> d6edf57 (WIP infinite scroll for workspaces, backend complete)
   create: async (orgName: string) => {
     let error;
     const organization = await fetch(`${API_BASE}/v1/org/create`, {
