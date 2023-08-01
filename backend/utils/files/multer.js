@@ -19,7 +19,9 @@ function setupMulter() {
     storage,
     fileFilter: function (req, file, callback) {
       // Solve the problem of garbled Chinese names
-      file.originalname = Buffer.from(file.originalname, "latin1").toString("utf8");
+      file.originalname = Buffer.from(file.originalname, "latin1").toString(
+        "utf8"
+      );
       callback(null, true);
     },
   });
