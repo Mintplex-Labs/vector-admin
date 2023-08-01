@@ -7,6 +7,7 @@ import { Box, ChevronUp, Command, Radio, Tool, Users } from 'react-feather';
 import Organization from '../models/organization';
 import PreLoader from './Preloader';
 import useUser from '../hooks/useUser';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 interface SidebarProps {
   organization: any;
@@ -14,6 +15,8 @@ interface SidebarProps {
   workspaces: object[];
   sidebarOpen: boolean;
   setSidebarOpen: (arg: boolean) => void;
+  hasMoreWorkspaces?: boolean;
+  loadMoreWorkspaces?: VoidFunction;
 }
 
 const Sidebar = ({
@@ -22,6 +25,8 @@ const Sidebar = ({
   workspaces,
   sidebarOpen,
   setSidebarOpen,
+  hasMoreWorkspaces = false,
+  loadMoreWorkspaces,
 }: SidebarProps) => {
   const { user } = useUser();
   const { slug } = useParams();
@@ -35,6 +40,11 @@ const Sidebar = ({
   const [sidebarExpanded, setSidebarExpanded] = useState(
     storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true'
   );
+
+  async function continueLoadWorkspaces() {
+    loadMoreWorkspaces?.();
+    return true;
+  }
 
   // close on click outside
   useEffect(() => {
@@ -233,23 +243,47 @@ const Sidebar = ({
                               !open && 'hidden'
                             }`}
                           >
-                            <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
-                              {workspaces?.map((workspace: any, i: number) => {
-                                return (
-                                  <li key={i}>
-                                    <NavLink
-                                      key={workspace.uid}
-                                      to={paths.workspace(slug, workspace.slug)}
-                                      className={({ isActive }) =>
-                                        'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                        (isActive && '!text-white')
-                                      }
-                                    >
-                                      {workspace.name}
-                                    </NavLink>
-                                  </li>
-                                );
-                              })}
+                            <ul
+                              id="workspaces-sidebar"
+                              className="no-scrollbar mb-5.5 mt-4 flex flex-col gap-2.5 pl-6"
+                            >
+                              <InfiniteScroll
+                                dataLength={workspaces.length}
+                                next={continueLoadWorkspaces}
+                                hasMore={hasMoreWorkspaces}
+                                height={200}
+                                scrollableTarget="workspaces-sidebar"
+                                scrollThreshold={0.8}
+                                loader={
+                                  <div className="ml-2 flex h-[30px] w-3/4 animate-pulse items-center justify-center rounded-sm bg-slate-800 px-4">
+                                    <p className="text-xs text-slate-500 ">
+                                      loading...
+                                    </p>
+                                  </div>
+                                }
+                              >
+                                {workspaces?.map(
+                                  (workspace: any, i: number) => {
+                                    return (
+                                      <li key={i}>
+                                        <NavLink
+                                          key={workspace.uid}
+                                          to={paths.workspace(
+                                            slug,
+                                            workspace.slug
+                                          )}
+                                          className={({ isActive }) =>
+                                            'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                            (isActive && '!text-white')
+                                          }
+                                        >
+                                          {workspace.name}
+                                        </NavLink>
+                                      </li>
+                                    );
+                                  }
+                                )}
+                              </InfiniteScroll>
                             </ul>
                             {/* <NavLink
                               to="/api-docs"

@@ -20,10 +20,45 @@ export default function WorkspaceDashboard() {
   const { slug, workspaceSlug } = useParams();
   const [loading, setLoading] = useState<boolean>(true);
   const [organizations, setOrganizations] = useState<object[]>([]);
-  const [organization, setOrganization] = useState<object | null>(null);
+  const [organization, setOrganization] = useState<{ slug: string } | null>(
+    null
+  );
   const [connector, setConnector] = useState<object | null | boolean>(false);
   const [workspaces, setWorkspaces] = useState<object[]>([]);
   const [workspace, setWorkspace] = useState<object[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [hasMoreWorkspaces, setHasMoreWorkspaces] = useState<boolean>(true);
+
+  async function fetchWorkspaces(focusedOrg?: { slug: string }) {
+    const org = focusedOrg || organization;
+    if (!org || !workspaceSlug) return false;
+
+    const { workspaces: _workspaces, totalWorkspaces = 0 } =
+      await Organization.workspaces(org.slug, currentPage, undefined, [
+        workspaceSlug,
+      ]);
+
+    if (workspaces.length !== 0) {
+      const _combinedWorkspaces = [...workspaces, ..._workspaces];
+      const uniques = _combinedWorkspaces.filter(
+        (obj, index) =>
+          _combinedWorkspaces.findIndex((item) => item.slug === obj.slug) ===
+          index
+      );
+      setWorkspaces(uniques);
+      setHasMoreWorkspaces(uniques.length < totalWorkspaces);
+    } else {
+      const _workspace =
+        _workspaces?.find((ws: any) => ws.slug === workspaceSlug) || null;
+
+      setWorkspace(_workspace);
+      setWorkspaces(_workspaces);
+      setHasMoreWorkspaces(totalWorkspaces > Organization.workspacePageSize);
+    }
+    setCurrentPage(currentPage + 1);
+    return true;
+  }
+
   const deleteWorkspace = async () => {
     if (!workspace || !slug || !workspaceSlug) return false;
     if (
@@ -48,16 +83,12 @@ export default function WorkspaceDashboard() {
 
       const focusedOrg =
         orgs?.find((org: any) => org.slug === slug) || orgs?.[0];
-      const _workspaces = await Organization.workspaces(focusedOrg.slug);
       const _connector = await Organization.connector(focusedOrg.slug);
 
       setOrganizations(orgs);
       setOrganization(focusedOrg);
-      setWorkspaces(_workspaces);
-      setWorkspace(
-        _workspaces?.find((ws: any) => ws.slug === workspaceSlug) || null
-      );
       setConnector(_connector);
+      await fetchWorkspaces(focusedOrg);
       setLoading(false);
     }
     userOrgs();
@@ -78,13 +109,15 @@ export default function WorkspaceDashboard() {
       organizations={organizations}
       organization={organization}
       workspaces={workspaces}
+      hasMoreWorkspaces={hasMoreWorkspaces}
+      loadMoreWorkspaces={fetchWorkspaces}
       headerExtendedItems={
         <div className="flex items-center gap-x-4">
           <button
             type="button"
             onClick={() =>
               document
-                .getElementById(`clone-workspace-${workspace.id}-modal`)
+                .getElementById(`clone-workspace-${workspace?.id}-modal`)
                 ?.showModal()
             }
             className="rounded-lg px-4 py-2 text-sm text-blue-400 hover:bg-blue-50 hover:text-blue-600"

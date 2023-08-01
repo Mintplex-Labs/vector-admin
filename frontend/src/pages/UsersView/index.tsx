@@ -13,19 +13,16 @@ export default function UserManagementView() {
   const [loading, setLoading] = useState<boolean>(true);
   const [organizations, setOrganizations] = useState<object[]>([]);
   const [organization, setOrganization] = useState<object | null>(null);
-  const [workspaces, setWorkspaces] = useState<object[]>([]);
   const [users, setUsers] = useState<object[]>([]);
 
   useEffect(() => {
     async function userOrgs() {
       const orgs = await Organization.all();
       const focusedOrg = orgs?.[0];
-      const _workspaces = await Organization.workspaces(orgs[0].slug);
       const _users = await User.all();
 
       setOrganizations(orgs);
       setOrganization(focusedOrg);
-      setWorkspaces(_workspaces);
       setUsers(_users);
       setLoading(false);
     }
@@ -47,7 +44,7 @@ export default function UserManagementView() {
       headerNameProp="name"
       organizations={organizations}
       organization={organization}
-      workspaces={workspaces}
+      workspaces={[]}
     >
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
         <div className="col-span-12 xl:col-span-12">

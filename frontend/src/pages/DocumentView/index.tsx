@@ -17,14 +17,47 @@ export default function DocumentView() {
   const { slug, workspaceSlug, documentId } = useParams();
   const [loading, setLoading] = useState<boolean>(true);
   const [organizations, setOrganizations] = useState<object[]>([]);
-  const [organization, setOrganization] = useState<object | null>(null);
+  const [organization, setOrganization] = useState<{ slug: string }>(null);
   const [workspaces, setWorkspaces] = useState<object[]>([]);
   const [workspace, setWorkspace] = useState<object>([]);
   const [document, setDocument] = useState<object | null>(null);
   const [canEdit, setCanEdit] = useState(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [hasMoreWorkspaces, setHasMoreWorkspaces] = useState<boolean>(true);
+
+  async function fetchWorkspaces(focusedOrg?: { slug: string }) {
+    const org = focusedOrg || organization;
+    if (!org || !workspaceSlug) return false;
+
+    const { workspaces: _workspaces, totalWorkspaces = 0 } =
+      await Organization.workspaces(org.slug, currentPage, undefined, [
+        workspaceSlug,
+      ]);
+
+    if (workspaces.length !== 0) {
+      const _combinedWorkspaces = [...workspaces, ..._workspaces];
+      const uniques = _combinedWorkspaces.filter(
+        (obj, index) =>
+          _combinedWorkspaces.findIndex((item) => item.slug === obj.slug) ===
+          index
+      );
+
+      setWorkspaces(uniques);
+      setHasMoreWorkspaces(uniques.length < totalWorkspaces);
+    } else {
+      const _workspace =
+        _workspaces?.find((ws: any) => ws.slug === workspaceSlug) || null;
+
+      setWorkspace(_workspace);
+      setWorkspaces(_workspaces);
+      setHasMoreWorkspaces(totalWorkspaces > Organization.workspacePageSize);
+    }
+    setCurrentPage(currentPage + 1);
+    return true;
+  }
 
   useEffect(() => {
-    async function userOrgs() {
+    async function fetchData() {
       if (!slug || !workspaceSlug || !documentId) return false;
 
       const orgs = await User.organizations();
@@ -35,23 +68,19 @@ export default function DocumentView() {
 
       const focusedOrg =
         orgs?.find((org: any) => org.slug === slug) || orgs?.[0];
-      const _workspaces = await Organization.workspaces(focusedOrg.slug);
-      const _workspace =
-        _workspaces?.find((ws: any) => ws.slug === workspaceSlug) || null;
+      setOrganizations(orgs);
+      setOrganization(focusedOrg);
+
       const document = await Document.get(documentId);
       const { exists: hasOpenAIKey } = await System.hasSetting(
         'open_ai_api_key'
       );
-
-      setOrganizations(orgs);
-      setOrganization(focusedOrg);
-      setWorkspace(_workspace);
-      setWorkspaces(_workspaces);
+      fetchWorkspaces(focusedOrg);
       setDocument(document);
       setCanEdit(hasOpenAIKey);
       setLoading(false);
     }
-    userOrgs();
+    fetchData();
   }, [user.uid, window.location.pathname]);
 
   if (loading || organizations.length === 0) {
@@ -70,6 +99,8 @@ export default function DocumentView() {
       organizations={organizations}
       organization={organization}
       workspaces={workspaces}
+      hasMoreWorkspaces={hasMoreWorkspaces}
+      loadMoreWorkspaces={fetchWorkspaces}
     >
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
         <div className="col-span-12 xl:col-span-12">

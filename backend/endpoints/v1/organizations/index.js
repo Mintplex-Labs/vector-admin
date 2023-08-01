@@ -401,6 +401,10 @@ function organizationEndpoints(app) {
     async function (request, response) {
       try {
         const { slug } = request.params;
+        const page = parseInt(request.query.page) || 1;
+        const pageSize = parseInt(request.query.pageSize) || 10;
+        const includeSlugs = request.query.includeSlugs?.split(",") || [];
+
         const user = await userFromSession(request);
         if (!user) {
           response.sendStatus(403).end();
@@ -419,9 +423,17 @@ function organizationEndpoints(app) {
         }
 
         const workspaces = await OrganizationWorkspace.forOrganization(
-          organization.id
+          organization.id,
+          page,
+          pageSize,
+          includeSlugs
         );
-        response.status(200).json({ workspaces });
+
+        const totalWorkspaces = await OrganizationWorkspace.count(
+          `organization_id = ${organization.id}`
+        );
+
+        response.status(200).json({ workspaces, totalWorkspaces });
       } catch (e) {
         console.log(e.message, e);
         response.sendStatus(500).end();

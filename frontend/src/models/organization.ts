@@ -3,6 +3,7 @@ import { baseHeaders } from '../utils/request';
 
 const Organization = {
   documentPageSize: 10,
+  workspacePageSize: 10,
   create: async (orgName: string) => {
     let error;
     const organization = await fetch(`${API_BASE}/v1/org/create`, {
@@ -78,17 +79,30 @@ const Organization = {
         return { documents: [], totalDocuments: 0 };
       });
   },
-  workspaces: async (slug: string) => {
-    return fetch(`${API_BASE}/v1/org/${slug}/workspaces`, {
+  workspaces: async (
+    slug: string,
+    page: number,
+    pageSize?: number,
+    includeSlugs?: string[]
+  ) => {
+    const queryURL = new URL(`${API_BASE}/v1/org/${slug}/workspaces`);
+    queryURL.searchParams.append('page', page || 1);
+    queryURL.searchParams.append(
+      'page',
+      pageSize || Organization.workspacePageSize
+    );
+    if (!!includeSlugs)
+      queryURL.searchParams.append('includeSlugs', includeSlugs.join(','));
+
+    return fetch(queryURL, {
       method: 'GET',
       cache: 'no-cache',
       headers: baseHeaders(),
     })
       .then((res) => res.json())
-      .then((res) => res?.workspaces || [])
       .catch((e) => {
         console.error(e);
-        return [];
+        return { workspaces: [], totalWorkspaces: 0 };
       });
   },
   apiKey: async (slug: string) => {
