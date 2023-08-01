@@ -12,11 +12,10 @@ import JobsList from './JobsList';
 
 export default function OrganizationJobsView() {
   const { user } = useUser();
-  const { slug, workspaceSlug } = useParams();
+  const { slug } = useParams();
   const [loading, setLoading] = useState<boolean>(true);
   const [organizations, setOrganizations] = useState<object[]>([]);
   const [organization, setOrganization] = useState<object | null>(null);
-  const [workspaces, setWorkspaces] = useState<object[]>([]);
   const [jobs, setJobs] = useState<object[]>([]);
 
   useEffect(() => {
@@ -31,12 +30,10 @@ export default function OrganizationJobsView() {
 
       const focusedOrg =
         orgs?.find((org: any) => org.slug === slug) || orgs?.[0];
-      const _workspaces = await Organization.workspaces(focusedOrg.slug);
       const _jobs = await Organization.jobs(focusedOrg.slug);
 
       setOrganizations(orgs);
       setOrganization(focusedOrg);
-      setWorkspaces(_workspaces);
       setJobs(_jobs);
       setLoading(false);
     }
@@ -57,7 +54,7 @@ export default function OrganizationJobsView() {
       headerProp="uuid"
       organizations={organizations}
       organization={organization}
-      workspaces={workspaces}
+      workspaces={[]}
     >
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
         <div className="col-span-12 xl:col-span-12">

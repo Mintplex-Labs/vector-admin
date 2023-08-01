@@ -18,9 +18,37 @@ export default function Dashboard() {
   const { user } = useUser();
   const [loading, setLoading] = useState<boolean>(true);
   const [organizations, setOrganizations] = useState<object[]>([]);
-  const [organization, setOrganization] = useState<object | null>(null);
+  const [organization, setOrganization] = useState<{ slug: string } | null>(
+    null
+  );
   const [connector, setConnector] = useState<object | null | boolean>(false);
   const [workspaces, setWorkspaces] = useState<object[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [hasMoreWorkspaces, setHasMoreWorkspaces] = useState<boolean>(true);
+
+  async function fetchWorkspaces(focusedOrg?: { slug: string }) {
+    const org = focusedOrg || organization;
+    if (!org) return false;
+
+    const { workspaces: _workspaces, totalWorkspaces = 0 } =
+      await Organization.workspaces(org.slug, currentPage);
+
+    if (workspaces.length !== 0) {
+      const _combinedWorkspaces = [...workspaces, ..._workspaces];
+      const uniques = _combinedWorkspaces.filter(
+        (obj, index) =>
+          _combinedWorkspaces.findIndex((item) => item.slug === obj.slug) ===
+          index
+      );
+      setWorkspaces(uniques);
+      setHasMoreWorkspaces(uniques.length < totalWorkspaces);
+    } else {
+      setWorkspaces(_workspaces);
+      setHasMoreWorkspaces(totalWorkspaces > Organization.workspacePageSize);
+    }
+    setCurrentPage(currentPage + 1);
+    return true;
+  }
 
   useEffect(() => {
     async function userOrgs() {
@@ -37,11 +65,11 @@ export default function Dashboard() {
 
       const focusedOrg =
         orgs?.find((org: any) => org.slug === slug) || orgs?.[0];
-      const _workspaces = await Organization.workspaces(focusedOrg.slug);
       const _connector = await Organization.connector(focusedOrg.slug);
+
+      fetchWorkspaces(focusedOrg);
       setOrganizations(orgs);
       setOrganization(focusedOrg);
-      setWorkspaces(_workspaces);
       setConnector(_connector);
       setLoading(false);
     }
@@ -63,6 +91,8 @@ export default function Dashboard() {
       organizations={organizations}
       organization={organization}
       workspaces={workspaces}
+      hasMoreWorkspaces={hasMoreWorkspaces}
+      loadMoreWorkspaces={fetchWorkspaces}
     >
       {!!organization && (
         <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">

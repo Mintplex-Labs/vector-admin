@@ -403,6 +403,7 @@ function organizationEndpoints(app) {
         const { slug } = request.params;
         const page = parseInt(request.query.page) || 1;
         const pageSize = parseInt(request.query.pageSize) || 10;
+        const includeSlugs = request.query.includeSlugs?.split(",") || [];
 
         const user = await userFromSession(request);
         if (!user) {
@@ -424,20 +425,16 @@ function organizationEndpoints(app) {
         const workspaces = await OrganizationWorkspace.forOrganization(
           organization.id,
           page,
-          pageSize
+          pageSize,
+          includeSlugs
         );
 
         const totalWorkspaces = await OrganizationWorkspace.count(
           `organization_id = ${organization.id}`
         );
 
-        // TODO: REMOVE DEBUG
-        console.log("PAGE DEBUG", page);
-        console.log("PAGE SIZE DEBUG", pageSize);
-        console.log("WORKSPACES DEBUG", workspaces);
-        console.log("TOTAL WORKSPACES DEBUG", totalWorkspaces);
-
-
+        // TODO REMOVE DELAY - ONLY FOR TESTING LOADING ANIMATION
+        await new Promise((r) => setTimeout(r, 3_500));
         response.status(200).json({ workspaces, totalWorkspaces });
       } catch (e) {
         console.log(e.message, e);

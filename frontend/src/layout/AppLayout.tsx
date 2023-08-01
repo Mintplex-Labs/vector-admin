@@ -11,8 +11,8 @@ interface DefaultLayoutProps {
   organization: any;
   headerExtendedItems?: ReactNode;
   children: ReactNode;
-  hasMore: any;
-  userOrgs: any;
+  hasMoreWorkspaces?: boolean;
+  loadMoreWorkspaces?: VoidFunction;
 }
 
 const AppLayout = ({
@@ -24,8 +24,8 @@ const AppLayout = ({
   organization,
   headerExtendedItems,
   children,
-  hasMore,
-  userOrgs,
+  hasMoreWorkspaces,
+  loadMoreWorkspaces,
 }: DefaultLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -38,8 +38,8 @@ const AppLayout = ({
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
           organization={organization}
-          hasMore={hasMore}
-          userOrgs={() => userOrgs}
+          hasMoreWorkspaces={hasMoreWorkspaces}
+          loadMoreWorkspaces={loadMoreWorkspaces}
         />
 
         <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">

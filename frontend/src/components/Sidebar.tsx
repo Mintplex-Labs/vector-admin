@@ -15,8 +15,8 @@ interface SidebarProps {
   workspaces: object[];
   sidebarOpen: boolean;
   setSidebarOpen: (arg: boolean) => void;
-  hasMore: any;
-  userOrgs: any;
+  hasMoreWorkspaces?: boolean;
+  loadMoreWorkspaces?: VoidFunction;
 }
 
 const Sidebar = ({
@@ -25,10 +25,9 @@ const Sidebar = ({
   workspaces,
   sidebarOpen,
   setSidebarOpen,
-  hasMore,
-  userOrgs,
+  hasMoreWorkspaces = false,
+  loadMoreWorkspaces,
 }: SidebarProps) => {
-  console.log('hasMore', hasMore);
   const { user } = useUser();
   const { slug } = useParams();
   const location = useLocation();
@@ -42,10 +41,10 @@ const Sidebar = ({
     storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true'
   );
 
-  const loadNext = async () => {
-    console.log('load next');
-    await userOrgs();
-  };
+  async function continueLoadWorkspaces() {
+    loadMoreWorkspaces?.();
+    return true;
+  }
 
   // close on click outside
   useEffect(() => {
@@ -244,32 +243,22 @@ const Sidebar = ({
                               !open && 'hidden'
                             }`}
                           >
-                            <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
+                            <ul
+                              id="workspaces-sidebar"
+                              className="no-scrollbar mb-5.5 mt-4 flex flex-col gap-2.5 pl-6"
+                            >
                               <InfiniteScroll
-                                dataLength={workspaces?.length}
-                                next={loadNext}
-                                hasMore={true}
+                                dataLength={workspaces.length}
+                                next={continueLoadWorkspaces}
+                                hasMore={hasMoreWorkspaces}
+                                height={200}
+                                scrollableTarget="workspaces-sidebar"
+                                scrollThreshold={0.8}
                                 loader={
-                                  <div className="py-4 text-center text-bodydark2">
-                                    Loading...
-                                  </div>
-                                }
-                                endMessage={
-                                  <div className="py-4 text-center text-bodydark2">
-                                    <b>You've seen them all :)</b>
-                                  </div>
-                                }
-                                refreshFunction={() => userOrgs()}
-                                pullDownToRefresh
-                                pullDownToRefreshThreshold={50}
-                                pullDownToRefreshContent={
-                                  <div className="py-4 text-center text-bodydark2">
-                                    &#8595; Pull down to refresh
-                                  </div>
-                                }
-                                releaseToRefreshContent={
-                                  <div className="py-4 text-center text-bodydark2">
-                                    &#8593; Release to refresh
+                                  <div className="ml-2 flex h-[30px] w-3/4 animate-pulse items-center justify-center rounded-sm bg-slate-800 px-4">
+                                    <p className="text-xs text-slate-500 ">
+                                      loading...
+                                    </p>
                                   </div>
                                 }
                               >

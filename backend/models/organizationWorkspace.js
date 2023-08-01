@@ -139,19 +139,37 @@ const OrganizationWorkspace = {
 
     return result;
   },
-  forOrganization: async function (organizationId, page = 1, pageSize = 10) {
+  forOrganization: async function (
+    organizationId,
+    page = 1,
+    pageSize = 10,
+    includeSlugs = []
+  ) {
     const offset = (page - 1) * pageSize;
-    const orgWorkspaces = await this.where(
-      `organization_id = ${organizationId} LIMIT ${pageSize} OFFSET ${offset}`
-    );
+    const orgWorkspaces = [
+      ...(includeSlugs
+        ? await this.where(
+            `organization_id = ${organizationId} AND slug IN (${includeSlugs.map(
+              (slug) => `'${slug}'`
+            )})`
+          )
+        : []),
+      ...(await this.where(
+        `organization_id = ${organizationId} LIMIT ${pageSize} OFFSET ${offset}`
+      )),
+    ];
+
+    const slugs = new Set();
     const workspaces = [];
     for (const workspace of orgWorkspaces) {
+      if (slugs.has(workspace.slug)) continue;
       workspaces.push({
         ...workspace,
         documentCount: await WorkspaceDocument.count(
           `workspace_id = ${workspace.id}`
         ),
       });
+      slugs.add(workspace.slug);
     }
 
     return workspaces;
