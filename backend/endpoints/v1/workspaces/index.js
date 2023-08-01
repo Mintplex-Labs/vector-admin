@@ -82,6 +82,53 @@ function workspaceEndpoints(app) {
     }
   );
 
+  app.post(
+    "/v1/org/:orgSlug/import-workspace",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { orgSlug } = request.params;
+        const { workspaceName } = reqBody(request);
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
+
+        const organization = await Organization.getWithOwner(
+          user.id,
+          `slug = '${orgSlug}'`
+        );
+        if (!organization) {
+          response
+            .status(200)
+            .json({ workspace: null, error: "No org by that slug." });
+          return;
+        }
+
+        const connector = await OrganizationConnection.get(
+          `organization_id = ${organization.id}`
+        );
+        if (!connector) {
+          response.status(200).json({
+            workspace: null,
+            error:
+              "You need to connect to a vector database before doing this.",
+          });
+          return;
+        }
+
+        const { workspace, message: error } =
+          await OrganizationWorkspace.create(workspaceName, organization.id);
+        await createWorkspaceSyncJob(organization, workspace, connector, user);
+        response.status(200).json({ workspace, error });
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
   app.get(
     "/v1/org/:orgSlug/workspace/:wsSlug",
     [validSessionForUser],

@@ -198,6 +198,24 @@ const Organization = {
         return [];
       });
   },
+  vectorDBExists: async (slug: string, namespace: string | null) => {
+    if (!namespace || !namespace?.length) return { match: null };
+    return fetch(
+      `${API_BASE}/v1/org/${slug}/namespace-search?name=${encodeURIComponent(
+        namespace
+      )}`,
+      {
+        method: 'GET',
+        cache: 'no-cache',
+        headers: baseHeaders(),
+      }
+    )
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        return { match: null };
+      });
+  },
 };
 
 export default Organization;

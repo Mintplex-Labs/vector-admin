@@ -560,6 +560,63 @@ function organizationEndpoints(app) {
       }
     }
   );
+
+  app.get(
+    "/v1/org/:slug/namespace-search",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { slug } = request.params;
+        const namespace = String(request.query?.name) || null;
+
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
+
+        if (!namespace || !namespace?.length) {
+          response
+            .status(200)
+            .json({ match: null, error: "No namespace query found." });
+          return;
+        }
+
+        const organization = await Organization.getWithOwner(
+          user.id,
+          `slug = '${slug}'`
+        );
+        if (!organization) {
+          response.status(200).json({ match: null, error: "No org found." });
+          return;
+        }
+
+        const connector = await OrganizationConnection.get(
+          `organization_id = ${organization.id}`
+        );
+        if (!connector) {
+          response
+            .status(200)
+            .json({ match: null, error: "No connector found." });
+          return;
+        }
+
+        const vectorDb = selectConnector(connector);
+        const existsInVectorDB = await vectorDb.namespace(namespace);
+        const existingInVdbms = await OrganizationWorkspace.bySlugAndOrg(
+          namespace,
+          organization.id
+        );
+        const exists = existsInVectorDB && !existingInVdbms;
+        response
+          .status(200)
+          .json({ match: exists ? namespace : null, error: null });
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
 }
 
 module.exports = { organizationEndpoints };
