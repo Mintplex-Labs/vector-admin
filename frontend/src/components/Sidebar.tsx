@@ -7,6 +7,7 @@ import { Box, ChevronUp, Command, Radio, Tool, Users } from 'react-feather';
 import Organization from '../models/organization';
 import PreLoader from './Preloader';
 import useUser from '../hooks/useUser';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 interface SidebarProps {
   organization: any;
@@ -14,6 +15,8 @@ interface SidebarProps {
   workspaces: object[];
   sidebarOpen: boolean;
   setSidebarOpen: (arg: boolean) => void;
+  hasMore: any;
+  userOrgs: any;
 }
 
 const Sidebar = ({
@@ -22,7 +25,10 @@ const Sidebar = ({
   workspaces,
   sidebarOpen,
   setSidebarOpen,
+  hasMore,
+  userOrgs,
 }: SidebarProps) => {
+  console.log('hasMore', hasMore);
   const { user } = useUser();
   const { slug } = useParams();
   const location = useLocation();
@@ -35,6 +41,11 @@ const Sidebar = ({
   const [sidebarExpanded, setSidebarExpanded] = useState(
     storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true'
   );
+
+  const loadNext = async () => {
+    console.log('load next');
+    await userOrgs();
+  };
 
   // close on click outside
   useEffect(() => {
@@ -234,22 +245,56 @@ const Sidebar = ({
                             }`}
                           >
                             <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
-                              {workspaces?.map((workspace: any, i: number) => {
-                                return (
-                                  <li key={i}>
-                                    <NavLink
-                                      key={workspace.uid}
-                                      to={paths.workspace(slug, workspace.slug)}
-                                      className={({ isActive }) =>
-                                        'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                        (isActive && '!text-white')
-                                      }
-                                    >
-                                      {workspace.name}
-                                    </NavLink>
-                                  </li>
-                                );
-                              })}
+                              <InfiniteScroll
+                                dataLength={workspaces?.length}
+                                next={loadNext}
+                                hasMore={true}
+                                loader={
+                                  <div className="py-4 text-center text-bodydark2">
+                                    Loading...
+                                  </div>
+                                }
+                                endMessage={
+                                  <div className="py-4 text-center text-bodydark2">
+                                    <b>You've seen them all :)</b>
+                                  </div>
+                                }
+                                refreshFunction={() => userOrgs()}
+                                pullDownToRefresh
+                                pullDownToRefreshThreshold={50}
+                                pullDownToRefreshContent={
+                                  <div className="py-4 text-center text-bodydark2">
+                                    &#8595; Pull down to refresh
+                                  </div>
+                                }
+                                releaseToRefreshContent={
+                                  <div className="py-4 text-center text-bodydark2">
+                                    &#8593; Release to refresh
+                                  </div>
+                                }
+                              >
+                                {workspaces?.map(
+                                  (workspace: any, i: number) => {
+                                    return (
+                                      <li key={i}>
+                                        <NavLink
+                                          key={workspace.uid}
+                                          to={paths.workspace(
+                                            slug,
+                                            workspace.slug
+                                          )}
+                                          className={({ isActive }) =>
+                                            'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                            (isActive && '!text-white')
+                                          }
+                                        >
+                                          {workspace.name}
+                                        </NavLink>
+                                      </li>
+                                    );
+                                  }
+                                )}
+                              </InfiniteScroll>
                             </ul>
                             {/* <NavLink
                               to="/api-docs"

@@ -11,6 +11,7 @@ import Document from '../../models/document';
 import System from '../../models/system';
 import Organization from '../../models/organization';
 import { APP_NAME } from '../../utils/constants';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 export default function DocumentView() {
   const { user } = useUser();
@@ -22,35 +23,46 @@ export default function DocumentView() {
   const [workspace, setWorkspace] = useState<object>([]);
   const [document, setDocument] = useState<object | null>(null);
   const [canEdit, setCanEdit] = useState(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+
+  async function userOrgs(loadMore = false) {
+    if (!slug || !workspaceSlug || !documentId) return false;
+
+    const orgs = await User.organizations();
+    if (orgs.length === 0) {
+      window.location.replace(paths.onboarding.orgName());
+      return false;
+    }
+
+    const focusedOrg = orgs?.find((org: any) => org.slug === slug) || orgs?.[0];
+    const _workspaces = loadMore
+      ? [
+          ...workspaces,
+          ...(await Organization.workspaces(focusedOrg.slug, currentPage)),
+        ]
+      : await Organization.workspaces(focusedOrg.slug, currentPage);
+    const _workspace =
+      _workspaces?.find((ws: any) => ws.slug === workspaceSlug) || null;
+    const document = await Document.get(documentId);
+    const { exists: hasOpenAIKey } = await System.hasSetting('open_ai_api_key');
+
+    setOrganizations(orgs);
+    setOrganization(focusedOrg);
+    setWorkspace(_workspace);
+    setWorkspaces(_workspaces);
+    setDocument(document);
+    setCanEdit(hasOpenAIKey);
+    setLoading(false);
+    // increment page number
+    setCurrentPage(currentPage + 1);
+    // Check if we have less workspaces than page size, then no more workspaces to load
+    if (_workspaces.length < Organization.workspacePageSize) {
+      setHasMore(false);
+    }
+  }
 
   useEffect(() => {
-    async function userOrgs() {
-      if (!slug || !workspaceSlug || !documentId) return false;
-
-      const orgs = await User.organizations();
-      if (orgs.length === 0) {
-        window.location.replace(paths.onboarding.orgName());
-        return false;
-      }
-
-      const focusedOrg =
-        orgs?.find((org: any) => org.slug === slug) || orgs?.[0];
-      const _workspaces = await Organization.workspaces(focusedOrg.slug);
-      const _workspace =
-        _workspaces?.find((ws: any) => ws.slug === workspaceSlug) || null;
-      const document = await Document.get(documentId);
-      const { exists: hasOpenAIKey } = await System.hasSetting(
-        'open_ai_api_key'
-      );
-
-      setOrganizations(orgs);
-      setOrganization(focusedOrg);
-      setWorkspace(_workspace);
-      setWorkspaces(_workspaces);
-      setDocument(document);
-      setCanEdit(hasOpenAIKey);
-      setLoading(false);
-    }
     userOrgs();
   }, [user.uid, window.location.pathname]);
 
@@ -70,6 +82,8 @@ export default function DocumentView() {
       organizations={organizations}
       organization={organization}
       workspaces={workspaces}
+      hasMore={hasMore}
+      userOrgs={() => userOrgs}
     >
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
         <div className="col-span-12 xl:col-span-12">

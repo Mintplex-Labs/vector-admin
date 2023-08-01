@@ -80,11 +80,16 @@ const Organization = {
       });
   },
   workspaces: async (slug: string, page: number, pageSize?: number) => {
-    return fetch(`${API_BASE}/v1/org/${slug}/workspaces?page=${page}&pageSize=${pageSize || Organization.workspacePageSize}`, {
-      method: 'GET',
-      cache: 'no-cache',
-      headers: baseHeaders(),
-    })
+    return fetch(
+      `${API_BASE}/v1/org/${slug}/workspaces?page=${page}&pageSize=${
+        pageSize || Organization.workspacePageSize
+      }`,
+      {
+        method: 'GET',
+        cache: 'no-cache',
+        headers: baseHeaders(),
+      }
+    )
       .then((res) => res.json())
       .then((res) => res?.workspaces || [])
       .catch((e) => {
