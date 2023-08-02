@@ -81,6 +81,15 @@ const Sidebar = ({
     }
   }, [sidebarExpanded]);
 
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const search = e.target.value;
+    console.log(search);
+
+    console.log(
+      await Organization.searchWorkspaces('mintplex-labs', 1, 10, search)
+    );
+  };
+
   return (
     <>
       <aside
@@ -217,7 +226,7 @@ const Sidebar = ({
                         <React.Fragment>
                           <NavLink
                             to="#"
-                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            className={`group relative flex items-center gap-2.5 rounded-t-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                               (pathname === '/' ||
                                 pathname.includes('dashboard')) &&
                               'bg-graydark dark:bg-meta-4'
@@ -243,6 +252,14 @@ const Sidebar = ({
                               !open && 'hidden'
                             }`}
                           >
+                            <input
+                              type="text"
+                              className="w-full rounded-b-sm bg-graydark px-4 py-2 text-bodydark1"
+                              placeholder="Search..."
+                              onChange={(e) => {
+                                handleSearch(e);
+                              }}
+                            />
                             <ul
                               id="workspaces-sidebar"
                               className="no-scrollbar mb-5.5 mt-4 flex flex-col gap-2.5 pl-6"

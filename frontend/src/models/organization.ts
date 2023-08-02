@@ -105,6 +105,33 @@ const Organization = {
         return { workspaces: [], totalWorkspaces: 0 };
       });
   },
+  searchWorkspaces: async (
+    slug: string,
+    page: number,
+    pageSize?: number,
+    searchQuery?: string,
+    includeSlugs?: string[]
+  ) => {
+    const queryURL = new URL(`${API_BASE}/v1/org/${slug}/workspaces/search`);
+    queryURL.searchParams.append('page', `${page}`);
+    queryURL.searchParams.append('pageSize', `${pageSize || Organization.workspacePageSize}`);
+    if (!!includeSlugs)
+      queryURL.searchParams.append('includeSlugs', includeSlugs.join(','));
+    if (!!searchQuery)
+      queryURL.searchParams.append('query', searchQuery);
+
+    return fetch(queryURL, {
+      method: 'GET',
+      cache: 'no-cache',
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        return { workspaces: [], totalWorkspaces: 0 };
+      });
+  },
+
   apiKey: async (slug: string) => {
     return fetch(`${API_BASE}/v1/org/${slug}/api-key`, {
       method: 'GET',

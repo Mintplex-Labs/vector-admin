@@ -396,6 +396,56 @@ function organizationEndpoints(app) {
   );
 
   app.get(
+    "/v1/org/:slug/workspaces/search",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { slug } = request.params;
+        const page = parseInt(request.query.page) || 1;
+        const pageSize = parseInt(request.query.pageSize) || 10;
+        const includeSlugs = request.query.includeSlugs?.split(",") || [];
+        const searchTerm = request.query.searchTerm || "";
+
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
+
+        const organization = await Organization.getWithOwner(
+          user.id,
+          `slug = ?`,
+          [slug]
+        );
+        if (!organization) {
+          response
+            .status(200)
+            .json({ organization: null, error: "No org found." });
+          return;
+        }
+
+        const workspaces = await OrganizationWorkspace.forOrganization(
+          organization.id,
+          page,
+          pageSize,
+          includeSlugs,
+          searchTerm
+        );
+
+        const totalWorkspaces = await OrganizationWorkspace.count(
+          `organization_id = ?`,
+          [organization.id]
+        );
+
+        response.status(200).json({ workspaces, totalWorkspaces });
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.get(
     "/v1/org/:slug/workspaces",
     [validSessionForUser],
     async function (request, response) {
