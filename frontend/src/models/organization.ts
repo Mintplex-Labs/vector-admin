@@ -114,11 +114,13 @@ const Organization = {
   ) => {
     const queryURL = new URL(`${API_BASE}/v1/org/${slug}/workspaces/search`);
     queryURL.searchParams.append('page', `${page}`);
-    queryURL.searchParams.append('pageSize', `${pageSize || Organization.workspacePageSize}`);
+    queryURL.searchParams.append(
+      'pageSize',
+      `${pageSize || Organization.workspacePageSize}`
+    );
     if (!!includeSlugs)
       queryURL.searchParams.append('includeSlugs', includeSlugs.join(','));
-    if (!!searchQuery)
-      queryURL.searchParams.append('searchTerm', searchQuery);
+    if (!!searchQuery) queryURL.searchParams.append('searchTerm', searchQuery);
 
     return fetch(queryURL, {
       method: 'GET',

@@ -41,7 +41,10 @@ export default function DocumentView() {
           _combinedWorkspaces.findIndex((item) => item.slug === obj.slug) ===
           index
       );
+      const _workspace =
+        uniques?.find((ws: any) => ws.slug === workspaceSlug) || null;
 
+      setWorkspace(_workspace);
       setWorkspaces(uniques);
       setHasMoreWorkspaces(uniques.length < totalWorkspaces);
     } else {

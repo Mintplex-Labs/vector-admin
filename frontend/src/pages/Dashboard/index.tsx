@@ -40,6 +40,7 @@ export default function Dashboard() {
           _combinedWorkspaces.findIndex((item) => item.slug === obj.slug) ===
           index
       );
+
       setWorkspaces(uniques);
       setHasMoreWorkspaces(uniques.length < totalWorkspaces);
     } else {

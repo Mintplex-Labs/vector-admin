@@ -42,12 +42,6 @@ const Sidebar = ({
     storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true'
   );
 
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
-
   async function continueLoadWorkspaces() {
     loadMoreWorkspaces?.();
     return true;
@@ -189,7 +183,7 @@ const Sidebar = ({
                               return (
                                 <li key={i}>
                                   <NavLink
-                                    key={org.uid}
+                                    key={org.id}
                                     to={paths.organization(org)}
                                     className={({ isActive }) =>
                                       'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
@@ -250,17 +244,12 @@ const Sidebar = ({
                               !open && 'hidden'
                             }`}
                           >
-                            <input
-                              type="text"
-                              className="w-full rounded-b-sm bg-graydark px-4 py-2 text-bodydark1"
-                              placeholder="Search..."
-                              value={searchTerm}
-                              onChange={handleSearch}
-                            />
                             <WorkspaceSearch
-                              RenderComponent={RenderComponent}
-                              search={searchTerm}
-                              slug={slug}
+                              RenderComponent={WorkspaceItem}
+                              canSearch={
+                                workspaces.length >=
+                                Organization.workspacePageSize
+                              }
                             >
                               <ul
                                 id="workspaces-sidebar"
@@ -283,7 +272,7 @@ const Sidebar = ({
                                 >
                                   {workspaces?.map(
                                     (workspace: any, i: number) => (
-                                      <RenderComponent
+                                      <WorkspaceItem
                                         key={i}
                                         workspace={workspace}
                                         slug={slug}
@@ -378,20 +367,19 @@ const Sidebar = ({
 
 export default Sidebar;
 
-// RenderComponent used to render the workspaces in the sidebar with consistent styling
-interface RenderComponentProps {
+interface IWorkspaceItem {
   workspace: {
-    uid: string;
+    id: string;
     name: string;
     slug: string;
   };
   slug: string;
 }
 
-const RenderComponent = ({ workspace, slug }: RenderComponentProps) => (
+const WorkspaceItem = ({ workspace, slug }: IWorkspaceItem) => (
   <li>
     <NavLink
-      key={workspace.uid}
+      key={workspace.id}
       to={paths.workspace(slug, workspace.slug)}
       className={({ isActive }) =>
         'group relative flex items-center gap-1 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
@@ -402,82 +390,86 @@ const RenderComponent = ({ workspace, slug }: RenderComponentProps) => (
     </NavLink>
   </li>
 );
+
 interface WorkspaceSearchProps {
-  RenderComponent: React.FC<RenderComponentProps>;
+  RenderComponent: React.FC<IWorkspaceItem>;
+  canSearch?: boolean;
   children: React.ReactNode;
-  search: string;
-  slug: string;
 }
 
 function WorkspaceSearch({
   RenderComponent,
+  canSearch = false,
   children,
-  search,
-  slug,
 }: WorkspaceSearchProps) {
+  const { slug } = useParams();
   const [searching, setSearching] = useState(false);
   const [results, setResults] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
 
-  const fetchResults = useCallback(
-    debounce(async (searchText: string) => {
-      if (searchText.trim() !== '') {
-        const { workspacesResults } = await Organization.searchWorkspaces(
-          slug,
-          1, // Page 1
-          30, // 30 results per page
-          searchText
-        );
-        setResults(workspacesResults);
-      } else {
-        setResults([]);
-      }
-      setIsTyping(false);
-    }, 500),
-    [slug]
-  );
-
-  useEffect(() => {
-    if (search.trim() !== '') {
+  const handleSearch = async (e: any) => {
+    if (!slug) return null;
+    const searchTerm = e.target?.value;
+    if (searchTerm !== '') {
       setIsTyping(true);
       setSearching(true);
-      fetchResults(search);
+
+      const { workspacesResults = [] } = await Organization.searchWorkspaces(
+        slug,
+        1, // Page 1
+        30, // 30 results per page
+        searchTerm
+      );
+      setResults(workspacesResults);
+      setIsTyping(false);
     } else {
       setIsTyping(false);
       setSearching(false);
     }
-  }, [fetchResults, search]);
+  };
 
-  if (!searching) {
-    return <>{children}</>;
-  }
-
+  if (!slug) return null;
+  const debouncedSearch = debounce(handleSearch, 500);
   return (
     <div
       id="workspaces-sidebar"
-      className="no-scrollbar mb-5.5 mt-4 flex max-h-[200px] flex-col gap-1 overflow-auto"
+      className="no-scrollbar mb-5.5 mt-2 flex max-h-[200px] flex-col gap-1 overflow-auto"
     >
-      {isTyping ? (
-        <div className="flex w-full animate-pulse items-center justify-center rounded-sm bg-slate-800">
-          <p className="p-1 text-xs text-slate-500">Loading...</p>
-        </div>
-      ) : results.length > 0 ? (
-        <div className="pl-6">
-          {results.map((workspace) => (
-            <RenderComponent
-              key={workspace.uid}
-              workspace={workspace}
-              slug={slug}
-            />
-          ))}
-        </div>
-      ) : (
+      <input
+        type="search"
+        hidden={!canSearch}
+        className="dark-search w-full rounded-md border border-graydark bg-transparent px-4 py-2 text-sm text-bodydark1 outline-none"
+        placeholder="Search for workspace"
+        onChange={debouncedSearch}
+        // @ts-ignore: Onsearch does not exist, it does.
+        onSearch={debouncedSearch}
+      />
+      {searching ? (
         <>
-          <div className="flex h-20 w-full items-center justify-center rounded-sm bg-slate-800">
-            <p className="p-1 text-xs text-slate-500">No results found.</p>
-          </div>
-          {children}
+          {isTyping ? (
+            <div className="flex w-full animate-pulse items-center justify-center rounded-sm bg-slate-800">
+              <p className="p-1 text-xs text-slate-500">Loading...</p>
+            </div>
+          ) : results.length > 0 ? (
+            <div className="pl-6">
+              {results.map((workspace: IWorkspaceItem['workspace']) => (
+                <RenderComponent
+                  key={workspace.id}
+                  workspace={workspace}
+                  slug={slug}
+                />
+              ))}
+            </div>
+          ) : (
+            <>
+              <div className="flex h-20 w-full items-center justify-center rounded-sm bg-slate-800">
+                <p className="p-1 text-xs text-slate-500">No results found.</p>
+              </div>
+            </>
+          )}
         </>
+      ) : (
+        <>{children}</>
       )}
     </div>
   );
