@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
 import Logo from '../images/logo/logo.png';
 import SidebarLinkGroup from './SidebarLinkGroup';
@@ -8,6 +8,7 @@ import Organization from '../models/organization';
 import PreLoader from './Preloader';
 import useUser from '../hooks/useUser';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { debounce } from 'lodash';
 
 interface SidebarProps {
   organization: any;
@@ -40,6 +41,12 @@ const Sidebar = ({
   const [sidebarExpanded, setSidebarExpanded] = useState(
     storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true'
   );
+
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
   async function continueLoadWorkspaces() {
     loadMoreWorkspaces?.();
@@ -80,15 +87,6 @@ const Sidebar = ({
       document.querySelector('body')?.classList.remove('sidebar-expanded');
     }
   }, [sidebarExpanded]);
-
-  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const search = e.target.value;
-    console.log(search);
-
-    console.log(
-      await Organization.searchWorkspaces('mintplex-labs', 1, 10, search)
-    );
-  };
 
   return (
     <>
@@ -256,52 +254,45 @@ const Sidebar = ({
                               type="text"
                               className="w-full rounded-b-sm bg-graydark px-4 py-2 text-bodydark1"
                               placeholder="Search..."
-                              onChange={(e) => {
-                                handleSearch(e);
-                              }}
+                              value={searchTerm}
+                              onChange={handleSearch}
                             />
-                            <ul
-                              id="workspaces-sidebar"
-                              className="no-scrollbar mb-5.5 mt-4 flex flex-col gap-2.5 pl-6"
+                            <WorkspaceSearch
+                              RenderComponent={RenderComponent}
+                              search={searchTerm}
+                              slug={slug}
                             >
-                              <InfiniteScroll
-                                dataLength={workspaces.length}
-                                next={continueLoadWorkspaces}
-                                hasMore={hasMoreWorkspaces}
-                                height={200}
-                                scrollableTarget="workspaces-sidebar"
-                                scrollThreshold={0.8}
-                                loader={
-                                  <div className="ml-2 flex h-[30px] w-3/4 animate-pulse items-center justify-center rounded-sm bg-slate-800 px-4">
-                                    <p className="text-xs text-slate-500 ">
-                                      loading...
-                                    </p>
-                                  </div>
-                                }
+                              <ul
+                                id="workspaces-sidebar"
+                                className="no-scrollbar mb-5.5 mt-4 flex flex-col gap-1 pl-6"
                               >
-                                {workspaces?.map(
-                                  (workspace: any, i: number) => {
-                                    return (
-                                      <li key={i}>
-                                        <NavLink
-                                          key={workspace.uid}
-                                          to={paths.workspace(
-                                            slug,
-                                            workspace.slug
-                                          )}
-                                          className={({ isActive }) =>
-                                            'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                            (isActive && '!text-white')
-                                          }
-                                        >
-                                          {workspace.name}
-                                        </NavLink>
-                                      </li>
-                                    );
+                                <InfiniteScroll
+                                  dataLength={workspaces.length}
+                                  next={continueLoadWorkspaces}
+                                  hasMore={hasMoreWorkspaces}
+                                  height={200}
+                                  scrollableTarget="workspaces-sidebar"
+                                  scrollThreshold={0.8}
+                                  loader={
+                                    <div className="ml-2 flex h-[30px] w-3/4 animate-pulse items-center justify-center rounded-sm bg-slate-800 px-4">
+                                      <p className="text-xs text-slate-500 ">
+                                        loading...
+                                      </p>
+                                    </div>
                                   }
-                                )}
-                              </InfiniteScroll>
-                            </ul>
+                                >
+                                  {workspaces?.map(
+                                    (workspace: any, i: number) => (
+                                      <RenderComponent
+                                        key={i}
+                                        workspace={workspace}
+                                        slug={slug}
+                                      />
+                                    )
+                                  )}
+                                </InfiniteScroll>
+                              </ul>
+                            </WorkspaceSearch>
                             {/* <NavLink
                               to="/api-docs"
                               target="_blank"
@@ -386,6 +377,111 @@ const Sidebar = ({
 };
 
 export default Sidebar;
+
+// RenderComponent used to render the workspaces in the sidebar with consistent styling
+interface RenderComponentProps {
+  workspace: {
+    uid: string;
+    name: string;
+    slug: string;
+  };
+  slug: string;
+}
+
+const RenderComponent = ({ workspace, slug }: RenderComponentProps) => (
+  <li>
+    <NavLink
+      key={workspace.uid}
+      to={paths.workspace(slug, workspace.slug)}
+      className={({ isActive }) =>
+        'group relative flex items-center gap-1 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+        (isActive && '!text-white')
+      }
+    >
+      {workspace.name}
+    </NavLink>
+  </li>
+);
+interface WorkspaceSearchProps {
+  RenderComponent: React.FC<RenderComponentProps>;
+  children: React.ReactNode;
+  search: string;
+  slug: string;
+}
+
+function WorkspaceSearch({
+  RenderComponent,
+  children,
+  search,
+  slug,
+}: WorkspaceSearchProps) {
+  const [searching, setSearching] = useState(false);
+  const [results, setResults] = useState([]);
+  const [isTyping, setIsTyping] = useState(false);
+
+  const fetchResults = useCallback(
+    debounce(async (searchText: string) => {
+      if (searchText.trim() !== '') {
+        const { workspacesResults } = await Organization.searchWorkspaces(
+          slug,
+          1, // Page 1
+          30, // 30 results per page
+          searchText
+        );
+        setResults(workspacesResults);
+      } else {
+        setResults([]);
+      }
+      setIsTyping(false);
+    }, 500),
+    [slug]
+  );
+
+  useEffect(() => {
+    if (search.trim() !== '') {
+      setIsTyping(true);
+      setSearching(true);
+      fetchResults(search);
+    } else {
+      setIsTyping(false);
+      setSearching(false);
+    }
+  }, [fetchResults, search]);
+
+  if (!searching) {
+    return <>{children}</>;
+  }
+
+  return (
+    <div
+      id="workspaces-sidebar"
+      className="no-scrollbar mb-5.5 mt-4 flex max-h-[200px] flex-col gap-1 overflow-auto"
+    >
+      {isTyping ? (
+        <div className="flex w-full animate-pulse items-center justify-center rounded-sm bg-slate-800">
+          <p className="p-1 text-xs text-slate-500">Loading...</p>
+        </div>
+      ) : results.length > 0 ? (
+        <div className="pl-6">
+          {results.map((workspace) => (
+            <RenderComponent
+              key={workspace.uid}
+              workspace={workspace}
+              slug={slug}
+            />
+          ))}
+        </div>
+      ) : (
+        <>
+          <div className="flex h-20 w-full items-center justify-center rounded-sm bg-slate-800">
+            <p className="p-1 text-xs text-slate-500">No results found.</p>
+          </div>
+          {children}
+        </>
+      )}
+    </div>
+  );
+}
 
 const CreateOrganizationModal = () => {
   const [loading, setLoading] = useState(false);

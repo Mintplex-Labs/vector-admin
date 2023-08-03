@@ -414,8 +414,7 @@ function organizationEndpoints(app) {
 
         const organization = await Organization.getWithOwner(
           user.id,
-          `slug = ?`,
-          [slug]
+          `slug = '${slug}'`
         );
         if (!organization) {
           response
@@ -424,7 +423,7 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const workspaces = await OrganizationWorkspace.forOrganization(
+        const workspacesResults = await OrganizationWorkspace.forOrganization(
           organization.id,
           page,
           pageSize,
@@ -432,12 +431,9 @@ function organizationEndpoints(app) {
           searchTerm
         );
 
-        const totalWorkspaces = await OrganizationWorkspace.count(
-          `organization_id = ?`,
-          [organization.id]
-        );
+        const totalWorkspaces = workspacesResults.length;
 
-        response.status(200).json({ workspaces, totalWorkspaces });
+        response.status(200).json({ workspacesResults, totalWorkspaces });
       } catch (e) {
         console.log(e.message, e);
         response.sendStatus(500).end();

@@ -159,7 +159,7 @@ const OrganizationWorkspace = {
         : []),
       ...(await this.where(
         `organization_id = ? ${
-          searchTerm ? "AND workspace_name LIKE ? " : ""
+          searchTerm ? "AND name LIKE ? " : ""
         }LIMIT ? OFFSET ?`,
         null,
         [

@@ -118,7 +118,7 @@ const Organization = {
     if (!!includeSlugs)
       queryURL.searchParams.append('includeSlugs', includeSlugs.join(','));
     if (!!searchQuery)
-      queryURL.searchParams.append('query', searchQuery);
+      queryURL.searchParams.append('searchTerm', searchQuery);
 
     return fetch(queryURL, {
       method: 'GET',
@@ -128,7 +128,7 @@ const Organization = {
       .then((res) => res.json())
       .catch((e) => {
         console.error(e);
-        return { workspaces: [], totalWorkspaces: 0 };
+        return { workspacesResults: [], totalWorkspaces: 0 };
       });
   },
 

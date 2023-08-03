@@ -21,6 +21,7 @@
     "jsvectormap": "^1.5.1",
     "localforage": "^1.10.0",
     "lodash": "^4.17.21",
+    "lodash.debounce": "^4.0.8",
     "match-sorter": "^6.3.1",
     "moment": "^2.29.4",
     "pluralize": "^8.0.0",
