@@ -1,66 +1,31 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Jazzicon from '../../../components/Jazzicon';
 import paths from '../../../utils/paths';
 import moment from 'moment';
 import { nFormatter } from '../../../utils/numbers';
-import { File } from 'react-feather';
+import { FileText } from 'react-feather';
 import truncate from 'truncate';
 import CreateWorkspaceModal from './CreateWorkspaceModal';
-import { useState } from 'react';
 import Organization from '../../../models/organization';
-import { debounce } from 'lodash';
+import WorkspaceSearch from '../../../components/Sidebar/WorkspaceSearch';
 
 export default function WorkspacesList({
   knownConnector,
   organization,
   workspaces,
+  totalWorkspaces = 0,
 }: {
   knownConnector: any;
   organization: any;
   workspaces: any[];
+  totalWorkspaces?: number;
 }) {
-  const { slug } = useParams();
-  const [searching, setSearching] = useState(false);
-  const [results, setResults] = useState([]);
-  const [isTyping, setIsTyping] = useState(false);
-
-  const handleSearch = async (e: any) => {
-    if (!slug) return null;
-    const searchTerm = e.target?.value;
-    if (searchTerm !== '') {
-      setIsTyping(true);
-      setSearching(true);
-
-      const { workspacesResults = [] } = await Organization.searchWorkspaces(
-        slug,
-        1, // Page 1
-        30, // 30 results per page
-        searchTerm
-      );
-
-      setResults(workspacesResults);
-      setIsTyping(false);
-    } else {
-      setIsTyping(false);
-      setSearching(false);
-    }
-  };
-
-  if (!slug) return null;
-  const debouncedSearch = debounce(handleSearch, 500);
-
   return (
-    <div
-      className="col-span-12 flex-1 rounded-sm border border-stroke bg-white py-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4"
-      style={{ maxHeight: '860px', overflowY: 'auto' }}
-    >
-      <div
-        className=" top-0 z-10 bg-white"
-        style={{ top: '0px', backgroundColor: 'white' }}
-      >
+    <div className="col-span-12 flex-1 rounded-sm border border-stroke bg-white py-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
+      <div className=" top-0 z-10 bg-white">
         <div className="mb-6 flex w-full items-center justify-between px-7.5">
           <h4 className="text-xl font-semibold text-black dark:text-white">
-            Workspaces {workspaces.length > 0 ? `(${workspaces.length})` : ''}
+            Workspaces {totalWorkspaces ? `(${totalWorkspaces})` : ''}
           </h4>
           {workspaces.length > 0 && (
             <button
@@ -75,73 +40,42 @@ export default function WorkspacesList({
             </button>
           )}
         </div>
-        <div className="px-4">
-          <input
-            type="search"
-            placeholder="Search for workspace"
-            className="dark-search mb-4 w-full rounded-lg border border-stroke bg-white px-4 py-2 text-sm text-black placeholder-gray-500 outline-none focus:ring-1 focus:ring-blue-500 dark:border-strokedark dark:text-white"
-            onChange={debouncedSearch}
-          />
-        </div>
       </div>
 
-      {searching ? (
-        <>
-          {isTyping ? (
-            <div className="flex h-20 w-full animate-pulse items-center justify-center rounded-sm bg-white">
-              <p className="p-1 text-lg text-slate-500">Loading...</p>
-            </div>
-          ) : results.length > 0 ? (
-            <>
-              {results.map((workspace: any) => (
-                <WorkspaceCard
-                  key={workspace.id}
-                  workspace={workspace}
-                  organization={organization}
-                />
-              ))}
-            </>
-          ) : (
-            <div className="flex h-20 w-full items-center justify-center rounded-sm bg-white">
-              <p className="p-1 text-lg text-slate-500">No results found.</p>
-            </div>
-          )}
-        </>
-      ) : (
-        <>
+      <WorkspaceSearch
+        // @ts-ignore
+        RenderComponent={WorkspaceCard}
+        waitingContainerClassName="flex h-[40vh] w-full items-center justify-center rounded-sm bg-transparent rounded-lg text-slate-800 text-md font-semibold"
+        searchInputClassName="light-search w-3/4 rounded-md border focus:border-blue-600 mx-auto bg-transparent px-4 py-2 text-sm text-slate-800 outline-none"
+        canSearch={totalWorkspaces >= Organization.workspacePageSize}
+      >
+        <div className="h-auto w-full">
           {workspaces.length > 0 ? (
-            <div>
-              <>
-                {workspaces.map((workspace) => (
-                  <WorkspaceCard
-                    workspace={workspace}
-                    organization={organization}
-                  />
-                ))}
-              </>
+            <div className="no-scrollbar flex max-h-[800px] w-full flex-col overflow-y-scroll px-4">
+              {workspaces.map((workspace) => (
+                <WorkspaceCard workspace={workspace} slug={organization.slug} />
+              ))}
             </div>
           ) : (
             <>
               {!!knownConnector ? (
-                <div>
-                  <div className="flex min-h-[40vh] w-full px-8">
-                    <div className="flex h-auto w-full items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200">
-                      <button
-                        onClick={() => {
-                          document
-                            .getElementById('workspace-creation-modal')
-                            ?.showModal();
-                        }}
-                        className="rounded-lg border border-slate-800 px-4 py-2 text-slate-800 hover:bg-slate-800 hover:text-white"
-                      >
-                        Find or Create a Workspace
-                      </button>
-                    </div>
+                <div className="flex h-[40vh] w-full px-4">
+                  <div className="flex h-auto w-full items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200">
+                    <button
+                      onClick={() => {
+                        document
+                          .getElementById('workspace-creation-modal')
+                          ?.showModal();
+                      }}
+                      className="rounded-lg border border-slate-800 px-4 py-2 text-slate-800 hover:bg-slate-800 hover:text-white"
+                    >
+                      Find or Create a Workspace
+                    </button>
                   </div>
                 </div>
               ) : (
                 <div>
-                  <div className="flex min-h-[40vh] w-full px-8">
+                  <div className="flex min-h-[40vh] w-full px-4">
                     <div className="flex h-auto w-full items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200">
                       <p className="px-4 text-center text-sm">
                         Creation of workspaces is disabled until you add a
@@ -153,9 +87,8 @@ export default function WorkspacesList({
               )}
             </>
           )}
-        </>
-      )}
-
+        </div>
+      </WorkspaceSearch>
       <CreateWorkspaceModal organization={organization} />
     </div>
   );
@@ -170,23 +103,21 @@ interface WorkspaceCardProps {
     documentCount: number;
     slug: string;
   };
-  organization: {
-    slug: string;
-  };
+  slug: string;
 }
-const WorkspaceCard = ({ workspace, organization }: WorkspaceCardProps) => (
+const WorkspaceCard = ({ workspace, slug }: WorkspaceCardProps) => (
   <Link
     key={workspace.uid}
-    to={paths.workspace(organization.slug, workspace.slug)}
-    className="flex items-center gap-5 px-7.5 py-3 hover:bg-gray-3 dark:hover:bg-meta-4"
+    to={paths.workspace(slug, workspace.slug)}
+    className="flex items-center gap-5 px-7.5 py-3 hover:bg-gray-50 dark:hover:bg-meta-4"
   >
     <div className="relative h-14 w-14 rounded-full">
       <Jazzicon uid={workspace.uid} size={55} />
     </div>
 
-    <div className="flex flex-1 items-center justify-between">
+    <div className="flex flex-1 items-start justify-between">
       <div>
-        <h5 className="font-medium text-black dark:text-white">
+        <h5 className="max-w-[8vw] truncate font-medium text-black dark:text-white">
           {workspace.name}
         </h5>
         <p>
@@ -200,10 +131,10 @@ const WorkspaceCard = ({ workspace, organization }: WorkspaceCardProps) => (
           <p className="text-sm text-gray-600">
             {nFormatter(workspace?.documentCount || 0)}
           </p>
-          <File className="h-4 w-4 text-gray-600" />
+          <FileText className="h-4 w-4 text-gray-600" />
         </div>
         <p>
-          <span className="text-sm text-black dark:text-white">
+          <span className="whitespace-nowrap text-xs text-black dark:text-white">
             created {moment.unix(workspace.createdAt).fromNow()}
           </span>
         </p>

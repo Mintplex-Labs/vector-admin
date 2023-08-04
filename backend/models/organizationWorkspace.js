@@ -150,9 +150,7 @@ const OrganizationWorkspace = {
     const orgWorkspaces = [
       ...(includeSlugs
         ? await this.where(
-            `organization_id = ? AND slug IN (${includeSlugs.map(
-              () => "?"
-            )})`,
+            `organization_id = ? AND slug IN (${includeSlugs.map(() => "?")})`,
             null,
             [organizationId, ...includeSlugs]
           )

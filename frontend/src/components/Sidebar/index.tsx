@@ -1,14 +1,14 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
-import Logo from '../images/logo/logo.png';
-import SidebarLinkGroup from './SidebarLinkGroup';
-import paths from '../utils/paths';
+import Logo from '../../images/logo/logo.png';
+import SidebarLinkGroup from '../SidebarLinkGroup';
+import paths from '../../utils/paths';
 import { Box, ChevronUp, Command, Radio, Tool, Users } from 'react-feather';
-import Organization from '../models/organization';
-import PreLoader from './Preloader';
-import useUser from '../hooks/useUser';
+import Organization from '../../models/organization';
+import useUser from '../../hooks/useUser';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { debounce } from 'lodash';
+import WorkspaceSearch, { WorkspaceItem } from './WorkspaceSearch';
+import CreateOrganizationModal from './CreateOrganizationModal';
 
 interface SidebarProps {
   organization: any;
@@ -20,7 +20,7 @@ interface SidebarProps {
   loadMoreWorkspaces?: VoidFunction;
 }
 
-const Sidebar = ({
+export default function Sidebar({
   organization,
   organizations,
   workspaces,
@@ -28,7 +28,7 @@ const Sidebar = ({
   setSidebarOpen,
   hasMoreWorkspaces = false,
   loadMoreWorkspaces,
-}: SidebarProps) => {
+}: SidebarProps) {
   const { user } = useUser();
   const { slug } = useParams();
   const location = useLocation();
@@ -246,6 +246,7 @@ const Sidebar = ({
                           >
                             <WorkspaceSearch
                               RenderComponent={WorkspaceItem}
+                              maxContainerHeight={200}
                               canSearch={
                                 workspaces.length >=
                                 Organization.workspacePageSize
@@ -282,21 +283,12 @@ const Sidebar = ({
                                 </InfiniteScroll>
                               </ul>
                             </WorkspaceSearch>
-                            {/* <NavLink
-                              to="/api-docs"
-                              target="_blank"
-                              className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4`}
-                            >
-                              <Code className="h-4 w-4" />
-                              API Documentation
-                            </NavLink> */}
                           </div>
                           {/* <!-- Dropdown Menu End --> */}
                         </React.Fragment>
                       );
                     }}
                   </SidebarLinkGroup>
-                  {/* <!-- Menu Item Dashboard --> */}
                 </ul>
               </div>
             )}
@@ -363,191 +355,4 @@ const Sidebar = ({
       <CreateOrganizationModal />
     </>
   );
-};
-
-export default Sidebar;
-
-interface IWorkspaceItem {
-  workspace: {
-    id: string;
-    name: string;
-    slug: string;
-  };
-  slug: string;
 }
-
-const WorkspaceItem = ({ workspace, slug }: IWorkspaceItem) => (
-  <li>
-    <NavLink
-      key={workspace.id}
-      to={paths.workspace(slug, workspace.slug)}
-      className={({ isActive }) =>
-        'group relative flex items-center gap-1 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-        (isActive && '!text-white')
-      }
-    >
-      {workspace.name}
-    </NavLink>
-  </li>
-);
-
-interface WorkspaceSearchProps {
-  RenderComponent: React.FC<IWorkspaceItem>;
-  canSearch?: boolean;
-  children: React.ReactNode;
-}
-
-function WorkspaceSearch({
-  RenderComponent,
-  canSearch = false,
-  children,
-}: WorkspaceSearchProps) {
-  const { slug } = useParams();
-  const [searching, setSearching] = useState(false);
-  const [results, setResults] = useState([]);
-  const [isTyping, setIsTyping] = useState(false);
-
-  const handleSearch = async (e: any) => {
-    if (!slug) return null;
-    const searchTerm = e.target?.value;
-    if (searchTerm !== '') {
-      setIsTyping(true);
-      setSearching(true);
-
-      const { workspacesResults = [] } = await Organization.searchWorkspaces(
-        slug,
-        1, // Page 1
-        30, // 30 results per page
-        searchTerm
-      );
-      setResults(workspacesResults);
-      setIsTyping(false);
-    } else {
-      setIsTyping(false);
-      setSearching(false);
-    }
-  };
-
-  if (!slug) return null;
-  const debouncedSearch = debounce(handleSearch, 500);
-  return (
-    <div
-      id="workspaces-sidebar"
-      className="no-scrollbar mb-5.5 mt-2 flex max-h-[200px] flex-col gap-1 overflow-auto"
-    >
-      <input
-        type="search"
-        hidden={!canSearch}
-        className="dark-search w-full rounded-md border border-graydark bg-transparent px-4 py-2 text-sm text-bodydark1 outline-none"
-        placeholder="Search for workspace"
-        onChange={debouncedSearch}
-        // @ts-ignore: Onsearch does not exist, it does.
-        onSearch={debouncedSearch}
-      />
-      {searching ? (
-        <>
-          {isTyping ? (
-            <div className="flex w-full animate-pulse items-center justify-center rounded-sm bg-slate-800">
-              <p className="p-1 text-xs text-slate-500">Loading...</p>
-            </div>
-          ) : results.length > 0 ? (
-            <div className="pl-6">
-              {results.map((workspace: IWorkspaceItem['workspace']) => (
-                <RenderComponent
-                  key={workspace.id}
-                  workspace={workspace}
-                  slug={slug}
-                />
-              ))}
-            </div>
-          ) : (
-            <>
-              <div className="flex h-20 w-full items-center justify-center rounded-sm bg-slate-800">
-                <p className="p-1 text-xs text-slate-500">No results found.</p>
-              </div>
-            </>
-          )}
-        </>
-      ) : (
-        <>{children}</>
-      )}
-    </div>
-  );
-}
-
-const CreateOrganizationModal = () => {
-  const [loading, setLoading] = useState(false);
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    setLoading(true);
-    const { organization } = await Organization.create(e.target.name.value);
-    if (!organization) {
-      setLoading(false);
-      return false;
-    }
-
-    window.location.replace(paths.organization(organization));
-  };
-
-  return (
-    <dialog id="organization-creation-modal" className="w-1/3 rounded-lg">
-      <div className="w-full rounded-sm bg-white p-[20px] dark:border-strokedark dark:bg-boxdark">
-        <div className="px-6.5 py-4 dark:border-strokedark">
-          <h3 className="font-medium text-black dark:text-white">
-            Create a New Organization
-          </h3>
-        </div>
-        {loading ? (
-          <div className="px-6.5">
-            <div className="mb-4.5 flex w-full justify-center">
-              <PreLoader />
-            </div>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <div className="px-6.5">
-              <div className="mb-4.5">
-                <label className="mb-2.5 block text-black dark:text-white">
-                  Organization Name
-                </label>
-                <input
-                  required={true}
-                  type="text"
-                  name="name"
-                  placeholder="My Organization"
-                  autoComplete="off"
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                />
-              </div>
-              <div className="flex flex-col gap-y-2">
-                <button
-                  type="submit"
-                  className="flex w-full justify-center rounded bg-blue-500 p-3 font-medium text-white"
-                >
-                  Create Organization
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    document
-                      .getElementById('organization-creation-modal')
-                      ?.close();
-                  }}
-                  className="flex w-full justify-center rounded bg-transparent p-3 font-medium text-slate-500 hover:bg-slate-200"
-                >
-                  Cancel
-                </button>
-              </div>
-              <p className="my-2 rounded-lg border border-orange-800 bg-orange-100 p-2 text-center text-sm text-orange-800">
-                Once your organization exists you can start workspaces and
-                documents.
-                <br />
-                <b>YOU CANNOT DELETE ORGANIZATIONS.</b>
-              </p>
-            </div>
-          </form>
-        )}
-      </div>
-    </dialog>
-  );
-};
