@@ -14,6 +14,14 @@
   /* Firefox */
 }
 
+.dark-search::-webkit-search-cancel-button {
+  filter: grayscale(100%) invert(1) brightness(100) opacity(0.5);
+}
+
+.light-search::-webkit-search-cancel-button {
+  filter: grayscale(100%) invert(0) brightness(0) opacity(0.5);
+}
+
 dialog {
   pointer-events: none;
   opacity: 0;

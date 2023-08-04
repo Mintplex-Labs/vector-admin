@@ -25,6 +25,7 @@ export default function Dashboard() {
   const [workspaces, setWorkspaces] = useState<object[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [hasMoreWorkspaces, setHasMoreWorkspaces] = useState<boolean>(true);
+  const [totalWorkspaces, setTotalWorkspaces] = useState<number>(0);
 
   async function fetchWorkspaces(focusedOrg?: { slug: string }) {
     const org = focusedOrg || organization;
@@ -40,11 +41,14 @@ export default function Dashboard() {
           _combinedWorkspaces.findIndex((item) => item.slug === obj.slug) ===
           index
       );
+
       setWorkspaces(uniques);
       setHasMoreWorkspaces(uniques.length < totalWorkspaces);
+      setTotalWorkspaces(totalWorkspaces);
     } else {
       setWorkspaces(_workspaces);
       setHasMoreWorkspaces(totalWorkspaces > Organization.workspacePageSize);
+      setTotalWorkspaces(totalWorkspaces);
     }
     setCurrentPage(currentPage + 1);
     return true;
@@ -118,6 +122,7 @@ export default function Dashboard() {
           knownConnector={connector}
           organization={organization}
           workspaces={workspaces}
+          totalWorkspaces={totalWorkspaces}
         />
       </div>
     </AppLayout>

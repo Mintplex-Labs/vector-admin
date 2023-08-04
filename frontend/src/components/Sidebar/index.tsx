@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
-import Logo from '../images/logo/logo.png';
-import SidebarLinkGroup from './SidebarLinkGroup';
-import paths from '../utils/paths';
+import Logo from '../../images/logo/logo.png';
+import SidebarLinkGroup from '../SidebarLinkGroup';
+import paths from '../../utils/paths';
 import { Box, ChevronUp, Command, Radio, Tool, Users } from 'react-feather';
-import Organization from '../models/organization';
-import PreLoader from './Preloader';
-import useUser from '../hooks/useUser';
+import Organization from '../../models/organization';
+import useUser from '../../hooks/useUser';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import WorkspaceSearch, { WorkspaceItem } from './WorkspaceSearch';
+import CreateOrganizationModal from './CreateOrganizationModal';
 
 interface SidebarProps {
   organization: any;
@@ -19,7 +20,7 @@ interface SidebarProps {
   loadMoreWorkspaces?: VoidFunction;
 }
 
-const Sidebar = ({
+export default function Sidebar({
   organization,
   organizations,
   workspaces,
@@ -27,7 +28,7 @@ const Sidebar = ({
   setSidebarOpen,
   hasMoreWorkspaces = false,
   loadMoreWorkspaces,
-}: SidebarProps) => {
+}: SidebarProps) {
   const { user } = useUser();
   const { slug } = useParams();
   const location = useLocation();
@@ -182,7 +183,7 @@ const Sidebar = ({
                               return (
                                 <li key={i}>
                                   <NavLink
-                                    key={org.uid}
+                                    key={org.id}
                                     to={paths.organization(org)}
                                     className={({ isActive }) =>
                                       'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
@@ -217,7 +218,7 @@ const Sidebar = ({
                         <React.Fragment>
                           <NavLink
                             to="#"
-                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            className={`group relative flex items-center gap-2.5 rounded-t-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                               (pathname === '/' ||
                                 pathname.includes('dashboard')) &&
                               'bg-graydark dark:bg-meta-4'
@@ -243,63 +244,51 @@ const Sidebar = ({
                               !open && 'hidden'
                             }`}
                           >
-                            <ul
-                              id="workspaces-sidebar"
-                              className="no-scrollbar mb-5.5 mt-4 flex flex-col gap-2.5 pl-6"
+                            <WorkspaceSearch
+                              RenderComponent={WorkspaceItem}
+                              maxContainerHeight={200}
+                              canSearch={
+                                workspaces.length >=
+                                Organization.workspacePageSize
+                              }
                             >
-                              <InfiniteScroll
-                                dataLength={workspaces.length}
-                                next={continueLoadWorkspaces}
-                                hasMore={hasMoreWorkspaces}
-                                height={200}
-                                scrollableTarget="workspaces-sidebar"
-                                scrollThreshold={0.8}
-                                loader={
-                                  <div className="ml-2 flex h-[30px] w-3/4 animate-pulse items-center justify-center rounded-sm bg-slate-800 px-4">
-                                    <p className="text-xs text-slate-500 ">
-                                      loading...
-                                    </p>
-                                  </div>
-                                }
+                              <ul
+                                id="workspaces-sidebar"
+                                className="no-scrollbar mb-5.5 mt-4 flex flex-col gap-1 pl-6"
                               >
-                                {workspaces?.map(
-                                  (workspace: any, i: number) => {
-                                    return (
-                                      <li key={i}>
-                                        <NavLink
-                                          key={workspace.uid}
-                                          to={paths.workspace(
-                                            slug,
-                                            workspace.slug
-                                          )}
-                                          className={({ isActive }) =>
-                                            'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                            (isActive && '!text-white')
-                                          }
-                                        >
-                                          {workspace.name}
-                                        </NavLink>
-                                      </li>
-                                    );
+                                <InfiniteScroll
+                                  dataLength={workspaces.length}
+                                  next={continueLoadWorkspaces}
+                                  hasMore={hasMoreWorkspaces}
+                                  height={200}
+                                  scrollableTarget="workspaces-sidebar"
+                                  scrollThreshold={0.8}
+                                  loader={
+                                    <div className="ml-2 flex h-[30px] w-3/4 animate-pulse items-center justify-center rounded-sm bg-slate-800 px-4">
+                                      <p className="text-xs text-slate-500 ">
+                                        loading...
+                                      </p>
+                                    </div>
                                   }
-                                )}
-                              </InfiniteScroll>
-                            </ul>
-                            {/* <NavLink
-                              to="/api-docs"
-                              target="_blank"
-                              className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4`}
-                            >
-                              <Code className="h-4 w-4" />
-                              API Documentation
-                            </NavLink> */}
+                                >
+                                  {workspaces?.map(
+                                    (workspace: any, i: number) => (
+                                      <WorkspaceItem
+                                        key={i}
+                                        workspace={workspace}
+                                        slug={slug}
+                                      />
+                                    )
+                                  )}
+                                </InfiniteScroll>
+                              </ul>
+                            </WorkspaceSearch>
                           </div>
                           {/* <!-- Dropdown Menu End --> */}
                         </React.Fragment>
                       );
                     }}
                   </SidebarLinkGroup>
-                  {/* <!-- Menu Item Dashboard --> */}
                 </ul>
               </div>
             )}
@@ -366,83 +355,4 @@ const Sidebar = ({
       <CreateOrganizationModal />
     </>
   );
-};
-
-export default Sidebar;
-
-const CreateOrganizationModal = () => {
-  const [loading, setLoading] = useState(false);
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    setLoading(true);
-    const { organization } = await Organization.create(e.target.name.value);
-    if (!organization) {
-      setLoading(false);
-      return false;
-    }
-
-    window.location.replace(paths.organization(organization));
-  };
-
-  return (
-    <dialog id="organization-creation-modal" className="w-1/3 rounded-lg">
-      <div className="w-full rounded-sm bg-white p-[20px] dark:border-strokedark dark:bg-boxdark">
-        <div className="px-6.5 py-4 dark:border-strokedark">
-          <h3 className="font-medium text-black dark:text-white">
-            Create a New Organization
-          </h3>
-        </div>
-        {loading ? (
-          <div className="px-6.5">
-            <div className="mb-4.5 flex w-full justify-center">
-              <PreLoader />
-            </div>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <div className="px-6.5">
-              <div className="mb-4.5">
-                <label className="mb-2.5 block text-black dark:text-white">
-                  Organization Name
-                </label>
-                <input
-                  required={true}
-                  type="text"
-                  name="name"
-                  placeholder="My Organization"
-                  autoComplete="off"
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                />
-              </div>
-              <div className="flex flex-col gap-y-2">
-                <button
-                  type="submit"
-                  className="flex w-full justify-center rounded bg-blue-500 p-3 font-medium text-white"
-                >
-                  Create Organization
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    document
-                      .getElementById('organization-creation-modal')
-                      ?.close();
-                  }}
-                  className="flex w-full justify-center rounded bg-transparent p-3 font-medium text-slate-500 hover:bg-slate-200"
-                >
-                  Cancel
-                </button>
-              </div>
-              <p className="my-2 rounded-lg border border-orange-800 bg-orange-100 p-2 text-center text-sm text-orange-800">
-                Once your organization exists you can start workspaces and
-                documents.
-                <br />
-                <b>YOU CANNOT DELETE ORGANIZATIONS.</b>
-              </p>
-            </div>
-          </form>
-        )}
-      </div>
-    </dialog>
-  );
-};
+}

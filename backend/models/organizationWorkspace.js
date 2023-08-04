@@ -143,19 +143,29 @@ const OrganizationWorkspace = {
     organizationId,
     page = 1,
     pageSize = 10,
-    includeSlugs = []
+    includeSlugs = [],
+    searchTerm = ""
   ) {
     const offset = (page - 1) * pageSize;
     const orgWorkspaces = [
       ...(includeSlugs
         ? await this.where(
-            `organization_id = ${organizationId} AND slug IN (${includeSlugs.map(
-              (slug) => `'${slug}'`
-            )})`
+            `organization_id = ? AND slug IN (${includeSlugs.map(() => "?")})`,
+            null,
+            [organizationId, ...includeSlugs]
           )
         : []),
       ...(await this.where(
-        `organization_id = ${organizationId} LIMIT ${pageSize} OFFSET ${offset}`
+        `organization_id = ? ${
+          searchTerm ? "AND name LIKE ? " : ""
+        }LIMIT ? OFFSET ?`,
+        null,
+        [
+          organizationId,
+          ...(searchTerm ? [`%${searchTerm}%`] : []),
+          pageSize,
+          offset,
+        ]
       )),
     ];
 
@@ -179,15 +189,15 @@ const OrganizationWorkspace = {
       `slug = '${wsSlug}' AND organization_id = ${organizationId}`
     );
   },
-  where: async function (clause = null, limit = null) {
+  where: async function (clause = null, limit = null, params = []) {
     const db = await this.db();
     const results = await db.all(
       `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${
         !!limit ? `LIMIT ${limit}` : ""
-      }`
+      }`,
+      params
     );
     await db.close();
-
     return results;
   },
   count: async function (clause = null) {
