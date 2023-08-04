@@ -1,5 +1,5 @@
 import { API_BASE } from '../utils/constants';
-import { baseHeaders } from '../utils/request';
+import { baseHeaders, getAPIUrlString } from '../utils/request';
 
 const Organization = {
   documentPageSize: 10,
@@ -85,7 +85,7 @@ const Organization = {
     pageSize?: number,
     includeSlugs?: string[]
   ) => {
-    const queryURL = new URL(`${API_BASE}/v1/org/${slug}/workspaces`);
+    const queryURL = new URL(`${getAPIUrlString()}/v1/org/${slug}/workspaces`);
     queryURL.searchParams.append('page', page || 1);
     queryURL.searchParams.append(
       'page',
@@ -112,7 +112,9 @@ const Organization = {
     searchQuery?: string,
     includeSlugs?: string[]
   ) => {
-    const queryURL = new URL(`${API_BASE}/v1/org/${slug}/workspaces/search`);
+    const queryURL = new URL(
+      `${getAPIUrlString()}/v1/org/${slug}/workspaces/search`
+    );
     queryURL.searchParams.append('page', `${page}`);
     queryURL.searchParams.append(
       'pageSize',
