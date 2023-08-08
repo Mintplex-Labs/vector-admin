@@ -154,7 +154,7 @@ function organizationEndpoints(app) {
         if (!organization) {
           response
             .status(200)
-            .json({ organization: null, error: "No org by that slug." });
+            .json({ success: false, error: "No org by that slug." });
           return;
         }
 
