@@ -69,8 +69,9 @@ const syncPineconeIndex = InngestClient.createFunction(
       }
 
       result = {
-        message: `Pinecone instance vector data has been synced for ${collections.length
-          } of ${collections.length - failedToSync.length} namespaces.`,
+        message: `Pinecone instance vector data has been synced for ${
+          collections.length
+        } of ${collections.length - failedToSync.length} namespaces.`,
         failedToSync,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);

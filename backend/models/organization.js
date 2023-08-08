@@ -6,6 +6,7 @@ const { OrganizationApiKey } = require("./organizationApiKey");
 
 const Organization = {
   tablename: "organizations",
+  writable: ["name"],
   colsInit: `
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
@@ -80,6 +81,32 @@ const Organization = {
     await OrganizationUser.create(adminId, organization.id);
     await OrganizationApiKey.create(organization.id);
     return { organization, message: null };
+  },
+  update: async function (orgId = null, updates = {}) {
+    if (!orgId) throw new Error("No workspace id provided for update");
+
+    const validKeys = Object.keys(updates).filter((key) =>
+      this.writable.includes(key)
+    );
+    const values = Object.values(updates);
+    if (validKeys.length === 0 || validKeys.length !== values.length)
+      return { success: false, error: "No valid fields to update!" };
+
+    const template = `UPDATE ${this.tablename} SET ${validKeys.map((key) => {
+      return `${key}=?`;
+    })} WHERE id = ?`;
+    const db = await this.db();
+    const { success, error } = await db
+      .run(template, [...values, orgId])
+      .then(() => {
+        return { success: true, error: null };
+      })
+      .catch((error) => {
+        return { success: false, error: error.message };
+      });
+
+    await db.close();
+    return { success, error };
   },
   get: async function (clause = "") {
     const db = await this.db();
