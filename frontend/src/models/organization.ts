@@ -26,6 +26,19 @@ const Organization = {
     if (!organization) return { organization: null, error };
     return { organization, error: null };
   },
+  update: async (slug: string, updates: object = {}) => {
+    return await fetch(`${API_BASE}/v1/org/${slug}`, {
+      method: 'POST',
+      cache: 'no-cache',
+      body: JSON.stringify({ updates }),
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        return { success: false, error: e.message };
+      });
+  },
   bySlug: async (slug: string) => {
     const organization = await fetch(`${API_BASE}/v1/org/${slug}`, {
       method: 'GET',

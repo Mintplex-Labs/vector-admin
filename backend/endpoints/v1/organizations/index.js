@@ -135,6 +135,41 @@ function organizationEndpoints(app) {
     }
   );
 
+  app.post(
+    "/v1/org/:slug",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { slug } = request.params;
+        const { updates = {} } = reqBody(request);
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
+        const organization = await Organization.getWithOwner(
+          user.id,
+          `slug = '${slug}'`
+        );
+        if (!organization) {
+          response
+            .status(200)
+            .json({ organization: null, error: "No org by that slug." });
+          return;
+        }
+
+        const updateResponse = await Organization.update(
+          organization.id,
+          updates
+        );
+        response.status(200).json(updateResponse);
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
   app.get(
     "/v1/org/:slug/api-key",
     [validSessionForUser],
