@@ -76,7 +76,7 @@ export default function FragmentList({
               </button>
             </div>
 
-            <p className="text-sm text-slate-500">{document.name}</p>
+            <p className="text-sm text-slate-500">{document?.name}</p>
           </div>
         </div>
 
@@ -159,8 +159,8 @@ const Fragment = ({
         </th>
         <td className="px-6 py-4">{fragment.vectorId}</td>
         <td className="px-6 py-4">
-          {truncate(data?.metadata.text, 40)}
-          {!!data?.metadata.text ? (
+          {truncate(data?.metadata?.text, 40)}
+          {!!data?.metadata?.text ? (
             <button
               className="text-blue-400"
               onClick={() => {
@@ -224,7 +224,7 @@ const FullTextWindow = memo(
       <dialog id={`${fragment.id}-text`} className="w-1/2 rounded-lg">
         <div className="flex flex-col overflow-y-scroll p-[20px]">
           <pre className="font-mono whitespace-pre-line rounded-lg bg-slate-100 p-2">
-            {data.metadata.text}
+            {data?.metadata?.text || '[ERROR] Could not parse text key from embedding'}
           </pre>
           <div className="mt-4 flex flex-col gap-y-2">
             <button

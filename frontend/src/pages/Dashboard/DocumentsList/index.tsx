@@ -164,7 +164,7 @@ export default function DocumentsList({
                           className="hover:text-blue-500 hover:underline"
                         >
                           <span className="font-medium">
-                            {document.workspace.name || ''}
+                            {truncate(document.workspace.name, 23) || ''}
                           </span>
                         </a>
                       </div>
