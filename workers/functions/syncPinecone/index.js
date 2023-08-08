@@ -69,9 +69,8 @@ const syncPineconeIndex = InngestClient.createFunction(
       }
 
       result = {
-        message: `Pinecone instance vector data has been synced for ${
-          collections.length
-        } of ${collections.length - failedToSync.length} namespaces.`,
+        message: `Pinecone instance vector data has been synced for ${collections.length
+          } of ${collections.length - failedToSync.length} namespaces.`,
         failedToSync,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
@@ -126,8 +125,8 @@ async function paginateAndStore(
 
     for (let i = 0; i < ids.length; i++) {
       const documentName =
-        metadatas[i].title ||
-        metadatas[i].source?.split('/')?.at(-1) ||
+        metadatas[i]?.title ||
+        metadatas[i]?.name ||
         `imported-document-${v4()}.txt`;
       if (!files.hasOwnProperty(documentName)) {
         files[documentName] = {

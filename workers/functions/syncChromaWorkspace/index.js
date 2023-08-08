@@ -92,8 +92,8 @@ async function paginateAndStore(
 
     for (let i = 0; i < ids.length; i++) {
       const documentName =
-        metadatas[i].title ||
-        metadatas[i].source?.split('/')?.at(-1) ||
+        metadatas[i]?.title ||
+        metadatas[i]?.name ||
         `imported-document-${v4()}.txt`;
       if (!files.hasOwnProperty(documentName)) {
         files[documentName] = {

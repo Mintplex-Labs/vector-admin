@@ -69,9 +69,8 @@ const syncChromaInstance = InngestClient.createFunction(
       }
 
       result = {
-        message: `Chroma instance vector data has been synced for ${
-          collections.length
-        } of ${collections.length - failedToSync.length} collections.`,
+        message: `Chroma instance vector data has been synced for ${collections.length
+          } of ${collections.length - failedToSync.length} collections.`,
         failedToSync,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
@@ -120,8 +119,8 @@ async function paginateAndStore(
 
     for (let i = 0; i < ids.length; i++) {
       const documentName =
-        metadatas[i].title ||
-        metadatas[i].source?.split('/')?.at(-1) ||
+        metadatas[i]?.title ||
+        metadatas[i]?.name ||
         `imported-document-${v4()}.txt`;
       if (!files.hasOwnProperty(documentName)) {
         files[documentName] = {
