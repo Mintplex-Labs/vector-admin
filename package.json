@@ -14,5 +14,5 @@
     "dev:workers": "cd workers && ./dev_entrypoint.sh",
     "lint": "cd backend && yarn lint && cd ../frontend && yarn lint && cd ../workers && yarn lint"
   },
-  "private": false
+  "packageManager": "yarn@1.22.1"
 }
