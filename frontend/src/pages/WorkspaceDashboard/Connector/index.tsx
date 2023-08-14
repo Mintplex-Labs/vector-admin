@@ -271,20 +271,29 @@ const NewConnectorModal = ({
                       htmlFor="settings::authToken"
                       className="block text-sm font-medium text-gray-900 dark:text-white"
                     >
-                      API Key
+                      API Header & Key
                     </label>
                     <p className="text-xs text-gray-500">
                       If your hosted Chroma instance is protected by an API key
-                      - enter it here.
+                      - enter the header and api key here.
                     </p>
                   </div>
-                  <input
-                    name="settings::authToken"
-                    autoComplete="off"
-                    type="password"
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                    placeholder="sk-myApiKeyToAccessMyChromaInstance"
-                  />
+                  <div className="flex w-full items-center gap-x-4">
+                    <input
+                      name="settings::authTokenHeader"
+                      autoComplete="off"
+                      type="text"
+                      className="block w-[20%] rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                      placeholder="X-Api-Key"
+                    />
+                    <input
+                      name="settings::authToken"
+                      autoComplete="off"
+                      type="password"
+                      className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                      placeholder="sk-myApiKeyToAccessMyChromaInstance"
+                    />
+                  </div>
                 </div>
               </div>
             )}
