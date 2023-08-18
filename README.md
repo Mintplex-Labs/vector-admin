@@ -3,8 +3,7 @@
 </p>
 
 <p align="center">
-    <b>VectorAdmin: The universal interface for vector databases.</b>. <br />
-    A production-ready vector database management system that doesn't hurt to use.
+    <b>The universal UI and tool suite for managing vector databases at scale.</b><br />
 </p>
 
 <p align="center">
