@@ -69,8 +69,9 @@ const syncChromaInstance = InngestClient.createFunction(
       }
 
       result = {
-        message: `Chroma instance vector data has been synced for ${collections.length
-          } of ${collections.length - failedToSync.length} collections.`,
+        message: `Chroma instance vector data has been synced for ${
+          collections.length
+        } of ${collections.length - failedToSync.length} collections.`,
         failedToSync,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);

@@ -27,6 +27,15 @@ class Chroma {
 
     const client = new ChromaClient({
       path: settings.instanceURL,
+      ...(settings?.authToken
+        ? {
+            fetchOptions: {
+              headers: {
+                [settings.authTokenHeader || "X-Api-Key"]: settings.authToken,
+              },
+            },
+          }
+        : {}),
     });
 
     const isAlive = await client.heartbeat();

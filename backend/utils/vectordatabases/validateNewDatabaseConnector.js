@@ -26,17 +26,35 @@ async function validateNewDatabaseConnector(organization, config) {
   return { connector, error: null };
 }
 
-async function validateChroma({ instanceURL, authToken = null }) {
+async function validateChroma({
+  instanceURL,
+  authToken = null,
+  authTokenHeader = null,
+}) {
   const { ChromaClient } = require("chromadb");
   const options = { path: instanceURL };
-  if (!!authToken) options.fetchOptions.headers = { Authorization: authToken };
+
+  if (!!authToken) {
+    if (!authTokenHeader)
+      return {
+        valid: false,
+        message: "Auth token set but no request header set - set a header!",
+      };
+    options.fetchOptions = {};
+    options.fetchOptions.headers = { [authTokenHeader]: authToken };
+  }
 
   try {
     const client = new ChromaClient(options);
     await client.heartbeat(); // Will abort if no connection is possible.
     return { valid: true, message: null };
   } catch (e) {
-    return { valid: false, message: e.message };
+    return {
+      valid: false,
+      message:
+        e.message ||
+        "Could not connect to Chroma instance with those credentials.",
+    };
   }
 }
 
