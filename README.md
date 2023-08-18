@@ -7,8 +7,8 @@
 </p>
 
 <p align="center">
- <a href="https://twitter.com/tcarambat" target="_blank">
-      <img src="https://img.shields.io/twitter/url/https/twitter.com/tim.svg?style=social&label=Follow%20%40Timothy%20Carambat" alt="Twitter">
+ <a href="https://twitter.com/mintplexlabs" target="_blank">
+      <img src="https://img.shields.io/twitter/url/https/twitter.com/mintplexlabs.svg?style=social&label=Follow%20%40Mintplex%20Labs" alt="Twitter">
   </a> |
   <a href="https://discord.gg/6UyHPeGZAC" target="_blank">
       <img src="https://dcbadge.vercel.app/api/server/6UyHPeGZAC?compact=true&style=flat" alt="Discord">
