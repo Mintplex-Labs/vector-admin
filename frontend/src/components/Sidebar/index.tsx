@@ -3,7 +3,15 @@ import { NavLink, useLocation, useParams } from 'react-router-dom';
 import Logo from '../../images/logo/logo.png';
 import SidebarLinkGroup from '../SidebarLinkGroup';
 import paths from '../../utils/paths';
-import { Box, ChevronUp, Command, Radio, Tool, Users } from 'react-feather';
+import {
+  Box,
+  Briefcase,
+  ChevronUp,
+  Command,
+  Radio,
+  Tool,
+  Users,
+} from 'react-feather';
 import Organization from '../../models/organization';
 import useUser from '../../hooks/useUser';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -104,6 +112,7 @@ export default function Sidebar({
             className="block lg:hidden"
           >
             <svg
+              color="white"
               className="fill-current"
               width="20"
               height="18"
@@ -184,6 +193,7 @@ export default function Sidebar({
                                 <li key={i}>
                                   <NavLink
                                     key={org.id}
+                                    reloadDocument={true}
                                     to={paths.organization(org)}
                                     className={({ isActive }) =>
                                       'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
@@ -297,20 +307,38 @@ export default function Sidebar({
               {!!organization && (
                 <ul className="mb-6 flex flex-col gap-1.5">
                   {user?.role === 'admin' && (
-                    <li>
-                      <div className={`translate transform overflow-hidden`}>
-                        <NavLink
-                          to={paths.users()}
-                          className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                            (pathname === '/' || pathname.includes('users')) &&
-                            'bg-graydark dark:bg-meta-4'
-                          }`}
-                        >
-                          <Users className="h-4 w-4" />
-                          User Management
-                        </NavLink>
-                      </div>
-                    </li>
+                    <>
+                      <li>
+                        <div className={`translate transform overflow-hidden`}>
+                          <NavLink
+                            to={paths.users()}
+                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                              (pathname === '/' ||
+                                pathname.includes('users')) &&
+                              'bg-graydark dark:bg-meta-4'
+                            }`}
+                          >
+                            <Users className="h-4 w-4" />
+                            User Management
+                          </NavLink>
+                        </div>
+                      </li>
+                      <li>
+                        <div className={`translate transform overflow-hidden`}>
+                          <NavLink
+                            to={paths.organizationSettings(organization)}
+                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                              (pathname === '/' ||
+                                pathname.includes('users')) &&
+                              'bg-graydark dark:bg-meta-4'
+                            }`}
+                          >
+                            <Briefcase className="h-4 w-4" />
+                            Organization Settings
+                          </NavLink>
+                        </div>
+                      </li>
+                    </>
                   )}
 
                   {user?.role === 'admin' && (

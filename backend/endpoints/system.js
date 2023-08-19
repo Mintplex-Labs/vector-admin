@@ -3,7 +3,9 @@ process.env.NODE_ENV === "development"
   : require("dotenv").config();
 const { SystemSettings } = require("../models/systemSettings");
 const { systemInit } = require("../utils/boot");
+const { dumpENV } = require("../utils/env");
 const { reqBody, userFromSession } = require("../utils/http");
+const { getGitVersion, getDiskStorage } = require("../utils/metrics");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 // const { validateTablePragmas } = require("../utils/database");
 
@@ -12,6 +14,27 @@ function systemEndpoints(app) {
 
   app.get("/ping", (_, response) => {
     response.sendStatus(200);
+  });
+
+  app.get("/system/metrics", async (_, response) => {
+    try {
+      const metrics = {
+        online: true,
+        version: getGitVersion(),
+        storage: await getDiskStorage(),
+      };
+      response.status(200).json(metrics);
+    } catch (e) {
+      console.error(e);
+      response.sendStatus(500).end();
+    }
+  });
+
+  app.get("/env-dump", async (_, response) => {
+    if (process.env.NODE_ENV !== "production")
+      return response.sendStatus(200).end();
+    await dumpENV();
+    response.sendStatus(200).end();
   });
 
   app.get("/migrate", async (_, response) => {

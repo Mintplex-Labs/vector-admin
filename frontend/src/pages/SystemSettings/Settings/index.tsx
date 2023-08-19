@@ -1,18 +1,10 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { APP_NAME } from '../../../utils/constants';
 import System from '../../../models/system';
 import { ExternalLink, Eye, EyeOff } from 'react-feather';
 import paths from '../../../utils/paths';
-import Organization from '../../../models/organization';
 
-export default function Settings({
-  settings,
-  organization,
-}: {
-  settings: any[];
-  organization: any;
-}) {
-  const [hasOrgChanges, setHasOrgChanges] = useState(false);
+export default function Settings({ settings }: { settings: any[] }) {
   const [result, setResult] = useState<{
     show: boolean;
     success: boolean;
@@ -35,21 +27,6 @@ export default function Settings({
 
     const { success, error } = await System.updateSettings(data);
     setResult({ show: true, success, error });
-  };
-  const handleOrgUpdate = async (e: any) => {
-    e.preventDefault();
-    setResult({ show: false, success: false, error: null });
-    const form = new FormData(e.target);
-    const newOrgName =
-      (form.get('organization_name') as string) || organization?.name;
-    const data = { name: newOrgName };
-
-    const { success, error } = await Organization.update(
-      organization.slug,
-      data
-    );
-    setResult({ show: true, success, error });
-    success && setHasOrgChanges(false);
   };
 
   return (
@@ -76,38 +53,6 @@ export default function Settings({
             )}
           </>
         )}
-
-        <form
-          onChange={() => setHasOrgChanges(true)}
-          onSubmit={handleOrgUpdate}
-          className="border-b border-gray-200 pb-4"
-        >
-          <div className="my-4">
-            <label className=" block flex items-center gap-x-1 font-medium text-black dark:text-white">
-              Organization name
-            </label>
-            <p className="mb-2.5 text-sm text-slate-600">
-              This will only change the display name of the organization.
-            </p>
-            <div className="relative flex w-1/2 items-center gap-x-4">
-              <input
-                type="text"
-                name="organization_name"
-                placeholder="My Organization"
-                defaultValue={organization.name}
-                required={true}
-                className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-              />
-              <button
-                hidden={!hasOrgChanges}
-                type="submit"
-                className="rounded-lg border border-primary px-8 py-3 text-lg text-blue-500 transition-all duration-300 hover:bg-primary hover:text-white"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </form>
 
         <form onSubmit={handleSubmit}>
           <div className="my-4">

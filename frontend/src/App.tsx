@@ -8,6 +8,7 @@ import SignUp from './pages/Authentication/SignUp';
 import { FullScreenLoader } from './components/Preloader';
 import UserManagementView from './pages/UsersView';
 import AdminRoute from './components/AdminRoute';
+import OrganizationSettingsView from './pages/OrganizationSettings';
 
 const OnboardingHome = lazy(() => import('./pages/Onboarding'));
 const OrganizationDashboard = lazy(() => import('./pages/Dashboard'));
@@ -45,6 +46,11 @@ function App() {
           <Route
             path="/dashboard/:slug/workspace/:workspaceSlug"
             element={<PrivateRoute Component={WorkspaceDashboard} />}
+          />
+
+          <Route
+            path="/dashboard/:slug/settings"
+            element={<AdminRoute Component={OrganizationSettingsView} />}
           />
 
           <Route

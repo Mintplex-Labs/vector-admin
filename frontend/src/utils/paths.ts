@@ -39,6 +39,9 @@ const paths = {
   organization: function ({ slug }: { slug: string }) {
     return `/dashboard/${slug}`;
   },
+  organizationSettings: function ({ slug }: { slug: string }) {
+    return `/dashboard/${slug}/settings`;
+  },
   workspace: function (slug: string, workspaceSlug: string) {
     return `/dashboard/${slug}/workspace/${workspaceSlug}`;
   },
