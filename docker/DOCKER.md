@@ -41,6 +41,7 @@ is not `http://localhost:3001` and instead is something like `http://193.xx.xx.x
 ```
 # frontend/.env.production
 GENERATE_SOURCEMAP=false
+VITE_APP_NAME="Vector Admin"
 VITE_API_BASE="http://<YOUR_REACHABLE_IP_ADDRESS>:3001/api"
 ```
 For example, if the docker instance is available on `192.186.1.222` your `VITE_API_BASE` would look like `VITE_API_BASE="http://192.186.1.222:3001/api"` in `frontend/.env.production`.
