@@ -87,7 +87,28 @@ In separate terminal windows from project root:
 
 On first boot of the system you will be prompted to login. Consult the `backend/.env.development` and set or use the `SYS_EMAIL` and `SYS_PASSWORD` values. Once your new account is setup the root credentials will no longer work and you can use your admin account.
 
-### Contributing
+## Contributing
 - create issue
 - create PR with branch name format of `<issue number>-<short name>`
 - yee haw let's merge
+
+## Telemetry
+VectorAdmin by Mintplex Labs Inc contains a telemetry feature that collects anonymous usage information.
+
+### Why?
+We use this information to help us understand how VectorAdmin is used, to help us prioritize work on new features and bug fixes, and to help us improve VectorAdmin's performance and stability.
+
+### Opting out
+Set `DISABLE_TELEMETRY` in your server or docker .env settings to "true" to opt out of telemetry.
+
+```
+DISABLE_TELEMETRY="true"
+```
+
+### What do you explicitly track?
+We will only track usage details that help us make product and roadmap decisions, specifically:
+- Server is started or booted up.
+- Version of your installation.
+- Type of job when executed. 
+
+You can verify these claims by finding all locations `Telemetry.sendTelemetry` is called. Additionally these events are written to the output log so you can also see the specific data which was sent - if enabled. No IP or other identifying information is collected. The Telemetry provider is [PostHog](https://posthog.com/) - an open-source telemetry collection service.

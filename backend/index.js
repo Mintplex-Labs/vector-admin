@@ -11,6 +11,7 @@ const { systemInit } = require("./utils/boot");
 const { authenticationEndpoints } = require("./endpoints/auth");
 const { v1Endpoints } = require("./endpoints/v1");
 const { setupDebugger } = require("./utils/debug");
+const { Telemetry } = require("./models/telemetry");
 const app = express();
 const apiRouter = express.Router();
 
@@ -53,9 +54,11 @@ app
   })
   .on("error", function (err) {
     process.once("SIGUSR2", function () {
+      Telemetry.flush();
       process.kill(process.pid, "SIGUSR2");
     });
     process.on("SIGINT", function () {
+      Telemetry.flush();
       process.kill(process.pid, "SIGINT");
     });
   });

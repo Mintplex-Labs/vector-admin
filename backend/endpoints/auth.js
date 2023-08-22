@@ -2,6 +2,7 @@ process.env.NODE_ENV === "development"
   ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
   : require("dotenv").config();
 const { SystemSettings } = require("../models/systemSettings");
+const { Telemetry } = require("../models/telemetry");
 const { User } = require("../models/user");
 const { reqBody, makeJWT } = require("../utils/http");
 const bcrypt = require("bcrypt");
@@ -56,6 +57,7 @@ function authenticationEndpoints(app) {
         return;
       }
 
+      await Telemetry.sendTelemetry("login_event");
       response.status(200).json({
         valid: true,
         user: existingUser,

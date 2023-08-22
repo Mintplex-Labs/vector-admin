@@ -45,6 +45,7 @@ const Queue = {
     return db;
   },
   create: async function (task, data = {}, userId = null, organizationId) {
+    const { Telemetry } = require("./telemetry");
     const db = await this.db();
     const { id, success, message } = await db
       .run(
@@ -68,7 +69,7 @@ const Queue = {
       `SELECT * FROM ${this.tablename} WHERE id = ${id}`
     );
     await db.close();
-
+    await Telemetry.sendTelemetry(`job_queued`, { name: task });
     return { job, error: null };
   },
   get: async function (clause = "") {

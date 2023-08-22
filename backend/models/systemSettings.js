@@ -7,6 +7,7 @@ const SystemSettings = {
     "open_ai_api_key",
     "debug_username",
     "debug_pwd",
+    "telemetry_id",
   ],
   privateField: ["open_ai_api_key"],
   tablename: "system_settings",
