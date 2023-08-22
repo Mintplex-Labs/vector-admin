@@ -31,3 +31,19 @@ Once your organization is connected you will need to put in your Pinecone config
 When trying to connect to a Chroma instance running also on the same machine use `http://host.docker.internal:[CHROMA_PORT]` as the URL to connect with.
 
 Once connected you may see a `Sync Chroma Data` button on the organization homepage. This indicates there is existing data in your vector database that can be pulled in. If syncing, the time to sync is dependent on how many documents you have embedded in Chroma. Otherwise, you can just create a workspace and add documents via the UI.
+
+
+## Common questions and fixes
+
+### API is not working, cannot login?
+You are likely running the docker container on a remote machine like EC2 or some other instance where the reachable URL
+is not `http://localhost:3001` and instead is something like `http://193.xx.xx.xx:3001` - in this case all you need to do is add the following to your `frontend/.env.production` before running `docker-compose up -d --build`
+```
+# frontend/.env.production
+GENERATE_SOURCEMAP=false
+VITE_API_BASE="http://<YOUR_REACHABLE_IP_ADDRESS>:3001/api"
+```
+For example, if the docker instance is available on `192.186.1.222` your `VITE_API_BASE` would look like `VITE_API_BASE="http://192.186.1.222:3001/api"` in `frontend/.env.production`.
+
+### Still not working?
+[Ask for help on Discord](https://discord.gg/6UyHPeGZAC)
