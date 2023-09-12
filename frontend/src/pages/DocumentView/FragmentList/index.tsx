@@ -5,6 +5,7 @@ import truncate from 'truncate';
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import paths from '../../../utils/paths';
+import DocumentListPagination from '../../../components/DocumentPaginator';
 const DeleteEmbeddingConfirmation = lazy(
   () => import('./DeleteEmbeddingConfirmation')
 );
@@ -23,6 +24,16 @@ export default function FragmentList({
   const [loading, setLoading] = useState(true);
   const [fragments, setFragments] = useState([]);
   const [sourceDoc, setSourceDoc] = useState(null);
+
+  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(fragments.length / itemsPerPage);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   const deleteDocument = async () => {
     if (!document) return false;
     if (
@@ -107,20 +118,30 @@ export default function FragmentList({
                 </tr>
               </thead>
               <tbody>
-                {fragments.map((fragment) => {
-                  return (
-                    <Fragment
-                      key={fragment.id}
-                      fragment={fragment}
-                      sourceDoc={sourceDoc}
-                      canEdit={canEdit}
-                    />
-                  );
-                })}
+                {fragments
+                  .slice(
+                    (currentPage - 1) * itemsPerPage,
+                    currentPage * itemsPerPage
+                  )
+                  .map((fragment) => {
+                    return (
+                      <Fragment
+                        key={fragment.id}
+                        fragment={fragment}
+                        sourceDoc={sourceDoc}
+                        canEdit={canEdit}
+                      />
+                    );
+                  })}
               </tbody>
             </table>
           )}
         </div>
+        <DocumentListPagination
+          pageCount={totalPages}
+          currentPage={currentPage}
+          gotoPage={handlePageChange}
+        />
       </div>
     </>
   );
