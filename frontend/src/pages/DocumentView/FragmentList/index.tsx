@@ -24,11 +24,12 @@ export default function FragmentList({
   const [loading, setLoading] = useState(true);
   const [fragments, setFragments] = useState([]);
   const [sourceDoc, setSourceDoc] = useState(null);
+  const [totalFragments, setTotalFragments] = useState(0);
 
-  const itemsPerPage = 10;
+  const pageSize = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(fragments.length / itemsPerPage);
+  const totalPages = Math.ceil(totalFragments / pageSize);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -47,17 +48,25 @@ export default function FragmentList({
     window.location.replace(paths.workspace(slug, workspaceSlug));
   };
 
+  const getFragments = async (page = 1) => {
+    if (!document?.id) return;
+    setLoading(true);
+    const { fragments: _fragments, totalFragments } = await Document.fragments(
+      document.id,
+      page,
+      pageSize
+    );
+
+    setFragments(_fragments);
+    setTotalFragments(totalFragments);
+    const _src = await Document.source(document.id);
+    setSourceDoc(_src);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    async function getFragments() {
-      if (!document?.id) return;
-      const _fragments = await Document.fragments(document.id);
-      const _src = await Document.source(document.id);
-      setFragments(_fragments);
-      setSourceDoc(_src);
-      setLoading(false);
-    }
-    getFragments();
-  }, [document]);
+    getFragments(currentPage);
+  }, [document, currentPage]);
 
   return (
     <>
@@ -118,21 +127,16 @@ export default function FragmentList({
                 </tr>
               </thead>
               <tbody>
-                {fragments
-                  .slice(
-                    (currentPage - 1) * itemsPerPage,
-                    currentPage * itemsPerPage
-                  )
-                  .map((fragment) => {
-                    return (
-                      <Fragment
-                        key={fragment.id}
-                        fragment={fragment}
-                        sourceDoc={sourceDoc}
-                        canEdit={canEdit}
-                      />
-                    );
-                  })}
+                {fragments.map((fragment) => {
+                  return (
+                    <Fragment
+                      key={fragment.id}
+                      fragment={fragment}
+                      sourceDoc={sourceDoc}
+                      canEdit={canEdit}
+                    />
+                  );
+                })}
               </tbody>
             </table>
           )}
