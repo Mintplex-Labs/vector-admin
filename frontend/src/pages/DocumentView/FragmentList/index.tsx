@@ -5,12 +5,14 @@ import truncate from 'truncate';
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import paths from '../../../utils/paths';
+import DocumentListPagination from '../../../components/DocumentPaginator';
 const DeleteEmbeddingConfirmation = lazy(
   () => import('./DeleteEmbeddingConfirmation')
 );
 const EditEmbeddingConfirmation = lazy(
   () => import('./EditEmbeddingConfirmation')
 );
+const PAGE_SIZE = 10;
 
 export default function FragmentList({
   document,
@@ -23,6 +25,14 @@ export default function FragmentList({
   const [loading, setLoading] = useState(true);
   const [fragments, setFragments] = useState([]);
   const [sourceDoc, setSourceDoc] = useState(null);
+  const [totalFragments, setTotalFragments] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(totalFragments / PAGE_SIZE);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   const deleteDocument = async () => {
     if (!document) return false;
     if (
@@ -36,17 +46,32 @@ export default function FragmentList({
     window.location.replace(paths.workspace(slug, workspaceSlug));
   };
 
+  const getFragments = async (page = 1) => {
+    if (!document?.id) return;
+    setLoading(true);
+    const { fragments: _fragments, totalFragments } = await Document.fragments(
+      document.id,
+      page,
+      PAGE_SIZE
+    );
+    setFragments(_fragments);
+    setTotalFragments(totalFragments);
+    setLoading(false);
+  };
+
+  // Only load source document on page load.
   useEffect(() => {
-    async function getFragments() {
+    async function downloadSource() {
       if (!document?.id) return;
-      const _fragments = await Document.fragments(document.id);
       const _src = await Document.source(document.id);
-      setFragments(_fragments);
       setSourceDoc(_src);
-      setLoading(false);
     }
-    getFragments();
+    downloadSource();
   }, [document]);
+
+  useEffect(() => {
+    getFragments(currentPage);
+  }, [document, currentPage]);
 
   return (
     <>
@@ -121,6 +146,11 @@ export default function FragmentList({
             </table>
           )}
         </div>
+        <DocumentListPagination
+          pageCount={totalPages}
+          currentPage={currentPage}
+          gotoPage={handlePageChange}
+        />
       </div>
     </>
   );

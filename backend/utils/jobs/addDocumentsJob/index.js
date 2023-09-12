@@ -16,11 +16,15 @@ async function addDocumentJob(
     organization.id
   );
   if (!!error) return { job, error };
+
   await Queue.sendJob({
     name: taskName,
     data: {
       jobId: job.id,
-      ...jobData,
+      organization,
+      workspace,
+      connector,
+      // we don't pass documents in the event directly as it may be very large.
     },
   });
   return { job, error: null };

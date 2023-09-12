@@ -13,8 +13,22 @@ const addChromaDocuments = InngestClient.createFunction(
   { event: 'chroma/addDocument' },
   async ({ event, step: _step, logger }) => {
     var result = {};
-    const { documents, organization, workspace, connector, jobId } = event.data;
+    // Sometimes the passed in document may have very large pageContent, so we load it from the DB
+    // instead of passing it on the event object - which will crash Inngest.
+    const { jobId } = event.data;
+    const job = await Queue.get(`id = ${jobId}`);
 
+    if (!job) {
+      result = {
+        message: `No job data found for this operation.`,
+      };
+      await Queue.updateJob(jobId, Queue.status.failed, result);
+      return { result };
+    }
+
+    const { documents, organization, workspace, connector } = JSON.parse(
+      job.data
+    );
     try {
       const openAiSetting = await SystemSettings.get(
         `label = 'open_ai_api_key'`

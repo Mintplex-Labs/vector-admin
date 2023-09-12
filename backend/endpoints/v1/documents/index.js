@@ -94,14 +94,26 @@ function documentEndpoints(app) {
     async function (request, response) {
       try {
         const { id } = request.params;
+        const page = parseInt(request.query.page) || 1;
+        const pageSize = parseInt(request.query.pageSize) || 10;
+
         const user = await userFromSession(request);
         if (!user) {
           response.sendStatus(403).end();
           return;
         }
 
-        const fragments = await DocumentVectors.where(`document_id = ${id}`);
-        response.status(200).json({ fragments });
+        const offset = (page - 1) * pageSize;
+        const fragments = await DocumentVectors.where(
+          `document_id = ${id}`,
+          pageSize,
+          `OFFSET ${offset}`
+        );
+
+        const totalFragments = await DocumentVectors.count(
+          `document_id = ${id}`
+        );
+        response.status(200).json({ fragments, totalFragments });
       } catch (e) {
         console.log(e.message, e);
         response.sendStatus(500).end();
@@ -234,6 +246,9 @@ function documentEndpoints(app) {
           });
           return data;
         });
+
+        // Set cache-control to retain this file for 1 hour.
+        response.set("Cache-control", `public, max-age=${60 * 60}`);
         response.status(200).json({ ...source });
       } catch (e) {
         console.log(e);

@@ -18,7 +18,7 @@ const Document = {
   source: async (id: string | number) => {
     return fetch(`${API_BASE}/v1/document/${id}/source`, {
       method: 'GET',
-      cache: 'no-cache',
+      cache: 'default',
       headers: baseHeaders(),
     })
       .then((res) => res.json())
@@ -28,17 +28,28 @@ const Document = {
         return null;
       });
   },
-  fragments: async (id: string) => {
-    return fetch(`${API_BASE}/v1/document/${id}/fragments`, {
-      method: 'GET',
-      cache: 'no-cache',
-      headers: baseHeaders(),
-    })
+  fragments: async (id: string, page: number = 1, pageSize: number = 10) => {
+    return fetch(
+      `${API_BASE}/v1/document/${id}/fragments?page=${page}&pageSize=${pageSize}`,
+      {
+        method: 'GET',
+        cache: 'no-cache',
+        headers: baseHeaders(),
+      }
+    )
       .then((res) => res.json())
-      .then((res) => res?.fragments || [])
+      .then((res) => {
+        return {
+          fragments: res?.fragments || [],
+          totalFragments: res?.totalFragments || 0,
+        };
+      })
       .catch((e) => {
         console.error(e);
-        return [];
+        return {
+          fragments: [],
+          totalFragments: 0,
+        };
       });
   },
   deleteFragment: async (id: string | number) => {
