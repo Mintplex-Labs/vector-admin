@@ -246,6 +246,9 @@ function documentEndpoints(app) {
           });
           return data;
         });
+
+        // Set cache-control to retain this file for 1 hour.
+        response.set("Cache-control", `public, max-age=${60 * 60}`);
         response.status(200).json({ ...source });
       } catch (e) {
         console.log(e);

@@ -18,7 +18,7 @@ const Document = {
   source: async (id: string | number) => {
     return fetch(`${API_BASE}/v1/document/${id}/source`, {
       method: 'GET',
-      cache: 'no-cache',
+      cache: 'default',
       headers: baseHeaders(),
     })
       .then((res) => res.json())

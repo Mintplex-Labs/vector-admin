@@ -12,6 +12,7 @@ const DeleteEmbeddingConfirmation = lazy(
 const EditEmbeddingConfirmation = lazy(
   () => import('./EditEmbeddingConfirmation')
 );
+const PAGE_SIZE = 10;
 
 export default function FragmentList({
   document,
@@ -25,11 +26,8 @@ export default function FragmentList({
   const [fragments, setFragments] = useState([]);
   const [sourceDoc, setSourceDoc] = useState(null);
   const [totalFragments, setTotalFragments] = useState(0);
-
-  const pageSize = 10;
   const [currentPage, setCurrentPage] = useState(1);
-
-  const totalPages = Math.ceil(totalFragments / pageSize);
+  const totalPages = Math.ceil(totalFragments / PAGE_SIZE);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -54,15 +52,22 @@ export default function FragmentList({
     const { fragments: _fragments, totalFragments } = await Document.fragments(
       document.id,
       page,
-      pageSize
+      PAGE_SIZE
     );
-
     setFragments(_fragments);
     setTotalFragments(totalFragments);
-    const _src = await Document.source(document.id);
-    setSourceDoc(_src);
     setLoading(false);
   };
+
+  // Only load source document on page load.
+  useEffect(() => {
+    async function downloadSource() {
+      if (!document?.id) return;
+      const _src = await Document.source(document.id);
+      setSourceDoc(_src);
+    }
+    downloadSource();
+  }, [document]);
 
   useEffect(() => {
     getFragments(currentPage);
