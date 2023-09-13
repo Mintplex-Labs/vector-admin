@@ -134,13 +134,7 @@ const EditEmbeddingConfirmation = memo(
 
     const debouncedTokenLengthCheck = debounce(checkTokenSize, 500);
     return (
-      <dialog
-        id={`${fragment.id}-edit-embedding`}
-        className="w-1/2 rounded-lg"
-        onClick={(event) =>
-          event.target == event.currentTarget && event.currentTarget?.close()
-        }
-      >
+      <dialog id={`${fragment.id}-edit-embedding`} className="w-1/2 rounded-lg">
         <div className="my-4 flex w-full flex-col gap-y-1 p-[20px]">
           <p className="text-lg font-semibold text-blue-600">Edit embedding</p>
           <p className="text-sm text-slate-800">

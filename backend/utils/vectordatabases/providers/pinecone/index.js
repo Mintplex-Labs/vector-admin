@@ -363,6 +363,25 @@ class Pinecone {
       return { success: false, message: e.message };
     }
   }
+
+  async getMetadata(namespace = "", vectorIds = []) {
+    const { pineconeIndex } = await this.connect();
+
+    const { vectors } = await pineconeIndex.fetch({
+      ids: vectorIds,
+      namespace,
+    });
+    const metadatas = [];
+
+    Object.values(vectors)?.forEach((vector, i) => {
+      metadatas.push({
+        vectorId: vector.id,
+        ...(vector?.metadata || {}),
+      });
+    });
+
+    return metadatas;
+  }
 }
 
 module.exports.Pinecone = Pinecone;
