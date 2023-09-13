@@ -18,10 +18,10 @@ const {
 const {
   createDeleteEmbeddingJob,
 } = require("../../../utils/jobs/createDeleteEmbeddingJob");
-const { readJSON } = require("../../../utils/storage");
 const { validEmbedding } = require("../../../utils/tokenizer");
 const { documentDeletedJob } = require("../../../utils/jobs/documentDeleteJob");
 const { cloneDocumentJob } = require("../../../utils/jobs/cloneDocumentJob");
+const { selectConnector } = require("../../../utils/vectordatabases/providers");
 
 process.env.NODE_ENV === "development"
   ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
@@ -224,12 +224,13 @@ function documentEndpoints(app) {
     }
   );
 
-  app.get(
-    "/v1/document/:id/source",
+  app.post(
+    "/v1/document/:id/metadatas",
     [validSessionForUser],
     async function (request, response) {
       try {
         const { id } = request.params;
+        const { vectorIds } = reqBody(request);
         const user = await userFromSession(request);
         if (!user) {
           response.sendStatus(403).end();
@@ -237,19 +238,26 @@ function documentEndpoints(app) {
         }
 
         const document = await WorkspaceDocument.get(`id = ${id}`);
-        const filepath = WorkspaceDocument.vectorFilepath(document);
-        console.log(filepath);
-        const source = await readJSON(filepath).then((res) => {
-          const data = {};
-          Object.values(res).map((d) => {
-            data[d.vectorDbId] = { ...d };
-          });
-          return data;
-        });
+        if (!document) {
+          response.sendStatus(404).end();
+          return;
+        }
 
-        // Set cache-control to retain this file for 1 hour.
-        response.set("Cache-control", `public, max-age=${60 * 60}`);
-        response.status(200).json({ ...source });
+        const workspace = await OrganizationWorkspace.get(
+          `id = ${document.workspace_id}`
+        );
+        const connector = await OrganizationConnection.get(
+          `organization_id = ${document.organization_id}`
+        );
+
+        const VectorDb = selectConnector(connector);
+        const results = await VectorDb.getMetadata(workspace.slug, vectorIds);
+        const items = {};
+
+        results?.forEach((metadata) => {
+          items[metadata.vectorId] = { metadata };
+        });
+        response.status(200).json(items);
       } catch (e) {
         console.log(e);
         response.sendStatus(500).end();

@@ -54,20 +54,14 @@ export default function FragmentList({
       page,
       PAGE_SIZE
     );
+    const vectorIds = _fragments.map((fragment) => fragment.vectorId);
+    const metadataForIds = await Document.metadatas(document.id, vectorIds);
+
     setFragments(_fragments);
     setTotalFragments(totalFragments);
+    setSourceDoc(metadataForIds);
     setLoading(false);
   };
-
-  // Only load source document on page load.
-  useEffect(() => {
-    async function downloadSource() {
-      if (!document?.id) return;
-      const _src = await Document.source(document.id);
-      setSourceDoc(_src);
-    }
-    downloadSource();
-  }, [document]);
 
   useEffect(() => {
     getFragments(currentPage);

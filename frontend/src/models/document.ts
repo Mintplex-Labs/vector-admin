@@ -15,10 +15,11 @@ const Document = {
         return null;
       });
   },
-  source: async (id: string | number) => {
-    return fetch(`${API_BASE}/v1/document/${id}/source`, {
-      method: 'GET',
-      cache: 'default',
+  metadatas: async (id: string, vectorIds: string[]) => {
+    return fetch(`${API_BASE}/v1/document/${id}/metadatas`, {
+      method: 'POST',
+      cache: 'no-cache',
+      body: JSON.stringify({ vectorIds }),
       headers: baseHeaders(),
     })
       .then((res) => res.json())
