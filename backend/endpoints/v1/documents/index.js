@@ -18,7 +18,6 @@ const {
 const {
   createDeleteEmbeddingJob,
 } = require("../../../utils/jobs/createDeleteEmbeddingJob");
-const { readJSON } = require("../../../utils/storage");
 const { validEmbedding } = require("../../../utils/tokenizer");
 const { documentDeletedJob } = require("../../../utils/jobs/documentDeleteJob");
 const { cloneDocumentJob } = require("../../../utils/jobs/cloneDocumentJob");
