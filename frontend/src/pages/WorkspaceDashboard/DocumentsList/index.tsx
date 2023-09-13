@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import paths from '../../../utils/paths';
 import moment from 'moment';
-import { AlertOctagon, FileText } from 'react-feather';
+import { AlertOctagon, FileText, Search } from 'react-feather';
 // import { CodeBlock, vs2015 } from 'react-code-blocks';
 import { useEffect, useState } from 'react';
 import truncate from 'truncate';
@@ -14,6 +14,7 @@ import useQuery from '../../../hooks/useQuery';
 import { APP_NAME } from '../../../utils/constants';
 import { useParams } from 'react-router-dom';
 import DocumentListPagination from '../../../components/DocumentPaginator';
+import SearchView from './SearchView';
 
 export default function DocumentsList({
   knownConnector,
@@ -28,6 +29,7 @@ export default function DocumentsList({
 }) {
   const query = useQuery();
   const [loading, setLoading] = useState(true);
+  const [searchMode, setSearchMode] = useState(false);
   const [documents, setDocuments] = useState([]);
   const [totalDocuments, setTotalDocuments] = useState(0);
   const [canUpload, setCanUpload] = useState(false);
@@ -91,14 +93,34 @@ export default function DocumentsList({
     );
   }
 
+  if (searchMode)
+    return (
+      <SearchView
+        organization={organization}
+        workspace={workspace}
+        workspaces={workspaces}
+        stopSearching={() => setSearchMode(false)}
+        deleteDocument={deleteDocument}
+      />
+    );
+
   return (
     <>
       <div className="col-span-12 flex-1 rounded-sm border border-stroke bg-white py-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
         <div className="flex items-start justify-between px-4">
-          <div>
-            <h4 className="mb-6 px-4 text-xl font-semibold text-black dark:text-white">
+          <div className="mb-6 flex items-center gap-x-2">
+            <h4 className="px-4 text-xl font-semibold text-black dark:text-white">
               Documents {totalDocuments! > 0 ? `(${totalDocuments})` : ''}
             </h4>
+            <button
+              onClick={() => setSearchMode(true)}
+              className="group flex items-center gap-2 rounded-lg bg-transparent px-4 py-2 hover:bg-blue-300/20"
+            >
+              <Search size={20} className="text-blue-600" />
+              <p className="pointer-events-none translate-y-[20px] text-blue-600 opacity-0 transition-all duration-[300ms] group-hover:translate-y-[0px] group-hover:opacity-100">
+                Search documents in workspace
+              </p>
+            </button>
           </div>
           {!!knownConnector ? (
             <button
@@ -256,7 +278,7 @@ export default function DocumentsList({
   );
 }
 
-const CopyDocToModal = memo(
+export const CopyDocToModal = memo(
   ({
     document,
     workspace,
