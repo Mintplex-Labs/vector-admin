@@ -1,17 +1,14 @@
-// export type ISearchTypes = 'semantic' | 'exactText' | 'metadata' | 'vectorId';
+const { Telemetry } = require("../../../models/telemetry");
 const { exactTextSearch } = require("./exactText");
+const { metadataSearch } = require("./metadata");
+const { semanticSearch } = require("./semantic");
+const { vectorIdSearch } = require("./vectorId");
 
 const SEARCH_METHODS = {
-  semantic: () => {
-    return { documents: [], error: "unsupported" };
-  },
+  semantic: semanticSearch,
   exactText: exactTextSearch,
-  metadata: () => {
-    return { documents: [], error: "unsupported" };
-  },
-  vectorId: () => {
-    return { documents: [], error: "unsupported" };
-  },
+  metadata: metadataSearch,
+  vectorId: vectorIdSearch,
 };
 
 function validSearchMethod(method) {
@@ -22,7 +19,8 @@ async function workspaceDocumentSearch(workspace, method, query) {
   try {
     if (!validSearchMethod(method))
       throw new Error(`Invalid search method ${method}`);
-    return await SEARCH_METHODS[method](workspace, query);
+    await Telemetry.sendTelemetry("search_executed", { searchMethod: method });
+    return await SEARCH_METHODS[method](workspace, decodeURIComponent(query));
   } catch (e) {
     console.error("Workspace document search", e.message);
     return { documents: [], error: e.message };

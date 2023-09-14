@@ -211,6 +211,28 @@ class Chroma {
       return { success: false, message: e.message };
     }
   }
+
+  async similarityResponse(namespace, queryVector) {
+    const { client } = await this.connect();
+    const collection = await client.getCollection({ name: namespace });
+    const result = {
+      vectorIds: [],
+      contextTexts: [],
+      sourceDocuments: [],
+    };
+
+    const response = await collection.query({
+      queryEmbeddings: queryVector,
+      nResults: 4,
+    });
+    response.ids[0].forEach((_, i) => {
+      result.vectorIds.push(response.ids[0][i]);
+      result.contextTexts.push(response.documents[0][i]);
+      result.sourceDocuments.push(response.metadatas[0][i]);
+    });
+
+    return result;
+  }
 }
 
 module.exports.Chroma = Chroma;

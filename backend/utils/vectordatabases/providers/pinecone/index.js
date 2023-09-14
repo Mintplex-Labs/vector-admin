@@ -363,6 +363,31 @@ class Pinecone {
       return { success: false, message: e.message };
     }
   }
+
+  async similarityResponse(namespace, queryVector) {
+    const { pineconeIndex } = await this.connect();
+    const result = {
+      vectorIds: [],
+      contextTexts: [],
+      sourceDocuments: [],
+    };
+    const response = await pineconeIndex.query({
+      queryRequest: {
+        namespace,
+        vector: queryVector,
+        topK: 4,
+        includeMetadata: true,
+      },
+    });
+
+    response.matches.forEach((match) => {
+      result.vectorIds.push(match.id);
+      result.contextTexts.push(match.metadata.text);
+      result.sourceDocuments.push(match);
+    });
+
+    return result;
+  }
 }
 
 module.exports.Pinecone = Pinecone;

@@ -10,13 +10,13 @@ export type ISearchTypes = 'semantic' | 'exactText' | 'metadata' | 'vectorId';
 
 const SEARCH_MODES = {
   exactText: {
-    display: 'Exact Text Search',
-    placeholder: 'Find documents with exact text matches as your query.',
+    display: 'Fuzzy Text Search',
+    placeholder: 'Find documents via a fuzzy text match on your query.',
   },
   semantic: {
     display: 'Semantic Search',
     placeholder:
-      'Search with natural language finding the most similar text by meaning.',
+      'Search with natural language finding the most similar text by meaning. Use of this search will cost OpenAI credits to embed the query.',
   },
   metadata: {
     display: 'Metadata',
@@ -25,7 +25,7 @@ const SEARCH_MODES = {
   },
   vectorId: {
     display: 'Vector Id',
-    placeholder: 'Find documents which contain a specific vector ID',
+    placeholder: 'Find a document which contains a specific vector ID',
   },
 };
 
@@ -45,19 +45,25 @@ export default function SearchView({
   const [searching, setSearching] = useState(false);
   const [showSearchMethods, setShowSearchMethods] = useState(false);
   const [searchBy, setSearchBy] = useState<ISearchTypes>('exactText');
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [documents, setDocuments] = useState([]);
   const clearSearch = () => {
     setSearchBy('semantic');
+    setSearchTerm('')
     setDocuments([]);
     setSearching(false);
     stopSearching();
   };
   const handleSearch = async (e: SyntheticEvent<HTMLElement, SubmitEvent>) => {
     e.preventDefault();
-    const formData = new FormData(e.target as any)
-    // setSearching(true)
-    const matches = await Workspace.searchDocuments(workspace.id, searchBy, formData.get('query') as string);
+    const formData = new FormData(e.target as any);
+    const query = formData.get('query') as string;
+
+    setSearching(true)
+    setSearchTerm(query)
+    const matches = await Workspace.searchDocuments(workspace.id, searchBy, query);
     setDocuments(matches);
+    setSearching(false)
   }
 
   return (
@@ -129,113 +135,130 @@ export default function SearchView({
         </form>
       </div>
 
-      {documents.length > 0 ? (
+      {searching ? (
         <div>
-          <div className="border-b border-stroke px-4 pb-5 dark:border-strokedark md:px-6 xl:px-7.5">
-            <div className="flex items-center gap-3">
-              <div className="w-2/12 xl:w-3/12">
-                <span className="font-medium">Document Name</span>
-              </div>
-              <div className="w-6/12 2xsm:w-5/12 md:w-3/12">
-                <span className="font-medium">Workspace</span>
-              </div>
-              <div className="hidden w-4/12 md:block xl:w-3/12">
-                <span className="font-medium">Created</span>
-              </div>
-              <div className="w-5/12 2xsm:w-4/12 md:w-3/12 xl:w-2/12">
-                <span className="font-medium">Status</span>
-              </div>
-              <div className="hidden w-2/12 text-center 2xsm:block md:w-1/12">
-                <span className="font-medium"></span>
-              </div>
+          <div className="flex min-h-[40vh] w-full px-8">
+            <div className="flex flex h-auto w-full flex-col items-center justify-center gap-y-2 rounded-lg bg-slate-50">
+              <Loader size={15} className='animate-spin rounded-sm' />
+              <p className="text-sm">Running {SEARCH_MODES[searchBy].display} for <code className='bg-gray-200 px-2'>"{searchTerm}"</code></p>
             </div>
           </div>
-          <>
-            {documents.map((document) => {
-              return (
-                <div
-                  id={`document-row-${document.id}`}
-                  key={document.id}
-                  className="flex w-full items-center gap-5 px-7.5 py-3 text-gray-600 hover:bg-gray-3 dark:hover:bg-meta-4"
-                >
-                  <div className="flex w-full items-center gap-3">
-                    <div className="w-2/12 xl:w-3/12">
-                      <div className="flex items-center gap-x-1">
-                        <FileText className="h-4 w-4" />
-                        <span className="hidden font-medium xl:block">
-                          {truncate(document.name, 20)}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="w-6/12 2xsm:w-5/12 md:w-3/12">
-                      <span className="font-medium">
-                        {workspace.name || ''}
-                      </span>
-                    </div>
-                    <div className="hidden w-3/12 overflow-x-scroll md:block xl:w-3/12">
-                      <span className="font-medium">
-                        {moment.unix(document.createdAt).format('lll')}
-                      </span>
-                    </div>
-                    <div className="w-5/12 2xsm:w-4/12 md:w-3/12 xl:w-2/12">
-                      <span className="inline-block rounded bg-green-500 bg-opacity-25 px-2.5 py-0.5 text-sm font-medium text-green-500">
-                        Cached
-                      </span>
-                    </div>
-
-                    <div className=" flex items-center gap-x-2">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          window.document
-                            .getElementById(
-                              `copy-document-${document.id}-modal`
-                            )
-                            ?.showModal()
-                        }
-                        className="rounded-lg px-2 py-1 text-gray-400 transition-all duration-300 hover:bg-gray-50 hover:text-gray-600"
-                      >
-                        Clone
-                      </button>
-                      <a
-                        href={paths.document(
-                          organization.slug,
-                          workspace.slug,
-                          document.id
-                        )}
-                        className="rounded-lg px-2 py-1 text-blue-400 transition-all duration-300 hover:bg-blue-50 hover:text-blue-600"
-                      >
-                        Details
-                      </a>
-                      <button
-                        type="button"
-                        onClick={() => deleteDocument(document.id)}
-                        className="rounded-lg px-2 py-1 text-red-400 transition-all duration-300 hover:bg-red-50 hover:text-red-600"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                  <CopyDocToModal
-                    key={`copy-document-${document.id}`}
-                    document={document}
-                    workspace={workspace}
-                    workspaces={workspaces}
-                  />
-                </div>
-              );
-            })}
-          </>
         </div>
       ) : (
         <>
-          <div>
-            <div className="flex min-h-[40vh] w-full px-8">
-              <div className="flex flex h-auto w-full flex-col items-center justify-center gap-y-2 rounded-lg bg-slate-50">
-                <p className="text-sm">No search results found.</p>
+          {documents.length > 0 ? (
+            <div>
+              <div className="border-b border-stroke px-4 pb-5 dark:border-strokedark md:px-6 xl:px-7.5">
+                <div className="flex items-center gap-3">
+                  <div className="w-2/12 xl:w-3/12">
+                    <span className="font-medium">Document Name</span>
+                  </div>
+                  <div className="w-6/12 2xsm:w-5/12 md:w-3/12">
+                    <span className="font-medium">Workspace</span>
+                  </div>
+                  <div className="hidden w-4/12 md:block xl:w-3/12">
+                    <span className="font-medium">Created</span>
+                  </div>
+                  <div className="w-5/12 2xsm:w-4/12 md:w-3/12 xl:w-2/12">
+                    <span className="font-medium">Status</span>
+                  </div>
+                  <div className="hidden w-2/12 text-center 2xsm:block md:w-1/12">
+                    <span className="font-medium"></span>
+                  </div>
+                </div>
               </div>
+              <>
+                {documents.map((document) => {
+                  return (
+                    <div
+                      id={`document-row-${document.id}`}
+                      key={document.id}
+                      className="flex w-full items-center gap-5 px-7.5 py-3 text-gray-600 hover:bg-gray-3 dark:hover:bg-meta-4"
+                    >
+                      <div className="flex w-full items-center gap-3">
+                        <div className="w-2/12 xl:w-3/12">
+                          <div className="flex items-center gap-x-1">
+                            <FileText className="h-4 w-4" />
+                            <span className="hidden font-medium xl:block">
+                              {truncate(document.name, 20)}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="w-6/12 2xsm:w-5/12 md:w-3/12">
+                          <span className="font-medium">
+                            {workspace.name || ''}
+                          </span>
+                        </div>
+                        <div className="hidden w-3/12 overflow-x-scroll md:block xl:w-3/12">
+                          <span className="font-medium">
+                            {moment.unix(document.createdAt).format('lll')}
+                          </span>
+                        </div>
+                        <div className="w-5/12 2xsm:w-4/12 md:w-3/12 xl:w-2/12">
+                          <span className="inline-block rounded bg-green-500 bg-opacity-25 px-2.5 py-0.5 text-sm font-medium text-green-500">
+                            Cached
+                          </span>
+                        </div>
+
+                        <div className=" flex items-center gap-x-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              window.document
+                                .getElementById(
+                                  `copy-document-${document.id}-modal`
+                                )
+                                ?.showModal()
+                            }
+                            className="rounded-lg px-2 py-1 text-gray-400 transition-all duration-300 hover:bg-gray-50 hover:text-gray-600"
+                          >
+                            Clone
+                          </button>
+                          <a
+                            href={paths.document(
+                              organization.slug,
+                              workspace.slug,
+                              document.id
+                            )}
+                            className="rounded-lg px-2 py-1 text-blue-400 transition-all duration-300 hover:bg-blue-50 hover:text-blue-600"
+                          >
+                            Details
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => deleteDocument(document.id)}
+                            className="rounded-lg px-2 py-1 text-red-400 transition-all duration-300 hover:bg-red-50 hover:text-red-600"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                      <CopyDocToModal
+                        key={`copy-document-${document.id}`}
+                        document={document}
+                        workspace={workspace}
+                        workspaces={workspaces}
+                      />
+                    </div>
+                  );
+                })}
+              </>
             </div>
-          </div>
+          ) : (
+            <>
+              <div>
+                <div className="flex min-h-[40vh] w-full px-8">
+                  <div className="flex flex h-auto w-full flex-col items-center justify-center gap-y-2 rounded-lg bg-slate-50">
+                    {!!searchTerm ? (
+                      <p className="text-sm">No results on {SEARCH_MODES[searchBy].display} for <code className='bg-gray-200 px-2'>"{searchTerm}"</code></p>
+                    ) : (
+                      <p className="text-sm">Type in a query to search for a document</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </>
       )}
     </div>
