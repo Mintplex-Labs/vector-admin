@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import Organization from '../../../models/organization';
+import { Loader } from 'react-feather';
+import paths from '../../../utils/paths';
 
 export default function OrgSettings({ organization }: { organization: any }) {
   const [hasOrgChanges, setHasOrgChanges] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [result, setResult] = useState<{
     show: boolean;
     success: boolean;
@@ -22,6 +25,24 @@ export default function OrgSettings({ organization }: { organization: any }) {
     );
     setResult({ show: true, success, error });
     success && setHasOrgChanges(false);
+  };
+
+  const handleDelete = async () => {
+    if (
+      !confirm(
+        'Are you sure you want to do this. All associated information will be deleted.\n\nThis operation will ONLY remove information from Vector Admin and will not remove any data from your connected vector database.'
+      )
+    )
+      return false;
+    setDeleting(true);
+    const { success, error } = await Organization.deleteOrg(organization.slug);
+    if (!success) {
+      alert(error);
+      setDeleting(false);
+      return;
+    }
+
+    window.location.replace(paths.home());
   };
 
   return (
@@ -80,6 +101,17 @@ export default function OrgSettings({ organization }: { organization: any }) {
             </div>
           </div>
         </form>
+
+        <div className="my-2 flex w-full">
+          <button
+            disabled={deleting}
+            onClick={handleDelete}
+            className="flex items-center gap-x-1 rounded-lg bg-red-100 px-4 py-2 text-red-400 hover:bg-red-600 hover:text-white disabled:cursor-wait disabled:bg-red-600 disabled:text-white"
+          >
+            <Loader hidden={!deleting} size={16} className="animate-spin" />
+            {deleting ? 'Removing Organization' : 'Delete Organization'}
+          </button>
+        </div>
       </div>
     </div>
   );

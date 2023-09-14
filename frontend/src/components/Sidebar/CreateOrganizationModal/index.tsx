@@ -69,8 +69,6 @@ export default function CreateOrganizationModal() {
               <p className="my-2 rounded-lg border border-orange-800 bg-orange-100 p-2 text-center text-sm text-orange-800">
                 Once your organization exists you can start workspaces and
                 documents.
-                <br />
-                <b>YOU CANNOT DELETE ORGANIZATIONS.</b>
               </p>
             </div>
           </form>

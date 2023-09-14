@@ -274,6 +274,20 @@ const Organization = {
         return { match: null };
       });
   },
+  deleteOrg: async (
+    slug: string
+  ): Promise<{ success: boolean; error: null | string }> => {
+    return fetch(`${API_BASE}/v1/org/${slug}`, {
+      method: 'DELETE',
+      cache: 'no-cache',
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        return { success: false, error: e.message };
+      });
+  },
 };
 
 export default Organization;

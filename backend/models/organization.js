@@ -174,6 +174,12 @@ const Organization = {
 
     return results;
   },
+  delete: async function (clause = null) {
+    const db = await this.db();
+    await db.exec(`DELETE FROM ${this.tablename} WHERE ${clause}`);
+    await db.close();
+    return;
+  },
 };
 
 module.exports.Organization = Organization;

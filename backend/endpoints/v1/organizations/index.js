@@ -15,6 +15,7 @@ const {
   validSessionForUser,
 } = require("../../../utils/http");
 const { createSyncJob } = require("../../../utils/jobs/createSyncJob");
+const { deleteVectorCacheFile } = require("../../../utils/storage");
 const { selectConnector } = require("../../../utils/vectordatabases/providers");
 const {
   validateNewDatabaseConnector,
@@ -707,6 +708,46 @@ function organizationEndpoints(app) {
       } catch (e) {
         console.log(e.message, e);
         response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.delete(
+    "/v1/org/:orgSlug",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { orgSlug } = request.params;
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
+
+        const organization = await Organization.getWithOwner(
+          user.id,
+          `slug = '${orgSlug}'`
+        );
+        if (!organization) {
+          response
+            .status(200)
+            .json({ success: false, error: "No org by that slug." });
+          return;
+        }
+
+        const documents = await WorkspaceDocument.where(
+          `organization_id = ${organization.id}`
+        );
+        for (const document of documents) {
+          const digestFilename = WorkspaceDocument.vectorFilename(document);
+          await deleteVectorCacheFile(digestFilename);
+        }
+
+        await Organization.delete(`id = ${organization.id}`);
+        response.status(200).json({ success: true, error: null });
+      } catch (e) {
+        console.log(e.message, e);
+        response.status(500).json({ success: false, error: e.message });
       }
     }
   );
