@@ -161,7 +161,7 @@ export default function FragmentList({
   );
 }
 
-export const Fragment = ({
+const Fragment = ({
   fragment,
   sourceDoc,
   canEdit,
@@ -253,7 +253,7 @@ export const Fragment = ({
   );
 };
 
-export const FullTextWindow = memo(
+const FullTextWindow = memo(
   ({ data, fragment }: { data: any; fragment: any }) => {
     return (
       <dialog id={`${fragment.id}-text`} className="w-1/2 rounded-lg">

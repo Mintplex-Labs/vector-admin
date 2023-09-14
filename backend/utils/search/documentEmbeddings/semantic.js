@@ -6,7 +6,6 @@ const {
   OrganizationWorkspace,
 } = require("../../../models/organizationWorkspace");
 const { SystemSettings } = require("../../../models/systemSettings");
-const { WorkspaceDocument } = require("../../../models/workspaceDocument");
 const { OpenAi } = require("../../openAi");
 const { selectConnector } = require("../../vectordatabases/providers");
 
@@ -43,7 +42,8 @@ async function semanticSearch(document, query) {
     .map((vid) => `'${vid}'`)
     .join(",");
   const fragments = await DocumentVectors.where(
-    `vectorId IN (${searchString})`
+    `vectorId IN (${searchString})`,
+    100
   );
   return { fragments, error: null };
 }

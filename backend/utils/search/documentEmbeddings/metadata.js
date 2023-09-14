@@ -1,14 +1,7 @@
+const { fuzzyMatch } = require("..");
 const { DocumentVectors } = require("../../../models/documentVectors");
 const { WorkspaceDocument } = require("../../../models/workspaceDocument");
 const { readJSON } = require("../../storage");
-
-// Dirty, but works fast for most cases. Wont be perfect but also not something we should rely
-// heavily on for exact text searching.
-function fuzzyMatch(pattern, str) {
-  pattern = ".*" + pattern.split("").join(".*") + ".*";
-  const re = new RegExp(pattern);
-  return re.test(str);
-}
 
 async function findKeyValueInDoc(wsDoc, query) {
   try {
@@ -40,7 +33,7 @@ async function metadataSearch(document, query) {
   const queryString = matchingVectorIds.map((vid) => `'${vid}'`).join(",");
   const fragments = await DocumentVectors.where(
     `vectorId IN (${queryString})`,
-    200
+    100
   );
   return { fragments, error: null };
 }
