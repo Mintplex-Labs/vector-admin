@@ -1,11 +1,12 @@
-import { useState } from 'react';
-import { ChevronDown, FileText, Search } from 'react-feather';
+import { SyntheticEvent, useState } from 'react';
+import { ChevronDown, FileText, Search, Loader } from 'react-feather';
 import { CopyDocToModal } from '..';
 import truncate from 'truncate';
 import moment from 'moment';
 import paths from '../../../../utils/paths';
+import Workspace from '../../../../models/workspace';
 
-type ISearchTypes = 'semantic' | 'exactText' | 'metadata' | 'vectorId';
+export type ISearchTypes = 'semantic' | 'exactText' | 'metadata' | 'vectorId';
 
 const SEARCH_MODES = {
   exactText: {
@@ -44,19 +45,25 @@ export default function SearchView({
   const [searching, setSearching] = useState(false);
   const [showSearchMethods, setShowSearchMethods] = useState(false);
   const [searchBy, setSearchBy] = useState<ISearchTypes>('exactText');
-  const [searchTerm, setSearchTem] = useState('');
   const [documents, setDocuments] = useState([]);
   const clearSearch = () => {
     setSearchBy('semantic');
-    setSearchTem('');
     setDocuments([]);
+    setSearching(false);
     stopSearching();
   };
+  const handleSearch = async (e: SyntheticEvent<HTMLElement, SubmitEvent>) => {
+    e.preventDefault();
+    const formData = new FormData(e.target as any)
+    // setSearching(true)
+    const matches = await Workspace.searchDocuments(workspace.id, searchBy, formData.get('query') as string);
+    setDocuments(matches);
+  }
 
   return (
     <div className="col-span-12 flex-1 rounded-sm border border-stroke bg-white py-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
       <div className="mx-4 mb-6 flex items-center">
-        <form className="w-full">
+        <form onSubmit={handleSearch} className="w-full">
           <div className="relative flex">
             <button
               onClick={() => setShowSearchMethods(!showSearchMethods)}
@@ -97,15 +104,17 @@ export default function SearchView({
             <div className="relative w-full">
               <input
                 type="search"
+                name='query'
                 className="z-20 block w-full rounded-r-lg border border-l-2 border-gray-300 border-l-gray-50 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:border-l-gray-700  dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500"
                 placeholder={SEARCH_MODES[searchBy].placeholder}
                 required
               />
               <button
                 type="submit"
+                disabled={searching}
                 className="absolute right-0 top-0 h-full rounded-r-lg border border-blue-700 bg-blue-700 p-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
-                <Search size={18} />
+                {searching ? <Loader size={18} className='animate-spin' /> : <Search size={18} />}
                 <span className="sr-only">Search</span>
               </button>
             </div>
@@ -160,7 +169,7 @@ export default function SearchView({
                     </div>
                     <div className="w-6/12 2xsm:w-5/12 md:w-3/12">
                       <span className="font-medium">
-                        {document.workspace.name || ''}
+                        {workspace.name || ''}
                       </span>
                     </div>
                     <div className="hidden w-3/12 overflow-x-scroll md:block xl:w-3/12">
@@ -191,7 +200,7 @@ export default function SearchView({
                       <a
                         href={paths.document(
                           organization.slug,
-                          document.workspace.slug,
+                          workspace.slug,
                           document.id
                         )}
                         className="rounded-lg px-2 py-1 text-blue-400 transition-all duration-300 hover:bg-blue-50 hover:text-blue-600"
