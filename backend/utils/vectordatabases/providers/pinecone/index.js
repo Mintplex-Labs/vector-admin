@@ -364,6 +364,31 @@ class Pinecone {
     }
   }
 
+  async similarityResponse(namespace, queryVector) {
+    const { pineconeIndex } = await this.connect();
+    const result = {
+      vectorIds: [],
+      contextTexts: [],
+      sourceDocuments: [],
+    };
+    const response = await pineconeIndex.query({
+      queryRequest: {
+        namespace,
+        vector: queryVector,
+        topK: 4,
+        includeMetadata: true,
+      },
+    });
+
+    response.matches.forEach((match) => {
+      result.vectorIds.push(match.id);
+      result.contextTexts.push(match.metadata.text);
+      result.sourceDocuments.push(match);
+    });
+
+    return result;
+  }
+
   async getMetadata(namespace = "", vectorIds = []) {
     const { pineconeIndex } = await this.connect();
 

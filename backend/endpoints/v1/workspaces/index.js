@@ -22,6 +22,9 @@ const {
   createWorkspaceSyncJob,
 } = require("../../../utils/jobs/createWorkspaceSyncJob");
 const { cloneWorkspaceJob } = require("../../../utils/jobs/cloneWorkspaceJob");
+const {
+  workspaceDocumentSearch,
+} = require("../../../utils/search/workspaceDocuments");
 
 process.env.NODE_ENV === "development"
   ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
@@ -437,6 +440,43 @@ function workspaceEndpoints(app) {
           user
         );
         response.status(200).json({ job, error });
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.get(
+    "/v1/workspace/:workspaceId/search-documents",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { workspaceId } = request.params;
+        const { method, q: query } = request.query;
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
+
+        const workspace = await OrganizationWorkspace.get(
+          `id = ${workspaceId}`
+        );
+        if (!workspace) {
+          response.status(200).json({
+            documents: [],
+            error: "No workspace found.",
+          });
+          return;
+        }
+
+        const { documents, error } = await workspaceDocumentSearch(
+          workspace,
+          method,
+          query
+        );
+        response.status(200).json({ documents, error });
       } catch (e) {
         console.log(e.message, e);
         response.sendStatus(500).end();

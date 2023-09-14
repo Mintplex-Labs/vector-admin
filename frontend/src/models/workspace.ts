@@ -1,3 +1,4 @@
+import { ISearchTypes } from '../pages/WorkspaceDashboard/DocumentsList/SearchView';
 import { API_BASE } from '../utils/constants';
 import { baseHeaders } from '../utils/request';
 
@@ -173,6 +174,27 @@ const Workspace = {
       .catch((e) => {
         console.error(e.message);
         return { success: false, error: e.message };
+      });
+  },
+  searchDocuments: async (
+    workspaceId: number,
+    method: ISearchTypes,
+    query: string
+  ): Promise<{ documents: object[] }> => {
+    const searchEndpoint = new URL(
+      `${API_BASE}/v1/workspace/${workspaceId}/search-documents`
+    );
+    searchEndpoint.searchParams.append('method', method);
+    searchEndpoint.searchParams.append('q', encodeURIComponent(query));
+    return await fetch(searchEndpoint, {
+      method: 'GET',
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .then((res) => res?.documents || [])
+      .catch((e) => {
+        console.error(e.message);
+        return [];
       });
   },
 };
