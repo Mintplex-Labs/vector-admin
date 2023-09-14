@@ -1,6 +1,6 @@
 import { ISearchTypes } from '../pages/DocumentView/FragmentList/SearchView';
 import { API_BASE } from '../utils/constants';
-import { baseHeaders } from '../utils/request';
+import { baseHeaders, getAPIUrlString } from '../utils/request';
 
 const Document = {
   get: async (id: string | number) => {
@@ -113,7 +113,7 @@ const Document = {
     query: string
   ): Promise<{ documents: object[] }> => {
     const searchEndpoint = new URL(
-      `${API_BASE}/v1/documents/${documentId}/search-embeddings`
+      `${getAPIUrlString()}/v1/documents/${documentId}/search-embeddings`
     );
     searchEndpoint.searchParams.append('method', method);
     searchEndpoint.searchParams.append('q', encodeURIComponent(query));

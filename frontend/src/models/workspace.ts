@@ -1,6 +1,6 @@
 import { ISearchTypes } from '../pages/WorkspaceDashboard/DocumentsList/SearchView';
 import { API_BASE } from '../utils/constants';
-import { baseHeaders } from '../utils/request';
+import { baseHeaders, getAPIUrlString } from '../utils/request';
 
 const Workspace = {
   documentPageSize: 10,
@@ -182,7 +182,7 @@ const Workspace = {
     query: string
   ): Promise<{ documents: object[] }> => {
     const searchEndpoint = new URL(
-      `${API_BASE}/v1/workspace/${workspaceId}/search-documents`
+      `${getAPIUrlString()}/v1/workspace/${workspaceId}/search-documents`
     );
     searchEndpoint.searchParams.append('method', method);
     searchEndpoint.searchParams.append('q', encodeURIComponent(query));
