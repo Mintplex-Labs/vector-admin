@@ -6,6 +6,7 @@ import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import paths from '../../../utils/paths';
 import DocumentListPagination from '../../../components/DocumentPaginator';
+import SearchView from './SearchView';
 const DeleteEmbeddingConfirmation = lazy(
   () => import('./DeleteEmbeddingConfirmation')
 );
@@ -23,6 +24,7 @@ export default function FragmentList({
 }) {
   const { slug, workspaceSlug } = useParams();
   const [loading, setLoading] = useState(true);
+  const [searchMode, setSearchMode] = useState(false);
   const [fragments, setFragments] = useState([]);
   const [sourceDoc, setSourceDoc] = useState(null);
   const [totalFragments, setTotalFragments] = useState(0);
@@ -99,7 +101,14 @@ export default function FragmentList({
           </div>
         </div>
 
-        <div className="px-6">
+        <SearchView
+          searchMode={searchMode}
+          setSearchMode={setSearchMode}
+          document={document}
+          FragmentItem={Fragment}
+          canEdit={canEdit}
+        />
+        <div hidden={searchMode} className="px-6">
           {loading ? (
             <div>
               <PreLoader />
@@ -140,11 +149,13 @@ export default function FragmentList({
             </table>
           )}
         </div>
-        <DocumentListPagination
-          pageCount={totalPages}
-          currentPage={currentPage}
-          gotoPage={handlePageChange}
-        />
+        {!searchMode && (
+          <DocumentListPagination
+            pageCount={totalPages}
+            currentPage={currentPage}
+            gotoPage={handlePageChange}
+          />
+        )}
       </div>
     </>
   );

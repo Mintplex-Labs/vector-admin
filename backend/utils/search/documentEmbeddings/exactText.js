@@ -1,42 +1,38 @@
 const { fuzzyMatch } = require("..");
+const { DocumentVectors } = require("../../../models/documentVectors");
 const { WorkspaceDocument } = require("../../../models/workspaceDocument");
 const { readJSON } = require("../../storage");
 
 async function findTextInDoc(wsDoc, query) {
   try {
+    const fragmentIds = [];
     const data = await readJSON(WorkspaceDocument.vectorFilepath(wsDoc));
 
     for (const chunk of data) {
       if (!chunk.hasOwnProperty("metadata")) continue;
       for (const value of Object.values(chunk?.metadata)) {
         const valid = fuzzyMatch(query, String(value));
-        if (valid) return wsDoc;
+        if (valid) fragmentIds.push(chunk.vectorDbId);
       }
     }
 
-    return false;
+    return fragmentIds;
   } catch (e) {
     console.error(e);
-    return false;
+    return [];
   }
 }
 
-async function exactTextSearch(workspace, query) {
-  const workspaceDocs = await WorkspaceDocument.where(
-    `workspace_id = ${workspace.id}`
+async function exactTextSearch(document, query) {
+  const matchingVectorIds = await findTextInDoc(document, query);
+  if (matchingVectorIds.length === 0) return { fragments: [], error: null };
+
+  const queryString = matchingVectorIds.map((vid) => `'${vid}'`).join(",");
+  const fragments = await DocumentVectors.where(
+    `vectorId IN (${queryString})`,
+    100
   );
-  const promises = [];
-
-  for (const wsDoc of workspaceDocs) {
-    promises.push(
-      new Promise(async (resolve) => {
-        resolve(await findTextInDoc(wsDoc, query));
-      })
-    );
-  }
-
-  const matches = (await Promise.all(promises)).filter((res) => res !== false);
-  return { documents: matches, error: null };
+  return { fragments, error: null };
 }
 
 module.exports = {
