@@ -116,8 +116,11 @@ export default function DocumentsList({
               onClick={() => setSearchMode(true)}
               className="group flex items-center gap-2 rounded-lg bg-transparent px-4 py-2 hover:bg-blue-300/20"
             >
-              <Search size={20} className="text-gray-600 group-hover:text-blue-600" />
-              <p className="pointer-events-none text-gray-600 group-hover:text-blue-600 transition-all duration-[300ms]">
+              <Search
+                size={20}
+                className="text-gray-600 group-hover:text-blue-600"
+              />
+              <p className="pointer-events-none text-gray-600 transition-all duration-[300ms] group-hover:text-blue-600">
                 Search documents
               </p>
             </button>

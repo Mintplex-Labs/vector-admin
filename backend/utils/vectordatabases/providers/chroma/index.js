@@ -233,6 +233,22 @@ class Chroma {
 
     return result;
   }
+
+  async getMetadata(namespace = "", vectorIds = []) {
+    const { client } = await this.connect();
+    const collection = await client.getCollection({ name: namespace });
+    const result = await collection.get({
+      ids: vectorIds,
+      include: ["metadatas", "documents"],
+    });
+
+    result?.metadatas?.forEach((metadata, i) => {
+      metadata.vectorId = vectorIds[i];
+      metadata.text = result.documents[i];
+    });
+
+    return result.metadatas;
+  }
 }
 
 module.exports.Chroma = Chroma;

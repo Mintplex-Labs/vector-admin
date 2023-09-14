@@ -88,7 +88,8 @@ const Workspace = {
     pageSize?: number
   ) => {
     return fetch(
-      `${API_BASE}/v1/org/${orgSlug}/workspace/${workspaceSlug}/documents?page=${page}&pageSize=${pageSize || Workspace.documentPageSize
+      `${API_BASE}/v1/org/${orgSlug}/workspace/${workspaceSlug}/documents?page=${page}&pageSize=${
+        pageSize || Workspace.documentPageSize
       }`,
       {
         method: 'GET',
@@ -178,18 +179,17 @@ const Workspace = {
   searchDocuments: async (
     workspaceId: number,
     method: ISearchTypes,
-    query: string,
+    query: string
   ): Promise<{ documents: object[] }> => {
-    const searchEndpoint = new URL(`${API_BASE}/v1/workspace/${workspaceId}/search-documents`)
+    const searchEndpoint = new URL(
+      `${API_BASE}/v1/workspace/${workspaceId}/search-documents`
+    );
     searchEndpoint.searchParams.append('method', method);
     searchEndpoint.searchParams.append('q', encodeURIComponent(query));
-    return await fetch(
-      searchEndpoint,
-      {
-        method: 'GET',
-        headers: baseHeaders(),
-      }
-    )
+    return await fetch(searchEndpoint, {
+      method: 'GET',
+      headers: baseHeaders(),
+    })
       .then((res) => res.json())
       .then((res) => res?.documents || [])
       .catch((e) => {
@@ -197,7 +197,6 @@ const Workspace = {
         return [];
       });
   },
-
-}
+};
 
 export default Workspace;
