@@ -1,3 +1,4 @@
+import { ISearchTypes } from '../pages/DocumentView/FragmentList/SearchView';
 import { API_BASE } from '../utils/constants';
 import { baseHeaders } from '../utils/request';
 
@@ -104,6 +105,27 @@ const Document = {
       .catch((e) => {
         console.error(e);
         return { success: false, error: e.message };
+      });
+  },
+  searchEmbeddings: async (
+    documentId: number,
+    method: ISearchTypes,
+    query: string
+  ): Promise<{ documents: object[] }> => {
+    const searchEndpoint = new URL(
+      `${API_BASE}/v1/documents/${documentId}/search-embeddings`
+    );
+    searchEndpoint.searchParams.append('method', method);
+    searchEndpoint.searchParams.append('q', encodeURIComponent(query));
+    return await fetch(searchEndpoint, {
+      method: 'GET',
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .then((res) => res?.fragments || [])
+      .catch((e) => {
+        console.error(e.message);
+        return [];
       });
   },
 };

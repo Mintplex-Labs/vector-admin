@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from 'react';
+import { SyntheticEvent, useRef, useState } from 'react';
 import { ChevronDown, FileText, Search, Loader } from 'react-feather';
 import { CopyDocToModal } from '..';
 import truncate from 'truncate';
@@ -42,17 +42,19 @@ export default function SearchView({
   stopSearching: VoidFunction;
   deleteDocument: (documentId: number) => void;
 }) {
+  const formEl = useRef<HTMLFormElement>(null);
   const [searching, setSearching] = useState(false);
   const [showSearchMethods, setShowSearchMethods] = useState(false);
   const [searchBy, setSearchBy] = useState<ISearchTypes>('exactText');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [documents, setDocuments] = useState([]);
   const clearSearch = () => {
-    setSearchBy('semantic');
+    setSearchBy('exactText');
     setSearchTerm('');
     setDocuments([]);
     setSearching(false);
     stopSearching();
+    (formEl.current as HTMLFormElement).reset();
   };
   const handleSearch = async (e: SyntheticEvent<HTMLElement, SubmitEvent>) => {
     e.preventDefault();

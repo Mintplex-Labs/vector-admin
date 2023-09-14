@@ -22,6 +22,9 @@ const { validEmbedding } = require("../../../utils/tokenizer");
 const { documentDeletedJob } = require("../../../utils/jobs/documentDeleteJob");
 const { cloneDocumentJob } = require("../../../utils/jobs/cloneDocumentJob");
 const { selectConnector } = require("../../../utils/vectordatabases/providers");
+const {
+  documentEmbeddingSearch,
+} = require("../../../utils/search/documentEmbeddings");
 
 process.env.NODE_ENV === "development"
   ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
@@ -321,6 +324,41 @@ function documentEndpoints(app) {
         response.status(200).json({ success: true, error: null });
       } catch (e) {
         console.log(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.get(
+    "/v1/documents/:documentId/search-embeddings",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { documentId } = request.params;
+        const { method, q: query } = request.query;
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
+
+        const document = await WorkspaceDocument.get(`id = ${documentId}`);
+        if (!document) {
+          response.status(200).json({
+            fragments: [],
+            error: "No document found.",
+          });
+          return;
+        }
+
+        const { fragments, error } = await documentEmbeddingSearch(
+          document,
+          method,
+          query
+        );
+        response.status(200).json({ fragments, error });
+      } catch (e) {
+        console.log(e.message, e);
         response.sendStatus(500).end();
       }
     }
