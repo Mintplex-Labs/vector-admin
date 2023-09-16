@@ -25,6 +25,9 @@ const { selectConnector } = require("../../../utils/vectordatabases/providers");
 const {
   documentEmbeddingSearch,
 } = require("../../../utils/search/documentEmbeddings");
+const {
+  updateEmbeddingMetadataJob,
+} = require("../../../utils/jobs/updateEmbeddingMetadataJob");
 
 process.env.NODE_ENV === "development"
   ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
@@ -173,6 +176,55 @@ function documentEndpoints(app) {
           connector,
           user,
           newText
+        );
+        response.status(200).json({ success: true, error: null });
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.post(
+    "/v1/document/:id/fragment-metadata",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { id } = request.params;
+        const { newMetadata } = reqBody(request);
+        const user = await userFromSession(request);
+
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
+
+        const fragment = await DocumentVectors.get(`id = ${id}`);
+        if (!fragment) {
+          response.sendStatus(404).end();
+          return;
+        }
+
+        const document = await WorkspaceDocument.get(
+          `id = ${fragment.document_id}`
+        );
+        const workspace = await OrganizationWorkspace.get(
+          `id = ${document.workspace_id}`
+        );
+        const organization = await Organization.get(
+          `id = ${document.organization_id}`
+        );
+        const connector = await OrganizationConnection.get(
+          `organization_id = ${document.organization_id}`
+        );
+        await updateEmbeddingMetadataJob(
+          fragment,
+          document,
+          organization,
+          workspace,
+          connector,
+          user,
+          newMetadata
         );
         response.status(200).json({ success: true, error: null });
       } catch (e) {

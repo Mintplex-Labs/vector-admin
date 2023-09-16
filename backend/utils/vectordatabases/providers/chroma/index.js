@@ -242,12 +242,13 @@ class Chroma {
       include: ["metadatas", "documents"],
     });
 
-    result?.metadatas?.forEach((metadata, i) => {
+    const metadatas = result.metadatas.map((metadata) => metadata ?? {});
+    metadatas.forEach((metadata, i) => {
       metadata.vectorId = vectorIds[i];
       metadata.text = result.documents[i];
     });
 
-    return result.metadatas;
+    return metadatas;
   }
 }
 
