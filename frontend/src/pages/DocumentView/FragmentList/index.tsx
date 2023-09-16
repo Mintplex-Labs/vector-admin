@@ -3,10 +3,12 @@ import PreLoader from '../../../components/Preloader';
 import Document from '../../../models/document';
 import truncate from 'truncate';
 import moment from 'moment';
+import pluralize from 'pluralize';
 import { useParams } from 'react-router-dom';
 import paths from '../../../utils/paths';
 import DocumentListPagination from '../../../components/DocumentPaginator';
 import SearchView from './SearchView';
+import MetadataEditor from './MetadataEditor';
 const DeleteEmbeddingConfirmation = lazy(
   () => import('./DeleteEmbeddingConfirmation')
 );
@@ -127,6 +129,9 @@ export default function FragmentList({
                     Text Chunk
                   </th>
                   <th scope="col" className="px-6 py-3">
+                    Metadata
+                  </th>
+                  <th scope="col" className="px-6 py-3">
                     Last Updated
                   </th>
                   <th scope="col" className="px-6 py-3">
@@ -171,11 +176,18 @@ const Fragment = ({
   canEdit: boolean;
 }) => {
   const [data, setData] = useState(null);
+  const [metadata, setMetadata] = useState({});
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     async function fetchData() {
       if (!fragment || !sourceDoc) return;
       const _data = sourceDoc[fragment.vectorId];
       setData(_data);
+      const _metadata = _data?.metadata || {};
+      const { text: _, vectorId: __, ...validMetadata } = _metadata;
+      setMetadata(validMetadata);
+      setLoading(false);
     }
     fetchData();
   }, [fragment]);
@@ -205,7 +217,45 @@ const Fragment = ({
               See All
             </button>
           ) : (
-            <div className="h-[20px] w-[80px] animate-pulse rounded-md bg-slate-200" />
+            <>
+              {loading ? (
+                <div className="h-[20px] w-[80px] animate-pulse rounded-md bg-slate-200" />
+              ) : (
+                <p>no text found.</p>
+              )}
+            </>
+          )}
+        </td>
+        <td className="px-6 py-4">
+          {Object.keys(metadata).length > 0 ? (
+            <button
+              onClick={() => {
+                document
+                  .getElementById(`${fragment.id}-metadata-editor`)
+                  ?.showModal();
+              }}
+              className="rounded-full bg-blue-200 px-2 py-[1px] text-center text-blue-700 hover:bg-blue-300"
+            >
+              +{Object.keys(metadata).length} metadata{' '}
+              {pluralize('item', Object.keys(metadata).length)}
+            </button>
+          ) : (
+            <>
+              {loading ? (
+                <div className="h-[20px] w-[80px] animate-pulse rounded-md bg-slate-200" />
+              ) : (
+                <button
+                  onClick={() => {
+                    document
+                      .getElementById(`${fragment.id}-metadata-editor`)
+                      ?.showModal();
+                  }}
+                  className="rounded-full bg-blue-200 px-2 py-[1px] text-center text-blue-700 hover:bg-blue-300"
+                >
+                  <p>none</p>
+                </button>
+              )}
+            </>
           )}
         </td>
         <td className="px-6 py-4">
@@ -238,6 +288,9 @@ const Fragment = ({
       </tr>
       {!!data && !!fragment && (
         <FullTextWindow data={data} fragment={fragment} />
+      )}
+      {!!data && !!fragment && (
+        <MetadataEditor data={data} fragment={fragment} />
       )}
       {!!data && !!fragment && (
         <DeleteEmbeddingConfirmation data={data} fragment={fragment} />

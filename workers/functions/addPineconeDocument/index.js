@@ -15,9 +15,9 @@ const addPineconeDocuments = InngestClient.createFunction(
     // Sometimes the passed in document may have very large pageContent, so we load it from the DB
     // instead of passing it on the event object - which will crash Inngest.
     const { jobId } = event.data;
-    const jobData = await Queue.get(`id = ${jobId}`);
+    const job = await Queue.get(`id = ${jobId}`);
 
-    if (!jobData) {
+    if (!job) {
       result = {
         message: `No job data found for this operation.`,
       };
@@ -25,7 +25,9 @@ const addPineconeDocuments = InngestClient.createFunction(
       return { result };
     }
 
-    const { documents, organization, workspace, connector } = jobData;
+    const { documents, organization, workspace, connector } = JSON.parse(
+      job.data
+    );
     try {
       const openAiSetting = await SystemSettings.get(
         `label = 'open_ai_api_key'`

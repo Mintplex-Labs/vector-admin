@@ -81,6 +81,23 @@ const Document = {
         return { success: false, error: e.message };
       });
   },
+  updateFragmentMetadata: async (
+    id: string | number,
+    newMetadata: object
+  ): Promise<{ success: boolean; error: string | null }> => {
+    return fetch(`${API_BASE}/v1/document/${id}/fragment-metadata`, {
+      method: 'POST',
+      cache: 'no-cache',
+      body: JSON.stringify({ newMetadata }),
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .then((res) => res)
+      .catch((e) => {
+        console.error(e);
+        return { success: false, error: e.message };
+      });
+  },
   delete: async (id: string | number) => {
     return fetch(`${API_BASE}/v1/document/${id}`, {
       method: 'DELETE',

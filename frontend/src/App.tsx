@@ -2,6 +2,8 @@ import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { ContextWrapper } from './AuthContext';
 import PrivateRoute from './components/PrivateRoute';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
@@ -81,6 +83,7 @@ function App() {
           />
         </Routes>
       </Suspense>
+      <ToastContainer />
     </ContextWrapper>
   );
 }
