@@ -77,12 +77,6 @@ const MetadataEditor = memo(
               onChange={setHasChanges}
               metadata={editableMetadata}
             />
-
-            {/* <form id={`${fragment.id}-metadata`} onSubmit={handleSubmit} className="w-full" onChange={() => setHasChanges(true)}>
-              {renderFormFromJSON(editableMetadata, setHasChanges)}
-              <button type='submit' className='hidden' form={`${fragment.id}-metadata`} id={`${fragment.id}-submit-metadata`} />
-            </form> */}
-
             <NewEntry addKeyPair={addNewKeyValue} />
 
             <div className="mt-4 flex flex-col gap-y-2">
@@ -206,53 +200,6 @@ function JSONFormBuilder({
     </form>
   );
 }
-
-// function renderFormFromJSON(jsonObject = {}, setHasChanges: Dispatch<SetStateAction<boolean>>) {
-//   const renderField = (key: string, value: string | number | boolean, name: string) => {
-//     const containerId = `${name ? `${name}.${key}` : key}-container`;
-//     const setKeyForRemoval = () => {
-//       document.getElementById(containerId)?.setAttribute('hidden', 'true');
-//       document.getElementById(containerId)?.querySelector('input')?.setAttribute('disabled', 'true');
-//       setHasChanges(true)
-//     }
-
-//     return (
-//       <div key={key} id={containerId} className="mb-4">
-//         <label className="text-gray-700 text-sm mb-2 items-center gap-x-1 flex">
-//           <p className='font-bold'>{key}</p>
-//           <i className='text-xs text-gray-600 font-regular'>({typeof (value)})</i>
-//         </label>
-//         <div className='w-full items-center gap-x-2 flex'>
-//           <input
-//             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-//             name={name ? `${name}.${key}` : key}
-//             type={typeof value === 'number' ? 'number' : 'text'}
-//             data-output-type={typeof (value)}
-//             defaultValue={typeof value === 'number' ? Number(value) : String(value)}
-//           />
-//           <button type='button' onClick={setKeyForRemoval} className='hover:bg-red-100 p-1 rounded-full group'>
-//             <Trash className='group-hover:text-red-600 text-gray-300' size={20} />
-//           </button>
-//         </div>
-//       </div>
-//     )
-//   }
-
-//   const renderObject = (obj = {}, parentKey = '', name = '') => (
-//     <fieldset key={parentKey} className="border p-4 rounded mb-4">
-//       <legend className="text-gray-800 text-sm font-bold mb-2">{parentKey}</legend>
-//       {Object.entries(obj).map(([key, value]) =>
-//         typeof value === 'object' ? (
-//           renderObject(value, key, `${name ? `${name}.` : ''}${key}`)
-//         ) : (
-//           renderField(key, value, name)
-//         )
-//       )}
-//     </fieldset>
-//   );
-
-//   return renderObject(jsonObject);
-// }
 
 const NewEntry = ({
   addKeyPair,
