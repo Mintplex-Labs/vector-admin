@@ -14,7 +14,11 @@ async function validateNewDatabaseConnector(organization, config) {
   } else if (type === "pinecone") {
     const { valid, message } = await validatePinecone(settings);
     statusCheck = { valid, message };
+  } else if (type === "qdrant") {
+    const { valid, message } = await validateQDrant(settings);
+    statusCheck = { valid, message };
   }
+
   if (!statusCheck.valid)
     return { connector: null, error: statusCheck.message };
 
@@ -70,7 +74,23 @@ async function validatePinecone({ environment, index, apiKey }) {
       indexName: index,
     });
 
-    if (!status.ready) throw new Error("Pinecode::Index not ready or found.");
+    if (!status.ready) throw new Error("Pinecone::Index not ready or found.");
+    return { valid: true, message: null };
+  } catch (e) {
+    return { valid: false, message: e.message };
+  }
+}
+
+async function validateQDrant({ clusterUrl, apiKey }) {
+  const { QdrantClient } = require("@qdrant/js-client-rest");
+  try {
+    const client = new QdrantClient({
+      url: clusterUrl,
+      ...(apiKey ? { apiKey } : {}),
+    });
+
+    const online = (await client.api("cluster")?.clusterStatus())?.ok || false;
+    if (!online) throw new Error("qDrant::Cluster not ready or found.");
     return { valid: true, message: null };
   } catch (e) {
     return { valid: false, message: e.message };
@@ -81,4 +101,5 @@ module.exports = {
   validateNewDatabaseConnector,
   validateChroma,
   validatePinecone,
+  validateQDrant,
 };

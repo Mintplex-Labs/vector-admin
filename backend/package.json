@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@pinecone-database/pinecone": "^0.1.6",
+    "@qdrant/js-client-rest": "^1.5.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "check-disk-space": "^3.4.0",

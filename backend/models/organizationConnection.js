@@ -1,7 +1,7 @@
 // const { checkForMigrations } = require("../utils/database");
 
 const OrganizationConnection = {
-  supportedConnectors: ["chroma", "pinecone"],
+  supportedConnectors: ["chroma", "pinecone", "qdrant"],
   tablename: "organization_connections",
   colsInit: `
   id INTEGER PRIMARY KEY AUTOINCREMENT,
