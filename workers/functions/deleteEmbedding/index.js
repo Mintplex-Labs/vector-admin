@@ -14,6 +14,9 @@ const {
 const {
   Pinecone,
 } = require('../../../backend/utils/vectordatabases/providers/pinecone');
+const {
+  QDrant,
+} = require('../../../backend/utils/vectordatabases/providers/qdrant');
 
 const deleteSingleChromaEmbedding = InngestClient.createFunction(
   { name: 'Delete Single Embedding From ChromaDB' },
@@ -108,6 +111,56 @@ const deleteSinglePineconeEmbedding = InngestClient.createFunction(
   }
 );
 
+const deleteSingleQDrantEmbedding = InngestClient.createFunction(
+  { name: 'Delete Single Embedding From QDrant' },
+  { event: 'qdrant/deleteFragment' },
+  async ({ event, step: _step, logger }) => {
+    var result = {};
+    const { documentVector, workspace, connector, jobId } = event.data;
+    try {
+      const qdrantClient = new QDrant(connector);
+      const { client } = await qdrantClient.connect();
+      const hasNamespace = await qdrantClient.namespaceExists(
+        client,
+        workspace.slug
+      );
+
+      if (!hasNamespace) {
+        result = {
+          message: `No namespace found with name ${workspace.slug} - nothing to do.`,
+        };
+        await Queue.updateJob(jobId, Queue.status.failed, result);
+        return { result };
+      }
+
+      logger.info(
+        `Deleting vector ${documentVector.vectorId} from ${workspace.name}.`
+      );
+
+      await client.delete(workspace.slug, {
+        wait: true,
+        points: [documentVector.vectorId],
+      });
+      await DocumentVectors.delete(documentVector.id);
+      await cleanupCacheFile(documentVector);
+
+      result = {
+        message: `Vector ${documentVector.vectorId} removed from Qdrant namespace ${workspace.name}.`,
+      };
+      await Queue.updateJob(jobId, Queue.status.complete, result);
+      return { result };
+    } catch (e) {
+      const result = {
+        message: `Job failed with error`,
+        error: e.message,
+        details: e,
+      };
+      await Queue.updateJob(jobId, Queue.status.failed, result);
+      return { result };
+    }
+  }
+);
+
 // Keep cache file in sync with changes so when user copies it later the information is not out of sync.
 async function cleanupCacheFile(documentVector) {
   const document = await WorkspaceDocument.get(
@@ -132,4 +185,5 @@ async function cleanupCacheFile(documentVector) {
 module.exports = {
   deleteSingleChromaEmbedding,
   deleteSinglePineconeEmbedding,
+  deleteSingleQDrantEmbedding,
 };

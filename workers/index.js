@@ -8,12 +8,12 @@ const { syncChromaInstance } = require("./functions/syncChroma");
 const { findOrCreateDBFile, setupFunctions } = require("./utils/boot");
 const { reqBody } = require("./utils/http");
 const { Queue } = require("../backend/models/queue");
-const { deleteSingleChromaEmbedding, deleteSinglePineconeEmbedding } = require("./functions/deleteEmbedding");
+const { deleteSingleChromaEmbedding, deleteSinglePineconeEmbedding, deleteSingleQDrantEmbedding } = require("./functions/deleteEmbedding");
 const { updateSingleChromaEmbedding, updateSinglePineconeEmbedding } = require("./functions/updateEmbedding");
 const { newWorkspaceCreated } = require("./functions/newWorkspace");
 const { workspaceDeleted } = require("./functions/deleteWorkspace");
 const { addChromaDocuments } = require("./functions/addChromaDocument");
-const { deleteChromaDocument, deletePineconeDocument } = require("./functions/deleteDocument");
+const { deleteChromaDocument, deletePineconeDocument, deleteQdrantDocument } = require("./functions/deleteDocument");
 const { syncPineconeIndex } = require("./functions/syncPinecone");
 const { addPineconeDocuments } = require("./functions/addPineconeDocument");
 const { syncChromaWorkspace } = require("./functions/syncChromaWorkspace");
@@ -72,8 +72,8 @@ app.use(
     updateSinglePineconeEmbeddingMetadata,
     clonePineconeDocument,
 
-    // deleteQDrantDocument,
-    // deleteSingleQDrantEmbedding,
+    deleteQdrantDocument,
+    deleteSingleQDrantEmbedding,
     // updateSingleQDrantEmbedding,
     // updateSingleQDrantEmbeddingMetadata,
     cloneQDrantDocument,
