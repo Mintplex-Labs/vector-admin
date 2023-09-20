@@ -20,7 +20,10 @@ const syncQDrantWorkspace = InngestClient.createFunction(
     try {
       const qdrantClient = new QDrant(connector);
       const { client } = await qdrantClient.connect();
-      const collection = await qdrantClient.namespace(client, workspace.slug);
+      const collection = await qdrantClient.namespaceWithClient(
+        client,
+        workspace.slug
+      );
 
       if (!collection) {
         result = {

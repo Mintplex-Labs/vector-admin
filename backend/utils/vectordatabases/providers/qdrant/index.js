@@ -108,7 +108,8 @@ class QDrant {
     for (const collection of collections) {
       if (!collection || !collection.name) continue;
       totalVectors +=
-        (await this.namespace(client, collection.name))?.vectorCount || 0;
+        (await this.namespaceWithClient(client, collection.name))
+          ?.vectorCount || 0;
     }
 
     return { result: totalVectors, error: null };
@@ -151,7 +152,20 @@ class QDrant {
     return !!collection;
   }
 
-  async namespace(client, name = null) {
+  async namespace(name = null) {
+    if (!name) throw new Error("No namespace value provided.");
+    const { client } = await this.connect();
+    const collection = await client.getCollection(name).catch(() => null);
+    if (!collection) return null;
+
+    return {
+      name,
+      ...collection,
+      vectorCount: collection.vectors_count,
+    };
+  }
+
+  async namespaceWithClient(client, name = null) {
     if (!name) throw new Error("No namespace value provided.");
     const collection = await client.getCollection(name).catch(() => null);
     if (!collection) return null;
