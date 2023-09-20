@@ -1,6 +1,3 @@
-const {
-  OrganizationWorkspace,
-} = require('../../../backend/models/organizationWorkspace');
 const { Queue } = require('../../../backend/models/queue');
 const { InngestClient } = require('../../utils/inngest');
 const { v4 } = require('uuid');
@@ -9,70 +6,46 @@ const {
   WorkspaceDocument,
 } = require('../../../backend/models/workspaceDocument');
 const { DocumentVectors } = require('../../../backend/models/documentVectors');
+const { deleteVectorCacheFile } = require('../../../backend/utils/storage');
 const {
   QDrant,
 } = require('../../../backend/utils/vectordatabases/providers/qdrant');
 
-const syncQDrantCluster = InngestClient.createFunction(
-  { name: 'Sync Qdrant Instance' },
-  { event: 'qdrant/sync' },
+const syncQDrantWorkspace = InngestClient.createFunction(
+  { name: 'Sync QDrant Workspace' },
+  { event: 'qdrant/sync-workspace' },
   async ({ event, step: _step, logger }) => {
     var result = {};
-    const { organization, connector, jobId } = event.data;
+    const { organization, workspace, connector, jobId } = event.data;
     try {
-      const failedToSync = [];
       const qdrantClient = new QDrant(connector);
-      const collections = await qdrantClient.collections();
+      const { client } = await qdrantClient.connect();
+      const collection = await qdrantClient.namespace(client, workspace.slug);
 
-      if (collections.length === 0) {
-        result = { message: 'No collections found - nothing to do.' };
+      if (!collection) {
+        result = {
+          message: `No collection ${workspace.slug} found - nothing to do.`,
+        };
+        await Queue.updateJob(jobId, Queue.status.complete, result);
+        return { result };
+      }
+
+      if (collection.vectorCount === 0) {
+        result = {
+          message: `QDrant collection ${workspace.slug} has no data- nothing to do.`,
+        };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };
       }
 
       logger.info(
-        `Deleting ALL existing workspaces for ${organization.name} and reseeding.`
+        `Working on ${collection.count} embeddings of ${collection.name}`
       );
-      await OrganizationWorkspace.deleteAllForOrganization(organization.id);
-
-      for (const collection of collections) {
-        logger.info(
-          `Creating new workspace ${collection.name} for ${organization.name}`
-        );
-        const { workspace } = await OrganizationWorkspace.create(
-          collection.name,
-          organization.id
-        );
-        if (!workspace || collection.vectorCount === 0) continue;
-
-        logger.info(
-          `Working on ${collection.vectorCount} embeddings of ${collection.name}`
-        );
-
-        try {
-          await paginateAndStore(
-            qdrantClient,
-            collection,
-            workspace,
-            organization
-          );
-        } catch (e) {
-          logger.error(
-            `Failed to paginate records for ${collection.name} - workspace will remain in db but may be incomplete.`,
-            e
-          );
-          failedToSync.push({
-            namespace: collection.name,
-            reason: e.message,
-          });
-        }
-      }
+      await paginateAndStore(client, collection, workspace, organization);
 
       result = {
-        message: `Qdrant instance vector data has been synced for ${
-          collections.length
-        } of ${collections.length - failedToSync.length} collections.`,
-        failedToSync,
+        message:
+          'QDrant instance vector data has been synced. Workspaces data synced.',
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
       return { result };
@@ -88,17 +61,11 @@ const syncQDrantCluster = InngestClient.createFunction(
   }
 );
 
-async function paginateAndStore(
-  qdrantClient,
-  collection,
-  workspace,
-  organization
-) {
+async function paginateAndStore(client, collection, workspace, organization) {
   const PAGE_SIZE = 10;
   var syncing = true;
   var offset = 0;
   const files = {};
-  const { client } = await qdrantClient.connect();
 
   while (syncing) {
     const { points, next_page_offset } = await client.scroll(collection.name, {
@@ -172,6 +139,19 @@ async function paginateAndStore(
 
     offset = next_page_offset;
   }
+
+  console.log('Removing existing Workspace Documents & Document Vectors');
+  const documents = await WorkspaceDocument.where(
+    `workspace_id = ${workspace.id}`
+  );
+  for (const document of documents) {
+    const digestFilename = WorkspaceDocument.vectorFilename(document);
+    await deleteVectorCacheFile(digestFilename);
+  }
+  await WorkspaceDocument.deleteWhere(`workspace_id = ${workspace.id}`);
+  console.log(
+    `Removed ${documents.length} existing Workspace Documents & Document Vectors`
+  );
 
   console.log('Creating Workspace Documents & Document Vectors');
   await createDocuments(files, workspace, organization);
@@ -257,5 +237,5 @@ async function saveVectorCache(data) {
 }
 
 module.exports = {
-  syncQDrantCluster,
+  syncQDrantWorkspace,
 };

@@ -24,6 +24,7 @@ const { cloneChromaWorkspace } = require("./functions/cloneChromaWorkspace");
 const { clonePineconeWorkspace } = require("./functions/clonePineconeWorkspace");
 const { updateSinglePineconeEmbeddingMetadata, updateSingleChromaEmbeddingMetadata } = require("./functions/updateEmbeddingMetadata");
 const { syncQDrantCluster } = require("./functions/syncQDrantCluster");
+const { syncQDrantWorkspace } = require("./functions/syncQDrantWorkspace");
 const app = express();
 
 app.use(cors({ origin: true }));
@@ -51,7 +52,7 @@ app.use(
     syncPineconeWorkspace,
 
     // cloneQDrantWorkspace,
-    // syncQDrantWorkspace,
+    syncQDrantWorkspace,
 
     addChromaDocuments,
     addPineconeDocuments,
