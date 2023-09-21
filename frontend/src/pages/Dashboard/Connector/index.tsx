@@ -6,6 +6,7 @@ import { APP_NAME, SUPPORTED_VECTOR_DBS } from '../../../utils/constants';
 import ChromaLogo from '../../../images/vectordbs/chroma.png';
 import PineconeLogo from '../../../images/vectordbs/pinecone.png';
 import qDrantLogo from '../../../images/vectordbs/qdrant.png';
+import WeaviateLogo from '../../../images/vectordbs/weaviate.png';
 import paths from '../../../utils/paths';
 import { titleCase } from 'title-case';
 
@@ -302,6 +303,30 @@ const NewConnectorModal = ({
                 </div>
               </label>
             </li>
+            <li onClick={() => setType('weaviate')}>
+              <input
+                name="type"
+                type="checkbox"
+                value="weaviate"
+                className="peer hidden"
+                checked={type === 'weaviate'}
+                readOnly={true}
+                formNoValidate={true}
+              />
+              <label className="inline-flex h-full w-full cursor-pointer items-center justify-between rounded-lg border-2 border-gray-200 bg-white p-5 text-gray-500 hover:bg-gray-50 hover:text-gray-600 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 dark:peer-checked:text-gray-300">
+                <div className="block">
+                  <img
+                    src={WeaviateLogo}
+                    className="mb-2 h-10 w-10 rounded-full"
+                  />
+                  <div className="w-full text-lg font-semibold">Weaviate</div>
+                  <div className="flex w-full flex-col gap-y-1 text-sm">
+                    <p className="text-xs text-slate-400">weaviate.io</p>
+                    Open-source & hosted vector database.
+                  </div>
+                </div>
+              </label>
+            </li>
           </ul>
 
           {type === 'chroma' && (
@@ -466,6 +491,55 @@ const NewConnectorModal = ({
                   <p className="text-xs text-gray-500">
                     (optional) If you are using qDrant cloud you will need an
                     API key.
+                  </p>
+                </div>
+                <input
+                  name="settings::apiKey"
+                  autoComplete="off"
+                  type="password"
+                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                  placeholder="ee1051-xxxx-xxxx-xxxx"
+                />
+              </div>
+            </div>
+          )}
+
+          {type === 'weaviate' && (
+            <div className="mx-6 my-4 flex flex-col gap-y-6">
+              <div className="">
+                <div className="mb-2 flex flex-col gap-y-1">
+                  <label
+                    htmlFor="settings::clusterUrl"
+                    className="block text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Weaviate Cluster URL
+                  </label>
+                  <p className="text-xs text-gray-500">
+                    You can find this in your cloud hosted Weaviate cluster or
+                    just using the URL to your local docker container.
+                  </p>
+                </div>
+                <input
+                  name="settings::clusterUrl"
+                  autoComplete="off"
+                  type="url"
+                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                  placeholder="https://my-sandbox-b5vipdmw.weaviate.network"
+                  required={true}
+                />
+              </div>
+
+              <div className="">
+                <div className="mb-2 flex flex-col gap-y-1">
+                  <label
+                    htmlFor="settings::apiKey"
+                    className="block text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    API Key
+                  </label>
+                  <p className="text-xs text-gray-500">
+                    (optional) If you are using Weaviate cloud may need an API
+                    key.
                   </p>
                 </div>
                 <input
@@ -649,6 +723,29 @@ const UpdateConnectorModal = ({
                   </div>
                 </label>
               </li>
+              <li onClick={() => setType('weaviate')}>
+                <input
+                  name="type"
+                  type="checkbox"
+                  value="weaviate"
+                  className="peer hidden"
+                  checked={type === 'weaviate'}
+                  formNoValidate={true}
+                />
+                <label className="inline-flex h-full w-full cursor-pointer items-center justify-between rounded-lg border-2 border-gray-200 bg-white p-5 text-gray-500 hover:bg-gray-50 hover:text-gray-600 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 dark:peer-checked:text-gray-300">
+                  <div className="block">
+                    <img
+                      src={WeaviateLogo}
+                      className="mb-2 h-10 w-10 rounded-full"
+                    />
+                    <div className="w-full text-lg font-semibold">Weaviate</div>
+                    <div className="flex w-full flex-col gap-y-1 text-sm">
+                      <p className="text-xs text-slate-400">weaviate.io</p>
+                      Open-source & hosted vector database.
+                    </div>
+                  </div>
+                </label>
+              </li>
             </ul>
 
             {type === 'chroma' && (
@@ -820,6 +917,57 @@ const UpdateConnectorModal = ({
                     <p className="text-xs text-gray-500">
                       (optional) If you are using qDrant cloud you will need an
                       API key.
+                    </p>
+                  </div>
+                  <input
+                    name="settings::apiKey"
+                    autoComplete="off"
+                    type="password"
+                    defaultValue={settings.apiKey}
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    placeholder="ee1051-xxxx-xxxx-xxxx"
+                  />
+                </div>
+              </div>
+            )}
+
+            {type === 'weaviate' && (
+              <div className="mx-6 my-4 flex flex-col gap-y-6">
+                <div className="">
+                  <div className="mb-2 flex flex-col gap-y-1">
+                    <label
+                      htmlFor="settings::clusterUrl"
+                      className="block text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Weaviate Cluster URL
+                    </label>
+                    <p className="text-xs text-gray-500">
+                      You can find this in your cloud hosted Weaviate cluster or
+                      just using the URL to your local docker container.
+                    </p>
+                  </div>
+                  <input
+                    name="settings::clusterUrl"
+                    autoComplete="off"
+                    type="url"
+                    defaultValue={settings.clusterUrl}
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    placeholder="https://my-sandbox-b5vipdmw.weaviate.network"
+                    required={true}
+                  />
+                </div>
+
+                <div className="">
+                  <div className="mb-2 flex flex-col gap-y-1">
+                    <label
+                      htmlFor="settings::apiKey"
+                      className="block text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      API Key
+                    </label>
+                    <p className="text-xs text-gray-500">
+                      (optional) If you are using Weaviate cloud you will need
+                      an API key.
                     </p>
                   </div>
                   <input

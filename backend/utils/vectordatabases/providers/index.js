@@ -4,6 +4,7 @@ const {
 const { Chroma } = require("./chroma");
 const { Pinecone } = require("./pinecone");
 const { QDrant } = require("./qdrant");
+const { Weaviate } = require("./weaviate");
 
 function selectConnector(organizationConnector) {
   const { type } = organizationConnector;
@@ -20,6 +21,10 @@ function selectConnector(organizationConnector) {
 
   if (organizationConnector.type === "qdrant") {
     return new QDrant(organizationConnector);
+  }
+
+  if (organizationConnector.type === "weaviate") {
+    return new Weaviate(organizationConnector);
   }
 
   throw new Error(

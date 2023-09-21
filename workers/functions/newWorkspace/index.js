@@ -5,6 +5,9 @@ const {
 const {
   QDrant,
 } = require('../../../backend/utils/vectordatabases/providers/qdrant');
+const {
+  Weaviate,
+} = require('../../../backend/utils/vectordatabases/providers/weaviate');
 const { InngestClient } = require('../../utils/inngest');
 
 const newWorkspaceCreated = InngestClient.createFunction(
@@ -13,7 +16,7 @@ const newWorkspaceCreated = InngestClient.createFunction(
   async ({ event, step: _step, logger }) => {
     var result = {};
     const { workspace, connector, jobId } = event.data;
-    if (!['chroma', 'qdrant'].includes(connector.type)) {
+    if (!['chroma', 'qdrant', 'weaviate'].includes(connector.type)) {
       result = {
         message: `Connector type does not support empty collection creation - nothing to do.`,
       };
@@ -74,6 +77,44 @@ const newWorkspaceCreated = InngestClient.createFunction(
         }
 
         result = { message: `Collection ${workspace.slug} created in QDrant.` };
+        await Queue.updateJob(jobId, Queue.status.complete, result);
+        return { result };
+      } catch (e) {
+        const result = {
+          message: `Job failed with error`,
+          error: e.message,
+          details: e,
+        };
+        await Queue.updateJob(jobId, Queue.status.failed, result);
+        return { result };
+      }
+    }
+
+    if (connector.type === 'weaviate') {
+      try {
+        const weaviateClient = new Weaviate(connector);
+        const className = weaviateClient.camelCase(workspace.slug);
+        const { client } = await weaviateClient.connect();
+        const collectionCreated = await client.schema
+          .classCreator()
+          .withClass({
+            class: className,
+            description: `Class created by VectorAdmin named ${className}`,
+            vectorizer: 'none',
+          })
+          .do();
+
+        if (!collectionCreated?.class) {
+          result = {
+            message: `No collection could be created with name ${workspace.slug} - nothing to do.`,
+          };
+          await Queue.updateJob(jobId, Queue.status.failed, result);
+          return { result };
+        }
+
+        result = {
+          message: `Collection ${workspace.slug} (class ${className}) created in Weaviate.`,
+        };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };
       } catch (e) {

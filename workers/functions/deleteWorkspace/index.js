@@ -12,6 +12,9 @@ const {
 const {
   QDrant,
 } = require('../../../backend/utils/vectordatabases/providers/qdrant');
+const {
+  Weaviate,
+} = require('../../../backend/utils/vectordatabases/providers/weaviate');
 const { InngestClient } = require('../../utils/inngest');
 
 const workspaceDeleted = InngestClient.createFunction(
@@ -121,6 +124,46 @@ const workspaceDeleted = InngestClient.createFunction(
         await client.deleteCollection(workspace.slug);
         result = {
           message: `Collection ${workspace.slug} deleted from QDrant along with ${documents.length} vectorized documents.`,
+        };
+        await Queue.updateJob(jobId, Queue.status.complete, result);
+        return { result };
+      } catch (e) {
+        const result = {
+          message: `Job failed with error`,
+          error: e.message,
+          details: e,
+        };
+        await Queue.updateJob(jobId, Queue.status.failed, result);
+        return { result };
+      }
+    }
+
+    if (connector.type === 'weaviate') {
+      try {
+        const weaviateClient = new Weaviate(connector);
+        const { client } = await weaviateClient.connect();
+        const targetClassName = weaviateClient.camelCase(workspace.slug);
+        const collection = await weaviateClient.namespaceExists(
+          client,
+          targetClassName
+        );
+
+        if (!collection) {
+          result = {
+            message: `No collection found with name ${workspace.slug} - nothing to do.`,
+          };
+          await Queue.updateJob(jobId, Queue.status.complete, result);
+          return { result };
+        }
+
+        for (const document of documents) {
+          const digestFilename = WorkspaceDocument.vectorFilename(document);
+          await deleteVectorCacheFile(digestFilename);
+        }
+
+        await client.schema.classDeleter().withClassName(targetClassName).do();
+        result = {
+          message: `Collection ${workspace.slug} (class: ${targetClassName}) deleted from Weaviate along with ${documents.length} vectorized documents.`,
         };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };
