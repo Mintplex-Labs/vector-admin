@@ -176,7 +176,7 @@ class Chroma {
           });
           cacheInfo.push({
             vectorDbId: vectorRecord.id,
-            values: vectorValues,
+            values: vector,
             metadata: vectorRecord.metadata,
           });
         }

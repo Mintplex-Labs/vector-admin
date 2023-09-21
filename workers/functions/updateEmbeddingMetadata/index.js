@@ -330,7 +330,7 @@ const updateSingleWeaviateEmbeddingMetadata = InngestClient.createFunction(
       }
 
       const existingMetadata = vectorMatch.properties || {};
-      const { updatedMetadata, newProperties } = await prepareMetadata(
+      const { updatedMetadata, newProperties } = prepareMetadata(
         schema.properties,
         existingMetadata,
         weaviateClient.flattenObjectForWeaviate(newMetadata)
@@ -418,7 +418,7 @@ function weaviateToJsTypeCast(weaviateType, value) {
 // ensure type correctness for each key:value in the known schema at runtime.
 // New metadata is flattened and key-sanitized here so we are good to append-only merge.
 // returns the new metadata to insert and an array of properties to add to schema via weaviate client.
-async function prepareMetadata(propertiesSchema, prevMetadata, newMetadata) {
+function prepareMetadata(propertiesSchema, prevMetadata, newMetadata) {
   const newProperties = [];
   const updatedMetadata = { ...prevMetadata };
 
