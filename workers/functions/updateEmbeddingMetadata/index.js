@@ -3,9 +3,6 @@ const {
   Chroma,
 } = require('../../../backend/utils/vectordatabases/providers/chroma');
 const { InngestClient } = require('../../utils/inngest');
-const { SystemSettings } = require('../../../backend/models/systemSettings');
-const { OpenAi } = require('../../../backend/utils/openAi');
-const { validEmbedding } = require('../../../backend/utils/tokenizer');
 const path = require('path');
 const {
   WorkspaceDocument,
@@ -13,6 +10,9 @@ const {
 const {
   Pinecone,
 } = require('../../../backend/utils/vectordatabases/providers/pinecone');
+const {
+  QDrant,
+} = require('../../../backend/utils/vectordatabases/providers/qdrant');
 
 // Chroma will only drop null values. So to "reset" the metadata we need to make every existing key null.
 function nullifyExisting(json = {}) {
@@ -192,6 +192,88 @@ const updateSinglePineconeEmbeddingMetadata = InngestClient.createFunction(
   }
 );
 
+const updateSingleQDrantEmbeddingMetadata = InngestClient.createFunction(
+  { name: "Update Single Embedding's metadata in QDrant" },
+  { event: 'qdrant/updateFragmentMetadata' },
+  async ({ event, step: _step, logger }) => {
+    var result = {};
+    const {
+      documentVector,
+      document,
+      workspace,
+      connector,
+      newMetadata,
+      jobId,
+    } = event.data;
+    try {
+      const qdrantClient = new QDrant(connector);
+      const { client } = await qdrantClient.connect();
+      const collection = await qdrantClient.namespaceExists(
+        client,
+        workspace.slug
+      );
+
+      if (!collection) {
+        result = {
+          message: `No collection found with name ${workspace.slug} - nothing to do.`,
+        };
+        await Queue.updateJob(jobId, Queue.status.failed, result);
+        return { result };
+      }
+
+      const vectorMatches = await client.retrieve(workspace.slug, {
+        ids: [documentVector.vectorId],
+        with_vector: true,
+        with_payload: true,
+      });
+
+      if (vectorMatches.length === 0) {
+        result = {
+          message: `No vectors found with ID ${documentVector.vectorId}!`,
+        };
+        await Queue.updateJob(jobId, Queue.status.failed, result);
+        return { result };
+      }
+      const qdrantVector = vectorMatches[0];
+      const existingMetadata = qdrantVector.payload || {};
+      const updatedMetadata = {
+        ...newMetadata,
+        ...(existingMetadata.hasOwnProperty('text')
+          ? { text: existingMetadata.text }
+          : {}), // Persist text key if it was present
+      };
+
+      await client.overwritePayload(workspace.slug, {
+        payload: updatedMetadata,
+        points: [qdrantVector.id],
+      });
+
+      await updateVectorCache({
+        vectorId: documentVector.vectorId,
+        cacheFilename: `${WorkspaceDocument.vectorFilename(document)}.json`,
+        values: qdrantVector.vector, // in Cache we make sure we keep embeddings in sync
+        metadata: updatedMetadata,
+      });
+
+      result = {
+        message: `Document ${document.id} with Qdrant vector ${documentVector.vectorId} updated with new metadata.`,
+        oldMetadata: existingMetadata,
+        updatedMetadata,
+      };
+      await Queue.updateJob(jobId, Queue.status.complete, result);
+      return { result };
+    } catch (e) {
+      const result = {
+        message: `Job failed with error`,
+        error: e.message,
+        details: e,
+      };
+      await Queue.updateJob(jobId, Queue.status.failed, result);
+      return { result };
+    }
+  }
+);
+
 async function updateVectorCache({
   vectorId,
   cacheFilename,
@@ -220,4 +302,5 @@ async function updateVectorCache({
 module.exports = {
   updateSingleChromaEmbeddingMetadata,
   updateSinglePineconeEmbeddingMetadata,
+  updateSingleQDrantEmbeddingMetadata,
 };
