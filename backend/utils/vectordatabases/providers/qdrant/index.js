@@ -1,10 +1,10 @@
-// const { RecursiveCharacterTextSplitter } = require("langchain/text_splitter");
-// const { OpenAi } = require("../../../openAi");
-// const { v4 } = require("uuid");
-// const { DocumentVectors } = require("../../../../models/documentVectors");
-// const { toChunks } = require("../../utils");
-// const { storeVectorResult } = require("../../../storage");
-// const { WorkspaceDocument } = require("../../../../models/workspaceDocument");
+const { RecursiveCharacterTextSplitter } = require("langchain/text_splitter");
+const { OpenAi } = require("../../../openAi");
+const { v4 } = require("uuid");
+const { DocumentVectors } = require("../../../../models/documentVectors");
+const { toChunks } = require("../../utils");
+const { storeVectorResult } = require("../../../storage");
+const { WorkspaceDocument } = require("../../../../models/workspaceDocument");
 
 class QDrant {
   constructor(connector) {
@@ -46,60 +46,6 @@ class QDrant {
 
     return Number(collection?.config?.params?.vectors?.size || 0);
   }
-
-  // async describeIndexRaw() {
-  //   const { settings } = this.config;
-  //   // 200 OK Example
-  //   //   {
-  //   //     "database": {
-  //   //         "name": string,
-  //   //         "metric": "cosine",
-  //   //         "dimension": 1536,
-  //   //         "replicas": 1,
-  //   //         "shards": 1,
-  //   //         "pods": 1
-  //   //     },
-  //   //     "status": {
-  //   //         "waiting": [],
-  //   //         "crashed": [],
-  //   //         "host": URL without protocol,
-  //   //         "port": 433,
-  //   //         "state": "Ready",
-  //   //         "ready": true
-  //   //     }
-  //   // }
-  //   return await fetch(
-  //     `https://controller.${settings.environment}.pinecone.io/databases/${settings.index}`,
-  //     {
-  //       method: "GET",
-  //       headers: {
-  //         "Api-Key": settings.apiKey,
-  //       },
-  //     }
-  //   )
-  //     .then((res) => {
-  //       if (res.ok) {
-  //         return res.json();
-  //       }
-
-  //       const error = {
-  //         code: res?.status,
-  //         message: res?.statusText,
-  //         url: res?.url,
-  //       };
-  //       throw error;
-  //     })
-  //     .catch((e) => {
-  //       console.error("Pinecone.describeIndexRaw", e);
-  //       return {
-  //         database: {},
-  //         status: {
-  //           ready: false,
-  //           host: null,
-  //         },
-  //       };
-  //     });
-  // }
 
   async totalIndicies() {
     const { client } = await this.connect();
@@ -177,94 +123,79 @@ class QDrant {
     };
   }
 
-  // // Split, embed, and save a given document data that we get from the document processor
-  // // API.
-  // async processDocument(
-  //   namespace,
-  //   documentData,
-  //   embedderApiKey,
-  //   dbDocument,
-  //   pineconeIndex
-  // ) {
-  //   try {
-  //     const openai = new OpenAi(embedderApiKey);
-  //     const { pageContent, id, ...metadata } = documentData;
-  //     const textSplitter = new RecursiveCharacterTextSplitter({
-  //       chunkSize: 1000,
-  //       chunkOverlap: 20,
-  //     });
-  //     const textChunks = await textSplitter.splitText(pageContent);
+  // Split, embed, and save a given document data that we get from the document processor
+  // API.
+  async processDocument(namespace, documentData, embedderApiKey, dbDocument) {
+    try {
+      const openai = new OpenAi(embedderApiKey);
+      const { pageContent, id, ...metadata } = documentData;
+      const textSplitter = new RecursiveCharacterTextSplitter({
+        chunkSize: 1000,
+        chunkOverlap: 20,
+      });
+      const textChunks = await textSplitter.splitText(pageContent);
 
-  //     console.log("Chunks created from document:", textChunks.length);
-  //     const documentVectors = [];
-  //     const cacheInfo = [];
-  //     const vectors = [];
-  //     const vectorValues = await openai.embedTextChunks(textChunks);
-  //     const submission = {
-  //       ids: [],
-  //       embeddings: [],
-  //       metadatas: [],
-  //       documents: [],
-  //     };
+      console.log("Chunks created from document:", textChunks.length);
+      const documentVectors = [];
+      const cacheInfo = [];
+      const vectors = [];
+      const vectorValues = await openai.embedTextChunks(textChunks);
 
-  //     if (!!vectorValues && vectorValues.length > 0) {
-  //       for (const [i, vector] of vectorValues.entries()) {
-  //         const vectorRecord = {
-  //           id: v4(),
-  //           values: vector,
-  //           // [DO NOT REMOVE]
-  //           // LangChain will be unable to find your text if you embed manually and dont include the `text` key.
-  //           // https://github.com/hwchase17/langchainjs/blob/2def486af734c0ca87285a48f1a04c057ab74bdf/langchain/src/vectorstores/pinecone.ts#L64
-  //           metadata: { ...metadata, text: textChunks[i] },
-  //         };
+      if (!!vectorValues && vectorValues.length > 0) {
+        for (const [i, vector] of vectorValues.entries()) {
+          const vectorRecord = {
+            id: v4(),
+            vector: vector,
+            // [DO NOT REMOVE]
+            // LangChain will be unable to find your text if you embed manually and dont include the `text` key.
+            // https://github.com/hwchase17/langchainjs/blob/2def486af734c0ca87285a48f1a04c057ab74bdf/langchain/src/vectorstores/pinecone.ts#L64
+            payload: { ...metadata, text: textChunks[i] },
+          };
 
-  //         submission.ids.push(vectorRecord.id);
-  //         submission.embeddings.push(vectorRecord.values);
-  //         submission.metadatas.push(metadata);
-  //         submission.documents.push(textChunks[i]);
+          vectors.push(vectorRecord);
+          documentVectors.push({
+            docId: id,
+            vectorId: vectorRecord.id,
+            documentId: dbDocument.id,
+          });
+          cacheInfo.push({
+            vectorDbId: vectorRecord.id,
+            values: vectorValues,
+            metadata: vectorRecord.payload,
+          });
+        }
+      } else {
+        console.error(
+          "Could not use OpenAI to embed document chunk! This document will not be recorded."
+        );
+      }
 
-  //         vectors.push(vectorRecord);
-  //         documentVectors.push({
-  //           docId: id,
-  //           vectorId: vectorRecord.id,
-  //           documentId: dbDocument.id,
-  //         });
-  //         cacheInfo.push({
-  //           vectorDbId: vectorRecord.id,
-  //           values: vectorValues,
-  //           metadata: vectorRecord.metadata,
-  //         });
-  //       }
-  //     } else {
-  //       console.error(
-  //         "Could not use OpenAI to embed document chunk! This document will not be recorded."
-  //       );
-  //     }
+      const { client } = await this.connect();
+      if (vectors.length > 0) {
+        for (const chunk of toChunks(vectors, 500)) {
+          const submission = {
+            ids: chunk.map((c) => c.id),
+            vectors: chunk.map((c) => c.vector),
+            payloads: chunk.map((c) => c.payload),
+          };
+          await client.upsert(namespace, {
+            wait: true,
+            batch: { ...submission },
+          });
+        }
+      }
 
-  //     if (vectors.length > 0) {
-  //       const chunks = [];
-  //       for (const chunk of toChunks(vectors, 500)) {
-  //         chunks.push(chunk);
-  //         await pineconeIndex.upsert({
-  //           upsertRequest: {
-  //             vectors: [...chunk],
-  //             namespace,
-  //           },
-  //         });
-  //       }
-  //     }
-
-  //     await DocumentVectors.createMany(documentVectors);
-  //     await storeVectorResult(
-  //       cacheInfo,
-  //       WorkspaceDocument.vectorFilename(dbDocument)
-  //     );
-  //     return { success: true, message: null };
-  //   } catch (e) {
-  //     console.error("addDocumentToNamespace", e.message);
-  //     return { success: false, message: e.message };
-  //   }
-  // }
+      await DocumentVectors.createMany(documentVectors);
+      await storeVectorResult(
+        cacheInfo,
+        WorkspaceDocument.vectorFilename(dbDocument)
+      );
+      return { success: true, message: null };
+    } catch (e) {
+      console.error("addDocumentToNamespace", e.message);
+      return { success: false, message: e.message };
+    }
+  }
 
   async similarityResponse(namespace, queryVector) {
     const { client } = await this.connect();

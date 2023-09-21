@@ -27,6 +27,7 @@ const { syncQDrantCluster } = require("./functions/syncQDrantCluster");
 const { syncQDrantWorkspace } = require("./functions/syncQDrantWorkspace");
 const { cloneQDrantWorkspace } = require("./functions/cloneQDrantWorkspace");
 const { cloneQDrantDocument } = require("./functions/cloneQDrantDocument");
+const { addQdrantDocuments } = require("./functions/addQdrantDocuments");
 const app = express();
 
 app.use(cors({ origin: true }));
@@ -58,7 +59,7 @@ app.use(
 
     addChromaDocuments,
     addPineconeDocuments,
-    //addQdrantDocuments,
+    addQdrantDocuments,
 
     deleteChromaDocument,
     deleteSingleChromaEmbedding,
