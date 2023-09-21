@@ -40,10 +40,6 @@ class QDrant {
   async indexDimensions(namespace) {
     const collection = await this.namespace(namespace);
     if (!collection) return 0;
-
-    console.log("qdrant Index dimensions");
-    console.log({ collection });
-
     return Number(collection?.config?.params?.vectors?.size || 0);
   }
 
