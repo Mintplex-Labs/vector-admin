@@ -44,41 +44,41 @@ app.use(
 app.use(
   "/background-workers",
   serve(InngestClient, [
+    // Chroma Functionss
     syncChromaInstance,
-    syncPineconeIndex,
-    syncQDrantCluster,
-
     cloneChromaWorkspace,
     syncChromaWorkspace,
-
-    clonePineconeWorkspace,
-    syncPineconeWorkspace,
-
-    cloneQDrantWorkspace,
-    syncQDrantWorkspace,
-
     addChromaDocuments,
-    addPineconeDocuments,
-    addQdrantDocuments,
-
     deleteChromaDocument,
     deleteSingleChromaEmbedding,
     updateSingleChromaEmbedding,
     updateSingleChromaEmbeddingMetadata,
     cloneChromaDocument,
 
+    // Pinecone
+    syncPineconeIndex,
+    clonePineconeWorkspace,
+    syncPineconeWorkspace,
+    addPineconeDocuments,
     deletePineconeDocument,
     deleteSinglePineconeEmbedding,
     updateSinglePineconeEmbedding,
     updateSinglePineconeEmbeddingMetadata,
     clonePineconeDocument,
 
+    //QDrant
+    syncQDrantCluster,
+    cloneQDrantWorkspace,
+    syncQDrantWorkspace,
+    addQdrantDocuments,
     deleteQdrantDocument,
     deleteSingleQDrantEmbedding,
     updateSingleQDrantEmbedding,
     updateSingleQDrantEmbeddingMetadata,
     cloneQDrantDocument,
 
+
+    // Generics
     newWorkspaceCreated,
     workspaceDeleted,
   ], { landingPage: true })
