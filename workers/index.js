@@ -8,12 +8,12 @@ const { syncChromaInstance } = require("./functions/syncChroma");
 const { findOrCreateDBFile, setupFunctions } = require("./utils/boot");
 const { reqBody } = require("./utils/http");
 const { Queue } = require("../backend/models/queue");
-const { deleteSingleChromaEmbedding, deleteSinglePineconeEmbedding, deleteSingleQDrantEmbedding } = require("./functions/deleteEmbedding");
-const { updateSingleChromaEmbedding, updateSinglePineconeEmbedding, updateSingleQDrantEmbedding } = require("./functions/updateEmbedding");
+const { deleteSingleChromaEmbedding, deleteSinglePineconeEmbedding, deleteSingleQDrantEmbedding, deleteSingleWeaviateEmbedding } = require("./functions/deleteEmbedding");
+const { updateSingleChromaEmbedding, updateSinglePineconeEmbedding, updateSingleQDrantEmbedding, updateSingleWeaviateEmbedding } = require("./functions/updateEmbedding");
 const { newWorkspaceCreated } = require("./functions/newWorkspace");
 const { workspaceDeleted } = require("./functions/deleteWorkspace");
 const { addChromaDocuments } = require("./functions/addChromaDocument");
-const { deleteChromaDocument, deletePineconeDocument, deleteQdrantDocument } = require("./functions/deleteDocument");
+const { deleteChromaDocument, deletePineconeDocument, deleteQdrantDocument, deleteWeaviateDocument } = require("./functions/deleteDocument");
 const { syncPineconeIndex } = require("./functions/syncPinecone");
 const { addPineconeDocuments } = require("./functions/addPineconeDocument");
 const { syncChromaWorkspace } = require("./functions/syncChromaWorkspace");
@@ -22,12 +22,17 @@ const { clonePineconeDocument } = require("./functions/clonePineconeDocument");
 const { cloneChromaDocument } = require("./functions/cloneChromaDocument");
 const { cloneChromaWorkspace } = require("./functions/cloneChromaWorkspace");
 const { clonePineconeWorkspace } = require("./functions/clonePineconeWorkspace");
-const { updateSinglePineconeEmbeddingMetadata, updateSingleChromaEmbeddingMetadata, updateSingleQDrantEmbeddingMetadata } = require("./functions/updateEmbeddingMetadata");
+const { updateSinglePineconeEmbeddingMetadata, updateSingleChromaEmbeddingMetadata, updateSingleQDrantEmbeddingMetadata, updateSingleWeaviateEmbeddingMetadata } = require("./functions/updateEmbeddingMetadata");
 const { syncQDrantCluster } = require("./functions/syncQDrantCluster");
 const { syncQDrantWorkspace } = require("./functions/syncQDrantWorkspace");
 const { cloneQDrantWorkspace } = require("./functions/cloneQDrantWorkspace");
 const { cloneQDrantDocument } = require("./functions/cloneQDrantDocument");
 const { addQdrantDocuments } = require("./functions/addQdrantDocuments");
+const { syncWeaviateCluster } = require("./functions/syncWeaviateCluster");
+const { syncWeaviateWorkspace } = require("./functions/syncWeaviateWorkspace");
+const { cloneWeaviateWorkspace } = require("./functions/cloneWeaviateWorkspace");
+const { cloneWeaviateDocument } = require("./functions/cloneWeaviateDocument");
+const { addWeaviateDocuments } = require("./functions/addWeaviateDocuments");
 const app = express();
 
 app.use(cors({ origin: true }));
@@ -44,7 +49,7 @@ app.use(
 app.use(
   "/background-workers",
   serve(InngestClient, [
-    // Chroma Functionss
+    // Chroma Functions
     syncChromaInstance,
     cloneChromaWorkspace,
     syncChromaWorkspace,
@@ -66,7 +71,7 @@ app.use(
     updateSinglePineconeEmbeddingMetadata,
     clonePineconeDocument,
 
-    //QDrant
+    // QDrant
     syncQDrantCluster,
     cloneQDrantWorkspace,
     syncQDrantWorkspace,
@@ -77,6 +82,16 @@ app.use(
     updateSingleQDrantEmbeddingMetadata,
     cloneQDrantDocument,
 
+    // Weaviate
+    syncWeaviateCluster,
+    cloneWeaviateWorkspace,
+    syncWeaviateWorkspace,
+    addWeaviateDocuments,
+    deleteWeaviateDocument,
+    deleteSingleWeaviateEmbedding,
+    updateSingleWeaviateEmbedding,
+    updateSingleWeaviateEmbeddingMetadata,
+    cloneWeaviateDocument,
 
     // Generics
     newWorkspaceCreated,

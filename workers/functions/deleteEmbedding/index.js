@@ -17,6 +17,9 @@ const {
 const {
   QDrant,
 } = require('../../../backend/utils/vectordatabases/providers/qdrant');
+const {
+  Weaviate,
+} = require('../../../backend/utils/vectordatabases/providers/weaviate');
 
 const deleteSingleChromaEmbedding = InngestClient.createFunction(
   { name: 'Delete Single Embedding From ChromaDB' },
@@ -161,6 +164,58 @@ const deleteSingleQDrantEmbedding = InngestClient.createFunction(
   }
 );
 
+const deleteSingleWeaviateEmbedding = InngestClient.createFunction(
+  { name: 'Delete Single Embedding From Weaviate' },
+  { event: 'weaviate/deleteFragment' },
+  async ({ event, step: _step, logger }) => {
+    var result = {};
+    const { documentVector, workspace, connector, jobId } = event.data;
+    try {
+      const weaviateClient = new Weaviate(connector);
+      const { client } = await weaviateClient.connect();
+      const className = weaviateClient.camelCase(workspace.slug);
+      const hasNamespace = await weaviateClient.namespaceExists(
+        client,
+        workspace.slug
+      );
+
+      if (!hasNamespace) {
+        result = {
+          message: `No namespace found with name ${workspace.slug} (class: ${className}) - nothing to do.`,
+        };
+        await Queue.updateJob(jobId, Queue.status.failed, result);
+        return { result };
+      }
+
+      logger.info(
+        `Deleting vector ${documentVector.vectorId} from ${workspace.name} (class: ${className}).`
+      );
+
+      await client.data
+        .deleter()
+        .withClassName(className)
+        .withId(documentVector.vectorId)
+        .do();
+      await DocumentVectors.delete(documentVector.id);
+      await cleanupCacheFile(documentVector);
+
+      result = {
+        message: `Vector ${documentVector.vectorId} removed from Weaviate collection ${className}.`,
+      };
+      await Queue.updateJob(jobId, Queue.status.complete, result);
+      return { result };
+    } catch (e) {
+      const result = {
+        message: `Job failed with error`,
+        error: e.message,
+        details: e,
+      };
+      await Queue.updateJob(jobId, Queue.status.failed, result);
+      return { result };
+    }
+  }
+);
+
 // Keep cache file in sync with changes so when user copies it later the information is not out of sync.
 async function cleanupCacheFile(documentVector) {
   const document = await WorkspaceDocument.get(
@@ -186,4 +241,5 @@ module.exports = {
   deleteSingleChromaEmbedding,
   deleteSinglePineconeEmbedding,
   deleteSingleQDrantEmbedding,
+  deleteSingleWeaviateEmbedding,
 };

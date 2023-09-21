@@ -18,9 +18,11 @@ const EditEmbeddingConfirmation = lazy(
 const PAGE_SIZE = 10;
 
 export default function FragmentList({
+  connector,
   document,
   canEdit,
 }: {
+  connector: any;
   document: any;
   canEdit: boolean;
 }) {
@@ -147,6 +149,7 @@ export default function FragmentList({
                       fragment={fragment}
                       sourceDoc={sourceDoc}
                       canEdit={canEdit}
+                      connector={connector}
                     />
                   );
                 })}
@@ -170,10 +173,12 @@ const Fragment = ({
   fragment,
   sourceDoc,
   canEdit,
+  connector,
 }: {
   fragment: any;
   sourceDoc: any;
   canEdit: boolean;
+  connector: any;
 }) => {
   const [data, setData] = useState(null);
   const [metadata, setMetadata] = useState({});
@@ -290,7 +295,11 @@ const Fragment = ({
         <FullTextWindow data={data} fragment={fragment} />
       )}
       {!!data && !!fragment && (
-        <MetadataEditor data={data} fragment={fragment} />
+        <MetadataEditor
+          data={data}
+          fragment={fragment}
+          canEdit={canEdit && connector.type !== 'weaviate'}
+        />
       )}
       {!!data && !!fragment && (
         <DeleteEmbeddingConfirmation data={data} fragment={fragment} />

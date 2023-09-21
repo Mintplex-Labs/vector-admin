@@ -13,6 +13,9 @@ const {
 const {
   QDrant,
 } = require('../../../backend/utils/vectordatabases/providers/qdrant');
+const {
+  Weaviate,
+} = require('../../../backend/utils/vectordatabases/providers/weaviate');
 
 // Chroma will only drop null values. So to "reset" the metadata we need to make every existing key null.
 function nullifyExisting(json = {}) {
@@ -274,6 +277,45 @@ const updateSingleQDrantEmbeddingMetadata = InngestClient.createFunction(
   }
 );
 
+// Because of the nature of Weaviate and their class model we cannot atomically control the metadata of independent vectors.
+// Since adding a new field would warrant a total schema update which would be now empty for all existing vectors and would fail...
+// and deleting would have the inverse problem of existing vectors keeping a property which cannot exist. It would mean our only
+// option is to then update every single vector in the DB - will just wait for Weaviate to make this sensible for our use cases.
+
+// TODO: Allow appending only, no key deletes. When adding a record with metadata any properties not in known schema are dropped
+// so the only real concern is removing keys which _do_ have data on existing properties. We can pull the current schema and then
+// just add the newest keys.
+const updateSingleWeaviateEmbeddingMetadata = InngestClient.createFunction(
+  { name: "Update Single Embedding's metadata in Weaviate" },
+  { event: 'weaviate/updateFragmentMetadata' },
+  async ({ event, step: _step, logger }) => {
+    var result = {};
+    const {
+      // documentVector,
+      // document,
+      // workspace,
+      // connector,
+      // newMetadata,
+      jobId,
+    } = event.data;
+    try {
+      result = {
+        message: `Metadata updates are not enabled for Weaviate database connections - nothing was done.`,
+      };
+      await Queue.updateJob(jobId, Queue.status.complete, result);
+      return { result };
+    } catch (e) {
+      const result = {
+        message: `Job failed with error`,
+        error: e.message,
+        details: e,
+      };
+      await Queue.updateJob(jobId, Queue.status.failed, result);
+      return { result };
+    }
+  }
+);
+
 async function updateVectorCache({
   vectorId,
   cacheFilename,
@@ -303,4 +345,5 @@ module.exports = {
   updateSingleChromaEmbeddingMetadata,
   updateSinglePineconeEmbeddingMetadata,
   updateSingleQDrantEmbeddingMetadata,
+  updateSingleWeaviateEmbeddingMetadata,
 };
