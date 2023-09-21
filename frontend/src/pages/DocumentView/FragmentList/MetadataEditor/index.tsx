@@ -74,7 +74,7 @@ const MetadataEditor = memo(
               non-embedded information.
             </p>
 
-            {connector.type === 'weaviate' && (
+            {connector?.type === 'weaviate' && (
               <div className="flex w-full items-center justify-center gap-x-2 rounded-lg border border-orange-600 bg-orange-50 px-4 py-2 text-lg text-orange-800">
                 <AlertTriangle size={18} />
                 <p>
@@ -96,7 +96,7 @@ const MetadataEditor = memo(
               onChange={setHasChanges}
               metadata={editableMetadata}
               canEdit={canEdit}
-              canDelete={connector.type !== 'weaviate'}
+              canDelete={connector?.type !== 'weaviate'}
             />
             <NewEntry addKeyPair={addNewKeyValue} />
 
