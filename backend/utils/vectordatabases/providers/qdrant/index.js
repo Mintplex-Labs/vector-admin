@@ -156,7 +156,7 @@ class QDrant {
           });
           cacheInfo.push({
             vectorDbId: vectorRecord.id,
-            values: vectorValues,
+            values: vector,
             metadata: vectorRecord.payload,
           });
         }
