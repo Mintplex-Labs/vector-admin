@@ -14,6 +14,9 @@ const {
 const {
   QDrant,
 } = require('../../../backend/utils/vectordatabases/providers/qdrant');
+const {
+  Weaviate,
+} = require('../../../backend/utils/vectordatabases/providers/weaviate');
 
 const deleteChromaDocument = InngestClient.createFunction(
   { name: 'Delete Document From ChromaDB' },
@@ -153,8 +156,58 @@ const deleteQdrantDocument = InngestClient.createFunction(
   }
 );
 
+const deleteWeaviateDocument = InngestClient.createFunction(
+  { name: 'Delete Document From Weaviate' },
+  { event: 'weaviate/deleteDocument' },
+  async ({ event, step: _step, logger }) => {
+    var result = {};
+    const { workspace, document, connector, jobId } = event.data;
+    try {
+      const weaviateClient = new Weaviate(connector);
+      const { client } = await weaviateClient.connect();
+      const className = weaviateClient.camelCase(workspace.slug);
+      const hasNamespace = await weaviateClient.namespaceExists(
+        client,
+        workspace.slug
+      );
+
+      if (!hasNamespace) {
+        result = {
+          message: `No namespace found with name ${workspace.slug} (class: ${className}) - nothing to do.`,
+        };
+        await Queue.updateJob(jobId, Queue.status.failed, result);
+        return { result };
+      }
+
+      const vectors = await DocumentVectors.where(
+        `document_id = ${document.id}`
+      );
+      const vectorIds = vectors.map((vector) => vector.vectorId);
+
+      await weaviateClient.bulkDeleteIds(client, className, vectorIds);
+      await WorkspaceDocument.delete(document.id);
+      await deleteVectorCacheFile(WorkspaceDocument.vectorFilename(document));
+
+      result = {
+        message: `Document ${document.name} removed from ${connector.type} collection ${workspace.name}.`,
+      };
+      await Queue.updateJob(jobId, Queue.status.complete, result);
+      return { result };
+    } catch (e) {
+      const result = {
+        message: `Job failed with error`,
+        error: e.message,
+        details: e,
+      };
+      await Queue.updateJob(jobId, Queue.status.failed, result);
+      return { result };
+    }
+  }
+);
+
 module.exports = {
   deleteChromaDocument,
   deletePineconeDocument,
   deleteQdrantDocument,
+  deleteWeaviateDocument,
 };

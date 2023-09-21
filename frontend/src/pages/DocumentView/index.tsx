@@ -20,6 +20,8 @@ export default function DocumentView() {
   const [organization, setOrganization] = useState<{ slug: string }>(null);
   const [workspaces, setWorkspaces] = useState<object[]>([]);
   const [workspace, setWorkspace] = useState<object>([]);
+  const [connector, setConnector] = useState<object | null | boolean>(false);
+
   const [document, setDocument] = useState<object | null>(null);
   const [canEdit, setCanEdit] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -71,8 +73,11 @@ export default function DocumentView() {
 
       const focusedOrg =
         orgs?.find((org: any) => org.slug === slug) || orgs?.[0];
+      const _connector = await Organization.connector(focusedOrg.slug);
+
       setOrganizations(orgs);
       setOrganization(focusedOrg);
+      setConnector(_connector);
 
       const document = await Document.get(documentId);
       const { exists: hasOpenAIKey } = await System.hasSetting(
@@ -107,7 +112,11 @@ export default function DocumentView() {
     >
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
         <div className="col-span-12 xl:col-span-12">
-          <FragmentList document={document} canEdit={canEdit} />
+          <FragmentList
+            connector={connector}
+            document={document}
+            canEdit={canEdit}
+          />
         </div>
       </div>
       <CopyDocToModal

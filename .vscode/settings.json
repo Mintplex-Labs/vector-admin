@@ -1,7 +1,8 @@
 {
   "cSpell.words": [
     "Inngest",
-    "qdrant"
+    "qdrant",
+    "Weaviate"
   ],
   "[json]": {
     "editor.formatOnSave": false

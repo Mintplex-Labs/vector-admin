@@ -17,6 +17,9 @@ async function validateNewDatabaseConnector(organization, config) {
   } else if (type === "qdrant") {
     const { valid, message } = await validateQDrant(settings);
     statusCheck = { valid, message };
+  } else if (type === "weaviate") {
+    const { valid, message } = await validateWeaviate(settings);
+    statusCheck = { valid, message };
   }
 
   if (!statusCheck.valid)
@@ -97,9 +100,29 @@ async function validateQDrant({ clusterUrl, apiKey }) {
   }
 }
 
+async function validateWeaviate({ clusterUrl, apiKey }) {
+  const { default: weaviate } = require("weaviate-ts-client");
+  try {
+    const weaviateUrl = new URL(clusterUrl);
+    const options = {
+      scheme: weaviateUrl.protocol?.replace(":", "") || "http",
+      host: weaviateUrl?.host,
+      ...(apiKey ? { apiKey: new weaviate.ApiKey(apiKey) } : {}),
+    };
+
+    const client = weaviate.client(options);
+    const clusterReady = await client.misc.liveChecker().do();
+    if (!clusterReady) throw new Error("Weaviate::Cluster not ready.");
+    return { valid: true, message: null };
+  } catch (e) {
+    return { valid: false, message: e.message };
+  }
+}
+
 module.exports = {
   validateNewDatabaseConnector,
   validateChroma,
   validatePinecone,
   validateQDrant,
+  validateWeaviate,
 };
