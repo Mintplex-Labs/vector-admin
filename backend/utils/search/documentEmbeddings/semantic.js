@@ -42,7 +42,7 @@ async function semanticSearch(document, query) {
     .map((vid) => `'${vid}'`)
     .join(",");
   const fragments = await DocumentVectors.where(
-    `vectorId IN (${searchString})`,
+    `vectorId IN (${searchString}) AND document_id = ${document.id}`,
     100
   );
   return { fragments, error: null };
