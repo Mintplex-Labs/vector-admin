@@ -13,6 +13,9 @@ const {
 const {
   Pinecone,
 } = require('../../../backend/utils/vectordatabases/providers/pinecone');
+const {
+  QDrant,
+} = require('../../../backend/utils/vectordatabases/providers/qdrant');
 
 const updateSingleChromaEmbedding = InngestClient.createFunction(
   { name: 'Update Single Embedding From ChromaDB' },
@@ -217,6 +220,114 @@ const updateSinglePineconeEmbedding = InngestClient.createFunction(
   }
 );
 
+const updateSingleQDrantEmbedding = InngestClient.createFunction(
+  { name: 'Update Single Embedding From QDrant' },
+  { event: 'qdrant/updateFragment' },
+  async ({ event, step: _step, logger }) => {
+    var result = {};
+    const { documentVector, document, workspace, connector, newText, jobId } =
+      event.data;
+    try {
+      const qdrantClient = new QDrant(connector);
+      const { client } = await qdrantClient.connect();
+      const collection = await qdrantClient.namespaceExists(
+        client,
+        workspace.slug
+      );
+
+      if (!collection) {
+        result = {
+          message: `No collection found with name ${workspace.slug} - nothing to do.`,
+        };
+        await Queue.updateJob(jobId, Queue.status.failed, result);
+        return { result };
+      }
+
+      const vectorMatches = await client.retrieve(workspace.slug, {
+        ids: [documentVector.vectorId],
+        with_vector: true,
+        with_payload: true,
+      });
+
+      if (vectorMatches.length === 0) {
+        result = {
+          message: `No vectors found with ID ${documentVector.vectorId}!`,
+        };
+        await Queue.updateJob(jobId, Queue.status.failed, result);
+        return { result };
+      }
+      const qdrantVector = vectorMatches[0];
+
+      const { length, valid } = validEmbedding(newText);
+      if (length === 0 || !valid) {
+        result = {
+          message: `Text input valid tokenization pre-flight check.`,
+          length,
+        };
+        await Queue.updateJob(jobId, Queue.status.failed, result);
+        return { result };
+      }
+
+      const config = await SystemSettings.get(`label = 'open_ai_api_key'`);
+      if (!config || !config.value) {
+        result = {
+          message: `No OpenAI API Key set for instance - cannot embed text - aborting.`,
+        };
+        await Queue.updateJob(jobId, Queue.status.failed, result);
+        return { result };
+      }
+
+      logger.info(`Embedding text via OpenAi.`);
+      const openAi = new OpenAi(config.value);
+      const embedding = await openAi.embedTextChunk(newText);
+      if (!embedding || embedding.length === 0) {
+        result = { message: `Failed to embed text chunk using OpenAI.` };
+        await Queue.updateJob(jobId, Queue.status.failed, result);
+        return { result };
+      }
+
+      const existingMetadata = qdrantVector?.payload || {};
+      const updatedMetadata = {
+        ...existingMetadata,
+        wordCount: newText.split(' ').length,
+        token_count_estimate: length,
+        text: newText,
+      };
+
+      await client.upsert(workspace.slug, {
+        wait: true,
+        batch: {
+          ids: [documentVector.vectorId],
+          vectors: [embedding],
+          payloads: [updatedMetadata],
+        },
+      });
+
+      await updateVectorCache({
+        vectorId: documentVector.vectorId,
+        cacheFilename: `${WorkspaceDocument.vectorFilename(document)}.json`,
+        values: embedding,
+        metadata: updatedMetadata,
+      });
+      result = {
+        message: `Document ${document.id} with QDrant vector ${documentVector.vectorId} updated with newly embedded text.`,
+        oldText: existingMetadata.text,
+        newText,
+      };
+      await Queue.updateJob(jobId, Queue.status.complete, result);
+      return { result };
+    } catch (e) {
+      const result = {
+        message: `Job failed with error`,
+        error: e.message,
+        details: e,
+      };
+      await Queue.updateJob(jobId, Queue.status.failed, result);
+      return { result };
+    }
+  }
+);
+
 async function updateVectorCache({
   vectorId,
   cacheFilename,
@@ -245,4 +356,5 @@ async function updateVectorCache({
 module.exports = {
   updateSingleChromaEmbedding,
   updateSinglePineconeEmbedding,
+  updateSingleQDrantEmbedding,
 };

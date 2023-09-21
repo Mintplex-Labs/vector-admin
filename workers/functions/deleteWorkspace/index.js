@@ -9,6 +9,9 @@ const {
 const {
   Pinecone,
 } = require('../../../backend/utils/vectordatabases/providers/pinecone');
+const {
+  QDrant,
+} = require('../../../backend/utils/vectordatabases/providers/qdrant');
 const { InngestClient } = require('../../utils/inngest');
 
 const workspaceDeleted = InngestClient.createFunction(
@@ -82,6 +85,42 @@ const workspaceDeleted = InngestClient.createFunction(
         });
         result = {
           message: `Namespace ${workspace.slug} deleted from Pinecone along with ${documents.length} vectorized documents.`,
+        };
+        await Queue.updateJob(jobId, Queue.status.complete, result);
+        return { result };
+      } catch (e) {
+        const result = {
+          message: `Job failed with error`,
+          error: e.message,
+          details: e,
+        };
+        await Queue.updateJob(jobId, Queue.status.failed, result);
+        return { result };
+      }
+    }
+
+    if (connector.type === 'qdrant') {
+      try {
+        const qdrantClient = new QDrant(connector);
+        const { client } = await qdrantClient.connect();
+        const collection = await client.getCollection(workspace.slug);
+
+        if (!collection) {
+          result = {
+            message: `No collection found with name ${workspace.slug} - nothing to do.`,
+          };
+          await Queue.updateJob(jobId, Queue.status.complete, result);
+          return { result };
+        }
+
+        for (const document of documents) {
+          const digestFilename = WorkspaceDocument.vectorFilename(document);
+          await deleteVectorCacheFile(digestFilename);
+        }
+
+        await client.deleteCollection(workspace.slug);
+        result = {
+          message: `Collection ${workspace.slug} deleted from QDrant along with ${documents.length} vectorized documents.`,
         };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };

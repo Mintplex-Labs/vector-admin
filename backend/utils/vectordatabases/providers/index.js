@@ -3,6 +3,7 @@ const {
 } = require("../../../models/organizationConnection");
 const { Chroma } = require("./chroma");
 const { Pinecone } = require("./pinecone");
+const { QDrant } = require("./qdrant");
 
 function selectConnector(organizationConnector) {
   const { type } = organizationConnector;
@@ -15,6 +16,10 @@ function selectConnector(organizationConnector) {
 
   if (organizationConnector.type === "pinecone") {
     return new Pinecone(organizationConnector);
+  }
+
+  if (organizationConnector.type === "qdrant") {
+    return new QDrant(organizationConnector);
   }
 
   throw new Error(

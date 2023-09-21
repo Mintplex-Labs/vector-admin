@@ -2,6 +2,9 @@ const { Queue } = require('../../../backend/models/queue');
 const {
   Chroma,
 } = require('../../../backend/utils/vectordatabases/providers/chroma');
+const {
+  QDrant,
+} = require('../../../backend/utils/vectordatabases/providers/qdrant');
 const { InngestClient } = require('../../utils/inngest');
 
 const newWorkspaceCreated = InngestClient.createFunction(
@@ -10,7 +13,7 @@ const newWorkspaceCreated = InngestClient.createFunction(
   async ({ event, step: _step, logger }) => {
     var result = {};
     const { workspace, connector, jobId } = event.data;
-    if (connector.type !== 'chroma') {
+    if (!['chroma', 'qdrant'].includes(connector.type)) {
       result = {
         message: `Connector type does not support empty collection creation - nothing to do.`,
       };
@@ -35,6 +38,42 @@ const newWorkspaceCreated = InngestClient.createFunction(
         }
 
         result = { message: `Collection ${workspace.slug} created in Chroma.` };
+        await Queue.updateJob(jobId, Queue.status.complete, result);
+        return { result };
+      } catch (e) {
+        const result = {
+          message: `Job failed with error`,
+          error: e.message,
+          details: e,
+        };
+        await Queue.updateJob(jobId, Queue.status.failed, result);
+        return { result };
+      }
+    }
+
+    if (connector.type === 'qdrant') {
+      try {
+        const qdrantClient = new QDrant(connector);
+        const { client } = await qdrantClient.connect();
+        const collectionCreated = await client.createCollection(
+          workspace.slug,
+          {
+            vectors: {
+              size: 1536, // TODO: Fixed to OpenAI models - when other embeddings exist make variable.
+              distance: 'Cosine',
+            },
+          }
+        );
+
+        if (!collectionCreated) {
+          result = {
+            message: `No collection could be created with name ${workspace.slug} - nothing to do.`,
+          };
+          await Queue.updateJob(jobId, Queue.status.failed, result);
+          return { result };
+        }
+
+        result = { message: `Collection ${workspace.slug} created in QDrant.` };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };
       } catch (e) {

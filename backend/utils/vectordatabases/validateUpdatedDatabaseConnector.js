@@ -4,6 +4,7 @@ const {
 const {
   validateChroma,
   validatePinecone,
+  validateQDrant,
 } = require("./validateNewDatabaseConnector");
 
 async function validateUpdatedDatabaseConnector(connector, config) {
@@ -18,7 +19,11 @@ async function validateUpdatedDatabaseConnector(connector, config) {
   } else if (type === "pinecone") {
     const { valid, message } = await validatePinecone(settings);
     statusCheck = { valid, message };
+  } else if (type === "qdrant") {
+    const { valid, message } = await validateQDrant(settings);
+    statusCheck = { valid, message };
   }
+
   if (!statusCheck.valid)
     return { connector: null, error: statusCheck.message };
 
