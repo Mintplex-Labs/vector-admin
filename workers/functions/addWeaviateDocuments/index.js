@@ -5,9 +5,6 @@ const {
   WorkspaceDocument,
 } = require('../../../backend/models/workspaceDocument');
 const {
-  QDrant,
-} = require('../../../backend/utils/vectordatabases/providers/qdrant');
-const {
   Weaviate,
 } = require('../../../backend/utils/vectordatabases/providers/weaviate');
 

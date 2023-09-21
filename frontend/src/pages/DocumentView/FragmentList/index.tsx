@@ -298,7 +298,8 @@ const Fragment = ({
         <MetadataEditor
           data={data}
           fragment={fragment}
-          canEdit={canEdit && connector.type !== 'weaviate'}
+          connector={connector}
+          canEdit={canEdit}
         />
       )}
       {!!data && !!fragment && (

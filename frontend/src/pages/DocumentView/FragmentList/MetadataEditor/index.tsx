@@ -8,10 +8,12 @@ const MetadataEditor = memo(
   ({
     data,
     fragment,
+    connector,
     canEdit,
   }: {
     data: any;
     fragment: any;
+    connector: any;
     canEdit: boolean;
   }) => {
     const [hasChanges, setHasChanges] = useState(false);
@@ -72,10 +74,12 @@ const MetadataEditor = memo(
               non-embedded information.
             </p>
 
-            {!canEdit && (
+            {connector.type === 'weaviate' && (
               <div className="flex w-full items-center justify-center gap-x-2 rounded-lg border border-orange-600 bg-orange-50 px-4 py-2 text-lg text-orange-800">
                 <AlertTriangle size={18} />
-                <p>Editing of metadata is disabled for Weaviate databases.</p>
+                <p>
+                  Deletion of metadata keys is disabled for Weaviate databases.
+                </p>
               </div>
             )}
           </div>
@@ -92,8 +96,9 @@ const MetadataEditor = memo(
               onChange={setHasChanges}
               metadata={editableMetadata}
               canEdit={canEdit}
+              canDelete={connector.type !== 'weaviate'}
             />
-            {canEdit && <NewEntry addKeyPair={addNewKeyValue} />}
+            <NewEntry addKeyPair={addNewKeyValue} />
 
             <div className="mt-4 flex flex-col gap-y-2">
               <div hidden={!hasChanges || !canEdit}>
@@ -134,12 +139,14 @@ function JSONFormBuilder({
   onSubmit,
   onChange,
   metadata,
+  canDelete,
   canEdit,
 }: {
   fragment: { id: number };
   onSubmit: any;
   onChange: (b: boolean) => void;
   metadata: object;
+  canDelete: boolean;
   canEdit: boolean;
 }) {
   const renderField = (
@@ -149,7 +156,7 @@ function JSONFormBuilder({
   ) => {
     const containerId = `${name ? `${name}.${key}` : key}-container`;
     const setKeyForRemoval = () => {
-      if (!canEdit) return;
+      if (!canDelete) return;
       document.getElementById(containerId)?.setAttribute('hidden', 'true');
       document
         .getElementById(containerId)
@@ -177,7 +184,7 @@ function JSONFormBuilder({
               typeof value === 'number' ? Number(value) : String(value ?? '')
             }
           />
-          {canEdit && (
+          {canDelete && (
             <button
               type="button"
               onClick={setKeyForRemoval}

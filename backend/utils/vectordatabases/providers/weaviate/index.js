@@ -235,6 +235,21 @@ class Weaviate {
     return;
   }
 
+  async schemaForCollection(namespace) {
+    if (!namespace) throw new Error("No namespace value provided.");
+    const { client } = await this.connect();
+    const className = await this.camelCase(namespace);
+    const weaviateClass = await client.schema
+      .classGetter()
+      .withClassName(className)
+      .do();
+
+    return {
+      name: className,
+      ...weaviateClass,
+    };
+  }
+
   async fieldNamesForCollection(namespace) {
     if (!namespace) throw new Error("No namespace value provided.");
     const weaviateClass = await this.namespace(namespace);
