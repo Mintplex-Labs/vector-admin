@@ -310,9 +310,6 @@ class Pinecone {
           const vectorRecord = {
             id: v4(),
             values: vector,
-            // [DO NOT REMOVE]
-            // LangChain will be unable to find your text if you embed manually and dont include the `text` key.
-            // https://github.com/hwchase17/langchainjs/blob/2def486af734c0ca87285a48f1a04c057ab74bdf/langchain/src/vectorstores/pinecone.ts#L64
             metadata: { ...metadata, text: textChunks[i] },
           };
 
@@ -343,12 +340,33 @@ class Pinecone {
         const chunks = [];
         for (const chunk of toChunks(vectors, 500)) {
           chunks.push(chunk);
-          await pineconeIndex.upsert({
-            upsertRequest: {
-              vectors: [...chunk],
-              namespace,
-            },
-          });
+          try {
+            await pineconeIndex.upsert({
+              upsertRequest: {
+                vectors: [...chunk],
+                namespace,
+              },
+            });
+          } catch (e) {
+            // Catch error for Pinecone free tier
+            if (
+              e.message &&
+              e.message.includes(
+                "The requested feature 'Namespaces' is not supported by the current index type 'Starter'"
+              )
+            ) {
+              // Leave namespace blank for free tier
+              console.log("Attempting to upsert without a namespace.");
+              await pineconeIndex.upsert({
+                upsertRequest: {
+                  vectors: [...chunk],
+                  namespace: "",
+                },
+              });
+            } else {
+              throw e;
+            }
+          }
         }
       }
 
@@ -363,6 +381,7 @@ class Pinecone {
       return { success: false, message: e.message };
     }
   }
+
 
   async similarityResponse(namespace, queryVector) {
     const { pineconeIndex } = await this.connect();
