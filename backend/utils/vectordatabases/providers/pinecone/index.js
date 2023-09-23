@@ -382,7 +382,6 @@ class Pinecone {
     }
   }
 
-
   async similarityResponse(namespace, queryVector) {
     const { pineconeIndex } = await this.connect();
     const result = {
