@@ -51,8 +51,17 @@ class Chroma {
     return { result: await client.heartbeat(), error: null };
   }
 
-  async totalIndicies() {
+  async totalIndicies(filterByNamespace = null) {
     const { client } = await this.connect();
+
+    if (!!filterByNamespace) {
+      const collection = await client
+        .getCollection({ name: filterByNamespace })
+        .catch(() => null);
+      if (!collection) return 0;
+      return { result: await collection.count(), error: null };
+    }
+
     const collections = await client.listCollections();
     var totalVectors = 0;
     for (const collectionObj of collections) {

@@ -3,6 +3,7 @@ const path = require("path");
 const { v5 } = require("uuid");
 const { fetchMetadata } = require("../utils/storage");
 const { DocumentVectors } = require("./documentVectors");
+const { selectConnector } = require("../utils/vectordatabases/providers");
 
 const WorkspaceDocument = {
   tablename: "workspace_documents",
@@ -200,14 +201,34 @@ const WorkspaceDocument = {
 
     return completeResults;
   },
-
   countForEntity: async function (field = "organization_id", value = null) {
     return await this.count(`${field} = ${value}`);
   },
-  calcVectors: async function (field = "organization_id", value = null) {
+  // We can rely on the database connector to make this count quicker as when the instance is tracking over
+  // 50K+ documents the SQL query could have 50K+ ids in the `IN` part of the query. This is not only
+  // inefficient it also is slow. Since we need a static count lets just use the heuristic from the provider.
+  // and if that fails, look at the local DB.
+  calcVectors: async function (
+    field = "organization_id",
+    value = null,
+    filterByNamespace = null
+  ) {
     try {
       const documents = await this.where(`${field} = ${value}`);
       if (documents.length === 0) return 0;
+
+      const { OrganizationConnection } = require("./organizationConnection");
+      var connector =
+        field === "organization_id"
+          ? await OrganizationConnection.get(`${field} = ${value}`)
+          : await OrganizationConnection.get(
+              `organization_id = ${documents[0].organization_id}`
+            );
+
+      if (!!connector) {
+        const vectorDB = selectConnector(connector);
+        return (await vectorDB.totalIndicies(filterByNamespace))?.result || 0;
+      }
 
       const docIdSet = new Set();
       documents.forEach((doc) => docIdSet.add(doc.id));

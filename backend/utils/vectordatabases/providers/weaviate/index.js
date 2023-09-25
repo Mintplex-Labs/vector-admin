@@ -60,13 +60,15 @@ class Weaviate {
     );
   }
 
-  async totalIndicies() {
+  async totalIndicies(filterByNamespace = null) {
     const { client } = await this.connect();
     const collections = await this.collections();
     var totalVectors = 0;
     for (const collection of collections) {
       if (!collection || !collection.name) continue;
-      console.log({ dim: await this.indexDimensions(collection.name) });
+      if (!!filterByNamespace && filterByNamespace !== collection.name)
+        continue;
+
       totalVectors +=
         (await this.namespaceWithClient(client, collection.name))
           ?.vectorCount || 0;

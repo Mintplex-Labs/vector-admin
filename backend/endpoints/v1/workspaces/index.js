@@ -303,10 +303,10 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        console.log(workspace);
         const value = await WorkspaceDocument[methods[statistic]](
           "workspace_id",
-          workspace.id
+          workspace.id,
+          workspace.slug
         );
         response.status(200).json({ value });
       } catch (e) {

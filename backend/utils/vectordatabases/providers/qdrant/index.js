@@ -43,12 +43,15 @@ class QDrant {
     return Number(collection?.config?.params?.vectors?.size || 0);
   }
 
-  async totalIndicies() {
+  async totalIndicies(filterByNamespace = null) {
     const { client } = await this.connect();
     const { collections } = await client.getCollections();
     var totalVectors = 0;
     for (const collection of collections) {
       if (!collection || !collection.name) continue;
+      if (!!filterByNamespace && filterByNamespace !== collection.name)
+        continue;
+
       totalVectors +=
         (await this.namespaceWithClient(client, collection.name))
           ?.vectorCount || 0;

@@ -100,9 +100,19 @@ class Pinecone {
       });
   }
 
-  async totalIndicies() {
+  async totalIndicies(filterByNamespace = null) {
     const { pineconeIndex } = await this.connect();
     const { namespaces } = await pineconeIndex.describeIndexStats1();
+
+    if (!!filterByNamespace) {
+      if (!namespaces.hasOwnProperty(filterByNamespace))
+        return { result: 0, error: null };
+      return {
+        result: namespaces[filterByNamespace].vectorCount || 0,
+        error: null,
+      };
+    }
+
     const totalVectors = Object.values(namespaces).reduce(
       (a, b) => a + (b?.vectorCount || 0),
       0
