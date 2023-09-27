@@ -13,9 +13,9 @@ async function semanticSearch(document, query) {
   const workspace = await OrganizationWorkspace.get(
     `id = ${document.workspace_id}`
   );
-  const connector = await OrganizationConnection.get(
-    `organization_id = ${document.organization_id}`
-  );
+  const connector = await OrganizationConnection.get({
+    organization_id: Number(document.organization_id),
+  });
   if (!connector)
     return { fragments: [], error: "No connector found for org." };
 

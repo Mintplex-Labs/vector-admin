@@ -14,8 +14,8 @@ const SystemSettings = {
     try {
       const setting = await prisma.system_settings.findFirst({ where: clause });
       return setting || null;
-    } catch (error) {
-      console.error(error.message);
+    } catch (e) {
+      console.error(e.message);
       return null;
     }
   },
@@ -27,8 +27,8 @@ const SystemSettings = {
         ...(limit !== null ? { take: limit } : {}),
       });
       return settings;
-    } catch (error) {
-      console.error(error.message);
+    } catch (e) {
+      console.error(e.message);
       return [];
     }
   },
@@ -40,9 +40,8 @@ const SystemSettings = {
 
     for (const key of validConfigKeys) {
       const existingRecord = await this.get({ label: key });
-
       if (!existingRecord) {
-        const value = updates[key] === null ? null : String(updates[key]);
+        const value = updates[key] === null ? "" : String(updates[key]);
         const success = await prisma.system_settings.create({
           data: { label: key, value },
         });
@@ -51,7 +50,7 @@ const SystemSettings = {
           return { success: false, error: message };
         }
       } else {
-        const value = updates[key] === null ? null : String(updates[key]);
+        const value = updates[key] === null ? "" : String(updates[key]);
         const success = await prisma.system_settings.update({
           where: { id: Number(existingRecord.id) },
           data: { label: key, value },

@@ -42,8 +42,8 @@ model organization_users {
   organization_id Int
   createdAt       DateTime      @default(now())
   lastUpdatedAt   DateTime      @default(now())
-  user            users         @relation(fields: [user_id], references: [id])
-  organization    organizations @relation(fields: [organization_id], references: [id])
+  user            users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  organization    organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 }
 
 model organization_api_keys {

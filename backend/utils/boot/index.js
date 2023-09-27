@@ -110,10 +110,9 @@ async function systemInit() {
     });
     if (existingRootUser) return;
 
-    const bcrypt = require("bcrypt");
     const rootUser = await User.create({
       email: process.env.SYS_EMAIL,
-      password: bcrypt.hashSync(process.env.SYS_PASSWORD, 10),
+      password: process.env.SYS_PASSWORD,
       role: "root",
     });
 

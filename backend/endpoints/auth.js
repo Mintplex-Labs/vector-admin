@@ -155,7 +155,7 @@ function authenticationEndpoints(app) {
         return;
       }
 
-      await User.addToAllOrgs(user.id); // TODO: Add users to Orgs
+      await User.addToAllOrgs(user.id);
       await Telemetry.sendTelemetry("login_event");
       response.status(200).json({
         user,

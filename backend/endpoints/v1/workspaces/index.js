@@ -47,10 +47,9 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${orgSlug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, {
+          slug: orgSlug,
+        });
         if (!organization) {
           response
             .status(200)
@@ -58,9 +57,9 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${organization.id}`
-        );
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         if (!connector) {
           response.status(200).json({
             workspace: null,
@@ -98,10 +97,9 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${orgSlug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, {
+          slug: orgSlug,
+        });
         if (!organization) {
           response
             .status(200)
@@ -109,9 +107,9 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${organization.id}`
-        );
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         if (!connector) {
           response.status(200).json({
             workspace: null,
@@ -144,10 +142,9 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${orgSlug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, {
+          slug: orgSlug,
+        });
         if (!organization) {
           response
             .status(200)
@@ -176,10 +173,9 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${orgSlug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, {
+          slug: orgSlug,
+        });
         if (!organization) {
           response
             .status(200)
@@ -200,9 +196,9 @@ function workspaceEndpoints(app) {
         );
         await OrganizationWorkspace.delete(`id = ${workspace.id}`);
 
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${organization.id}`
-        );
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         await workspaceDeletedJob(
           organization,
           workspace,
@@ -232,10 +228,9 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${orgSlug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, {
+          slug: orgSlug,
+        });
         const workspace = await OrganizationWorkspace.get(
           `slug = '${wsSlug}' AND organization_id = ${organization.id}`
         );
@@ -275,10 +270,7 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${slug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, { slug });
         const workspace = await OrganizationWorkspace.bySlugAndOrg(
           workspaceSlug,
           organization.id
@@ -344,13 +336,13 @@ function workspaceEndpoints(app) {
 
       try {
         const user = await userFromSession(request);
-        const organization = await Organization.get(`slug = '${slug}'`);
+        const organization = await Organization.get({ slug });
         const workspace = await OrganizationWorkspace.get(
           `slug = '${workspaceSlug}' AND organization_id = ${organization.id}`
         );
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${organization.id}`
-        );
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         await addDocumentJob(
           metadata,
           organization,
@@ -377,13 +369,13 @@ function workspaceEndpoints(app) {
         const { newWorkspaceName } = reqBody(request);
 
         const user = await userFromSession(request);
-        const organization = await Organization.get(`slug = '${slug}'`);
+        const organization = await Organization.get({ slug });
         const workspace = await OrganizationWorkspace.get(
           `slug = '${workspaceSlug}' AND organization_id = ${organization.id}`
         );
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${organization.id}`
-        );
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
 
         await cloneWorkspaceJob(
           organization,
@@ -414,13 +406,10 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        const connector = await OrganizationConnection.get(
-          `id = ${connectorId}`
-        );
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${slug}'`
-        );
+        const connector = await OrganizationConnection.get({
+          id: Number(connectorId),
+        });
+        const organization = await Organization.getWithOwner(user.id, { slug });
         const workspace = await OrganizationWorkspace.bySlugAndOrg(
           workspaceSlug,
           organization.id

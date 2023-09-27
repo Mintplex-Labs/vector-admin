@@ -8,9 +8,9 @@ const { OpenAi } = require("../../openAi");
 const { selectConnector } = require("../../vectordatabases/providers");
 
 async function semanticSearch(workspace, query) {
-  const connector = await OrganizationConnection.get(
-    `organization_id = ${workspace.organization_id}`
-  );
+  const connector = await OrganizationConnection.get({
+    organization_id: Number(workspace.organization_id),
+  });
   if (!connector)
     return { documents: [], error: "No connector found for org." };
 

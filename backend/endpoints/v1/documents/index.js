@@ -70,15 +70,15 @@ function documentEndpoints(app) {
         }
 
         const document = await WorkspaceDocument.get(`id = ${id}`);
-        const organization = await Organization.get(
-          `id = ${document.organization_id}`
-        );
+        const organization = await Organization.get({
+          id: Number(document.organization_id),
+        });
         const workspace = await OrganizationWorkspace.get(
           `id = ${document.workspace_id}`
         );
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${organization.id}`
-        );
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         await documentDeletedJob(
           organization,
           workspace,
@@ -162,12 +162,12 @@ function documentEndpoints(app) {
         const workspace = await OrganizationWorkspace.get(
           `id = ${document.workspace_id}`
         );
-        const organization = await Organization.get(
-          `id = ${document.organization_id}`
-        );
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${document.organization_id}`
-        );
+        const organization = await Organization.get({
+          id: Number(document.organization_id),
+        });
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         await updateEmbeddingJob(
           fragment,
           document,
@@ -211,12 +211,12 @@ function documentEndpoints(app) {
         const workspace = await OrganizationWorkspace.get(
           `id = ${document.workspace_id}`
         );
-        const organization = await Organization.get(
-          `id = ${document.organization_id}`
-        );
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${document.organization_id}`
-        );
+        const organization = await Organization.get({
+          id: Number(document.organization_id),
+        });
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         await updateEmbeddingMetadataJob(
           fragment,
           document,
@@ -258,12 +258,12 @@ function documentEndpoints(app) {
         const workspace = await OrganizationWorkspace.get(
           `id = ${document.workspace_id}`
         );
-        const organization = await Organization.get(
-          `id = ${document.organization_id}`
-        );
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${document.organization_id}`
-        );
+        const organization = await Organization.get({
+          id: Number(document.organization_id),
+        });
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         await createDeleteEmbeddingJob(
           fragment,
           workspace,
@@ -301,10 +301,9 @@ function documentEndpoints(app) {
         const workspace = await OrganizationWorkspace.get(
           `id = ${document.workspace_id}`
         );
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${document.organization_id}`
-        );
-
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(document.organization_id),
+        });
         const VectorDb = selectConnector(connector);
         const results = await VectorDb.getMetadata(workspace.slug, vectorIds);
         const items = {};
@@ -352,12 +351,12 @@ function documentEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.get(
-          `id = ${workspace.organization_id}`
-        );
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${workspace.organization_id}`
-        );
+        const organization = await Organization.get({
+          id: Number(document.organization_id),
+        });
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         if (!connector) {
           response.status(404).json({
             success: false,

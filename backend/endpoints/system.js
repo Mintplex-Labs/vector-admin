@@ -80,6 +80,14 @@ function systemEndpoints(app) {
         }
 
         const config = await SystemSettings.get({ label });
+        if (!config) {
+          response.status(200).json({
+            label,
+            value: "",
+          });
+          return;
+        }
+
         if (SystemSettings.privateField.includes(label)) {
           response.status(200).json({
             ...config,

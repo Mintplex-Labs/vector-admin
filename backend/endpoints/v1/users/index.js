@@ -23,7 +23,11 @@ function userEndpoints(app) {
           return;
         }
 
-        const users = await User.whereWithOrgs(`role != 'root'`); // TODO: Support
+        const users = await User.whereWithOrgs({
+          role: {
+            not: "root",
+          },
+        });
         response.status(200).json({ users });
       } catch (e) {
         console.log(e.message, e);
@@ -77,7 +81,7 @@ function userEndpoints(app) {
           password,
           role,
         });
-        await User.addToAllOrgs(newUser.id); // TODO
+        await User.addToAllOrgs(newUser.id);
         response.status(200).json({ success: !!newUser, error: message });
       } catch (e) {
         console.log(e.message, e);

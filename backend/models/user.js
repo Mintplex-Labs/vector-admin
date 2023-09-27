@@ -14,8 +14,8 @@ const User = {
 
       return { user, message: null };
     } catch (e) {
-      console.error("FAILED TO CREATE USER.", error.message);
-      return { user: null, error: error.message };
+      console.error("FAILED TO CREATE USER.", e.message);
+      return { user: null, error: e.message };
     }
   },
 
@@ -23,8 +23,8 @@ const User = {
     try {
       const user = await prisma.users.findFirst({ where: clause });
       return user ? { ...user } : null;
-    } catch (error) {
-      console.error(error.message);
+    } catch (e) {
+      console.error(e.message);
       return null;
     }
   },
@@ -36,8 +36,8 @@ const User = {
         ...(limit !== null ? { take: limit } : {}),
       });
       return users;
-    } catch (error) {
-      console.error(error.message);
+    } catch (e) {
+      console.error(e.message);
       return [];
     }
   },
@@ -46,53 +46,56 @@ const User = {
     try {
       const count = await prisma.users.count({ where: clause });
       return count;
-    } catch (error) {
-      console.error(error.message);
+    } catch (e) {
+      console.error(e.message);
       return 0;
     }
   },
 
-  // whereWithOrgs: async function (clause = null, limit = null) {
-  //   const { Organization } = require("./organization");
-  //   const { OrganizationUser } = require("./organizationUser");
+  whereWithOrgs: async function (clause = {}, limit = null) {
+    const { Organization } = require("./organization");
+    const { OrganizationUser } = require("./organizationUser");
 
-  //   const users = await this.where(clause, limit);
-  //   const organizations = await Organization.where();
+    const users = await this.where(clause, limit);
+    const organizations = await Organization.where();
 
-  //   for (const user of users) {
-  //     const memberships = await OrganizationUser.where(`user_id = ${user.id}`);
-  //     delete user.password;
-  //     user.memberships = [];
+    for (const user of users) {
+      const memberships = await OrganizationUser.where({
+        user_id: Number(user.id),
+      });
+      delete user.password;
+      user.memberships = [];
 
-  //     for (const membership of memberships) {
-  //       const org = organizations.find(
-  //         (org) => org.id === membership.organization_id
-  //       );
-  //       user.memberships.push({ ...org, organization_id: org.id });
-  //     }
-  //   }
+      for (const membership of memberships) {
+        const org = organizations.find(
+          (org) => org.id === membership.organization_id
+        );
+        user.memberships.push({ ...org, organization_id: org.id });
+      }
+    }
 
-  //   return users;
-  // },
-  // addToAllOrgs: async function (userId = null) {
-  //   if (!userId) return false;
-  //   const { Organization } = require("./organization");
-  //   const { OrganizationUser } = require("./organizationUser");
+    return users;
+  },
 
-  //   const organizations = await Organization.where();
-  //   if (!organizations.length) return;
+  addToAllOrgs: async function (userId = null) {
+    if (!userId) return false;
+    const { Organization } = require("./organization");
+    const { OrganizationUser } = require("./organizationUser");
 
-  //   const orgIds = organizations.map((org) => org.id);
-  //   await OrganizationUser.createMany(userId, orgIds);
-  //   return;
-  // },
+    const organizations = await Organization.where();
+    if (!organizations.length) return;
+
+    const orgIds = organizations.map((org) => org.id);
+    await OrganizationUser.createMany(userId, orgIds);
+    return;
+  },
 
   delete: async function (clause = {}) {
     try {
       await prisma.users.delete({ where: clause });
       return true;
-    } catch (error) {
-      console.error(error.message);
+    } catch (e) {
+      console.error(e.message);
       return false;
     }
   },
@@ -138,9 +141,9 @@ const User = {
       const { OrganizationUser } = require("./organizationUser");
       await OrganizationUser.updateOrgPermissions(user.id, memberships);
       return { success: !!updatedUser, error: null };
-    } catch (error) {
-      console.error(error.message);
-      return { success: false, error: error.message };
+    } catch (e) {
+      console.error(e.message);
+      return { success: false, error: e.message };
     }
   },
 };
