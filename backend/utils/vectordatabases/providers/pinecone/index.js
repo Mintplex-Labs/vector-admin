@@ -5,6 +5,7 @@ const { DocumentVectors } = require("../../../../models/documentVectors");
 const { toChunks } = require("../../utils");
 const { storeVectorResult } = require("../../../storage");
 const { WorkspaceDocument } = require("../../../../models/workspaceDocument");
+const { OrganizationWorkspace } = require("../../../../models/organizationWorkspace");
 
 class Pinecone {
   constructor(connector) {
@@ -15,8 +16,12 @@ class Pinecone {
   setConfig(config) {
     var { type, settings } = config;
     if (typeof settings === "string") settings = JSON.parse(settings);
-    return { type, settings };
-  }
+    return {
+        type,
+        settings,
+        starterMode: settings.starterMode || false
+    };
+}
 
   async connect() {
     const { PineconeClient } = require("@pinecone-database/pinecone");
@@ -33,8 +38,14 @@ class Pinecone {
 
     const pineconeIndex = client.Index(settings.index);
     const {
-      status: { ready, host },
+      status: { ready, host }, database: { pod_type },
     } = await this.describeIndexRaw();
+
+    if(pod_type === "starter"){
+      console.log("Pinecone::connect::starterMode detected.");
+      this.config.starterMode = true;
+      // OrganizationWorkspace.safeCreate("");
+    }
     if (!ready) throw new Error("Pinecone::Index not ready.");
 
     return { client, host, pineconeIndex };
@@ -129,6 +140,7 @@ class Pinecone {
   }
 
   async namespaceExists(index, namespace = null) {
+    if (this.config.starterMode) namespace = "";
     if (!namespace) throw new Error("No namespace value provided.");
     const { namespaces } = await index.describeIndexStats1();
     return namespaces.hasOwnProperty(namespace);
@@ -137,6 +149,7 @@ class Pinecone {
   async namespace(name = null) {
     if (!name) throw new Error("No namespace value provided.");
     const { pineconeIndex } = await this.connect();
+    if (this.config.starterMode) name = "";
     const { namespaces } = await pineconeIndex.describeIndexStats1();
     const collection = namespaces.hasOwnProperty(name)
       ? namespaces[name]
@@ -231,6 +244,7 @@ class Pinecone {
   }
 
   async rawGet(host, namespace, offset = 10, filterRunId = "") {
+    if (this.config.starterMode) namespace = "";
     try {
       const data = {
         ids: [],
@@ -284,6 +298,7 @@ class Pinecone {
     dbDocument,
     pineconeIndex
   ) {
+    if (this.config.starterMode) namespace = "";
     try {
       const openai = new OpenAi(embedderApiKey);
       const { pageContent, id, ...metadata } = documentData;
@@ -340,33 +355,12 @@ class Pinecone {
         const chunks = [];
         for (const chunk of toChunks(vectors, 500)) {
           chunks.push(chunk);
-          try {
             await pineconeIndex.upsert({
               upsertRequest: {
                 vectors: [...chunk],
                 namespace,
               },
             });
-          } catch (e) {
-            // Catch error for Pinecone free tier
-            if (
-              e.message &&
-              e.message.includes(
-                "The requested feature 'Namespaces' is not supported by the current index type 'Starter'"
-              )
-            ) {
-              // Leave namespace blank for free tier
-              console.log("Attempting to upsert without a namespace.");
-              await pineconeIndex.upsert({
-                upsertRequest: {
-                  vectors: [...chunk],
-                  namespace: "",
-                },
-              });
-            } else {
-              throw e;
-            }
-          }
         }
       }
 
@@ -384,6 +378,7 @@ class Pinecone {
 
   async similarityResponse(namespace, queryVector) {
     const { pineconeIndex } = await this.connect();
+    if (this.config.starterMode) namespace = "";
     const result = {
       vectorIds: [],
       contextTexts: [],
