@@ -5,23 +5,23 @@ const { DocumentVectors } = require("../../../../models/documentVectors");
 const { toChunks } = require("../../utils");
 const { storeVectorResult } = require("../../../storage");
 const { WorkspaceDocument } = require("../../../../models/workspaceDocument");
-const { OrganizationWorkspace } = require("../../../../models/organizationWorkspace");
 
 class Pinecone {
   constructor(connector) {
     this.name = "pinecone";
     this.config = this.setConfig(connector);
+    this.emptyNamespaceIdentifier = "default-pinecone-namespace"
   }
 
   setConfig(config) {
     var { type, settings } = config;
     if (typeof settings === "string") settings = JSON.parse(settings);
     return {
-        type,
-        settings,
-        starterMode: settings.starterMode || false
+      type,
+      settings,
+      starterMode: settings.starterMode || false
     };
-}
+  }
 
   async connect() {
     const { PineconeClient } = require("@pinecone-database/pinecone");
@@ -41,7 +41,7 @@ class Pinecone {
       status: { ready, host }, database: { pod_type },
     } = await this.describeIndexRaw();
 
-    if(pod_type === "starter"){
+    if (pod_type === "starter") {
       console.log("Pinecone::connect::starterMode detected.");
       this.config.starterMode = true;
       // OrganizationWorkspace.safeCreate("");
@@ -131,7 +131,7 @@ class Pinecone {
     const { namespaces } = await pineconeIndex.describeIndexStats1();
     const collections = Object.entries(namespaces).map(([name, values]) => {
       return {
-        name,
+        name: name === '' ? this.emptyNamespaceIdentifier : name,
         count: values?.vectorCount || 0,
       };
     });
@@ -355,12 +355,12 @@ class Pinecone {
         const chunks = [];
         for (const chunk of toChunks(vectors, 500)) {
           chunks.push(chunk);
-            await pineconeIndex.upsert({
-              upsertRequest: {
-                vectors: [...chunk],
-                namespace,
-              },
-            });
+          await pineconeIndex.upsert({
+            upsertRequest: {
+              vectors: [...chunk],
+              namespace,
+            },
+          });
         }
       }
 

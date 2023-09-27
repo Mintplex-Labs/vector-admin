@@ -1,6 +1,7 @@
 const {
   OrganizationConnection,
 } = require("../../models/organizationConnection");
+const { Pinecone } = require("./providers/pinecone");
 
 async function validateNewDatabaseConnector(organization, config) {
   const { type, settings } = config;

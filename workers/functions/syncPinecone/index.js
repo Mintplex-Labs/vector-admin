@@ -69,9 +69,8 @@ const syncPineconeIndex = InngestClient.createFunction(
       }
 
       result = {
-        message: `Pinecone instance vector data has been synced for ${
-          collections.length
-        } of ${collections.length - failedToSync.length} namespaces.`,
+        message: `Pinecone instance vector data has been synced for ${collections.length
+          } of ${collections.length - failedToSync.length} namespaces.`,
         failedToSync,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
@@ -122,7 +121,7 @@ async function paginateAndStore(
     // Since Pinecone does not support pagination we need to now go an update all the discovered ids
     // with some unique key <runId> in its metadata so on subsequent runs the same vectors are not discovered
     // again.
-    await updateAllPineconeIds(pineconeIndex, collection.name, ids, runId);
+    await updateAllPineconeIds(pineconeClient, pineconeIndex, collection.name, ids, runId);
 
     for (let i = 0; i < ids.length; i++) {
       const documentName =
@@ -159,6 +158,15 @@ async function paginateAndStore(
       files[documentName].currentLine =
         files[documentName].currentLine + 1 + totalLines;
     }
+
+    // Pinecone Starter pod does not update items for up to 10 seconds :(
+    // https://docs.pinecone.io/docs/starter-environment#limitations
+    if (pineconeClient.config.starterMode) {
+      console.log(
+        `\x1b[33m[Pinecone Starter Instance WAIT (30s)]\x1b[0m Pinecone starter clients do not update instantly so this process is delayed to ensure data quality..`
+      );
+      await new Promise(r => setTimeout(r, 30_000));
+    }
   }
 
   console.log('Creating Workspace Documents & Document Vectors');
@@ -178,8 +186,9 @@ async function paginateAndStore(
 // send them "concurrently" at once so they are not stuck in sequential execution.
 // Maybe this should be a node worker for true multi-threading? Or Maybe Pinecone can add in this simple feature to the API.
 // Who knows.
-async function updateAllPineconeIds(pineconeIndex, namespace, ids = [], runId) {
+async function updateAllPineconeIds(pineconeClient, pineconeIndex, namespace, ids = [], runId) {
   if (ids.length === 0) return;
+  if (pineconeClient.config.starterMode) namespace = "";
 
   console.log(`Updating ${ids.length} Pinecone vectors with runID: ${runId}`);
   const items = ids.map((id) => {
