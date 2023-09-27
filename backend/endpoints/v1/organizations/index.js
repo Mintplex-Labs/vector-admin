@@ -514,9 +514,9 @@ function organizationEndpoints(app) {
         }
 
         const jobs = await Queue.where(
-          `organizationId = ${organization.id}`,
+          { organization_id: Number(organization.id) },
           null,
-          "ORDER BY createdAt DESC"
+          { createdAt: "desc" }
         );
         for (const job of jobs) {
           const { id, email, role } = await User.get({

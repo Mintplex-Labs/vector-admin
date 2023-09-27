@@ -1,109 +1,77 @@
-// const { checkForMigrations } = require("../utils/database");
+const prisma = require("../utils/prisma");
 require("dotenv").config();
 
 const Queue = {
-  tablename: "jobs",
   status: {
     pending: "pending",
     failed: "failed",
     complete: "complete",
   },
-  colsInit: `
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  taskName TEXT NOT NULL,
-  status TEXT NOT NULL DEFAULT 'pending',
-  data TEXT NOT NULL,
-  result TEXT NOT NULL,
-  runByUserId INTEGER DEFAULT NULL,
-  organizationId INTEGER,
-  createdAt TEXT DEFAULT (strftime('%s', 'now')),
-  lastUpdatedAt TEXT DEFAULT (strftime('%s', 'now'))
-  `,
-  // migrateTable: async function () {
-  //   console.log(`\x1b[34m[MIGRATING]\x1b[0m Checking for Document migrations`);
-  //   const db = await this.db(false);
-  //   await checkForMigrations(this, db);
-  // },
-  migrations: function () {
-    return [];
-  },
-  db: async function (tracing = true) {
-    const sqlite3 = require("sqlite3").verbose();
-    const { open } = require("sqlite");
-    const path = require("path");
-    const dbFilePath = path.resolve(__dirname, "../storage/job_queue.db");
-    const db = await open({
-      filename: dbFilePath,
-      driver: sqlite3.Database,
-    });
 
-    await db.exec(
-      `PRAGMA foreign_keys = ON;CREATE TABLE IF NOT EXISTS ${this.tablename} (${this.colsInit})`
-    );
-
-    if (tracing) db.on("trace", (sql) => console.log(sql));
-    return db;
-  },
   create: async function (task, data = {}, userId = null, organizationId) {
-    const { Telemetry } = require("./telemetry");
-    const db = await this.db();
-    const { id, success, message } = await db
-      .run(
-        `INSERT INTO ${this.tablename} (taskName, data, result, runByUserId, organizationId) VALUES (?, ?, ?, ?, ?)`,
-        [task, JSON.stringify(data), JSON.stringify({}), userId, organizationId]
-      )
-      .then((res) => {
-        return { id: res.lastID, success: true, message: null };
-      })
-      .catch((error) => {
-        return { id: null, success: false, message: error.message };
+    try {
+      const { Telemetry } = require("./telemetry");
+      const newJob = await prisma.jobs.create({
+        data: {
+          taskName: task,
+          data: JSON.stringify(data),
+          result: JSON.stringify({ status: "Job queued" }),
+          run_by_user_id: Number(userId),
+          organization_id: Number(organizationId),
+        },
       });
 
-    if (!success) {
-      await db.close();
-      console.error("FAILED TO CREATE JOB.", message);
-      return { job: null, error: message };
+      if (!newJob) {
+        console.error("FAILED TO CREATE JOB.");
+        return { job: null, error: "Could not create Job" };
+      }
+
+      await Telemetry.sendTelemetry(`job_queued`, { name: task });
+      return { job, error: null };
+    } catch (e) {
+      console.error(e.message);
+      return null;
     }
-
-    const job = await db.get(
-      `SELECT * FROM ${this.tablename} WHERE id = ${id}`
-    );
-    await db.close();
-    await Telemetry.sendTelemetry(`job_queued`, { name: task });
-    return { job, error: null };
   },
-  get: async function (clause = "") {
-    const db = await this.db();
-    const result = await db.get(
-      `SELECT * FROM ${this.tablename} WHERE ${clause}`
-    );
-    if (!result) return null;
-    await db.close();
 
-    return result;
+  get: async function (clause = {}) {
+    try {
+      const user = await prisma.jobs.findFirst({
+        where: clause,
+      });
+      return user ? { ...user } : null;
+    } catch (e) {
+      console.error(e.message);
+      return null;
+    }
   },
-  where: async function (clause = null, limit = null, orderBy = null) {
-    const db = await this.db();
-    const results = await db.all(
-      `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${
-        !!limit ? `LIMIT ${limit}` : ""
-      } ${orderBy ? orderBy : ""}`
-    );
-    await db.close();
 
-    return results;
+  where: async function (clause = {}, limit = null, orderBy = null) {
+    try {
+      const users = await prisma.jobs.findMany({
+        where: clause,
+        ...(limit !== null ? { take: limit } : {}),
+        ...(orderBy !== null ? { orderBy } : {}),
+      });
+      return users;
+    } catch (e) {
+      console.error(e.message);
+      return [];
+    }
   },
-  count: async function (clause = null) {
-    const db = await this.db();
-    const { count } = await db.get(
-      `SELECT COUNT(*) as count FROM ${this.tablename} ${
-        clause ? `WHERE ${clause}` : ""
-      }`
-    );
-    await db.close();
 
-    return count;
+  count: async function (clause = {}) {
+    try {
+      const count = await prisma.jobs.count({
+        where: clause,
+      });
+      return count;
+    } catch (e) {
+      console.error(e.message);
+      return 0;
+    }
   },
+
   sendJob: async function (data) {
     await fetch(`http://127.0.0.1:3355/send`, {
       method: "POST",
@@ -114,26 +82,26 @@ const Queue = {
         console.error("Failed to send background worker job", e.message);
       });
   },
+
   updateJob: async function (jobId, status, result) {
-    const template = `UPDATE ${this.tablename} SET status=?, result=? WHERE id = ?`;
-    const db = await this.db();
-    const { success, message } = await db
-      .run(template, [status, JSON.stringify(result), jobId])
-      .then(() => {
-        return { success: true, message: null };
-      })
-      .catch((error) => {
-        return { success: false, message: error.message };
+    try {
+      const updatedJob = await prisma.jobs.update({
+        where: { id: Number(jobId) },
+        data: {
+          status,
+          result: JSON.stringify(result),
+        },
       });
 
-    await db.close();
-    if (!success) {
-      console.error(message);
+      if (!updatedJob) {
+        console.error("Could not update Job");
+        return null;
+      }
+      return updatedJob;
+    } catch (e) {
+      console.error(e.message);
       return null;
     }
-
-    const updatedJob = await this.get(`id = ${jobId}`);
-    return updatedJob;
   },
 };
 

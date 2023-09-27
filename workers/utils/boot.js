@@ -1,16 +1,3 @@
-function findOrCreateDBFile() {
-  const path = require('path');
-  const fs = require('fs');
-  const storageFolder = path.resolve(__dirname, '../../backend/storage/');
-  const dbPath = path.resolve(storageFolder, 'job_queue.db');
-
-  if (!fs.existsSync(storageFolder)) fs.mkdirSync(storageFolder);
-  if (fs.existsSync(dbPath)) return;
-  fs.writeFileSync(dbPath, '');
-  console.log('SQLite db created on boot.');
-  return;
-}
-
 async function setupFunctions() {
   let count = 5;
   while (count > 0) {
@@ -47,6 +34,5 @@ async function setupFunctions() {
 }
 
 module.exports = {
-  findOrCreateDBFile,
   setupFunctions,
 };

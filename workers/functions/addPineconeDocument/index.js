@@ -15,7 +15,7 @@ const addPineconeDocuments = InngestClient.createFunction(
     // Sometimes the passed in document may have very large pageContent, so we load it from the DB
     // instead of passing it on the event object - which will crash Inngest.
     const { jobId } = event.data;
-    const job = await Queue.get(`id = ${jobId}`);
+    const job = await Queue.get({ id: Number(jobId) });
 
     if (!job) {
       result = {

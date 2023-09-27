@@ -2,9 +2,11 @@ const { Queue } = require("../../../models/queue");
 
 async function createSyncJob(organization, connector, user) {
   const taskName = `${connector.type}/sync`;
-  const hasPendingJob = await Queue.get(
-    `organizationId = ${organization.id} AND status = '${Queue.status.pending}' AND taskName = '${taskName}'`
-  );
+  const hasPendingJob = await Queue.get({
+    organization_id: Number(organization.id),
+    status: Queue.status.pending,
+    taskName,
+  });
   if (hasPendingJob) return { job: hasPendingJob, error: null };
 
   const jobData = { organization, connector };
