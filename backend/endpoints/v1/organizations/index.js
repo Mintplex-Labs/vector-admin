@@ -552,8 +552,10 @@ function organizationEndpoints(app) {
           "ORDER BY createdAt DESC"
         );
         for (const job of jobs) {
-          const { id, email, role } = await User.get(`id = ${job.runByUserId}`);
-          job.runByUser = { id, email, role };
+          const { id, email, role } = await User.get({
+            id: Number(job.run_by_user_id),
+          });
+          job.run_by_user_id = { id, email, role };
         }
         response.status(200).json({ jobs });
       } catch (e) {

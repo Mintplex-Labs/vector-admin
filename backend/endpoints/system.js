@@ -53,7 +53,7 @@ function systemEndpoints(app) {
           return;
         }
 
-        const config = await SystemSettings.get(`label = '${label}'`);
+        const config = await SystemSettings.get({ label });
         response.status(200).json({ label, exists: !!config?.value });
       } catch (e) {
         console.log(e.message, e);
@@ -79,7 +79,7 @@ function systemEndpoints(app) {
           return;
         }
 
-        const config = await SystemSettings.get(`label = '${label}'`);
+        const config = await SystemSettings.get({ label });
         if (SystemSettings.privateField.includes(label)) {
           response.status(200).json({
             ...config,

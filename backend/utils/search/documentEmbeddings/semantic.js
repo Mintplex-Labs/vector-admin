@@ -19,7 +19,7 @@ async function semanticSearch(document, query) {
   if (!connector)
     return { fragments: [], error: "No connector found for org." };
 
-  const openAiKey = (await SystemSettings.get(`label = 'open_ai_api_key'`))
+  const openAiKey = (await SystemSettings.get({ label: "open_ai_api_key" }))
     ?.value;
   if (!openAiKey)
     return { fragments: [], error: "No OpenAI key available to embed query." };

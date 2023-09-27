@@ -23,7 +23,7 @@ function userEndpoints(app) {
           return;
         }
 
-        const users = await User.whereWithOrgs(`role != 'root'`);
+        const users = await User.whereWithOrgs(`role != 'root'`); // TODO: Support
         response.status(200).json({ users });
       } catch (e) {
         console.log(e.message, e);
@@ -51,7 +51,7 @@ function userEndpoints(app) {
           return;
         }
 
-        await User.delete(`id = ${userId}`);
+        await User.delete({ id: Number(userId) });
         response.status(200).json({ success: true, error: null });
       } catch (e) {
         console.log(e.message, e);
@@ -77,7 +77,7 @@ function userEndpoints(app) {
           password,
           role,
         });
-        await User.addToAllOrgs(newUser.id);
+        await User.addToAllOrgs(newUser.id); // TODO
         response.status(200).json({ success: !!newUser, error: message });
       } catch (e) {
         console.log(e.message, e);

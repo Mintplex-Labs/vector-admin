@@ -7,7 +7,7 @@ const Telemetry = {
   stubDevelopmentEvents: true, // [DO NOT TOUCH] Core team only.
   label: "telemetry_id",
   id: async function () {
-    const result = await SystemSettings.get(`label = '${this.label}'`);
+    const result = await SystemSettings.get({ label: this.label });
     if (!!result?.value) return result.value;
     return result?.value;
   },

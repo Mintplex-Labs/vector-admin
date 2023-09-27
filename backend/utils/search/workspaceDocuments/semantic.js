@@ -14,7 +14,7 @@ async function semanticSearch(workspace, query) {
   if (!connector)
     return { documents: [], error: "No connector found for org." };
 
-  const openAiKey = (await SystemSettings.get(`label = 'open_ai_api_key'`))
+  const openAiKey = (await SystemSettings.get({ label: "open_ai_api_key" }))
     ?.value;
   if (!openAiKey)
     return { documents: [], error: "No OpenAI key available to embed query." };

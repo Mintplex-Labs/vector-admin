@@ -24,7 +24,7 @@ function authenticationEndpoints(app) {
       }
 
       if (email === process.env.SYS_EMAIL) {
-        const completeSetup = (await User.count('role = "admin"')) > 0;
+        const completeSetup = (await User.count({ role: "admin" })) > 0;
         if (completeSetup) {
           response.status(200).json({
             user: null,
@@ -36,7 +36,7 @@ function authenticationEndpoints(app) {
         }
       }
 
-      const existingUser = await User.get(`email = '${email}'`);
+      const existingUser = await User.get({ email: email });
       if (!existingUser) {
         response.status(200).json({
           user: null,
@@ -87,7 +87,7 @@ function authenticationEndpoints(app) {
         return;
       }
 
-      const adminCount = await User.count('role = "admin"');
+      const adminCount = await User.count({ role: "admin" });
       if (adminCount === 0) {
         response.status(200).json({
           user: null,
@@ -99,7 +99,7 @@ function authenticationEndpoints(app) {
         return;
       }
 
-      const existingUser = await User.get(`email = '${email}'`);
+      const existingUser = await User.get({ email });
       if (!!existingUser) {
         response.status(200).json({
           user: null,
@@ -110,9 +110,9 @@ function authenticationEndpoints(app) {
         return;
       }
 
-      const allowingAccounts = await SystemSettings.get(
-        'label = "allow_account_creation"'
-      );
+      const allowingAccounts = await SystemSettings.get({
+        label: "allow_account_creation",
+      });
       if (
         !!allowingAccounts &&
         allowingAccounts.value !== null &&
@@ -127,9 +127,9 @@ function authenticationEndpoints(app) {
         return;
       }
 
-      const domainRestriction = await SystemSettings.get(
-        'label = "account_creation_domain_scope"'
-      );
+      const domainRestriction = await SystemSettings.get({
+        label: "account_creation_domain_scope",
+      });
       if (
         !!domainRestriction &&
         domainRestriction.value !== null &&
@@ -155,7 +155,7 @@ function authenticationEndpoints(app) {
         return;
       }
 
-      await User.addToAllOrgs(user.id);
+      await User.addToAllOrgs(user.id); // TODO: Add users to Orgs
       await Telemetry.sendTelemetry("login_event");
       response.status(200).json({
         user,
@@ -183,7 +183,7 @@ function authenticationEndpoints(app) {
         return;
       }
 
-      const adminCount = await User.count('role = "admin"');
+      const adminCount = await User.count({ role: "admin" });
       if (adminCount > 0) {
         response.status(200).json({
           user: null,
@@ -195,7 +195,7 @@ function authenticationEndpoints(app) {
         return;
       }
 
-      const existingUser = await User.get(`email = '${email}'`);
+      const existingUser = await User.get({ email });
       if (!!existingUser) {
         response.status(200).json({
           user: null,
