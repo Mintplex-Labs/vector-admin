@@ -91,7 +91,7 @@ const DocumentVectors = {
     return results;
   },
   count: async function (clause = null) {
-    const db = await this.db();
+    const db = await this.db(false); // Dont trace this query as it can be quite large and causes problems in log view.
     const { count } = await db.get(
       `SELECT COUNT(*) as count FROM ${this.tablename} ${
         clause ? `WHERE ${clause}` : ""
