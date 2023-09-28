@@ -1,184 +1,167 @@
-// const { checkForMigrations } = require("../utils/database");
+const prisma = require("../utils/prisma");
 const uuidAPIKey = require("uuid-apikey");
 const slugify = require("slugify");
 const { OrganizationUser } = require("./organizationUser");
 const { OrganizationApiKey } = require("./organizationApiKey");
 
 const Organization = {
-  tablename: "organizations",
   writable: ["name"],
-  colsInit: `
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  slug TEXT NOT NULL UNIQUE,
-  uuid TEXT NOT NULL UNIQUE,
-  createdAt TEXT DEFAULT (strftime('%s', 'now')),
-  lastUpdatedAt TEXT DEFAULT (strftime('%s', 'now'))
-  `,
-  // migrateTable: async function () {
-  //   console.log(`\x1b[34m[MIGRATING]\x1b[0m Checking for Document migrations`);
-  //   const db = await this.db(false);
-  //   await checkForMigrations(this, db);
-  // },
-  migrations: function () {
-    return [];
-  },
-  db: async function (tracing = true) {
-    const sqlite3 = require("sqlite3").verbose();
-    const { open } = require("sqlite");
-    const path = require("path");
-    const dbFilePath = path.resolve(__dirname, "../storage/vdbms.db");
-    const db = await open({
-      filename: dbFilePath,
-      driver: sqlite3.Database,
-    });
-
-    await db.exec(
-      `PRAGMA foreign_keys = ON;CREATE TABLE IF NOT EXISTS ${this.tablename} (${this.colsInit});`
-    );
-
-    if (tracing) db.on("trace", (sql) => console.log(sql));
-    return db;
-  },
   makeKey: () => {
     return `org-${uuidAPIKey.create().apiKey}`;
   },
   create: async function (orgName = "", adminId) {
-    if (!orgName)
-      return { organization: null, message: "No Organization name provided." };
-    var slug = slugify(orgName, { lower: true });
+    try {
+      if (!orgName)
+        return {
+          organization: null,
+          message: "No Organization name provided.",
+        };
+      var slug = slugify(orgName, { lower: true });
 
-    const existingBySlug = await this.get(`slug = '${slug}'`);
-    if (!!existingBySlug) {
-      const slugSeed = Math.floor(10000000 + Math.random() * 90000000);
-      slug = slugify(`${orgName}-${slugSeed}`, { lower: true });
-    }
+      const existingBySlug = await this.get({ slug });
+      if (!!existingBySlug) {
+        const slugSeed = Math.floor(10000000 + Math.random() * 90000000);
+        slug = slugify(`${orgName}-${slugSeed}`, { lower: true });
+      }
 
-    const db = await this.db();
-    const { id, success, message } = await db
-      .run(
-        `INSERT INTO ${this.tablename} (name, slug, uuid) VALUES (?, ?, ?)`,
-        [orgName, slug, this.makeKey()]
-      )
-      .then((res) => {
-        return { id: res.lastID, success: true, message: null };
-      })
-      .catch((error) => {
-        return { id: null, success: false, message: error.message };
+      const organization = await prisma.organizations.create({
+        data: {
+          name: orgName,
+          slug,
+          uuid: this.makeKey(),
+        },
       });
 
-    if (!success) {
-      await db.close();
-      console.error("FAILED TO CREATE ORGANIZATION.", message);
-      return { organization: null, message };
+      if (!organization) {
+        await db.close();
+        console.error("FAILED TO CREATE ORGANIZATION.", message);
+        return { organization: null, message };
+      }
+
+      await OrganizationUser.create(adminId, organization.id);
+      await OrganizationApiKey.create(organization.id);
+      return { organization, message: null };
+    } catch (e) {
+      console.error(e.message);
+      return { organization: null, error: e.message };
     }
-
-    const organization = await db.get(
-      `SELECT * FROM ${this.tablename} WHERE id = ${id}`
-    );
-    await db.close();
-
-    await OrganizationUser.create(adminId, organization.id);
-    await OrganizationApiKey.create(organization.id);
-    return { organization, message: null };
   },
   update: async function (orgId = null, updates = {}) {
-    if (!orgId) throw new Error("No workspace id provided for update");
+    try {
+      if (!orgId) throw new Error("No workspace id provided for update");
 
-    const validKeys = Object.keys(updates).filter((key) =>
-      this.writable.includes(key)
-    );
-    const values = Object.values(updates);
-    if (validKeys.length === 0 || validKeys.length !== values.length)
-      return { success: false, error: "No valid fields to update!" };
+      const validKeys = Object.keys(updates).filter((key) =>
+        this.writable.includes(key)
+      );
+      const values = Object.values(updates);
+      if (validKeys.length === 0 || validKeys.length !== values.length)
+        return { success: false, error: "No valid fields to update!" };
 
-    const template = `UPDATE ${this.tablename} SET ${validKeys.map((key) => {
-      return `${key}=?`;
-    })} WHERE id = ?`;
-    const db = await this.db();
-    const { success, error } = await db
-      .run(template, [...values, orgId])
-      .then(() => {
-        return { success: true, error: null };
-      })
-      .catch((error) => {
-        return { success: false, error: error.message };
+      // Assemble update array of only valid changes.
+      const validUpdates = {};
+      validKeys.forEach((key) => {
+        validUpdates[key] = updates[key];
       });
 
-    await db.close();
-    return { success, error };
+      const organization = await prisma.organizations.update({
+        where: { id: Number(orgId) },
+        data: validUpdates,
+      });
+      return { success: !!organization, error };
+    } catch (e) {
+      console.error(e.message);
+      return { success: false, error: e.message };
+    }
   },
-  get: async function (clause = "") {
-    const db = await this.db();
-    const result = await db
-      .get(`SELECT * FROM ${this.tablename} WHERE ${clause}`)
-      .then((res) => res || null);
-    if (!result) return null;
-    await db.close();
+  get: async function (clause = {}) {
+    try {
+      const organization = await prisma.organizations.findFirst({
+        where: clause,
+      });
+      return organization;
+    } catch (e) {
+      console.error(e.message);
+      return null;
+    }
+  },
 
-    return result;
+  getWithOwner: async function (userId, clause = {}) {
+    try {
+      const result = await prisma.organizations.findFirst({
+        where: {
+          ...clause,
+          organization_users: {
+            every: {
+              user_id: Number(userId),
+            },
+          },
+        },
+      });
+      return result;
+    } catch (e) {
+      console.error(e.message);
+      return null;
+    }
   },
-  getWithOwner: async function (userId, clause = "") {
-    const db = await this.db();
-    const result = await db
-      .get(
-        `SELECT * FROM ${this.tablename} as org 
-      LEFT JOIN organization_users as org_users 
-      ON org_users.organization_id = org.id 
-      WHERE org_users.user_id = ${userId} AND ${clause}`
-      )
-      .then((res) => res || null);
-    if (!result) return null;
-    await db.close();
 
-    return { ...result, id: result.organization_id };
+  where: async function (clause = {}, limit = null, orderBy = null) {
+    try {
+      const results = await prisma.organizations.findMany({
+        where: clause,
+        ...(limit !== null ? { take: limit } : {}),
+        ...(orderBy !== null ? { orderBy } : {}),
+      });
+      return results;
+    } catch (e) {
+      console.error(e.message);
+      return [];
+    }
   },
-  where: async function (clause = null, limit = null, orderBy = null) {
-    const db = await this.db();
-    const results = await db.all(
-      `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${
-        !!limit ? `LIMIT ${limit}` : ""
-      } ${!!orderBy ? orderBy : ""}`
-    );
-    await db.close();
 
-    return results;
+  count: async function (clause = {}) {
+    try {
+      const count = await prisma.organizations.count({ where: clause });
+      return count;
+    } catch (e) {
+      console.error(e.message);
+      return 0;
+    }
   },
-  count: async function (clause = null) {
-    const db = await this.db();
-    const { count } = await db.get(
-      `SELECT COUNT(*) as count FROM ${this.tablename} ${
-        clause ? `WHERE ${clause}` : ""
-      }`
-    );
-    await db.close();
 
-    return count;
-  },
   whereWithOwner: async function (
     userId,
-    clause = null,
+    clause = {},
     limit = null,
     orderBy = null
   ) {
-    const db = await this.db();
-    const results = await db.all(
-      `SELECT * FROM ${this.tablename} as org 
-      LEFT JOIN organization_users as org_users 
-      ON org_users.organization_id = org.id 
-      WHERE org_users.user_id = ${userId} ${clause ? `AND ${clause}` : ""} ${
-        !!limit ? `LIMIT ${limit}` : ""
-      } ${!!orderBy ? orderBy : ""}`
-    );
-    await db.close();
-
-    return results;
+    try {
+      const results = await prisma.organizations.findMany({
+        where: {
+          ...clause,
+          organization_users: {
+            every: {
+              user_id: Number(userId),
+            },
+          },
+        },
+        ...(limit ? { take: limit } : {}),
+        ...(orderBy ? { orderBy } : {}),
+      });
+      return results;
+    } catch (e) {
+      console.error(e.message);
+      return [];
+    }
   },
-  delete: async function (clause = null) {
-    const db = await this.db();
-    await db.exec(`DELETE FROM ${this.tablename} WHERE ${clause}`);
-    await db.close();
-    return;
+
+  delete: async function (clause = {}) {
+    try {
+      await prisma.organizations.deleteMany({ where: clause });
+      return true;
+    } catch (e) {
+      console.error(e.message);
+      return false;
+    }
   },
 };
 

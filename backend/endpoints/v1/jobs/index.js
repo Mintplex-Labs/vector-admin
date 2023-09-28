@@ -20,7 +20,7 @@ function jobEndpoints(app) {
           return;
         }
 
-        const existingJob = await Queue.get(`id = ${jobId}`);
+        const existingJob = await Queue.get({ id: Number(jobId) });
         if (!existingJob || existingJob.status !== Queue.status.failed) {
           response.sendStatus(403).end();
           return;
@@ -31,7 +31,7 @@ function jobEndpoints(app) {
           existingJob.taskName,
           jobData,
           user.id,
-          existingJob.organizationId
+          existingJob.organization_id
         );
 
         if (!!error) {
@@ -66,7 +66,7 @@ function jobEndpoints(app) {
           return;
         }
 
-        const existingJob = await Queue.get(`id = ${jobId}`);
+        const existingJob = await Queue.get({ id: Number(jobId) });
         if (!existingJob || existingJob.status !== Queue.status.pending) {
           response.sendStatus(403).end();
           return;

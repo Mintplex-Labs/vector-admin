@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Make sure to set the correct DATABASE_URL in your .env file
+// After swapping run `yarn prisma:setup` from the root directory to migrate the database
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_CONNECTION_STRING")
+}
+
+model users {
+  id                 Int                  @id @default(autoincrement())
+  email              String               @unique
+  password           String
+  role               String               @default("default")
+  createdAt          DateTime             @default(now())
+  lastUpdatedAt      DateTime             @default(now())
+  organization_users organization_users[]
+  jobs               jobs[]
+}
+
+model organizations {
+  id                       Int                        @id @default(autoincrement())
+  name                     String
+  slug                     String                     @unique
+  uuid                     String                     @unique
+  createdAt                DateTime                   @default(now())
+  lastUpdatedAt            DateTime                   @default(now())
+  organization_users       organization_users[]
+  organization_api_keys    organization_api_keys[]
+  organization_connections organization_connections[]
+  organization_workspaces  organization_workspaces[]
+  workspace_documents      workspace_documents[]
+  document_vectors         document_vectors[]
+  jobs                     jobs[]
+}
+
+model organization_users {
+  id              Int           @id @default(autoincrement())
+  user_id         Int
+  organization_id Int
+  createdAt       DateTime      @default(now())
+  lastUpdatedAt   DateTime      @default(now())
+  user            users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  organization    organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+}
+
+model organization_api_keys {
+  id              Int           @id @default(autoincrement())
+  apiKey          String        @unique
+  createdAt       DateTime      @default(now())
+  organization_id Int
+  lastUpdatedAt   DateTime      @default(now())
+  organization    organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+}
+
+model organization_connections {
+  id              Int           @id @default(autoincrement())
+  type            String
+  settings        String
+  organization_id Int
+  createdAt       DateTime      @default(now())
+  lastUpdatedAt   DateTime      @default(now())
+  organization    organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+}
+
+model organization_workspaces {
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  slug                String                @unique
+  uuid                String                @unique
+  organization_id     Int
+  createdAt           DateTime              @default(now())
+  lastUpdatedAt       DateTime              @default(now())
+  organization        organizations         @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  workspace_documents workspace_documents[]
+  document_vectors    document_vectors[]
+}
+
+model workspace_documents {
+  id               Int                     @id @default(autoincrement())
+  name             String
+  docId            String                  @unique
+  organization_id  Int
+  workspace_id     Int
+  createdAt        DateTime                @default(now())
+  lastUpdatedAt    DateTime                @default(now())
+  organization     organizations           @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  workspace        organization_workspaces @relation(fields: [workspace_id], references: [id], onDelete: Cascade)
+  document_vectors document_vectors[]
+}
+
+model document_vectors {
+  id              Int      @id @default(autoincrement())
+  docId           String
+  vectorId        String
+  document_id     Int
+  workspace_id    Int
+  organization_id Int
+  createdAt       DateTime @default(now())
+  lastUpdatedAt   DateTime @default(now())
+
+  document     workspace_documents     @relation(fields: [document_id], references: [id], onDelete: Cascade)
+  workspace    organization_workspaces @relation(fields: [workspace_id], references: [id], onDelete: Cascade)
+  organization organizations           @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+}
+
+model jobs {
+  id              Int           @id @default(autoincrement())
+  taskName        String
+  status          String        @default("pending")
+  data            String
+  result          String
+  run_by_user_id  Int
+  organization_id Int
+  createdAt       DateTime      @default(now())
+  lastUpdatedAt   DateTime      @default(now())
+  user            users         @relation(fields: [run_by_user_id], references: [id], onDelete: Cascade)
+  organization    organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+}
+
+model system_settings {
+  id            Int      @id @default(autoincrement())
+  label         String   @unique
+  value         String
+  createdAt     DateTime @default(now())
+  lastUpdatedAt DateTime @default(now())
+}

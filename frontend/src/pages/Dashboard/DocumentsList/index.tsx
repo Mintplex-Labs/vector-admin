@@ -170,7 +170,7 @@ export default function DocumentsList({
                       </div>
                       <div className="hidden w-3/12 overflow-x-scroll md:block xl:w-3/12">
                         <span className="font-medium">
-                          {moment.unix(document.createdAt).format('lll')}
+                          {moment(document.createdAt).format('lll')}
                         </span>
                       </div>
                       <div className="w-5/12 2xsm:w-4/12 md:w-3/12 xl:w-2/12">

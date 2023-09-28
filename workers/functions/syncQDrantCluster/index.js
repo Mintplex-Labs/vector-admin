@@ -33,7 +33,9 @@ const syncQDrantCluster = InngestClient.createFunction(
       logger.info(
         `Deleting ALL existing workspaces for ${organization.name} and reseeding.`
       );
-      await OrganizationWorkspace.deleteAllForOrganization(organization.id);
+      await OrganizationWorkspace.delete({
+        organization_id: Number(organization.id),
+      });
 
       for (const collection of collections) {
         logger.info(
@@ -202,9 +204,9 @@ async function createDocuments(files, workspace, organization) {
 
 async function createDocumentVectors(files) {
   const docIds = Object.values(files).map((data) => data.documentId);
-  const existingDocuments = await WorkspaceDocument.where(
-    `docId IN (${docIds.map((id) => `'${id}'`).join(',')})`
-  );
+  const existingDocuments = await WorkspaceDocument.where({
+    docId: { in: docIds },
+  });
   const vectors = [];
 
   Object.values(files).map((data) => {
@@ -221,9 +223,11 @@ async function createDocumentVectors(files) {
 
     data.ids.map((vectorId) => {
       vectors.push({
-        documentId: dbDocument.id,
         docId: data.documentId,
         vectorId,
+        documentId: dbDocument.id,
+        workspaceId: dbDocument.workspace_id,
+        organizationId: dbDocument.organization_id,
       });
     });
   });

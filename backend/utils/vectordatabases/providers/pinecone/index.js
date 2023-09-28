@@ -326,6 +326,8 @@ class Pinecone {
             docId: id,
             vectorId: vectorRecord.id,
             documentId: dbDocument.id,
+            workspaceId: dbDocument.workspace_id,
+            organizationId: dbDocument.organization_id,
           });
           cacheInfo.push({
             vectorDbId: vectorRecord.id,

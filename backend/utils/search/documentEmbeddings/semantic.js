@@ -10,16 +10,16 @@ const { OpenAi } = require("../../openAi");
 const { selectConnector } = require("../../vectordatabases/providers");
 
 async function semanticSearch(document, query) {
-  const workspace = await OrganizationWorkspace.get(
-    `id = ${document.workspace_id}`
-  );
-  const connector = await OrganizationConnection.get(
-    `organization_id = ${document.organization_id}`
-  );
+  const workspace = await OrganizationWorkspace.get({
+    id: Number(document.workspace_id),
+  });
+  const connector = await OrganizationConnection.get({
+    organization_id: Number(document.organization_id),
+  });
   if (!connector)
     return { fragments: [], error: "No connector found for org." };
 
-  const openAiKey = (await SystemSettings.get(`label = 'open_ai_api_key'`))
+  const openAiKey = (await SystemSettings.get({ label: "open_ai_api_key" }))
     ?.value;
   if (!openAiKey)
     return { fragments: [], error: "No OpenAI key available to embed query." };
@@ -42,7 +42,7 @@ async function semanticSearch(document, query) {
     .map((vid) => `'${vid}'`)
     .join(",");
   const fragments = await DocumentVectors.where(
-    `vectorId IN (${searchString}) AND document_id = ${document.id}`,
+    { vectorId: { in: queryString }, document_id: Number(document.id) },
     100
   );
   return { fragments, error: null };

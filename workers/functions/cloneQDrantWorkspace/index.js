@@ -39,9 +39,9 @@ const cloneQDrantWorkspace = InngestClient.createFunction(
         },
       });
 
-      const documentsToClone = await WorkspaceDocument.where(
-        `workspace_id = ${workspace.id}`
-      );
+      const documentsToClone = await WorkspaceDocument.where({
+        workspace_id: Number(workspace.id),
+      });
 
       for (const document of documentsToClone) {
         const newDocId = v4();
@@ -88,6 +88,8 @@ const cloneQDrantWorkspace = InngestClient.createFunction(
                 docId: newDocId,
                 vectorId: vectorDbId,
                 documentId: cloneDocument.id,
+                workspaceId: cloneDocument.workspace_id,
+                organizationId: cloneDocument.organization_id,
               });
               newCacheInfo.push({
                 vectorDbId: vectorDbId,
@@ -119,7 +121,7 @@ const cloneQDrantWorkspace = InngestClient.createFunction(
           );
         } catch (e) {
           console.log(`WorkspaceClone::DocumentClone::Failed`, e.message, e);
-          await WorkspaceDocument.deleteWhere(`docId = '${newDocId}'`);
+          await WorkspaceDocument.delete({ docId: newDocId });
         }
       }
 
@@ -135,7 +137,7 @@ const cloneQDrantWorkspace = InngestClient.createFunction(
         details: e,
       };
       await Queue.updateJob(jobId, Queue.status.failed, result);
-      await OrganizationWorkspace.delete(`id = ${clonedWorkspace.id}`);
+      await OrganizationWorkspace.delete({ id: Number(clonedWorkspace.id) });
       return { result };
     }
   }

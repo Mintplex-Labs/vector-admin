@@ -48,7 +48,7 @@ function documentEndpoints(app) {
           return;
         }
 
-        const document = await WorkspaceDocument.get(`id = ${id}`);
+        const document = await WorkspaceDocument.get({ id: Number(id) });
         response.status(200).json({ document });
       } catch (e) {
         console.log(e.message, e);
@@ -69,16 +69,16 @@ function documentEndpoints(app) {
           return;
         }
 
-        const document = await WorkspaceDocument.get(`id = ${id}`);
-        const organization = await Organization.get(
-          `id = ${document.organization_id}`
-        );
-        const workspace = await OrganizationWorkspace.get(
-          `id = ${document.workspace_id}`
-        );
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${organization.id}`
-        );
+        const document = await WorkspaceDocument.get({ id: Number(id) });
+        const organization = await Organization.get({
+          id: Number(document.organization_id),
+        });
+        const workspace = await OrganizationWorkspace.get({
+          id: Number(document.workspace_id),
+        });
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         await documentDeletedJob(
           organization,
           workspace,
@@ -111,14 +111,14 @@ function documentEndpoints(app) {
 
         const offset = (page - 1) * pageSize;
         const fragments = await DocumentVectors.where(
-          `document_id = ${id}`,
+          { document_id: Number(id) },
           pageSize,
-          `OFFSET ${offset}`
+          offset
         );
 
-        const totalFragments = await DocumentVectors.count(
-          `document_id = ${id}`
-        );
+        const totalFragments = await DocumentVectors.count({
+          document_id: Number(id),
+        });
         response.status(200).json({ fragments, totalFragments });
       } catch (e) {
         console.log(e.message, e);
@@ -150,24 +150,24 @@ function documentEndpoints(app) {
           return;
         }
 
-        const fragment = await DocumentVectors.get(`id = ${id}`);
+        const fragment = await DocumentVectors.get({ id: Number(id) });
         if (!fragment) {
           response.sendStatus(404).end();
           return;
         }
 
-        const document = await WorkspaceDocument.get(
-          `id = ${fragment.document_id}`
-        );
-        const workspace = await OrganizationWorkspace.get(
-          `id = ${document.workspace_id}`
-        );
-        const organization = await Organization.get(
-          `id = ${document.organization_id}`
-        );
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${document.organization_id}`
-        );
+        const document = await WorkspaceDocument.get({
+          id: Number(fragment.document_id),
+        });
+        const workspace = await OrganizationWorkspace.get({
+          id: Number(document.workspace_id),
+        });
+        const organization = await Organization.get({
+          id: Number(document.organization_id),
+        });
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         await updateEmbeddingJob(
           fragment,
           document,
@@ -199,24 +199,24 @@ function documentEndpoints(app) {
           return;
         }
 
-        const fragment = await DocumentVectors.get(`id = ${id}`);
+        const fragment = await DocumentVectors.get({ id: Number(id) });
         if (!fragment) {
           response.sendStatus(404).end();
           return;
         }
 
-        const document = await WorkspaceDocument.get(
-          `id = ${fragment.document_id}`
-        );
-        const workspace = await OrganizationWorkspace.get(
-          `id = ${document.workspace_id}`
-        );
-        const organization = await Organization.get(
-          `id = ${document.organization_id}`
-        );
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${document.organization_id}`
-        );
+        const document = await WorkspaceDocument.get({
+          id: Number(fragment.document_id),
+        });
+        const workspace = await OrganizationWorkspace.get({
+          id: Number(document.workspace_id),
+        });
+        const organization = await Organization.get({
+          id: Number(document.organization_id),
+        });
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         await updateEmbeddingMetadataJob(
           fragment,
           document,
@@ -246,24 +246,24 @@ function documentEndpoints(app) {
           return;
         }
 
-        const fragment = await DocumentVectors.get(`id = ${id}`);
+        const fragment = await DocumentVectors.get({ id: Number(id) });
         if (!fragment) {
           response.sendStatus(404).end();
           return;
         }
 
-        const document = await WorkspaceDocument.get(
-          `id = ${fragment.document_id}`
-        );
-        const workspace = await OrganizationWorkspace.get(
-          `id = ${document.workspace_id}`
-        );
-        const organization = await Organization.get(
-          `id = ${document.organization_id}`
-        );
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${document.organization_id}`
-        );
+        const document = await WorkspaceDocument.get({
+          id: Number(fragment.document_id),
+        });
+        const workspace = await OrganizationWorkspace.get({
+          id: Number(document.workspace_id),
+        });
+        const organization = await Organization.get({
+          id: Number(document.organization_id),
+        });
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         await createDeleteEmbeddingJob(
           fragment,
           workspace,
@@ -292,19 +292,18 @@ function documentEndpoints(app) {
           return;
         }
 
-        const document = await WorkspaceDocument.get(`id = ${id}`);
+        const document = await WorkspaceDocument.get({ id: Number(id) });
         if (!document) {
           response.sendStatus(404).end();
           return;
         }
 
-        const workspace = await OrganizationWorkspace.get(
-          `id = ${document.workspace_id}`
-        );
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${document.organization_id}`
-        );
-
+        const workspace = await OrganizationWorkspace.get({
+          id: Number(document.workspace_id),
+        });
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(document.organization_id),
+        });
         const VectorDb = selectConnector(connector);
         const results = await VectorDb.getMetadata(workspace.slug, vectorIds);
         const items = {};
@@ -333,7 +332,7 @@ function documentEndpoints(app) {
           return;
         }
 
-        const document = await WorkspaceDocument.get(`id = ${id}`);
+        const document = await WorkspaceDocument.get({ id: Number(id) });
         if (!document) {
           response
             .status(404)
@@ -341,9 +340,9 @@ function documentEndpoints(app) {
           return;
         }
 
-        const workspace = await OrganizationWorkspace.get(
-          `id = ${toWorkspaceId}`
-        );
+        const workspace = await OrganizationWorkspace.get({
+          id: Number(toWorkspaceId),
+        });
         if (!workspace) {
           response.status(404).json({
             success: false,
@@ -352,12 +351,12 @@ function documentEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.get(
-          `id = ${workspace.organization_id}`
-        );
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${workspace.organization_id}`
-        );
+        const organization = await Organization.get({
+          id: Number(document.organization_id),
+        });
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         if (!connector) {
           response.status(404).json({
             success: false,
@@ -394,7 +393,9 @@ function documentEndpoints(app) {
           return;
         }
 
-        const document = await WorkspaceDocument.get(`id = ${documentId}`);
+        const document = await WorkspaceDocument.get({
+          id: Number(documentId),
+        });
         if (!document) {
           response.status(200).json({
             fragments: [],

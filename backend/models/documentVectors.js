@@ -1,111 +1,80 @@
-// const { checkForMigrations } = require("../utils/database");
+const prisma = require("../utils/prisma");
 
 const DocumentVectors = {
-  tablename: "document_vectors",
-  colsInit: `
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  docId TEXT NOT NULL,
-  vectorId TEXT NOT NULL,
-  document_id INTEGER NOT NULL,
-  createdAt TEXT DEFAULT (strftime('%s', 'now')),
-  lastUpdatedAt TEXT DEFAULT (strftime('%s', 'now')),
-
-  FOREIGN KEY (document_id) REFERENCES workspace_documents (id) ON DELETE CASCADE
-  `,
-  // migrateTable: async function () {
-  //   console.log(`\x1b[34m[MIGRATING]\x1b[0m Checking for ${this.tablename} migrations`);
-  //   const db = await this.db(false);
-  //   await checkForMigrations(this, db);
-  // },
-  migrations: function () {
-    return [
-      //   {
-      //     colName: "id",
-      //     execCmd: `CREATE TRIGGER IF NOT EXISTS Trg_LastUpdated AFTER UPDATE ON ${this.tablename}
-      //                              FOR EACH ROW
-      //                              BEGIN
-      //                               UPDATE ${this.tablename} SET lastUpdatedAt = (strftime('%s', 'now')) WHERE id = old.id;
-      //                              END`,
-      //     doif: true,
-      //   },
-    ];
-  },
-  db: async function (tracing = true) {
-    const sqlite3 = require("sqlite3").verbose();
-    const { open } = require("sqlite");
-    const path = require("path");
-    const dbFilePath = path.resolve(__dirname, "../storage/vdbms.db");
-    const db = await open({
-      filename: dbFilePath,
-      driver: sqlite3.Database,
-    });
-
-    await db.exec(
-      `PRAGMA foreign_keys = ON;CREATE TABLE IF NOT EXISTS ${this.tablename} (${this.colsInit});`
-    );
-
-    if (tracing) db.on("trace", (sql) => console.log(sql));
-    return db;
-  },
-
   createMany: async function (vectors = []) {
-    if (vectors.length === 0) return;
-    const db = await this.db();
-    const stmt = await db.prepare(
-      `INSERT INTO ${this.tablename} (docId, vectorId, document_id) VALUES (?,?,?)`
-    );
-
-    await db.exec("BEGIN TRANSACTION");
     try {
-      for (const vector of vectors) {
-        await stmt.run([vector.docId, vector.vectorId, vector.documentId]);
-      }
-      await db.exec("COMMIT");
-    } catch {
-      await db.exec("ROLLBACK");
+      if (vectors.length === 0) return;
+      const inserts = vectors.map((vector) => {
+        return {
+          docId: vector.docId,
+          vectorId: vector.vectorId,
+          document_id: Number(vector.documentId),
+          workspace_id: Number(vector.workspaceId),
+          organization_id: Number(vector.organizationId),
+        };
+      });
+
+      await prisma.document_vectors.createMany({
+        data: inserts,
+      });
+
+      return;
+    } catch (e) {
+      console.error(e.message);
+      return { organization: null, error: e.message };
     }
-
-    await stmt.finalize();
-    await db.close();
-    return;
   },
-  get: async function (clause = "") {
-    const db = await this.db();
-    const result = await db
-      .get(`SELECT * FROM ${this.tablename} WHERE ${clause}`)
-      .then((res) => res || null);
-    if (!result) return null;
-    await db.close();
 
-    return result;
+  get: async function (clause = {}) {
+    try {
+      const vector = await prisma.document_vectors.findFirst({
+        where: clause,
+      });
+      return vector ? { ...vector } : null;
+    } catch (e) {
+      console.error(e.message);
+      return null;
+    }
   },
-  where: async function (clause = null, limit = null, orderBy = null) {
-    const db = await this.db();
-    const results = await db.all(
-      `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${
-        !!limit ? `LIMIT ${limit}` : ""
-      } ${orderBy ? orderBy : ""}`
-    );
-    await db.close();
 
-    return results;
+  where: async function (
+    clause = {},
+    limit = null,
+    offset = null,
+    orderBy = null
+  ) {
+    try {
+      const vectors = await prisma.document_vectors.findMany({
+        where: clause,
+        ...(limit !== null ? { take: limit } : {}),
+        ...(offset !== null ? { skip: offset } : {}),
+        ...(orderBy !== null ? { orderBy } : {}),
+      });
+      return vectors;
+    } catch (e) {
+      console.error(e.message);
+      return [];
+    }
   },
-  count: async function (clause = null) {
-    const db = await this.db(false); // Dont trace this query as it can be quite large and causes problems in log view.
-    const { count } = await db.get(
-      `SELECT COUNT(*) as count FROM ${this.tablename} ${
-        clause ? `WHERE ${clause}` : ""
-      }`
-    );
-    await db.close();
 
-    return count;
+  count: async function (clause = {}) {
+    try {
+      const count = await prisma.document_vectors.count({ where: clause });
+      return count;
+    } catch (e) {
+      console.error(e.message);
+      return 0;
+    }
   },
-  delete: async function (id = null) {
-    const db = await this.db();
-    await db.exec(`DELETE FROM ${this.tablename} WHERE id = ${id}`);
-    await db.close();
-    return;
+
+  delete: async function (clause = {}) {
+    try {
+      await prisma.document_vectors.deleteMany({ where: clause });
+      return true;
+    } catch (e) {
+      console.error(e.message);
+      return false;
+    }
   },
 };
 

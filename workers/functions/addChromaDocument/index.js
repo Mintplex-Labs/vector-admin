@@ -16,7 +16,7 @@ const addChromaDocuments = InngestClient.createFunction(
     // Sometimes the passed in document may have very large pageContent, so we load it from the DB
     // instead of passing it on the event object - which will crash Inngest.
     const { jobId } = event.data;
-    const job = await Queue.get(`id = ${jobId}`);
+    const job = await Queue.get({ id: Number(jobId) });
 
     if (!job) {
       result = {
@@ -30,9 +30,9 @@ const addChromaDocuments = InngestClient.createFunction(
       job.data
     );
     try {
-      const openAiSetting = await SystemSettings.get(
-        `label = 'open_ai_api_key'`
-      );
+      const openAiSetting = await SystemSettings.get({
+        label: 'open_ai_api_key',
+      });
       if (!openAiSetting) {
         result = {
           message: `No OpenAI Key set for instance to be used for embedding - aborting`,
@@ -42,9 +42,10 @@ const addChromaDocuments = InngestClient.createFunction(
       }
 
       for (const document of documents) {
-        const exists = await WorkspaceDocument.get(
-          `name = '${document.title}' AND workspace_id = ${workspace.id}`
-        );
+        const exists = await WorkspaceDocument.get({
+          name: document.title,
+          workspace_id: Number(workspace.id),
+        });
         if (exists) {
           result.files = {
             [document.title]: { skipped: true },
@@ -77,7 +78,8 @@ const addChromaDocuments = InngestClient.createFunction(
             openAiSetting.value,
             dbDocument
           );
-        if (!success) await WorkspaceDocument.delete(dbDocument.id);
+        if (!success)
+          await WorkspaceDocument.delete({ id: Number(dbDocument.id) });
         result.files = {
           [document.title]: {
             skipped: false,

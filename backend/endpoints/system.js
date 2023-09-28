@@ -7,7 +7,6 @@ const { dumpENV } = require("../utils/env");
 const { reqBody, userFromSession } = require("../utils/http");
 const { getGitVersion, getDiskStorage } = require("../utils/metrics");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
-// const { validateTablePragmas } = require("../utils/database");
 
 function systemEndpoints(app) {
   if (!app) return;
@@ -38,7 +37,10 @@ function systemEndpoints(app) {
   });
 
   app.get("/migrate", async (_, response) => {
-    // await validateTablePragmas(true);
+    const execSync = require("child_process").execSync;
+    execSync("npx prisma migrate deploy --schema=./prisma/schema.prisma", {
+      stdio: "inherit",
+    });
     response.sendStatus(200).end();
   });
 
@@ -53,7 +55,7 @@ function systemEndpoints(app) {
           return;
         }
 
-        const config = await SystemSettings.get(`label = '${label}'`);
+        const config = await SystemSettings.get({ label });
         response.status(200).json({ label, exists: !!config?.value });
       } catch (e) {
         console.log(e.message, e);
@@ -79,7 +81,15 @@ function systemEndpoints(app) {
           return;
         }
 
-        const config = await SystemSettings.get(`label = '${label}'`);
+        const config = await SystemSettings.get({ label });
+        if (!config) {
+          response.status(200).json({
+            label,
+            value: "",
+          });
+          return;
+        }
+
         if (SystemSettings.privateField.includes(label)) {
           response.status(200).json({
             ...config,

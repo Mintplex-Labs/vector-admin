@@ -75,9 +75,9 @@ function organizationEndpoints(app) {
         }
         const organizations = await Organization.whereWithOwner(
           user.id,
+          {},
           null,
-          null,
-          "ORDER BY createdAt ASC"
+          { createdAt: "asc" }
         );
         response.status(200).json({ organizations, error: null });
       } catch (e) {
@@ -97,7 +97,7 @@ function organizationEndpoints(app) {
           response.sendStatus(403).end();
           return;
         }
-        const organizations = await Organization.where(`id IS NOT NULL`);
+        const organizations = await Organization.where({ id: { not: null } });
         response.status(200).json({ organizations, error: null });
       } catch (e) {
         console.log(e.message, e);
@@ -117,10 +117,7 @@ function organizationEndpoints(app) {
           response.sendStatus(403).end();
           return;
         }
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${slug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, { slug });
         if (!organization) {
           response
             .status(200)
@@ -148,10 +145,7 @@ function organizationEndpoints(app) {
           response.sendStatus(403).end();
           return;
         }
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${slug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, { slug });
         if (!organization) {
           response
             .status(200)
@@ -183,10 +177,7 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${slug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, { slug });
         if (!organization) {
           response
             .status(200)
@@ -194,9 +185,9 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const apiKey = await OrganizationApiKey.get(
-          `organization_id = ${organization.id}`
-        );
+        const apiKey = await OrganizationApiKey.get({
+          organization_id: Number(organization.id),
+        });
         if (!apiKey) {
           response.status(200).json({
             organization: null,
@@ -225,10 +216,7 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${slug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, { slug });
         if (!organization) {
           response
             .status(200)
@@ -236,9 +224,9 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${organization.id}`
-        );
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         if (!connector) {
           response.status(200).json({
             connector: null,
@@ -268,10 +256,7 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${slug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, { slug });
         if (!organization) {
           response
             .status(200)
@@ -279,9 +264,9 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${organization.id}`
-        );
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         if (!!connector) {
           response.status(200).json({
             connector: null,
@@ -312,10 +297,7 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${slug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, { slug });
         if (!organization) {
           response
             .status(200)
@@ -323,9 +305,9 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${organization.id}`
-        );
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         if (!connector) {
           response.status(200).json({
             connector: null,
@@ -359,10 +341,7 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${slug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, { slug });
         if (!organization) {
           response
             .status(200)
@@ -370,9 +349,9 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${organization.id}`
-        );
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         if (!connector) {
           response.status(200).json({
             connector: null,
@@ -403,13 +382,10 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const connector = await OrganizationConnection.get(
-          `id = ${connectorId}`
-        );
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${slug}'`
-        );
+        const connector = await OrganizationConnection.get({
+          id: Number(connectorId),
+        });
+        const organization = await Organization.getWithOwner(user.id, { slug });
         if (!organization || !connector) {
           response.status(200).json({
             organization: null,
@@ -448,10 +424,7 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${slug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, { slug });
         if (!organization) {
           response
             .status(200)
@@ -493,10 +466,7 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${slug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, { slug });
         if (!organization) {
           response
             .status(200)
@@ -511,10 +481,9 @@ function organizationEndpoints(app) {
           includeSlugs
         );
 
-        const totalWorkspaces = await OrganizationWorkspace.count(
-          `organization_id = ${organization.id}`
-        );
-
+        const totalWorkspaces = await OrganizationWorkspace.count({
+          organization_id: Number(organization.id),
+        });
         response.status(200).json({ workspaces, totalWorkspaces });
       } catch (e) {
         console.log(e.message, e);
@@ -535,10 +504,7 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${slug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, { slug });
         if (!organization) {
           response
             .status(200)
@@ -547,13 +513,15 @@ function organizationEndpoints(app) {
         }
 
         const jobs = await Queue.where(
-          `organizationId = ${organization.id}`,
+          { organization_id: Number(organization.id) },
           null,
-          "ORDER BY createdAt DESC"
+          { createdAt: "desc" }
         );
         for (const job of jobs) {
-          const { id, email, role } = await User.get(`id = ${job.runByUserId}`);
-          job.runByUser = { id, email, role };
+          const { id, email, role } = await User.get({
+            id: Number(job.run_by_user_id),
+          });
+          job.run_by_user_id = { id, email, role };
         }
         response.status(200).json({ jobs });
       } catch (e) {
@@ -578,10 +546,7 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${slug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, { slug });
         if (!organization) {
           response
             .status(200)
@@ -590,15 +555,15 @@ function organizationEndpoints(app) {
         }
 
         const documents = await WorkspaceDocument.where(
-          `organization_id = ${organization.id}`,
+          { organization_id: Number(organization.id) },
           pageSize,
           (page - 1) * pageSize,
           true
         );
 
-        const totalDocuments = await WorkspaceDocument.count(
-          `organization_id = ${organization.id}`
-        );
+        const totalDocuments = await WorkspaceDocument.count({
+          organization_id: Number(organization.id),
+        });
         response.status(200).json({ documents, totalDocuments });
       } catch (e) {
         console.log(e.message, e);
@@ -619,10 +584,7 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${slug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, { slug });
         if (!organization) {
           response
             .status(200)
@@ -676,18 +638,15 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${slug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, { slug });
         if (!organization) {
           response.status(200).json({ match: null, error: "No org found." });
           return;
         }
 
-        const connector = await OrganizationConnection.get(
-          `organization_id = ${organization.id}`
-        );
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
         if (!connector) {
           response
             .status(200)
@@ -724,10 +683,9 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const organization = await Organization.getWithOwner(
-          user.id,
-          `slug = '${orgSlug}'`
-        );
+        const organization = await Organization.getWithOwner(user.id, {
+          slug: orgSlug,
+        });
         if (!organization) {
           response
             .status(200)
@@ -735,15 +693,15 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const documents = await WorkspaceDocument.where(
-          `organization_id = ${organization.id}`
-        );
+        const documents = await WorkspaceDocument.where({
+          organization_id: Number(organization.id),
+        });
         for (const document of documents) {
           const digestFilename = WorkspaceDocument.vectorFilename(document);
           await deleteVectorCacheFile(digestFilename);
         }
 
-        await Organization.delete(`id = ${organization.id}`);
+        await Organization.delete({ id: Number(organization.id) });
         response.status(200).json({ success: true, error: null });
       } catch (e) {
         console.log(e.message, e);

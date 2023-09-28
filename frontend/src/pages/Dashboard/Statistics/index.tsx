@@ -86,8 +86,8 @@ const Statistics = ({ organization }: { organization: any }) => {
           <div className="flex flex-col items-center">
             <h4 className="mb-0.5 text-xl font-bold text-black dark:text-white md:text-title-lg">
               {organization?.lastUpdated
-                ? moment.unix(organization.lastUpdated).fromNow()
-                : moment.unix(organization.createdAt).fromNow()}
+                ? moment(organization.lastUpdated).fromNow()
+                : moment(organization.createdAt).fromNow()}
             </h4>
             <p className="text-sm font-medium">Last Modified</p>
           </div>

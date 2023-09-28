@@ -2,9 +2,6 @@
 .env.development
 logs/server.log
 *.db
-!*.placeholderdb
 *.sqbpro
 node_modules
 storage/vector-cache/*.json
-storage/settings.json
-storage/job_settings.json

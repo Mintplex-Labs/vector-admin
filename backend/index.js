@@ -54,7 +54,6 @@ app.all("*", function (_, response) {
 
 app
   .listen(process.env.SERVER_PORT || 3001, async () => {
-    // await validateTablePragmas();
     await systemInit();
     setupDebugger(apiRouter);
     console.log(

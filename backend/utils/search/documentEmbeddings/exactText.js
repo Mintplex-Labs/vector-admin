@@ -29,7 +29,7 @@ async function exactTextSearch(document, query) {
 
   const queryString = matchingVectorIds.map((vid) => `'${vid}'`).join(",");
   const fragments = await DocumentVectors.where(
-    `vectorId IN (${queryString})`,
+    { vectorId: { in: queryString } },
     100
   );
   return { fragments, error: null };

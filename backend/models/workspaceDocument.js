@@ -1,48 +1,10 @@
-// const { checkForMigrations } = require("../utils/database");
+const prisma = require("../utils/prisma");
 const path = require("path");
 const { v5 } = require("uuid");
 const { fetchMetadata } = require("../utils/storage");
 const { DocumentVectors } = require("./documentVectors");
 
 const WorkspaceDocument = {
-  tablename: "workspace_documents",
-  colsInit: `
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  docId TEXT NOT NULL UNIQUE,
-  organization_id INTEGER NOT NULL,
-  workspace_id INTEGER NOT NULL,
-  createdAt TEXT DEFAULT (strftime('%s', 'now')),
-  lastUpdatedAt TEXT DEFAULT (strftime('%s', 'now')),
-
-  FOREIGN KEY (organization_id) REFERENCES organizations (id) ON DELETE CASCADE
-  FOREIGN KEY (workspace_id) REFERENCES organization_workspaces (id) ON DELETE CASCADE
-  `,
-  // migrateTable: async function () {
-  //   console.log(`\x1b[34m[MIGRATING]\x1b[0m Checking for Document migrations`);
-  //   const db = await this.db(false);
-  //   await checkForMigrations(this, db);
-  // },
-  migrations: function () {
-    return [];
-  },
-  db: async function (tracing = true) {
-    const sqlite3 = require("sqlite3").verbose();
-    const { open } = require("sqlite");
-    const path = require("path");
-    const dbFilePath = path.resolve(__dirname, "../storage/vdbms.db");
-    const db = await open({
-      filename: dbFilePath,
-      driver: sqlite3.Database,
-    });
-
-    await db.exec(
-      `PRAGMA foreign_keys = ON;CREATE TABLE IF NOT EXISTS ${this.tablename} (${this.colsInit});`
-    );
-
-    if (tracing) db.on("trace", (sql) => console.log(sql));
-    return db;
-  },
   vectorFilenameRaw: function (documentName, workspaceId) {
     const document = { name: documentName, workspace_id: workspaceId };
     return this.vectorFilename(document);
@@ -58,163 +20,122 @@ const WorkspaceDocument = {
       `../storage/vector-cache/${cacheFilename}.json`
     );
   },
+
   create: async function (data = null) {
-    if (!data) return;
-    const db = await this.db();
-    const { id, success, message } = await db
-      .run(
-        `INSERT INTO ${this.tablename} (docId, name, workspace_id, organization_id) VALUES (?,?,?,?)`,
-        [data.id, data.name, data.workspaceId, data.organizationId]
-      )
-      .then((res) => {
-        return { id: res.lastID, success: true, message: null };
-      })
-      .catch((error) => {
-        console.log(error);
-        return { id: null, success: false, message: error.message };
+    try {
+      if (!data) return;
+      const document = await prisma.workspace_documents.create({
+        data: {
+          docId: data.id,
+          name: data.name,
+          workspace_id: Number(data.workspaceId),
+          organization_id: Number(data.organizationId),
+        },
       });
 
-    if (!success) {
-      await db.close();
-      console.error("FAILED TO CREATE DOCUMENT.", message);
-      return { document: null, message };
+      if (!document) {
+        await db.close();
+        console.error("FAILED TO CREATE DOCUMENT.");
+        return { document: null, message: "Failed to create document" };
+      }
+      return { document, message: null };
+    } catch (e) {
+      console.error(e.message);
+      return false;
     }
-
-    const document = await db.get(
-      `SELECT * FROM ${this.tablename} WHERE id = ${id}`
-    );
-    await db.close();
-
-    return { document, message: null };
   },
 
   // Used by workers paginateAndStore method to bulk create documents easily during import.
   // document items in array must have documentId, name, metadata (this is document specific - not each vector chunk.), workspaceId, organizationId,
-  createMany: async function (documents = []) {
-    if (documents.length === 0) return;
-    const db = await this.db();
-    const stmt = await db.prepare(
-      `INSERT INTO ${this.tablename} (docId, name, workspace_id, organization_id) VALUES (?,?,?,?)`
-    );
-
-    await db.exec("BEGIN TRANSACTION");
+  createMany: async function (documents = null) {
     try {
-      for (const document of documents) {
-        await stmt.run([
-          document.documentId,
-          document.name,
-          document.workspaceId,
-          document.organizationId,
-        ]);
-      }
-      await db.exec("COMMIT");
-    } catch {
-      await db.exec("ROLLBACK");
+      if (documents.length === 0) return;
+      const inserts = documents.map((doc) => {
+        return {
+          docId: doc.documentId,
+          name: doc.name,
+          workspace_id: Number(doc.workspaceId),
+          organization_id: Number(doc.organizationId),
+        };
+      });
+
+      await prisma.workspace_documents.createMany({
+        data: inserts,
+      });
+      return;
+    } catch (e) {
+      console.error(e.message);
+      return;
     }
+  },
 
-    await stmt.finalize();
-    await db.close();
-    return;
+  get: async function (clause = {}, withReferences = false) {
+    try {
+      const document = await prisma.workspace_documents.findFirst({
+        where: clause,
+        include: {
+          workspace: withReferences,
+        },
+      });
+      return document ? { ...document } : null;
+    } catch (e) {
+      console.error(e.message);
+      return null;
+    }
   },
-  get: async function (clause = "", withReferences = false) {
-    const db = await this.db();
-    const result = await db
-      .get(`SELECT * FROM ${this.tablename} WHERE ${clause}`)
-      .then((res) => res || null);
-    if (!result) return null;
-    await db.close();
-    if (!withReferences) return result;
 
-    const { OrganizationWorkspace } = require("./organizationWorkspace");
-    return {
-      ...result,
-      workspace: await OrganizationWorkspace.get(`id = ${result.workspace_id}`),
-    };
-  },
-  count: async function (clause = null) {
-    const db = await this.db();
-    const { count } = await db.get(
-      `SELECT COUNT(*) as count FROM ${this.tablename} ${
-        clause ? `WHERE ${clause}` : ""
-      }`
-    );
-    await db.close();
-    return count;
-  },
   where: async function (
-    clause = null,
+    clause = {},
     limit = null,
     offset = null,
     withReferences = false
   ) {
-    if (!withReferences) {
-      const db = await this.db();
-      const results = await db.all(
-        `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${
-          offset ? `OFFSET ${offset}` : ""
-        } ${limit ? `LIMIT ${limit}` : ""}`
-      );
-      await db.close();
-      return results;
-    }
-
-    const { OrganizationWorkspace } = require("./organizationWorkspace");
-    const db = await this.db();
-    const results = await db.all(
-      `SELECT *,
-      wd.id as document_id,
-      wd.name as document_name,
-      wd.createdAt as document_createdAt,
-      ow.slug as workspace_slug,
-      ow.name as workspace_name
-      FROM ${this.tablename} as wd
-      LEFT JOIN ${
-        OrganizationWorkspace.tablename
-      } as ow ON ow.id = wd.workspace_id
-       ${clause ? `WHERE wd.${clause}` : ""} ${limit ? `LIMIT ${limit}` : ""} ${
-        offset ? `OFFSET ${offset}` : ""
-      }`
-    );
-    await db.close();
-
-    const completeResults = results.map((res) => {
-      const {
-        workspace_slug,
-        document_createdAt,
-        document_name,
-        document_id,
-        workspace_name,
-        ...rest
-      } = res;
-      return {
-        ...rest,
-        id: document_id,
-        name: document_name,
-        createdAt: document_createdAt,
-        workspace: {
-          slug: workspace_slug,
-          name: workspace_name,
+    try {
+      const documents = await prisma.workspace_documents.findMany({
+        where: clause,
+        include: {
+          workspace: withReferences,
         },
-      };
-    });
-
-    return completeResults;
+        ...(offset !== null ? { skip: offset } : {}),
+        ...(limit !== null ? { take: limit } : {}),
+      });
+      return documents;
+    } catch (e) {
+      console.error(e.message);
+      return [];
+    }
   },
 
+  count: async function (clause = {}) {
+    try {
+      const count = await prisma.workspace_documents.count({ where: clause });
+      return count;
+    } catch (e) {
+      console.error(e.message);
+      return 0;
+    }
+  },
+
+  delete: async function (clause = {}) {
+    try {
+      await prisma.workspace_documents.deleteMany({ where: clause });
+      return true;
+    } catch (e) {
+      console.error(e.message);
+      return false;
+    }
+  },
   countForEntity: async function (field = "organization_id", value = null) {
-    return await this.count(`${field} = ${value}`);
+    return await this.count({ [field]: value });
   },
   calcVectors: async function (field = "organization_id", value = null) {
     try {
-      const documents = await this.where(`${field} = ${value}`);
+      const documents = await this.where({ [field]: value });
       if (documents.length === 0) return 0;
 
-      const docIdSet = new Set();
-      documents.forEach((doc) => docIdSet.add(doc.id));
-      const docIds = Array.from(docIdSet);
-      const vectorCount = await DocumentVectors.count(
-        `document_id IN (${docIds.join(",")})`
-      );
+      const vectorCount = await DocumentVectors.count({
+        [field]: value,
+      });
       return vectorCount;
     } catch (e) {
       console.error(e);
@@ -222,7 +143,7 @@ const WorkspaceDocument = {
     }
   },
   calcVectorCache: async function (field = "organization_id", value = null) {
-    const documents = await this.where(`${field} = ${value}`);
+    const documents = await this.where({ [field]: value });
 
     var totalBytes = 0;
     for (const document of documents) {
@@ -236,18 +157,6 @@ const WorkspaceDocument = {
     }
 
     return totalBytes;
-  },
-  deleteWhere: async function (clause = null) {
-    const db = await this.db();
-    await db.exec(`DELETE FROM ${this.tablename} WHERE ${clause}`);
-    await db.close();
-    return;
-  },
-  delete: async function (id = null) {
-    const db = await this.db();
-    await db.exec(`DELETE FROM ${this.tablename} WHERE id = ${id}`);
-    await db.close();
-    return;
   },
 };
 

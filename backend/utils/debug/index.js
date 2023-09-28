@@ -32,8 +32,8 @@ function setupDebugger(app) {
     "/debug/vdbms",
     dbAdmin({
       config: {
-        sqlite: {
-          database: path.resolve(__dirname, "../../storage/vdbms.db"),
+        pg: {
+          connectionString: process.env.DATABASE_CONNECTION_STRING,
         },
         admin: {
           settings: path.resolve(__dirname, "../../storage/settings.json"),
@@ -53,41 +53,9 @@ function setupDebugger(app) {
         },
       },
       custom: {
-        ensurePragma: {
-          events: path.resolve(__dirname, "dbevents.js"),
-        },
-      },
-    })
-  );
-
-  app.use(
-    "/debug/jobs",
-    dbAdmin({
-      config: {
-        sqlite: {
-          database: path.resolve(__dirname, "../../storage/job_queue.db"),
-        },
-        admin: {
-          settings: path.resolve(__dirname, "../../storage/job_settings.json"),
-          layouts: false,
-          languages: false,
-          root: "/api/debug/jobs",
-          footer: {
-            text: "Mintplex Labs Inc | Vector Admin",
-            url: "https://github.com/Mintplex-Labs/vector-admin",
-          },
-        },
-      },
-      users: {
-        [username]: {
-          name: username,
-          pass: password,
-        },
-      },
-      custom: {
-        ensurePragma: {
-          events: path.resolve(__dirname, "dbevents.js"),
-        },
+        // ensurePragma: {
+        //   events: path.resolve(__dirname, "dbevents.js"),
+        // },
       },
     })
   );

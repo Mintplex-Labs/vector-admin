@@ -25,9 +25,9 @@ async function findKeyValueInDoc(wsDoc, query) {
 }
 
 async function metadataSearch(workspace, query) {
-  const workspaceDocs = await WorkspaceDocument.where(
-    `workspace_id = ${workspace.id}`
-  );
+  const workspaceDocs = await WorkspaceDocument.where({
+    workspace_id: Number(workspace.id),
+  });
   const promises = [];
 
   for (const wsDoc of workspaceDocs) {

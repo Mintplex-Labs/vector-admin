@@ -8,13 +8,13 @@ const { OpenAi } = require("../../openAi");
 const { selectConnector } = require("../../vectordatabases/providers");
 
 async function semanticSearch(workspace, query) {
-  const connector = await OrganizationConnection.get(
-    `organization_id = ${workspace.organization_id}`
-  );
+  const connector = await OrganizationConnection.get({
+    organization_id: Number(workspace.organization_id),
+  });
   if (!connector)
     return { documents: [], error: "No connector found for org." };
 
-  const openAiKey = (await SystemSettings.get(`label = 'open_ai_api_key'`))
+  const openAiKey = (await SystemSettings.get({ label: "open_ai_api_key" }))
     ?.value;
   if (!openAiKey)
     return { documents: [], error: "No OpenAI key available to embed query." };
@@ -36,17 +36,15 @@ async function semanticSearch(workspace, query) {
   const searchString = searchResults.vectorIds
     .map((vid) => `'${vid}'`)
     .join(",");
-  const matchingDocumentVectors = await DocumentVectors.where(
-    `vectorId IN (${searchString})`
-  );
+  const matchingDocumentVectors = await DocumentVectors.where({
+    vectorId: { in: { searchString } },
+  });
   const docDbIds = new Set();
   matchingDocumentVectors.forEach((record) => docDbIds.add(record.document_id));
 
   // Do a bulk query for all unique document ids we were able to find in previous step.
-  const docDbIdString = Array.from(docDbIds)
-    .map((id) => id)
-    .join(",");
-  const documents = await WorkspaceDocument.where(`id IN (${docDbIdString})`);
+  const docDbIdArray = Array.from(docDbIds);
+  const documents = await WorkspaceDocument.where({ id: { in: docDbIdArray } });
 
   return { documents, error: null };
 }

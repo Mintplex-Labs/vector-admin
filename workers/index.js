@@ -5,7 +5,7 @@ const cors = require("cors");
 const { serve } = require("inngest/express");
 const { InngestClient } = require("./utils/inngest");
 const { syncChromaInstance } = require("./functions/syncChroma");
-const { findOrCreateDBFile, setupFunctions } = require("./utils/boot");
+const { setupFunctions } = require("./utils/boot");
 const { reqBody } = require("./utils/http");
 const { Queue } = require("../backend/models/queue");
 const { deleteSingleChromaEmbedding, deleteSinglePineconeEmbedding, deleteSingleQDrantEmbedding, deleteSingleWeaviateEmbedding } = require("./functions/deleteEmbedding");
@@ -100,9 +100,9 @@ app.use(
 );
 
 app.get('/jobs', async function (_, response) {
-  const completed = (await Queue.where(`status = '${Queue.status.complete}'`)).length;
-  const pending = (await Queue.where(`status = '${Queue.status.pending}'`)).length;
-  const failed = (await Queue.where(`status = '${Queue.status.failed}'`)).length;
+  const completed = (await Queue.where({ status: Queue.status.complete })).length;
+  const pending = (await Queue.where({ status: Queue.status.pending })).length;
+  const failed = (await Queue.where({ status: Queue.status.failed })).length;
   response.status(200).send(`${completed + pending + failed} jobs processed.\n${completed} completed.\n${pending} pending.\n${failed} failed.`);
 })
 
@@ -120,7 +120,6 @@ app.post('/send', async function (request, response) {
 
 app
   .listen(process.env.WORKERS_PORT || 3355, async () => {
-    await findOrCreateDBFile();
     await setupFunctions();
     console.log(
       `Background workers listening on port ${process.env.WORKERS_PORT || 3355}`

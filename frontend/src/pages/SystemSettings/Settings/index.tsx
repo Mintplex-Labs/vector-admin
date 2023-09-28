@@ -204,14 +204,6 @@ function DebugCredentials({ settings }: { settings: {} }) {
             Go to {APP_NAME} database manager
             <ExternalLink className="h-4 w-4" />
           </a>
-          <a
-            href={paths.debug.jobs()}
-            target="_blank"
-            className="flex items-center gap-x-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200"
-          >
-            Go to {APP_NAME} job database manager
-            <ExternalLink className="h-4 w-4" />
-          </a>
         </div>
       </div>
     </>
