@@ -38,7 +38,7 @@ function systemEndpoints(app) {
 
   app.get("/migrate", async (_, response) => {
     const execSync = require("child_process").execSync;
-    execSync("npx prisma migrate dev --name init", {
+    execSync("npx prisma migrate deploy --schema=./prisma/schema.prisma", {
       stdio: "inherit",
     });
     response.sendStatus(200).end();
