@@ -60,38 +60,6 @@ function setupDebugger(app) {
     })
   );
 
-  app.use(
-    "/debug/jobs",
-    dbAdmin({
-      config: {
-        sqlite: {
-          database: path.resolve(__dirname, "../../storage/job_queue.db"),
-        },
-        admin: {
-          settings: path.resolve(__dirname, "../../storage/job_settings.json"),
-          layouts: false,
-          languages: false,
-          root: "/api/debug/jobs",
-          footer: {
-            text: "Mintplex Labs Inc | Vector Admin",
-            url: "https://github.com/Mintplex-Labs/vector-admin",
-          },
-        },
-      },
-      users: {
-        [username]: {
-          name: username,
-          pass: password,
-        },
-      },
-      custom: {
-        ensurePragma: {
-          events: path.resolve(__dirname, "dbevents.js"),
-        },
-      },
-    })
-  );
-
   saveDebug(username, password);
 }
 module.exports.setupDebugger = setupDebugger;

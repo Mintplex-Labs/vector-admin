@@ -56,10 +56,6 @@ const paths = {
       const { origin } = getServerUrl();
       return `${origin}/api/debug/vdbms/login`;
     },
-    jobs: function () {
-      const { origin } = getServerUrl();
-      return `${origin}/api/debug/jobs/login`;
-    },
   },
 };
 

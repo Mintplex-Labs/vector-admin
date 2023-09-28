@@ -4,6 +4,7 @@ FROM ubuntu:jammy-20230522 AS base
 # Build arguments
 ARG ARG_UID
 ARG ARG_GID
+ARG DATABASE_CONNECTION_STRING
 
 # Install system dependencies
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
@@ -77,19 +78,19 @@ RUN cd /app/workers && \
     yarn cache clean && \
     yarn add global inngest-cli
 
-# # Copy the document-processor
+# Copy the document-processor
 COPY ./document-processor/ ./document-processor/
 
-# # Install document-processor dependencies
+# Install document-processor dependencies
 RUN cd /app/document-processor && \
     python3 -m virtualenv v-env && \
     . v-env/bin/activate && \
     pip install --no-cache-dir -r requirements.txt
 
-# Create placeholder database files from .placeholderdb files in /storage.
+# Reown files and init Prisma Client
 USER root
-COPY ./backend/storage/job_queue.placeholderdb ./backend/storage/job_queue.db
-COPY ./backend/storage/vdbms.placeholderdb ./backend/storage/vdbms.db
+RUN cd ./backend && DATABASE_CONNECTION_STRING=$DATABASE_CONNECTION_STRING npx prisma generate --schema=./prisma/schema.prisma
+RUN cd ./backend && DATABASE_CONNECTION_STRING=$DATABASE_CONNECTION_STRING npx prisma migrate deploy --schema=./prisma/schema.prisma
 RUN chown -R anythingllm:anythingllm ./backend/storage ./document-processor
 USER anythingllm
 
