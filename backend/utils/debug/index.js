@@ -32,8 +32,8 @@ function setupDebugger(app) {
     "/debug/vdbms",
     dbAdmin({
       config: {
-        sqlite: {
-          database: path.resolve(__dirname, "../../storage/vdbms.db"),
+        pg: {
+          connectionString: process.env.DATABASE_CONNECTION_STRING,
         },
         admin: {
           settings: path.resolve(__dirname, "../../storage/settings.json"),
@@ -53,9 +53,9 @@ function setupDebugger(app) {
         },
       },
       custom: {
-        ensurePragma: {
-          events: path.resolve(__dirname, "dbevents.js"),
-        },
+        // ensurePragma: {
+        //   events: path.resolve(__dirname, "dbevents.js"),
+        // },
       },
     })
   );

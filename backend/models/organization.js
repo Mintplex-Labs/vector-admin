@@ -129,7 +129,6 @@ const Organization = {
   },
 
   whereWithOwner: async function (
-    // TODO
     userId,
     clause = {},
     limit = null,

@@ -6,7 +6,7 @@ generator client {
 // After swapping run `yarn prisma:setup` from the root directory to migrate the database
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://tim:tdc1994@localhost:5432/vdbms"
+  url      = env("DATABASE_CONNECTION_STRING")
 }
 
 model users {

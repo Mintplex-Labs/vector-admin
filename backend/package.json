@@ -33,6 +33,7 @@
     "moment": "^2.29.4",
     "multer": "^1.4.5-lts.1",
     "openai": "^3.3.0",
+    "pg": "^8.11.3",
     "pinecone-client": "^1.1.0",
     "posthog-node": "^3.1.2",
     "prisma": "^5.3.1",

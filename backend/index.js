@@ -54,9 +54,8 @@ app.all("*", function (_, response) {
 
 app
   .listen(process.env.SERVER_PORT || 3001, async () => {
-    // await validateTablePragmas();
     await systemInit();
-    // setupDebugger(apiRouter); //TODO: DEBUGGER
+    setupDebugger(apiRouter);
     console.log(
       `Example app listening on port ${process.env.SERVER_PORT || 3001}`
     );
