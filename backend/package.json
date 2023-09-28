@@ -1,6 +1,5 @@
 {
   "name": "vector-data-management-server",
-  "version": "0.0.1-beta",
   "description": "Server endpoints to process vector database connections",
   "main": "index.js",
   "author": "Timothy Carambat (Mintplex Labs)",

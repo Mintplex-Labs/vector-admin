@@ -1,7 +1,6 @@
 {
   "name": "tailadmin-react-free",
   "private": true,
-  "version": "1.0.5",
   "type": "module",
   "scripts": {
     "start": "vite --open",
