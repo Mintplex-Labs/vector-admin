@@ -59,8 +59,8 @@ CREATE TABLE "organization_connections" (
 -- CreateTable
 CREATE TABLE "organization_workspaces" (
     "id" SERIAL NOT NULL,
-    "type" TEXT NOT NULL,
-    "settings" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
     "uuid" TEXT NOT NULL,
     "organization_id" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -135,7 +135,7 @@ CREATE UNIQUE INDEX "organizations_uuid_key" ON "organizations"("uuid");
 CREATE UNIQUE INDEX "organization_api_keys_apiKey_key" ON "organization_api_keys"("apiKey");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "organization_workspaces_settings_key" ON "organization_workspaces"("settings");
+CREATE UNIQUE INDEX "organization_workspaces_slug_key" ON "organization_workspaces"("slug");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "organization_workspaces_uuid_key" ON "organization_workspaces"("uuid");

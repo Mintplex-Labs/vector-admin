@@ -157,7 +157,7 @@ const Organization = {
 
   delete: async function (clause = {}) {
     try {
-      await prisma.organizations.delete({ where: clause });
+      await prisma.organizations.deleteMany({ where: clause });
       return true;
     } catch (e) {
       console.error(e.message);

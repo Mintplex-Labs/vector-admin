@@ -264,7 +264,7 @@ const Fragment = ({
           )}
         </td>
         <td className="px-6 py-4">
-          {moment.unix(fragment.lastUpdatedAt).fromNow()}
+          {moment(fragment.lastUpdatedAt).fromNow()}
         </td>
         <td className="flex items-center gap-x-4 px-6 py-4">
           <button

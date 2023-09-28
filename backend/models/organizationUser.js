@@ -42,8 +42,10 @@ const OrganizationUser = {
 
   get: async function (clause = {}) {
     try {
-      const user = await prisma.organization_users.findFirst({ where: clause });
-      return user ? { ...user } : null;
+      const orgUser = await prisma.organization_users.findFirst({
+        where: clause,
+      });
+      return orgUser ? { ...orgUser } : null;
     } catch (e) {
       console.error(e.message);
       return null;
@@ -52,11 +54,11 @@ const OrganizationUser = {
 
   where: async function (clause = {}, limit = null) {
     try {
-      const users = await prisma.organization_users.findMany({
+      const orgUsers = await prisma.organization_users.findMany({
         where: clause,
         ...(limit !== null ? { take: limit } : {}),
       });
-      return users;
+      return orgUsers;
     } catch (e) {
       console.error(e.message);
       return [];
@@ -75,7 +77,7 @@ const OrganizationUser = {
 
   delete: async function (clause = {}) {
     try {
-      await prisma.organization_users.delete({ where: clause });
+      await prisma.organization_users.deleteMany({ where: clause });
       return true;
     } catch (e) {
       console.error(e.message);

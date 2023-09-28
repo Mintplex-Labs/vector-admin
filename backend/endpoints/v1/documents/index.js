@@ -48,7 +48,7 @@ function documentEndpoints(app) {
           return;
         }
 
-        const document = await WorkspaceDocument.get(`id = ${id}`);
+        const document = await WorkspaceDocument.get({ id: Number(id) });
         response.status(200).json({ document });
       } catch (e) {
         console.log(e.message, e);
@@ -69,13 +69,13 @@ function documentEndpoints(app) {
           return;
         }
 
-        const document = await WorkspaceDocument.get(`id = ${id}`);
+        const document = await WorkspaceDocument.get({ id: Number(id) });
         const organization = await Organization.get({
           id: Number(document.organization_id),
         });
-        const workspace = await OrganizationWorkspace.get(
-          `id = ${document.workspace_id}`
-        );
+        const workspace = await OrganizationWorkspace.get({
+          id: Number(document.workspace_id),
+        });
         const connector = await OrganizationConnection.get({
           organization_id: Number(organization.id),
         });
@@ -111,14 +111,14 @@ function documentEndpoints(app) {
 
         const offset = (page - 1) * pageSize;
         const fragments = await DocumentVectors.where(
-          `document_id = ${id}`,
+          { document_id: Number(id) },
           pageSize,
-          `OFFSET ${offset}`
+          offset
         );
 
-        const totalFragments = await DocumentVectors.count(
-          `document_id = ${id}`
-        );
+        const totalFragments = await DocumentVectors.count({
+          document_id: Number(id),
+        });
         response.status(200).json({ fragments, totalFragments });
       } catch (e) {
         console.log(e.message, e);
@@ -150,18 +150,18 @@ function documentEndpoints(app) {
           return;
         }
 
-        const fragment = await DocumentVectors.get(`id = ${id}`);
+        const fragment = await DocumentVectors.get({ id: Number(id) });
         if (!fragment) {
           response.sendStatus(404).end();
           return;
         }
 
-        const document = await WorkspaceDocument.get(
-          `id = ${fragment.document_id}`
-        );
-        const workspace = await OrganizationWorkspace.get(
-          `id = ${document.workspace_id}`
-        );
+        const document = await WorkspaceDocument.get({
+          id: Number(fragment.document_id),
+        });
+        const workspace = await OrganizationWorkspace.get({
+          id: Number(document.workspace_id),
+        });
         const organization = await Organization.get({
           id: Number(document.organization_id),
         });
@@ -199,18 +199,18 @@ function documentEndpoints(app) {
           return;
         }
 
-        const fragment = await DocumentVectors.get(`id = ${id}`);
+        const fragment = await DocumentVectors.get({ id: Number(id) });
         if (!fragment) {
           response.sendStatus(404).end();
           return;
         }
 
-        const document = await WorkspaceDocument.get(
-          `id = ${fragment.document_id}`
-        );
-        const workspace = await OrganizationWorkspace.get(
-          `id = ${document.workspace_id}`
-        );
+        const document = await WorkspaceDocument.get({
+          id: Number(fragment.document_id),
+        });
+        const workspace = await OrganizationWorkspace.get({
+          id: Number(document.workspace_id),
+        });
         const organization = await Organization.get({
           id: Number(document.organization_id),
         });
@@ -246,18 +246,18 @@ function documentEndpoints(app) {
           return;
         }
 
-        const fragment = await DocumentVectors.get(`id = ${id}`);
+        const fragment = await DocumentVectors.get({ id: Number(id) });
         if (!fragment) {
           response.sendStatus(404).end();
           return;
         }
 
-        const document = await WorkspaceDocument.get(
-          `id = ${fragment.document_id}`
-        );
-        const workspace = await OrganizationWorkspace.get(
-          `id = ${document.workspace_id}`
-        );
+        const document = await WorkspaceDocument.get({
+          id: Number(fragment.document_id),
+        });
+        const workspace = await OrganizationWorkspace.get({
+          id: Number(document.workspace_id),
+        });
         const organization = await Organization.get({
           id: Number(document.organization_id),
         });
@@ -292,15 +292,15 @@ function documentEndpoints(app) {
           return;
         }
 
-        const document = await WorkspaceDocument.get(`id = ${id}`);
+        const document = await WorkspaceDocument.get({ id: Number(id) });
         if (!document) {
           response.sendStatus(404).end();
           return;
         }
 
-        const workspace = await OrganizationWorkspace.get(
-          `id = ${document.workspace_id}`
-        );
+        const workspace = await OrganizationWorkspace.get({
+          id: Number(document.workspace_id),
+        });
         const connector = await OrganizationConnection.get({
           organization_id: Number(document.organization_id),
         });
@@ -332,7 +332,7 @@ function documentEndpoints(app) {
           return;
         }
 
-        const document = await WorkspaceDocument.get(`id = ${id}`);
+        const document = await WorkspaceDocument.get({ id: Number(id) });
         if (!document) {
           response
             .status(404)
@@ -340,9 +340,9 @@ function documentEndpoints(app) {
           return;
         }
 
-        const workspace = await OrganizationWorkspace.get(
-          `id = ${toWorkspaceId}`
-        );
+        const workspace = await OrganizationWorkspace.get({
+          id: Number(toWorkspaceId),
+        });
         if (!workspace) {
           response.status(404).json({
             success: false,
@@ -393,7 +393,9 @@ function documentEndpoints(app) {
           return;
         }
 
-        const document = await WorkspaceDocument.get(`id = ${documentId}`);
+        const document = await WorkspaceDocument.get({
+          id: Number(documentId),
+        });
         if (!document) {
           response.status(200).json({
             fragments: [],

@@ -44,7 +44,7 @@ const deleteSingleChromaEmbedding = InngestClient.createFunction(
         `Deleting vector ${documentVector.vectorId} from ${workspace.name}.`
       );
       await collection.delete({ ids: [documentVector.vectorId] });
-      await DocumentVectors.delete(documentVector.id);
+      await DocumentVectors.delete({ id: Number(documentVector.id) });
       await cleanupCacheFile(documentVector);
 
       result = {
@@ -94,7 +94,7 @@ const deleteSinglePineconeEmbedding = InngestClient.createFunction(
         ids: [documentVector.vectorId],
         namespace: workspace.slug,
       });
-      await DocumentVectors.delete(documentVector.id);
+      await DocumentVectors.delete({ id: Number(documentVector.id) });
       await cleanupCacheFile(documentVector);
 
       result = {
@@ -144,7 +144,7 @@ const deleteSingleQDrantEmbedding = InngestClient.createFunction(
         wait: true,
         points: [documentVector.vectorId],
       });
-      await DocumentVectors.delete(documentVector.id);
+      await DocumentVectors.delete({ id: Number(documentVector.id) });
       await cleanupCacheFile(documentVector);
 
       result = {
@@ -196,7 +196,7 @@ const deleteSingleWeaviateEmbedding = InngestClient.createFunction(
         .withClassName(className)
         .withId(documentVector.vectorId)
         .do();
-      await DocumentVectors.delete(documentVector.id);
+      await DocumentVectors.delete({ id: Number(documentVector.id) });
       await cleanupCacheFile(documentVector);
 
       result = {
@@ -218,9 +218,9 @@ const deleteSingleWeaviateEmbedding = InngestClient.createFunction(
 
 // Keep cache file in sync with changes so when user copies it later the information is not out of sync.
 async function cleanupCacheFile(documentVector) {
-  const document = await WorkspaceDocument.get(
-    `id = ${documentVector.document_id}`
-  );
+  const document = await WorkspaceDocument.get({
+    id: Number(documentVector.document_id),
+  });
   console.log({ document });
   if (!document) return;
   const digestFilename = WorkspaceDocument.vectorFilename(document);

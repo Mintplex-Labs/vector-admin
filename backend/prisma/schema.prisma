@@ -67,8 +67,8 @@ model organization_connections {
 
 model organization_workspaces {
   id                  Int                   @id @default(autoincrement())
-  type                String
-  settings            String                @unique
+  name                String
+  slug                String                @unique
   uuid                String                @unique
   organization_id     Int
   createdAt           DateTime              @default(now())

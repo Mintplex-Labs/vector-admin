@@ -35,10 +35,10 @@ const OrganizationConnection = {
 
   get: async function (clause = {}) {
     try {
-      const user = await prisma.organization_connections.findFirst({
+      const connection = await prisma.organization_connections.findFirst({
         where: clause,
       });
-      return user ? { ...user } : null;
+      return connection ? { ...connection } : null;
     } catch (e) {
       console.error(e.message);
       return null;
@@ -47,11 +47,11 @@ const OrganizationConnection = {
 
   where: async function (clause = {}, limit = null) {
     try {
-      const users = await prisma.organization_connections.findMany({
+      const connections = await prisma.organization_connections.findMany({
         where: clause,
         ...(limit !== null ? { take: limit } : {}),
       });
-      return users;
+      return connections;
     } catch (e) {
       console.error(e.message);
       return [];

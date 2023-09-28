@@ -28,10 +28,10 @@ const OrganizationApiKey = {
 
   get: async function (clause = {}) {
     try {
-      const user = await prisma.organization_api_keys.findFirst({
+      const apiKey = await prisma.organization_api_keys.findFirst({
         where: clause,
       });
-      return user ? { ...user } : null;
+      return apiKey ? { ...apiKey } : null;
     } catch (e) {
       console.error(e.message);
       return null;
@@ -40,11 +40,11 @@ const OrganizationApiKey = {
 
   where: async function (clause = {}, limit = null) {
     try {
-      const users = await prisma.organization_api_keys.findMany({
+      const apiKeys = await prisma.organization_api_keys.findMany({
         where: clause,
         ...(limit !== null ? { take: limit } : {}),
       });
-      return users;
+      return apiKeys;
     } catch (e) {
       console.error(e.message);
       return [];

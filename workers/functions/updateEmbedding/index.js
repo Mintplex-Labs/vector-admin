@@ -19,7 +19,6 @@ const {
 const {
   Weaviate,
 } = require('../../../backend/utils/vectordatabases/providers/weaviate');
-const { v4 } = require('uuid');
 
 const updateSingleChromaEmbedding = InngestClient.createFunction(
   { name: 'Update Single Embedding From ChromaDB' },
@@ -63,7 +62,7 @@ const updateSingleChromaEmbedding = InngestClient.createFunction(
         return { result };
       }
 
-      const config = await SystemSettings.get(`label = 'open_ai_api_key'`);
+      const config = await SystemSettings.get({ label: 'open_ai_api_key' });
       if (!config || !config.value) {
         result = {
           message: `No OpenAI API Key set for instance - cannot embed text - aborting.`,
@@ -166,7 +165,7 @@ const updateSinglePineconeEmbedding = InngestClient.createFunction(
         return { result };
       }
 
-      const config = await SystemSettings.get(`label = 'open_ai_api_key'`);
+      const config = await SystemSettings.get({ label: 'open_ai_api_key' });
       if (!config || !config.value) {
         result = {
           message: `No OpenAI API Key set for instance - cannot embed text - aborting.`,
@@ -272,7 +271,7 @@ const updateSingleQDrantEmbedding = InngestClient.createFunction(
         return { result };
       }
 
-      const config = await SystemSettings.get(`label = 'open_ai_api_key'`);
+      const config = await SystemSettings.get({ label: 'open_ai_api_key' });
       if (!config || !config.value) {
         result = {
           message: `No OpenAI API Key set for instance - cannot embed text - aborting.`,
@@ -383,7 +382,7 @@ const updateSingleWeaviateEmbedding = InngestClient.createFunction(
         return { result };
       }
 
-      const config = await SystemSettings.get(`label = 'open_ai_api_key'`);
+      const config = await SystemSettings.get({ label: 'open_ai_api_key' });
       if (!config || !config.value) {
         result = {
           message: `No OpenAI API Key set for instance - cannot embed text - aborting.`,

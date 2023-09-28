@@ -66,7 +66,7 @@ const JobRun = ({ job, user }: { job: any; user: any }) => {
             </span>
           </div>
           <p className="text-sm font-normal text-slate-400">
-            last updated {moment.unix(job.lastUpdatedAt).fromNow()}
+            last updated {moment(job.lastUpdatedAt).fromNow()}
           </p>
         </div>
         <ChevronDown className="h-6 w-6 text-gray-500" />

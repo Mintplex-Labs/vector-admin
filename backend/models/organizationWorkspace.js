@@ -1,47 +1,10 @@
-// const { checkForMigrations } = require("../utils/database");
+const prisma = require("../utils/prisma");
 const uuidAPIKey = require("uuid-apikey");
 const slugify = require("slugify");
 const { WorkspaceDocument } = require("./workspaceDocument");
 const { selectConnector } = require("../utils/vectordatabases/providers");
 
 const OrganizationWorkspace = {
-  tablename: "organization_workspaces",
-  colsInit: `
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  slug TEXT NOT NULL UNIQUE,
-  uuid TEXT NOT NULL UNIQUE,
-  organization_id INTEGER NOT NULL,
-  createdAt TEXT DEFAULT (strftime('%s', 'now')),
-  lastUpdatedAt TEXT DEFAULT (strftime('%s', 'now')),
-
-  FOREIGN KEY (organization_id) REFERENCES organizations (id) ON DELETE CASCADE
-  `,
-  // migrateTable: async function () {
-  //   console.log(`\x1b[34m[MIGRATING]\x1b[0m Checking for Document migrations`);
-  //   const db = await this.db(false);
-  //   await checkForMigrations(this, db);
-  // },
-  migrations: function () {
-    return [];
-  },
-  db: async function (tracing = true) {
-    const sqlite3 = require("sqlite3").verbose();
-    const { open } = require("sqlite");
-    const path = require("path");
-    const dbFilePath = path.resolve(__dirname, "../storage/vdbms.db");
-    const db = await open({
-      filename: dbFilePath,
-      driver: sqlite3.Database,
-    });
-
-    await db.exec(
-      `PRAGMA foreign_keys = ON;CREATE TABLE IF NOT EXISTS ${this.tablename} (${this.colsInit});`
-    );
-
-    if (tracing) db.on("trace", (sql) => console.log(sql));
-    return db;
-  },
   makeKey: () => {
     return `ws-${uuidAPIKey.create().apiKey}`;
   },
@@ -51,94 +14,90 @@ const OrganizationWorkspace = {
     organizationId = 0,
     dbConnectorRecord
   ) {
-    if (!workspaceName)
-      return { workspace: null, message: "No Workspace name provided." };
-    const connector = selectConnector(dbConnectorRecord);
+    try {
+      if (!workspaceName)
+        return { workspace: null, message: "No Workspace name provided." };
+      const connector = selectConnector(dbConnectorRecord);
 
-    var slug = slugify(workspaceName, { lower: true });
-    const existingDbBySlug = await this.get(`slug = '${slug}'`);
-    const existingConnectorNamespace = await connector.namespace(slug);
+      var slug = slugify(workspaceName, { lower: true });
+      const existingDbBySlug = await this.get({ slug });
+      const existingConnectorNamespace = await connector.namespace(slug);
 
-    // If there was a name collision in the DB or the vectorstore collection - make a unique slug.
-    // as the namespace/collection will always be the slug.
-    if (!!existingDbBySlug || !!existingConnectorNamespace) {
-      const slugSeed = Math.floor(10000000 + Math.random() * 90000000);
-      slug = slugify(`${workspaceName}-${slugSeed}`, { lower: true });
-    }
+      // If there was a name collision in the DB or the vectorstore collection - make a unique slug.
+      // as the namespace/collection will always be the slug.
+      if (!!existingDbBySlug || !!existingConnectorNamespace) {
+        const slugSeed = Math.floor(10000000 + Math.random() * 90000000);
+        slug = slugify(`${workspaceName}-${slugSeed}`, { lower: true });
+      }
 
-    const db = await this.db();
-    const { id, success, message } = await db
-      .run(
-        `INSERT INTO ${this.tablename} (name, slug, uuid, organization_id) VALUES (?, ?, ?, ?)`,
-        [workspaceName, slug, this.makeKey(), organizationId]
-      )
-      .then((res) => {
-        return { id: res.lastID, success: true, message: null };
-      })
-      .catch((error) => {
-        return { id: null, success: false, message: error.message };
+      const workspace = await prisma.organization_workspaces.create({
+        data: {
+          name: workspaceName,
+          slug,
+          uuid: this.makeKey(),
+          organization_id: Number(organizationId),
+        },
       });
 
-    if (!success) {
-      await db.close();
-      console.error("FAILED TO CREATE WORKSPACE.", message);
-      return { workspace: null, message };
+      if (!workspace) {
+        await db.close();
+        console.error("FAILED TO CREATE WORKSPACE.");
+        return { workspace: null, message: "Could not create workspace" };
+      }
+
+      return { workspace, message: null };
+    } catch (e) {
+      console.error(e.message);
+      return null;
     }
-
-    const workspace = await db.get(
-      `SELECT * FROM ${this.tablename} WHERE id = ${id}`
-    );
-    await db.close();
-
-    return { workspace, message: null };
   },
+
   create: async function (workspaceName = "", organizationId = 0) {
-    if (!workspaceName)
-      return { workspace: null, message: "No Workspace name provided." };
-    var slug = slugify(workspaceName, { lower: true });
+    try {
+      if (!workspaceName)
+        return { workspace: null, message: "No Workspace name provided." };
+      var slug = slugify(workspaceName, { lower: true });
 
-    const existingBySlug = await this.get(`slug = '${slug}'`);
-    if (!!existingBySlug) {
-      const slugSeed = Math.floor(10000000 + Math.random() * 90000000);
-      slug = slugify(`${workspaceName}-${slugSeed}`, { lower: true });
-    }
+      const existingBySlug = await this.get({ slug });
+      if (!!existingBySlug) {
+        const slugSeed = Math.floor(10000000 + Math.random() * 90000000);
+        slug = slugify(`${workspaceName}-${slugSeed}`, { lower: true });
+      }
 
-    const db = await this.db();
-    const { id, success, message } = await db
-      .run(
-        `INSERT INTO ${this.tablename} (name, slug, uuid, organization_id) VALUES (?, ?, ?, ?)`,
-        [workspaceName, slug, this.makeKey(), organizationId]
-      )
-      .then((res) => {
-        return { id: res.lastID, success: true, message: null };
-      })
-      .catch((error) => {
-        return { id: null, success: false, message: error.message };
+      const workspace = await prisma.organization_workspaces.create({
+        data: {
+          name: workspaceName,
+          slug,
+          uuid: this.makeKey(),
+          organization_id: Number(organizationId),
+        },
       });
 
-    if (!success) {
-      await db.close();
-      console.error("FAILED TO CREATE WORKSPACE.", message);
-      return { workspace: null, message };
+      if (!workspace) {
+        await db.close();
+        console.error("FAILED TO CREATE WORKSPACE.");
+        return { workspace: null, message: "Could not create workspace" };
+      }
+
+      return { workspace, message: null };
+    } catch (e) {
+      console.error(e.message);
+      return null;
     }
-
-    const workspace = await db.get(
-      `SELECT * FROM ${this.tablename} WHERE id = ${id}`
-    );
-    await db.close();
-
-    return { workspace, message: null };
   },
-  get: async function (clause = "") {
-    const db = await this.db();
-    const result = await db
-      .get(`SELECT * FROM ${this.tablename} WHERE ${clause}`)
-      .then((res) => res || null);
-    if (!result) return null;
-    await db.close();
 
-    return result;
+  get: async function (clause = {}) {
+    try {
+      const workspace = await prisma.organization_workspaces.findFirst({
+        where: clause,
+      });
+      return workspace ? { ...workspace } : null;
+    } catch (e) {
+      console.error(e.message);
+      return null;
+    }
   },
+
   forOrganization: async function (
     organizationId,
     page = 1,
@@ -146,84 +105,100 @@ const OrganizationWorkspace = {
     includeSlugs = [],
     searchTerm = ""
   ) {
-    const offset = (page - 1) * pageSize;
-    const orgWorkspaces = [
-      ...(includeSlugs
-        ? await this.where(
-            `organization_id = ? AND slug IN (${includeSlugs.map(() => "?")})`,
-            null,
-            [organizationId, ...includeSlugs]
-          )
-        : []),
-      ...(await this.where(
-        `organization_id = ? ${
-          searchTerm ? "AND name LIKE ? " : ""
-        }LIMIT ? OFFSET ?`,
-        null,
-        [
-          organizationId,
-          ...(searchTerm ? [`%${searchTerm}%`] : []),
-          pageSize,
-          offset,
-        ]
-      )),
-    ];
+    try {
+      const offset = (page - 1) * pageSize;
+      const orgWorkspaces = [
+        ...(includeSlugs?.length > 0
+          ? await this.where({
+              organization_id: Number(organizationId),
+              ...(includeSlugs.length > 0
+                ? { slug: { in: includeSlugs } }
+                : {}),
+            })
+          : []),
+        ...(await this.likeWhere(organizationId, searchTerm, pageSize, offset)),
+      ];
 
-    const slugs = new Set();
-    const workspaces = [];
-    for (const workspace of orgWorkspaces) {
-      if (slugs.has(workspace.slug)) continue;
-      workspaces.push({
-        ...workspace,
-        documentCount: await WorkspaceDocument.count(
-          `workspace_id = ${workspace.id}`
-        ),
-      });
-      slugs.add(workspace.slug);
+      const slugs = new Set();
+      const workspaces = [];
+      for (const workspace of orgWorkspaces) {
+        if (slugs.has(workspace.slug)) continue;
+        workspaces.push({
+          ...workspace,
+          documentCount: await WorkspaceDocument.count({
+            workspace_id: Number(workspace.id),
+          }),
+        });
+        slugs.add(workspace.slug);
+      }
+
+      return workspaces;
+    } catch (e) {
+      console.error(e.message);
+      return [];
     }
-
-    return workspaces;
   },
+
   bySlugAndOrg: async function (wsSlug, organizationId = null) {
-    return await this.get(
-      `slug = '${wsSlug}' AND organization_id = ${organizationId}`
-    );
+    return await this.get({
+      slug: wsSlug,
+      organization_id: Number(organizationId),
+    });
   },
-  where: async function (clause = null, limit = null, params = []) {
-    const db = await this.db();
-    const results = await db.all(
-      `SELECT * FROM ${this.tablename} ${clause ? `WHERE ${clause}` : ""} ${
-        !!limit ? `LIMIT ${limit}` : ""
-      }`,
-      params
-    );
-    await db.close();
-    return results;
-  },
-  count: async function (clause = null) {
-    const db = await this.db();
-    const { count } = await db.get(
-      `SELECT COUNT(*) as count FROM ${this.tablename} ${
-        clause ? `WHERE ${clause}` : ""
-      }`
-    );
-    await db.close();
 
-    return count;
+  where: async function (
+    clause = {},
+    limit = null,
+    offset = null,
+    orderBy = null
+  ) {
+    try {
+      const workspaces = await prisma.organization_workspaces.findMany({
+        where: clause,
+        ...(limit !== null ? { take: limit } : {}),
+        ...(offset !== null ? { skip: offset } : {}),
+        ...(orderBy !== null ? { orderBy } : {}),
+      });
+      return workspaces;
+    } catch (e) {
+      console.error(e.message);
+      return 0;
+    }
   },
-  deleteAllForOrganization: async function (organizationId = "") {
-    const db = await this.db();
-    await db.exec(
-      `DELETE FROM ${this.tablename} WHERE organization_id = ${organizationId}`
-    );
-    await db.close();
-    return;
+
+  // We have to break this out separately so Prisma can find it as it does not
+  // support % searching.
+  likeWhere: async function (
+    organization_id = 0,
+    searchTerm = "",
+    limit = 1,
+    offset = 0
+  ) {
+    return await prisma.$queryRaw`SELECT * FROM organization_workspaces WHERE organization_id = ${organization_id} AND name LIKE ${
+      "%" + searchTerm + "%"
+    } LIMIT ${limit} OFFSET ${offset}`;
   },
-  delete: async function (clause = null) {
-    const db = await this.db();
-    await db.exec(`DELETE FROM ${this.tablename} WHERE ${clause}`);
-    await db.close();
-    return;
+
+  count: async function (clause = {}) {
+    try {
+      const count = await prisma.organization_workspaces.count({
+        where: clause,
+      });
+      return count;
+    } catch (e) {
+      console.error(e.message);
+      return 0;
+    }
+  },
+
+  delete: async function (clause = {}) {
+    try {
+      await prisma.organization_workspaces.deleteMany({ where: clause });
+      return true;
+    } catch (e) {
+      console.error(e.message);
+      return false;
+    }
   },
 };
 

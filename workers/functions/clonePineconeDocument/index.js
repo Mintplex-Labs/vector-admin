@@ -62,6 +62,8 @@ const clonePineconeDocument = InngestClient.createFunction(
             docId: newDocId,
             vectorId: vectorDbId,
             documentId: cloneDocument.id,
+            workspaceId: cloneDocument.workspace_id,
+            organizationId: cloneDocument.organization_id,
           });
           newCacheInfo.push({
             vectorDbId: vectorDbId,
@@ -101,7 +103,7 @@ const clonePineconeDocument = InngestClient.createFunction(
         details: e,
       };
       await Queue.updateJob(jobId, Queue.status.failed, result);
-      await WorkspaceDocument.deleteWhere(`docId = '${newDocId}'`);
+      await WorkspaceDocument.delete({ docId: newDocId });
       return { result };
     }
   }

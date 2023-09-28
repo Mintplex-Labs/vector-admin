@@ -30,9 +30,9 @@ const addWeaviateDocuments = InngestClient.createFunction(
       job.data
     );
     try {
-      const openAiSetting = await SystemSettings.get(
-        `label = 'open_ai_api_key'`
-      );
+      const openAiSetting = await SystemSettings.get({
+        label: 'open_ai_api_key',
+      });
       if (!openAiSetting) {
         result = {
           message: `No OpenAI Key set for instance to be used for embedding - aborting`,
@@ -42,9 +42,10 @@ const addWeaviateDocuments = InngestClient.createFunction(
       }
 
       for (const document of documents) {
-        const exists = await WorkspaceDocument.get(
-          `name = '${document.title}' AND workspace_id = ${workspace.id}`
-        );
+        const exists = await WorkspaceDocument.get({
+          name: document.title,
+          workspace_id: Number(workspace.id),
+        });
         if (exists) {
           result.files = {
             [document.title]: { skipped: true },
@@ -77,7 +78,8 @@ const addWeaviateDocuments = InngestClient.createFunction(
             openAiSetting.value,
             dbDocument
           );
-        if (!success) await WorkspaceDocument.delete(dbDocument.id);
+        if (!success)
+          await WorkspaceDocument.delete({ id: Number(dbDocument.id) });
         result.files = {
           [document.title]: {
             skipped: false,

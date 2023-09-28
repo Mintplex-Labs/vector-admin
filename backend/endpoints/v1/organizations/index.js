@@ -481,10 +481,9 @@ function organizationEndpoints(app) {
           includeSlugs
         );
 
-        const totalWorkspaces = await OrganizationWorkspace.count(
-          `organization_id = ${organization.id}`
-        );
-
+        const totalWorkspaces = await OrganizationWorkspace.count({
+          organization_id: Number(organization.id),
+        });
         response.status(200).json({ workspaces, totalWorkspaces });
       } catch (e) {
         console.log(e.message, e);
@@ -556,15 +555,15 @@ function organizationEndpoints(app) {
         }
 
         const documents = await WorkspaceDocument.where(
-          `organization_id = ${organization.id}`,
+          { organization_id: Number(organization.id) },
           pageSize,
           (page - 1) * pageSize,
           true
         );
 
-        const totalDocuments = await WorkspaceDocument.count(
-          `organization_id = ${organization.id}`
-        );
+        const totalDocuments = await WorkspaceDocument.count({
+          organization_id: Number(organization.id),
+        });
         response.status(200).json({ documents, totalDocuments });
       } catch (e) {
         console.log(e.message, e);
@@ -694,9 +693,9 @@ function organizationEndpoints(app) {
           return;
         }
 
-        const documents = await WorkspaceDocument.where(
-          `organization_id = ${organization.id}`
-        );
+        const documents = await WorkspaceDocument.where({
+          organization_id: Number(organization.id),
+        });
         for (const document of documents) {
           const digestFilename = WorkspaceDocument.vectorFilename(document);
           await deleteVectorCacheFile(digestFilename);

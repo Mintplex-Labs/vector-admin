@@ -107,9 +107,7 @@ const UserItem = memo(
             </div>
           </td>
 
-          <td className="px-6 py-4">
-            {moment.unix(user?.createdAt).fromNow()}
-          </td>
+          <td className="px-6 py-4">{moment(user?.createdAt).fromNow()}</td>
           <td className="flex items-center gap-x-4 px-6 py-4">
             <button
               type="button"

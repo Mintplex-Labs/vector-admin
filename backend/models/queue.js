@@ -27,7 +27,7 @@ const Queue = {
       }
 
       await Telemetry.sendTelemetry(`job_queued`, { name: task });
-      return { job, error: null };
+      return { job: newJob, error: null };
     } catch (e) {
       console.error(e.message);
       return null;
@@ -36,10 +36,10 @@ const Queue = {
 
   get: async function (clause = {}) {
     try {
-      const user = await prisma.jobs.findFirst({
+      const job = await prisma.jobs.findFirst({
         where: clause,
       });
-      return user ? { ...user } : null;
+      return job ? { ...job } : null;
     } catch (e) {
       console.error(e.message);
       return null;
@@ -48,12 +48,12 @@ const Queue = {
 
   where: async function (clause = {}, limit = null, orderBy = null) {
     try {
-      const users = await prisma.jobs.findMany({
+      const jobs = await prisma.jobs.findMany({
         where: clause,
         ...(limit !== null ? { take: limit } : {}),
         ...(orderBy !== null ? { orderBy } : {}),
       });
-      return users;
+      return jobs;
     } catch (e) {
       console.error(e.message);
       return [];

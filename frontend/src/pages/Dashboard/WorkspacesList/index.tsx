@@ -135,7 +135,7 @@ const WorkspaceCard = ({ workspace, slug }: WorkspaceCardProps) => (
         </div>
         <p>
           <span className="whitespace-nowrap text-xs text-black dark:text-white">
-            created {moment.unix(workspace.createdAt).fromNow()}
+            created {moment(workspace.createdAt).fromNow()}
           </span>
         </p>
       </div>
