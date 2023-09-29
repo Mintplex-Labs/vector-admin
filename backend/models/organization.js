@@ -87,14 +87,13 @@ const Organization = {
 
   getWithOwner: async function (userId, clause = {}) {
     try {
+      const orgIds = (
+        await OrganizationUser.where({ user_id: Number(userId) })
+      ).map((record) => record.organization_id);
       const result = await prisma.organizations.findFirst({
         where: {
           ...clause,
-          organization_users: {
-            every: {
-              user_id: Number(userId),
-            },
-          },
+          id: { in: orgIds },
         },
       });
       return result;
@@ -135,14 +134,13 @@ const Organization = {
     orderBy = null
   ) {
     try {
+      const orgIds = (
+        await OrganizationUser.where({ user_id: Number(userId) })
+      ).map((record) => record.organization_id);
       const results = await prisma.organizations.findMany({
         where: {
+          id: { in: orgIds },
           ...clause,
-          organization_users: {
-            every: {
-              user_id: Number(userId),
-            },
-          },
         },
         ...(limit ? { take: limit } : {}),
         ...(orderBy ? { orderBy } : {}),

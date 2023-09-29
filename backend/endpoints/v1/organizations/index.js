@@ -97,7 +97,7 @@ function organizationEndpoints(app) {
           response.sendStatus(403).end();
           return;
         }
-        const organizations = await Organization.where({ id: { not: null } });
+        const organizations = await Organization.where({});
         response.status(200).json({ organizations, error: null });
       } catch (e) {
         console.log(e.message, e);
