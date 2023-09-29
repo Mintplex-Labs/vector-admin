@@ -305,7 +305,7 @@ function documentEndpoints(app) {
           organization_id: Number(document.organization_id),
         });
         const VectorDb = selectConnector(connector);
-        const results = await VectorDb.getMetadata(workspace.slug, vectorIds);
+        const results = await VectorDb.getMetadata(workspace.fname, vectorIds);
         const items = {};
 
         results?.forEach((metadata) => {

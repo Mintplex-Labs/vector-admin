@@ -79,7 +79,7 @@ const clonePineconeDocument = InngestClient.createFunction(
         await pineconeIndex.upsert({
           upsertRequest: {
             vectors: [...chunk],
-            namespace: destinationWs.slug,
+            namespace: destinationWs.fname,
           },
         });
       }

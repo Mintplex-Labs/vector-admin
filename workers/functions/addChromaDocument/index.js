@@ -73,7 +73,7 @@ const addChromaDocuments = InngestClient.createFunction(
         const chroma = new Chroma(connector);
         const { success, message: insertResponse } =
           await chroma.processDocument(
-            workspace.slug,
+            workspace.fname,
             document,
             openAiSetting.value,
             dbDocument

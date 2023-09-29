@@ -53,7 +53,7 @@ const cloneChromaDocument = InngestClient.createFunction(
       const chromaClient = new Chroma(connector);
       const { client } = await chromaClient.connect();
       const collection = await client.getCollection({
-        name: destinationWs.slug,
+        name: destinationWs.fname,
       });
 
       for (const chunks of toChunks(cacheInfo.chunks, 500)) {

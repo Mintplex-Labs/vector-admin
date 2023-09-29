@@ -92,7 +92,7 @@ const clonePineconeWorkspace = InngestClient.createFunction(
             await pineconeIndex.upsert({
               upsertRequest: {
                 vectors: [...chunk],
-                namespace: clonedWorkspace.slug,
+                namespace: clonedWorkspace.fname,
               },
             });
           }

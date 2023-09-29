@@ -34,6 +34,7 @@ const OrganizationWorkspace = {
         data: {
           name: workspaceName,
           slug,
+          fname: slug,
           uuid: this.makeKey(),
           organization_id: Number(organizationId),
         },
@@ -68,6 +69,7 @@ const OrganizationWorkspace = {
         data: {
           name: workspaceName,
           slug,
+          fname: workspaceName,
           uuid: this.makeKey(),
           organization_id: Number(organizationId),
         },

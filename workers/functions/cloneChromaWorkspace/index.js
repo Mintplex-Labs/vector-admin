@@ -33,7 +33,7 @@ const cloneChromaWorkspace = InngestClient.createFunction(
       const chromaClient = new Chroma(connector);
       const { client } = await chromaClient.connect();
       const collection = await client.createCollection({
-        name: clonedWorkspace.slug,
+        name: clonedWorkspace.fname,
       });
       const documentsToClone = await WorkspaceDocument.where({
         workspace_id: Number(workspace.id),

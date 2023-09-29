@@ -27,7 +27,7 @@ const deleteChromaDocument = InngestClient.createFunction(
     try {
       const chromaClient = new Chroma(connector);
       const { client } = await chromaClient.connect();
-      const collection = await client.getCollection({ name: workspace.slug });
+      const collection = await client.getCollection({ name: workspace.fname });
 
       const vectors = await DocumentVectors.where({
         document_id: Number(document.id),
@@ -65,12 +65,12 @@ const deletePineconeDocument = InngestClient.createFunction(
       const { pineconeIndex } = await pineconeClient.connect();
       const hasNamespace = await pineconeClient.namespaceExists(
         pineconeIndex,
-        workspace.slug
+        workspace.fname
       );
 
       if (!hasNamespace) {
         result = {
-          message: `No namespace found with name ${workspace.slug} - nothing to do.`,
+          message: `No namespace found with name ${workspace.fname} - nothing to do.`,
         };
         await Queue.updateJob(jobId, Queue.status.failed, result);
         return { result };
@@ -83,7 +83,7 @@ const deletePineconeDocument = InngestClient.createFunction(
 
       await pineconeIndex.delete1({
         ids: vectorIds,
-        namespace: workspace.slug,
+        namespace: workspace.fname,
       });
       await WorkspaceDocument.delete({ id: Number(document.id) });
       await deleteVectorCacheFile(WorkspaceDocument.vectorFilename(document));
@@ -116,12 +116,12 @@ const deleteQdrantDocument = InngestClient.createFunction(
       const { client } = await qdrantClient.connect();
       const hasNamespace = await qdrantClient.namespaceExists(
         client,
-        workspace.slug
+        workspace.fname
       );
 
       if (!hasNamespace) {
         result = {
-          message: `No namespace found with name ${workspace.slug} - nothing to do.`,
+          message: `No namespace found with name ${workspace.fname} - nothing to do.`,
         };
         await Queue.updateJob(jobId, Queue.status.failed, result);
         return { result };
@@ -131,7 +131,7 @@ const deleteQdrantDocument = InngestClient.createFunction(
         document_id: Number(document.id),
       });
       const vectorIds = vectors.map((vector) => vector.vectorId);
-      await client.delete(workspace.slug, {
+      await client.delete(workspace.fname, {
         wait: true,
         points: vectorIds,
       });
@@ -165,15 +165,15 @@ const deleteWeaviateDocument = InngestClient.createFunction(
     try {
       const weaviateClient = new Weaviate(connector);
       const { client } = await weaviateClient.connect();
-      const className = weaviateClient.camelCase(workspace.slug);
+      const className = weaviateClient.camelCase(workspace.fname);
       const hasNamespace = await weaviateClient.namespaceExists(
         client,
-        workspace.slug
+        workspace.fname
       );
 
       if (!hasNamespace) {
         result = {
-          message: `No namespace found with name ${workspace.slug} (class: ${className}) - nothing to do.`,
+          message: `No namespace found with name ${workspace.fname} (class: ${className}) - nothing to do.`,
         };
         await Queue.updateJob(jobId, Queue.status.failed, result);
         return { result };

@@ -73,7 +73,7 @@ const addQdrantDocuments = InngestClient.createFunction(
         const qdrant = new QDrant(connector);
         const { success, message: insertResponse } =
           await qdrant.processDocument(
-            workspace.slug,
+            workspace.fname,
             document,
             openAiSetting.value,
             dbDocument

@@ -30,11 +30,11 @@ const deleteSingleChromaEmbedding = InngestClient.createFunction(
     try {
       const chromaClient = new Chroma(connector);
       const { client } = await chromaClient.connect();
-      const collection = await client.getCollection({ name: workspace.slug });
+      const collection = await client.getCollection({ name: workspace.fname });
 
       if (!collection) {
         result = {
-          message: `No collection found with name ${workspace.slug} - nothing to do.`,
+          message: `No collection found with name ${workspace.fname} - nothing to do.`,
         };
         await Queue.updateJob(jobId, Queue.status.failed, result);
         return { result };
@@ -75,12 +75,12 @@ const deleteSinglePineconeEmbedding = InngestClient.createFunction(
       const { pineconeIndex } = await pineconeClient.connect();
       const hasNamespace = await pineconeClient.namespaceExists(
         pineconeIndex,
-        workspace.slug
+        workspace.fname
       );
 
       if (!hasNamespace) {
         result = {
-          message: `No namespace found with name ${workspace.slug} - nothing to do.`,
+          message: `No namespace found with name ${workspace.fname} - nothing to do.`,
         };
         await Queue.updateJob(jobId, Queue.status.failed, result);
         return { result };
@@ -92,7 +92,7 @@ const deleteSinglePineconeEmbedding = InngestClient.createFunction(
 
       await pineconeIndex.delete1({
         ids: [documentVector.vectorId],
-        namespace: workspace.slug,
+        namespace: workspace.fname,
       });
       await DocumentVectors.delete({ id: Number(documentVector.id) });
       await cleanupCacheFile(documentVector);
@@ -125,12 +125,12 @@ const deleteSingleQDrantEmbedding = InngestClient.createFunction(
       const { client } = await qdrantClient.connect();
       const hasNamespace = await qdrantClient.namespaceExists(
         client,
-        workspace.slug
+        workspace.fname
       );
 
       if (!hasNamespace) {
         result = {
-          message: `No namespace found with name ${workspace.slug} - nothing to do.`,
+          message: `No namespace found with name ${workspace.fname} - nothing to do.`,
         };
         await Queue.updateJob(jobId, Queue.status.failed, result);
         return { result };
@@ -140,7 +140,7 @@ const deleteSingleQDrantEmbedding = InngestClient.createFunction(
         `Deleting vector ${documentVector.vectorId} from ${workspace.name}.`
       );
 
-      await client.delete(workspace.slug, {
+      await client.delete(workspace.fname, {
         wait: true,
         points: [documentVector.vectorId],
       });
@@ -173,15 +173,15 @@ const deleteSingleWeaviateEmbedding = InngestClient.createFunction(
     try {
       const weaviateClient = new Weaviate(connector);
       const { client } = await weaviateClient.connect();
-      const className = weaviateClient.camelCase(workspace.slug);
+      const className = weaviateClient.camelCase(workspace.fname);
       const hasNamespace = await weaviateClient.namespaceExists(
         client,
-        workspace.slug
+        workspace.fname
       );
 
       if (!hasNamespace) {
         result = {
-          message: `No namespace found with name ${workspace.slug} (class: ${className}) - nothing to do.`,
+          message: `No namespace found with name ${workspace.fname} (class: ${className}) - nothing to do.`,
         };
         await Queue.updateJob(jobId, Queue.status.failed, result);
         return { result };

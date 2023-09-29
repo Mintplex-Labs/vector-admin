@@ -40,11 +40,11 @@ const updateSingleChromaEmbeddingMetadata = InngestClient.createFunction(
     try {
       const chromaClient = new Chroma(connector);
       const { client } = await chromaClient.connect();
-      const collection = await client.getCollection({ name: workspace.slug });
+      const collection = await client.getCollection({ name: workspace.fname });
 
       if (!collection) {
         result = {
-          message: `No collection found with name ${workspace.slug} - nothing to do.`,
+          message: `No collection found with name ${workspace.fname} - nothing to do.`,
         };
         await Queue.updateJob(jobId, Queue.status.failed, result);
         return { result };
@@ -120,12 +120,12 @@ const updateSinglePineconeEmbeddingMetadata = InngestClient.createFunction(
       const { pineconeIndex } = await pineconeClient.connect();
       const namespaceExists = await pineconeClient.namespaceExists(
         pineconeIndex,
-        workspace.slug
+        workspace.fname
       );
 
       if (!namespaceExists) {
         result = {
-          message: `No namespace found with name ${workspace.slug} - nothing to do.`,
+          message: `No namespace found with name ${workspace.fname} - nothing to do.`,
         };
         await Queue.updateJob(jobId, Queue.status.failed, result);
         return { result };
@@ -133,7 +133,7 @@ const updateSinglePineconeEmbeddingMetadata = InngestClient.createFunction(
 
       const { vectors } = await pineconeIndex.fetch({
         ids: [documentVector.vectorId],
-        namespace: workspace.slug,
+        namespace: workspace.fname,
       });
 
       if (vectors.length === 0) {
@@ -165,7 +165,7 @@ const updateSinglePineconeEmbeddingMetadata = InngestClient.createFunction(
               values: vectors[documentVector.vectorId]?.values,
             },
           ],
-          namespace: workspace.slug,
+          namespace: workspace.fname,
         },
       });
 
@@ -213,18 +213,18 @@ const updateSingleQDrantEmbeddingMetadata = InngestClient.createFunction(
       const { client } = await qdrantClient.connect();
       const collection = await qdrantClient.namespaceExists(
         client,
-        workspace.slug
+        workspace.fname
       );
 
       if (!collection) {
         result = {
-          message: `No collection found with name ${workspace.slug} - nothing to do.`,
+          message: `No collection found with name ${workspace.fname} - nothing to do.`,
         };
         await Queue.updateJob(jobId, Queue.status.failed, result);
         return { result };
       }
 
-      const vectorMatches = await client.retrieve(workspace.slug, {
+      const vectorMatches = await client.retrieve(workspace.fname, {
         ids: [documentVector.vectorId],
         with_vector: true,
         with_payload: true,
@@ -246,7 +246,7 @@ const updateSingleQDrantEmbeddingMetadata = InngestClient.createFunction(
           : {}), // Persist text key if it was present
       };
 
-      await client.overwritePayload(workspace.slug, {
+      await client.overwritePayload(workspace.fname, {
         payload: updatedMetadata,
         points: [qdrantVector.id],
       });
@@ -296,15 +296,15 @@ const updateSingleWeaviateEmbeddingMetadata = InngestClient.createFunction(
     try {
       const weaviateClient = new Weaviate(connector);
       const { client } = await weaviateClient.connect();
-      const className = weaviateClient.camelCase(workspace.slug);
+      const className = weaviateClient.camelCase(workspace.fname);
       const collection = await weaviateClient.namespaceExists(
         client,
-        workspace.slug
+        workspace.fname
       );
 
       if (!collection) {
         result = {
-          message: `No collection found with name ${workspace.slug} (class: ${className}) - nothing to do.`,
+          message: `No collection found with name ${workspace.fname} (class: ${className}) - nothing to do.`,
         };
         await Queue.updateJob(jobId, Queue.status.failed, result);
         return { result };

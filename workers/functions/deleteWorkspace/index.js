@@ -28,11 +28,13 @@ const workspaceDeleted = InngestClient.createFunction(
       try {
         const chromaClient = new Chroma(connector);
         const { client } = await chromaClient.connect();
-        const collection = await client.getCollection({ name: workspace.slug });
+        const collection = await client.getCollection({
+          name: workspace.fname,
+        });
 
         if (!collection) {
           result = {
-            message: `No collection found with name ${workspace.slug} - nothing to do.`,
+            message: `No collection found with name ${workspace.fname} - nothing to do.`,
           };
           await Queue.updateJob(jobId, Queue.status.complete, result);
           return { result };
@@ -43,9 +45,9 @@ const workspaceDeleted = InngestClient.createFunction(
           await deleteVectorCacheFile(digestFilename);
         }
 
-        await client.deleteCollection({ name: workspace.slug });
+        await client.deleteCollection({ name: workspace.fname });
         result = {
-          message: `Collection ${workspace.slug} deleted from Chroma along with ${documents.length} vectorized documents.`,
+          message: `Collection ${workspace.fname} deleted from Chroma along with ${documents.length} vectorized documents.`,
         };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };
@@ -66,12 +68,12 @@ const workspaceDeleted = InngestClient.createFunction(
         const { pineconeIndex } = await pineconeClient.connect();
         const namespaceExists = await pineconeClient.namespaceExists(
           pineconeIndex,
-          workspace.slug
+          workspace.fname
         );
 
         if (!namespaceExists) {
           result = {
-            message: `No namespace found with name ${workspace.slug} - nothing to do.`,
+            message: `No namespace found with name ${workspace.fname} - nothing to do.`,
           };
           await Queue.updateJob(jobId, Queue.status.complete, result);
           return { result };
@@ -83,11 +85,11 @@ const workspaceDeleted = InngestClient.createFunction(
         }
 
         await pineconeIndex.delete1({
-          namespace: workspace.slug,
+          namespace: workspace.fname,
           deleteAll: true,
         });
         result = {
-          message: `Namespace ${workspace.slug} deleted from Pinecone along with ${documents.length} vectorized documents.`,
+          message: `Namespace ${workspace.fname} deleted from Pinecone along with ${documents.length} vectorized documents.`,
         };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };
@@ -106,11 +108,11 @@ const workspaceDeleted = InngestClient.createFunction(
       try {
         const qdrantClient = new QDrant(connector);
         const { client } = await qdrantClient.connect();
-        const collection = await client.getCollection(workspace.slug);
+        const collection = await client.getCollection(workspace.fname);
 
         if (!collection) {
           result = {
-            message: `No collection found with name ${workspace.slug} - nothing to do.`,
+            message: `No collection found with name ${workspace.fname} - nothing to do.`,
           };
           await Queue.updateJob(jobId, Queue.status.complete, result);
           return { result };
@@ -121,9 +123,9 @@ const workspaceDeleted = InngestClient.createFunction(
           await deleteVectorCacheFile(digestFilename);
         }
 
-        await client.deleteCollection(workspace.slug);
+        await client.deleteCollection(workspace.fname);
         result = {
-          message: `Collection ${workspace.slug} deleted from QDrant along with ${documents.length} vectorized documents.`,
+          message: `Collection ${workspace.fname} deleted from QDrant along with ${documents.length} vectorized documents.`,
         };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };
@@ -142,7 +144,7 @@ const workspaceDeleted = InngestClient.createFunction(
       try {
         const weaviateClient = new Weaviate(connector);
         const { client } = await weaviateClient.connect();
-        const targetClassName = weaviateClient.camelCase(workspace.slug);
+        const targetClassName = weaviateClient.camelCase(workspace.fname);
         const collection = await weaviateClient.namespaceExists(
           client,
           targetClassName
@@ -150,7 +152,7 @@ const workspaceDeleted = InngestClient.createFunction(
 
         if (!collection) {
           result = {
-            message: `No collection found with name ${workspace.slug} - nothing to do.`,
+            message: `No collection found with name ${workspace.fname} - nothing to do.`,
           };
           await Queue.updateJob(jobId, Queue.status.complete, result);
           return { result };
@@ -163,7 +165,7 @@ const workspaceDeleted = InngestClient.createFunction(
 
         await client.schema.classDeleter().withClassName(targetClassName).do();
         result = {
-          message: `Collection ${workspace.slug} (class: ${targetClassName}) deleted from Weaviate along with ${documents.length} vectorized documents.`,
+          message: `Collection ${workspace.fname} (class: ${targetClassName}) deleted from Weaviate along with ${documents.length} vectorized documents.`,
         };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };

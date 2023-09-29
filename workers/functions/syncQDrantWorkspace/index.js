@@ -22,12 +22,12 @@ const syncQDrantWorkspace = InngestClient.createFunction(
       const { client } = await qdrantClient.connect();
       const collection = await qdrantClient.namespaceWithClient(
         client,
-        workspace.slug
+        workspace.fname
       );
 
       if (!collection) {
         result = {
-          message: `No collection ${workspace.slug} found - nothing to do.`,
+          message: `No collection ${workspace.fname} found - nothing to do.`,
         };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };
@@ -35,7 +35,7 @@ const syncQDrantWorkspace = InngestClient.createFunction(
 
       if (collection.vectorCount === 0) {
         result = {
-          message: `QDrant collection ${workspace.slug} has no data- nothing to do.`,
+          message: `QDrant collection ${workspace.fname} has no data- nothing to do.`,
         };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };

@@ -32,7 +32,7 @@ const cloneQDrantWorkspace = InngestClient.createFunction(
     try {
       const qdrantClient = new QDrant(connector);
       const { client } = await qdrantClient.connect();
-      await client.createCollection(clonedWorkspace.slug, {
+      await client.createCollection(clonedWorkspace.fname, {
         vectors: {
           size: 1536, // TODO: Fixed to OpenAI models - when other embeddings exist make variable.
           distance: 'Cosine',
@@ -102,7 +102,7 @@ const cloneQDrantWorkspace = InngestClient.createFunction(
               submission.payloads.push(metadata);
             });
 
-            const additionResult = await client.upsert(clonedWorkspace.slug, {
+            const additionResult = await client.upsert(clonedWorkspace.fname, {
               wait: true,
               batch: { ...submission },
             });

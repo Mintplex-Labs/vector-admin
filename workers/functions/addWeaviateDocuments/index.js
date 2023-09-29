@@ -73,7 +73,7 @@ const addWeaviateDocuments = InngestClient.createFunction(
         const weaviate = new Weaviate(connector);
         const { success, message: insertResponse } =
           await weaviate.processDocument(
-            workspace.slug,
+            workspace.fname,
             document,
             openAiSetting.value,
             dbDocument

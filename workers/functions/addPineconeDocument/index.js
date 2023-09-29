@@ -83,7 +83,7 @@ const addPineconeDocuments = InngestClient.createFunction(
 
         const { success, message: insertResponse } =
           await pineconeClient.processDocument(
-            workspace.slug,
+            workspace.fname,
             document,
             openAiSetting.value,
             dbDocument,

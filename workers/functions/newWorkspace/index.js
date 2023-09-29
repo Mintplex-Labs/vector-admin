@@ -29,18 +29,20 @@ const newWorkspaceCreated = InngestClient.createFunction(
         const chromaClient = new Chroma(connector);
         const { client } = await chromaClient.connect();
         const collection = await client.createCollection({
-          name: workspace.slug,
+          name: workspace.fname,
         });
 
         if (!collection) {
           result = {
-            message: `No collection could be created with name ${workspace.slug} - nothing to do.`,
+            message: `No collection could be created with name ${workspace.fname} - nothing to do.`,
           };
           await Queue.updateJob(jobId, Queue.status.failed, result);
           return { result };
         }
 
-        result = { message: `Collection ${workspace.slug} created in Chroma.` };
+        result = {
+          message: `Collection ${workspace.fname} created in Chroma.`,
+        };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };
       } catch (e) {
@@ -59,7 +61,7 @@ const newWorkspaceCreated = InngestClient.createFunction(
         const qdrantClient = new QDrant(connector);
         const { client } = await qdrantClient.connect();
         const collectionCreated = await client.createCollection(
-          workspace.slug,
+          workspace.fname,
           {
             vectors: {
               size: 1536, // TODO: Fixed to OpenAI models - when other embeddings exist make variable.
@@ -70,13 +72,15 @@ const newWorkspaceCreated = InngestClient.createFunction(
 
         if (!collectionCreated) {
           result = {
-            message: `No collection could be created with name ${workspace.slug} - nothing to do.`,
+            message: `No collection could be created with name ${workspace.fname} - nothing to do.`,
           };
           await Queue.updateJob(jobId, Queue.status.failed, result);
           return { result };
         }
 
-        result = { message: `Collection ${workspace.slug} created in QDrant.` };
+        result = {
+          message: `Collection ${workspace.fname} created in QDrant.`,
+        };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };
       } catch (e) {
@@ -93,7 +97,7 @@ const newWorkspaceCreated = InngestClient.createFunction(
     if (connector.type === 'weaviate') {
       try {
         const weaviateClient = new Weaviate(connector);
-        const className = weaviateClient.camelCase(workspace.slug);
+        const className = weaviateClient.camelCase(workspace.fname);
         const { client } = await weaviateClient.connect();
         const collectionCreated = await client.schema
           .classCreator()
@@ -106,14 +110,14 @@ const newWorkspaceCreated = InngestClient.createFunction(
 
         if (!collectionCreated?.class) {
           result = {
-            message: `No collection could be created with name ${workspace.slug} - nothing to do.`,
+            message: `No collection could be created with name ${workspace.fname} - nothing to do.`,
           };
           await Queue.updateJob(jobId, Queue.status.failed, result);
           return { result };
         }
 
         result = {
-          message: `Collection ${workspace.slug} (class ${className}) created in Weaviate.`,
+          message: `Collection ${workspace.fname} (class ${className}) created in Weaviate.`,
         };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };

@@ -80,7 +80,7 @@ const cloneQDrantDocument = InngestClient.createFunction(
           submission.payloads.push(metadata);
         });
 
-        const additionResult = await client.upsert(destinationWs.slug, {
+        const additionResult = await client.upsert(destinationWs.fname, {
           wait: true,
           batch: { ...submission },
         });

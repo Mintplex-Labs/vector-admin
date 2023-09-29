@@ -21,11 +21,11 @@ const syncPineconeWorkspace = InngestClient.createFunction(
     const { organization, workspace, connector, jobId } = event.data;
     try {
       const pineconeClient = new Pinecone(connector);
-      const collection = await pineconeClient.namespace(workspace.slug);
+      const collection = await pineconeClient.namespace(workspace.fname);
 
       if (!collection) {
         result = {
-          message: `No Pinecone namespace found for ${workspace.slug} - nothing to do.`,
+          message: `No Pinecone namespace found for ${workspace.fname} - nothing to do.`,
         };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };
@@ -36,7 +36,7 @@ const syncPineconeWorkspace = InngestClient.createFunction(
       );
       if (collection.count === 0) {
         result = {
-          message: `Pinecone namespace ${workspace.slug} has no data- nothing to do.`,
+          message: `Pinecone namespace ${workspace.fname} has no data- nothing to do.`,
         };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };

@@ -19,11 +19,11 @@ const syncChromaWorkspace = InngestClient.createFunction(
     const { organization, workspace, connector, jobId } = event.data;
     try {
       const chromaClient = new Chroma(connector);
-      const collection = await chromaClient.namespace(workspace.slug);
+      const collection = await chromaClient.namespace(workspace.fname);
 
       if (!collection) {
         result = {
-          message: `No collection ${workspace.slug} found - nothing to do.`,
+          message: `No collection ${workspace.fname} found - nothing to do.`,
         };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };
@@ -31,7 +31,7 @@ const syncChromaWorkspace = InngestClient.createFunction(
 
       if (collection.count === 0) {
         result = {
-          message: `Chroma collection ${workspace.slug} has no data- nothing to do.`,
+          message: `Chroma collection ${workspace.fname} has no data- nothing to do.`,
         };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };
