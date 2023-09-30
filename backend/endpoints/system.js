@@ -15,7 +15,7 @@ function systemEndpoints(app) {
     response.sendStatus(200);
   });
 
-  app.get("/system/metrics", async (_, response) => {
+  app.get("/utils/metrics", async (_, response) => {
     try {
       const metrics = {
         online: true,
