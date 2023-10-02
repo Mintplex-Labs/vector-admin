@@ -11,8 +11,18 @@ Running VectorAdmin in Docker is the easily way to get a locally hosted option r
 - `yarn dev:setup`
 - `cd docker/`
 - `cp .env.example .env` to create the `.env` file.
-- Edit `.env` file and update the variables. **please** update `JWT_SECRET`,`SYS_PASSWORD`, and `INNGEST_SIGNING_KEY`.
-- `docker-compose up -d --build` to build the image - this will take a few moments.
+- Edit `.env` file and update the variables. **please** update `JWT_SECRET`,`SYS_PASSWORD`, and `INNGEST_SIGNING_KEY`
+
+**Note** You must have a postgres DB running - the default ENV assumes a containerized PG instance running, but it can
+be located anywhere (RDS, remote, local host machine). Failure to use a valid DB connection string prior to building
+vector-admin will result in a build failure.
+- `DATABASE_CONNECTION_STRING` should be a valid connection string. On boot the `vdbms` database will be created for the connection string.
+
+**If running the containerized Postgres DB**
+Run this command first: `docker-compose up -d --build postgres`
+
+**Boot up vector-admin**
+- `docker-compose up -d --build vector-admin` to build the image - this will take a few moments.
 
 Your docker host will show the image as online once the build process is completed. This will build the app to `http://localhost:3001`.
 

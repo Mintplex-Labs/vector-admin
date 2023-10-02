@@ -47,11 +47,17 @@ WORKDIR /app
 # Install frontend dependencies
 FROM base as frontend-deps
 COPY ./frontend/package.json ./frontend/yarn.lock ./frontend/
+USER root
+RUN chown -R anythingllm:anythingllm ./frontend
+USER anythingllm
 RUN cd ./frontend/ && yarn install && yarn cache clean
 
 # Install server dependencies
 FROM base as server-deps
 COPY ./backend/package.json ./backend/yarn.lock ./backend/
+USER root
+RUN chown -R anythingllm:anythingllm ./frontend
+USER anythingllm
 RUN cd ./backend/ && yarn install --production && yarn cache clean 
 
 # Build the frontend

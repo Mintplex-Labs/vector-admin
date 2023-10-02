@@ -1,5 +1,7 @@
 version: '3.9'
 
+name: vectoradmin
+
 networks:
   vector-admin:
     driver: bridge
