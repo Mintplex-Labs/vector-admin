@@ -210,8 +210,8 @@ const NewConnectorModal = ({
         event.target == event.currentTarget && event.currentTarget?.close()
       }
     >
-      <div className="rounded-sm bg-white p-[20px] dark:border-strokedark dark:bg-boxdark">
-        <div className="px-6.5 py-4 dark:border-strokedark">
+      <div className="overflow-y-scroll rounded-sm bg-white p-[20px]">
+        <div className="px-6.5 py-4">
           <h3 className="font-medium text-black dark:text-white">
             Connect to Vector Database
           </h3>
@@ -634,8 +634,8 @@ const UpdateConnectorModal = ({
         event.target == event.currentTarget && event.currentTarget?.close()
       }
     >
-      <div className="rounded-sm bg-white p-[20px] dark:border-strokedark dark:bg-boxdark">
-        <div className="px-6.5 py-4 dark:border-strokedark">
+      <div className="overflow-y-scroll rounded-sm bg-white p-[20px]">
+        <div className="px-6.5 py-4">
           <h3 className="font-medium text-black dark:text-white">
             Update Vector Database Connection
           </h3>
@@ -1044,8 +1044,8 @@ const SyncConnectorModal = ({
         event.target == event.currentTarget && event.currentTarget?.close()
       }
     >
-      <div className="rounded-sm bg-white p-[20px] dark:border-strokedark dark:bg-boxdark">
-        <div className="px-6.5 py-4 dark:border-strokedark">
+      <div className="overflow-y-scroll rounded-sm bg-white p-[20px]">
+        <div className="px-6.5 py-4">
           <h3 className="font-medium text-black dark:text-white">
             Sync Vector Database Connection
           </h3>

@@ -181,8 +181,8 @@ export default function CreateWorkspaceModal({
 const ModalWrapper = ({ children }: { children: React.ReactElement }) => {
   return (
     <dialog id="workspace-creation-modal" className="w-1/2 rounded-lg">
-      <div className="rounded-sm bg-white p-[20px] dark:border-strokedark dark:bg-boxdark">
-        <div className="px-6.5 py-4 dark:border-strokedark">
+      <div className="overflow-y-scroll rounded-sm bg-white p-[20px]">
+        <div className="px-6.5 py-4">
           <h3 className="font-medium text-black dark:text-white">
             Create or find a new workspace
           </h3>

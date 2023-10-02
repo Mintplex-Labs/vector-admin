@@ -19,8 +19,8 @@ export default function CreateOrganizationModal() {
 
   return (
     <dialog id="organization-creation-modal" className="w-1/3 rounded-lg">
-      <div className="w-full rounded-sm bg-white p-[20px] dark:border-strokedark dark:bg-boxdark">
-        <div className="px-6.5 py-4 dark:border-strokedark">
+      <div className="w-full overflow-y-scroll rounded-sm bg-white p-[20px]">
+        <div className="px-6.5 py-4">
           <h3 className="font-medium text-black dark:text-white">
             Create a New Organization
           </h3>
