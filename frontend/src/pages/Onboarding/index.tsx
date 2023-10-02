@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import LogoDark from '../../images/logo/logo-dark.png';
-import Logo from '../../images/logo/logo.png';
+import Logo from '../../images/logo/logo-light.png';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ManageSvg from '../../images/undraws/manage.svg';
 import PreLoader, { FullScreenLoader } from '../../components/Preloader';
