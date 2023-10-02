@@ -1,5 +1,4 @@
 import os
-from slugify import slugify
 from ..utils import tokenize, guid, file_creation_time, move_source
 
 # Process all text-related documents.
