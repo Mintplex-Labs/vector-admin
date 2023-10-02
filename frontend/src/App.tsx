@@ -8,7 +8,6 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
-import { FullScreenLoader } from './components/Preloader';
 
 const UserManagementView = lazy(() => import('./pages/UsersView'));
 const OnboardingHome = lazy(() => import('./pages/Onboarding'));
@@ -77,6 +76,11 @@ function App() {
             element={<PrivateRoute Component={OnboardingSecuritySetup} />}
           />
 
+          <Route
+            path="/dashboard/:slug/tools/db-migration"
+            element={<PrivateRoute Component={OrganizationToolsView} />}
+          />
+
           <Route path="/auth/sign-up" element={<SignUp />} />
           <Route path="/auth/sign-in" element={<SignIn />} />
           <Route path="/system-setup" element={<SystemSetup />} />
@@ -95,10 +99,5 @@ function App() {
     </ContextWrapper>
   );
 }
-
-const Redirect = ({ to }: { to: any }) => {
-  if (!!window?.location) window.location = to;
-  return <FullScreenLoader />;
-};
 
 export default App;

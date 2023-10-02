@@ -3,6 +3,7 @@ import { ChevronDown, Info } from 'react-feather';
 import useUser from '../../../hooks/useUser';
 import { APP_NAME } from '../../../utils/constants';
 import moment from 'moment';
+import paths from '../../../utils/paths';
 
 export default function ToolsList({ organization }: { organization: any }) {
   const { user } = useUser();
@@ -23,13 +24,14 @@ export default function ToolsList({ organization }: { organization: any }) {
 
       <div className="px-6">
         <ToolItem
-          title="Snapshot vector database"
-          description="Take a snapshot of all of your vector data at this time to restore to at a later date."
-          available={false}
-        />
-        <ToolItem
           title="Migrate vector database to another provider"
           description="Take all of your vectors to another connected vector database provider."
+          available={true}
+          linkTo={paths.tools.migrationTool(organization)}
+        />
+        <ToolItem
+          title="Snapshot vector database"
+          description="Take a snapshot of all of your vector data at this time to restore to at a later date."
           available={false}
         />
         <ToolItem
@@ -59,37 +61,29 @@ const ToolItem = ({
 }) => {
   const [show, setShow] = useState(false);
   return (
-    <>
-      <button
-        onClick={() => {
-          setShow(!show);
-        }}
-        disabled={!available}
-        type="button"
-        className="flex w-full items-center justify-between border-b border-gray-200 py-5 text-left text-gray-500 dark:border-gray-700 dark:text-gray-400"
-      >
-        <div className="flex w-full items-center justify-between pr-4">
-          <div className="flex items-center gap-x-8">
-            <div className="flex flex-col gap-y-2">
-              <span className="text-xl font-bold text-gray-800">{title}</span>
-              <span className="font-regular rounded-full py-1 text-sm text-gray-500">
-                {description}
-              </span>
-            </div>
+    <div className="flex w-full items-center justify-between border-b border-gray-200 py-5 text-left text-gray-500 dark:border-gray-700 dark:text-gray-400"
+    >
+      <div className="flex w-full items-center justify-between pr-4">
+        <div className="flex items-center gap-x-8">
+          <div className="flex flex-col gap-y-2">
+            <span className="text-xl font-bold text-gray-800">{title}</span>
+            <span className="font-regular rounded-full py-1 text-sm text-gray-500">
+              {description}
+            </span>
           </div>
-          {!available && (
-            <div className="flex items-center gap-x-1 rounded-md bg-gray-100 px-4 py-1.5 text-slate-600 ">
-              <Info size={14} />
-              <p className="text-sm font-normal ">feature under development.</p>
-            </div>
-          )}
         </div>
-        {available && <ChevronDown className="h-6 w-6 text-gray-500" />}
-      </button>
-      {/* <div hidden={!show}>
-        {loaded && <JobDetail key={job.id} job={job} user={user} />}
-      </div> */}
-    </>
+        {!available ? (
+          <div className="flex items-center gap-x-1 rounded-md bg-gray-100 px-4 py-1.5 text-slate-600 ">
+            <Info size={14} />
+            <p className="text-sm font-normal">feature under development.</p>
+          </div>
+        ) : (
+          <a href={linkTo} className="flex items-center gap-x-1 rounded-md bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 text-slate-600 ">
+            <p className="text-sm font-normal ">Open tool &rarr;</p>
+          </a>
+        )}
+      </div>
+    </div>
   );
 };
 

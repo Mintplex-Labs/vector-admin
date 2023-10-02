@@ -95,9 +95,8 @@ export default function Sidebar({
     <>
       <aside
         ref={sidebar}
-        className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-slate-900 duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-slate-900 duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
       >
         {/* <!-- SIDEBAR HEADER --> */}
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
@@ -162,11 +161,10 @@ export default function Sidebar({
                       <React.Fragment>
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                            (pathname === '/' ||
+                          className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/' ||
                               pathname.includes('dashboard')) &&
                             'bg-graydark dark:bg-meta-4'
-                          }`}
+                            }`}
                           onClick={(e) => {
                             e.preventDefault();
                             sidebarExpanded
@@ -177,16 +175,14 @@ export default function Sidebar({
                           <Command className="h-4 w-4" />
                           Organizations
                           <ChevronUp
-                            className={`absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 fill-current ${
-                              open && 'rotate-180'
-                            }`}
+                            className={`absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 fill-current ${open && 'rotate-180'
+                              }`}
                           />
                         </NavLink>
                         {/* <!-- Dropdown Menu Start --> */}
                         <div
-                          className={`translate transform overflow-hidden ${
-                            !open && 'hidden'
-                          }`}
+                          className={`translate transform overflow-hidden ${!open && 'hidden'
+                            }`}
                         >
                           <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
                             {organizations.map((org: any, i: number) => {
@@ -229,11 +225,10 @@ export default function Sidebar({
                         <React.Fragment>
                           <NavLink
                             to="#"
-                            className={`group relative flex items-center gap-2.5 rounded-t-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                              (pathname === '/' ||
+                            className={`group relative flex items-center gap-2.5 rounded-t-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/' ||
                                 pathname.includes('dashboard')) &&
                               'bg-graydark dark:bg-meta-4'
-                            }`}
+                              }`}
                             onClick={(e) => {
                               e.preventDefault();
                               sidebarExpanded
@@ -244,16 +239,14 @@ export default function Sidebar({
                             <Box className="h-4 w-4" />
                             Workspaces
                             <ChevronUp
-                              className={`absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 fill-current ${
-                                open && 'rotate-180'
-                              }`}
+                              className={`absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 fill-current ${open && 'rotate-180'
+                                }`}
                             />
                           </NavLink>
                           {/* <!-- Dropdown Menu Start --> */}
                           <div
-                            className={`translate transform overflow-hidden ${
-                              !open && 'hidden'
-                            }`}
+                            className={`translate transform overflow-hidden ${!open && 'hidden'
+                              }`}
                           >
                             <WorkspaceSearch
                               RenderComponent={WorkspaceItem}
@@ -312,12 +305,11 @@ export default function Sidebar({
                       <li>
                         <div className={`translate transform overflow-hidden`}>
                           <NavLink
-                            to={paths.tools(organization)}
-                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                              (pathname === '/' ||
+                            to={paths.toolsHome(organization)}
+                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/' ||
                                 pathname.includes('all-tools')) &&
                               'bg-graydark dark:bg-meta-4'
-                            }`}
+                              }`}
                           >
                             <Package className="h-4 w-4" />
                             Tools & More
@@ -328,11 +320,10 @@ export default function Sidebar({
                         <div className={`translate transform overflow-hidden`}>
                           <NavLink
                             to={paths.users()}
-                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                              (pathname === '/' ||
+                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/' ||
                                 pathname.includes('users')) &&
                               'bg-graydark dark:bg-meta-4'
-                            }`}
+                              }`}
                           >
                             <Users className="h-4 w-4" />
                             User Management
@@ -343,13 +334,12 @@ export default function Sidebar({
                         <div className={`translate transform overflow-hidden`}>
                           <NavLink
                             to={paths.organizationSettings(organization)}
-                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                              (pathname === '/' ||
+                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/' ||
                                 pathname.includes(
                                   `${organization?.slug}/settings`
                                 )) &&
                               'bg-graydark dark:bg-meta-4'
-                            }`}
+                              }`}
                           >
                             <Briefcase className="h-4 w-4" />
                             Organization Settings
@@ -364,11 +354,10 @@ export default function Sidebar({
                       <div className={`translate transform overflow-hidden`}>
                         <NavLink
                           to={paths.settings()}
-                          className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                            (pathname === '/' ||
+                          className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/' ||
                               pathname.includes('system-settings')) &&
                             'bg-graydark dark:bg-meta-4'
-                          }`}
+                            }`}
                         >
                           <Tool className="h-4 w-4" />
                           System Settings
@@ -381,10 +370,9 @@ export default function Sidebar({
                     <div className={`translate transform overflow-hidden`}>
                       <NavLink
                         to={paths.jobs(organization)}
-                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === '/' || pathname.includes('jobs')) &&
+                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/' || pathname.includes('jobs')) &&
                           'bg-graydark dark:bg-meta-4'
-                        }`}
+                          }`}
                       >
                         <Radio className="h-4 w-4" />
                         Background Jobs

@@ -33,8 +33,13 @@ const paths = {
   users: function () {
     return '/users';
   },
-  tools: function ({ slug }: { slug: string }) {
+  toolsHome: function ({ slug }: { slug: string }) {
     return `/dashboard/${slug}/all-tools`;
+  },
+  tools: {
+    migrationTool: function ({ slug }: { slug: string }) {
+      return `/dashboard/${slug}/tools/db-migration`;
+    }
   },
   dashboard: function () {
     return '/dashboard';
