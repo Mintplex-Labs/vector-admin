@@ -2,8 +2,6 @@
 FROM ubuntu:jammy-20230522 AS base
 
 # Build arguments
-ARG ARG_UID
-ARG ARG_GID
 ARG DATABASE_CONNECTION_STRING
 
 # Install system dependencies
@@ -27,10 +25,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     dpkg-reconfigure -f noninteractive tzdata && \
     python3 -m pip install --no-cache-dir virtualenv
 
-# Create a group and user with specific UID and GID
-RUN groupadd -g $ARG_GID anythingllm && \
-    useradd -u $ARG_UID -m -d /app -s /bin/bash -g anythingllm anythingllm && \
-    mkdir -p /app/frontend/ /app/backend/ /app/workers/ /app/document-processor/ && chown -R anythingllm:anythingllm /app
+# Create folder struct
+RUN mkdir -p /app/frontend/ /app/backend/ /app/workers/ /app/document-processor/
 
 # Copy docker helper scripts
 COPY ./docker/docker-entrypoint.sh /usr/local/bin/
@@ -40,24 +36,17 @@ COPY ./docker/docker-healthcheck.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh && \
     chmod +x /usr/local/bin/docker-healthcheck.sh
 
-USER anythingllm
-
 WORKDIR /app
+USER root
 
 # Install frontend dependencies
 FROM base as frontend-deps
 COPY ./frontend/package.json ./frontend/yarn.lock ./frontend/
-USER root
-RUN chown -R anythingllm:anythingllm ./frontend
-USER anythingllm
 RUN cd ./frontend/ && yarn install && yarn cache clean
 
 # Install server dependencies
 FROM base as server-deps
 COPY ./backend/package.json ./backend/yarn.lock ./backend/
-USER root
-RUN chown -R anythingllm:anythingllm ./frontend
-USER anythingllm
 RUN cd ./backend/ && yarn install --production && yarn cache clean 
 
 # Build the frontend
@@ -74,9 +63,6 @@ COPY --from=build-stage /app/frontend/dist ./backend/public
 
 # Copy worker source files 
 COPY ./workers/ ./workers/
-USER root
-RUN chown -R anythingllm:anythingllm ./workers
-USER anythingllm
 
 # Install worker dependencies
 RUN cd /app/workers && \
@@ -94,11 +80,8 @@ RUN cd /app/document-processor && \
     pip install --no-cache-dir -r requirements.txt
 
 # Reown files and init Prisma Client
-USER root
 RUN cd ./backend && DATABASE_CONNECTION_STRING=$DATABASE_CONNECTION_STRING npx prisma generate --schema=./prisma/schema.prisma
 RUN cd ./backend && DATABASE_CONNECTION_STRING=$DATABASE_CONNECTION_STRING npx prisma migrate deploy --schema=./prisma/schema.prisma
-RUN chown -R anythingllm:anythingllm ./backend/storage ./document-processor
-USER anythingllm
 
 # Setup the environment
 ENV NODE_ENV=production

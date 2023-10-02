@@ -27,10 +27,7 @@ services:
       context: ../.
       dockerfile: ./docker/Dockerfile
       args:
-        ARG_UID: ${UID}
-        ARG_GID: ${GID}
         DATABASE_CONNECTION_STRING: ${DATABASE_CONNECTION_STRING}
-    user: "${UID}:${GID}"
     ports:
       - "3001:3001"
       - "3355:3355"
