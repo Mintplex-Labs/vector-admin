@@ -2,17 +2,19 @@ import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { ContextWrapper } from './AuthContext';
 import PrivateRoute from './components/PrivateRoute';
+import AdminRoute from './components/AdminRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
 import { FullScreenLoader } from './components/Preloader';
-import UserManagementView from './pages/UsersView';
-import AdminRoute from './components/AdminRoute';
-import OrganizationSettingsView from './pages/OrganizationSettings';
 
+const UserManagementView = lazy(() => import('./pages/UsersView'));
 const OnboardingHome = lazy(() => import('./pages/Onboarding'));
+const OrganizationSettingsView = lazy(
+  () => import('./pages/OrganizationSettings')
+);
 const OrganizationDashboard = lazy(() => import('./pages/Dashboard'));
 const WorkspaceDashboard = lazy(() => import('./pages/WorkspaceDashboard'));
 const DocumentView = lazy(() => import('./pages/DocumentView'));
@@ -21,6 +23,7 @@ const OnboardingSecuritySetup = lazy(
   () => import('./pages/Onboarding/security')
 );
 const OrganizationJobsView = lazy(() => import('./pages/Jobs'));
+const OrganizationToolsView = lazy(() => import('./pages/Tools'));
 const SystemSettingsView = lazy(() => import('./pages/SystemSettings'));
 
 function App() {
@@ -38,6 +41,11 @@ function App() {
           <Route
             path="/dashboard/:slug"
             element={<PrivateRoute Component={OrganizationDashboard} />}
+          />
+
+          <Route
+            path="/dashboard/:slug/all-tools"
+            element={<PrivateRoute Component={OrganizationToolsView} />}
           />
 
           <Route

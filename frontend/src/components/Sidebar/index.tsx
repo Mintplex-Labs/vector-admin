@@ -8,6 +8,7 @@ import {
   Briefcase,
   ChevronUp,
   Command,
+  Package,
   Radio,
   Tool,
   Users,
@@ -308,6 +309,21 @@ export default function Sidebar({
                 <ul className="mb-6 flex flex-col gap-1.5">
                   {user?.role === 'admin' && (
                     <>
+                      <li>
+                        <div className={`translate transform overflow-hidden`}>
+                          <NavLink
+                            to={paths.tools(organization)}
+                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                              (pathname === '/' ||
+                                pathname.includes('all-tools')) &&
+                              'bg-graydark dark:bg-meta-4'
+                            }`}
+                          >
+                            <Package className="h-4 w-4" />
+                            Tools & More
+                          </NavLink>
+                        </div>
+                      </li>
                       <li>
                         <div className={`translate transform overflow-hidden`}>
                           <NavLink

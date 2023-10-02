@@ -33,6 +33,9 @@ const paths = {
   users: function () {
     return '/users';
   },
+  tools: function ({ slug }: { slug: string }) {
+    return `/dashboard/${slug}/all-tools`;
+  },
   dashboard: function () {
     return '/dashboard';
   },
