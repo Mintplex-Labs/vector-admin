@@ -6,4 +6,4 @@ node_modules
 __pycache__
 v-env
 .DS_Store
-yarn.lock
+yarn-error.log
