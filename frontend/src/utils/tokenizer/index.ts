@@ -1,5 +1,5 @@
-import { Tiktoken } from "@dqbd/tiktoken/lite";
-import cl100k_base from "@dqbd/tiktoken/encoders/cl100k_base.json";
+import { Tiktoken } from '@dqbd/tiktoken/lite';
+import cl100k_base from '@dqbd/tiktoken/encoders/cl100k_base.json';
 
 type IValidEmbeddingModels = 'cl100k_base';
 export const MAX_TOKENS = {
