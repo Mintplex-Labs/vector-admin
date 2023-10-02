@@ -18,7 +18,7 @@ be located anywhere (RDS, remote, local host machine). Failure to use a valid DB
 vector-admin will result in a build failure.
 - `DATABASE_CONNECTION_STRING` should be a valid connection string. On boot the `vdbms` database will be created for the connection string.
 
-**If running the containerized Postgres DB**
+**If running the included containerized Postgres DB**
 Run this command first: `docker-compose up -d --build postgres`
 
 **Boot up vector-admin**
