@@ -1,4 +1,5 @@
-import { getEncoding } from 'js-tiktoken';
+import { Tiktoken } from "@dqbd/tiktoken/lite";
+import cl100k_base from "@dqbd/tiktoken/encoders/cl100k_base.json";
 
 type IValidEmbeddingModels = 'cl100k_base';
 export const MAX_TOKENS = {
@@ -6,7 +7,11 @@ export const MAX_TOKENS = {
 };
 
 export function countLLMTokens(input: string) {
-  const encoding = getEncoding('cl100k_base');
+  const encoding = new Tiktoken(
+    cl100k_base.bpe_ranks,
+    cl100k_base.special_tokens,
+    cl100k_base.pat_str
+  );
   const tokens = encoding.encode(input);
   return { tokens, length: tokens.length };
 }

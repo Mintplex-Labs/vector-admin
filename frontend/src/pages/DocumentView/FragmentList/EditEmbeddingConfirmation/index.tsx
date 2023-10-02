@@ -150,9 +150,8 @@ const EditEmbeddingConfirmation = memo(
           <div className="flex w-full items-center justify-between px-4">
             <p className="font-semibold text-red-600">{error || ''}</p>
             <p
-              className={`text-sm ${
-                error ? 'font-semibold text-red-600' : 'text-slate-600'
-              }`}
+              className={`text-sm ${error ? 'font-semibold text-red-600' : 'text-slate-600'
+                }`}
             >
               {numberWithCommas(tokenLength)}/
               {numberWithCommas(MAX_TOKENS.cl100k_base)}{' '}
