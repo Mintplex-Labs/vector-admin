@@ -30,7 +30,6 @@ etelemetry==0.3.0
 exceptiongroup==1.1.1
 fake-useragent==1.2.1
 filelock==3.12.4
-fitz==0.0.1.dev2
 Flask==2.3.2
 frozenlist==1.3.3
 future==0.18.3
