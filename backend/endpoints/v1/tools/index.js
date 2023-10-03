@@ -39,16 +39,23 @@ function toolEndpoints(app) {
           return;
         }
 
-        const destinationOrg = await Organization.getWithOwner(user.id, {
+        if (organization.id === Number(destinationOrgId)) {
+          response.status(200).json({
+            success: false,
+            message:
+              "Destination organization cannot be the same as originating organization.",
+          });
+          return;
+        }
+
+        const destinationOrg = await Organization.get({
           id: Number(destinationOrgId),
         });
         if (!destinationOrg) {
-          response
-            .status(200)
-            .json({
-              success: false,
-              message: "Destination org does not exit.",
-            });
+          response.status(200).json({
+            success: false,
+            message: "Destination org does not exit.",
+          });
           return;
         }
 

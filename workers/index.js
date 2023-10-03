@@ -33,6 +33,7 @@ const { syncWeaviateWorkspace } = require("./functions/syncWeaviateWorkspace");
 const { cloneWeaviateWorkspace } = require("./functions/cloneWeaviateWorkspace");
 const { cloneWeaviateDocument } = require("./functions/cloneWeaviateDocument");
 const { addWeaviateDocuments } = require("./functions/addWeaviateDocuments");
+const { migrateOrganization } = require("./functions/migrateOrganization");
 const app = express();
 
 app.use(cors({ origin: true }));
@@ -96,6 +97,7 @@ app.use(
     // Generics
     newWorkspaceCreated,
     workspaceDeleted,
+    migrateOrganization,
   ], { landingPage: true })
 );
 
