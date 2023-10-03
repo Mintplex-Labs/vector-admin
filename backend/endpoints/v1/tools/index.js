@@ -70,13 +70,11 @@ function toolEndpoints(app) {
           organization_id: destinationOrg.id,
         });
         if (!!existingJobForOrg || !!existingJobForDestinationOrg) {
-          response
-            .status(200)
-            .json({
-              success: false,
-              message:
-                "There is an existing migration job already running for these organizations.",
-            });
+          response.status(200).json({
+            success: false,
+            message:
+              "There is an existing migration job already running for these organizations.",
+          });
           return;
         }
 

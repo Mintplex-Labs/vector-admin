@@ -27,12 +27,14 @@ export default function ConnectorCard({
     async function fetchConnector() {
       if (!!knownConnector) {
         if (SUPPORTED_VECTOR_DBS.includes(knownConnector.type)) {
-          const { result } = await Organization.connectorCommand(
+          const { value: result } = await Organization.stats(
             organization.slug,
-            'totalIndicies'
+            'vectorCounts'
           );
-          if (!!result && result > 0 && workspaces?.length === 0)
-            setCanSync(true);
+
+          if (!!result) {
+            if (result.remoteCount > result.localCount) setCanSync(true);
+          }
         }
 
         setLoading(false);

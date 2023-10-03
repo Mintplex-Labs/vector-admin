@@ -187,7 +187,7 @@ async function createDocuments(files, workspace, organization) {
 }
 
 async function createDocumentVectors(files) {
-  const docIds = Object.values(files).map((data) => Number(data.documentId));
+  const docIds = Object.values(files).map((data) => data.documentId);
   const existingDocuments = await WorkspaceDocument.where({
     docId: { in: docIds },
   });
