@@ -40,6 +40,9 @@ const paths = {
     migrationTool: function ({ slug }: { slug: string }) {
       return `/dashboard/${slug}/tools/db-migration`;
     },
+    resetTool: function ({ slug }: { slug: string }) {
+      return `/dashboard/${slug}/tools/db-reset`;
+    },
   },
   dashboard: function () {
     return '/dashboard';

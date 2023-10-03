@@ -1,13 +1,9 @@
 import { useState } from 'react';
-import { ChevronDown, Info } from 'react-feather';
-import useUser from '../../../hooks/useUser';
+import { Info } from 'react-feather';
 import { APP_NAME } from '../../../utils/constants';
-import moment from 'moment';
 import paths from '../../../utils/paths';
 
 export default function ToolsList({ organization }: { organization: any }) {
-  const { user } = useUser();
-
   return (
     <div className="col-span-12 flex-1 rounded-sm bg-white pb-6 xl:col-span-4">
       <div className="flex items-start justify-between">
@@ -23,6 +19,12 @@ export default function ToolsList({ organization }: { organization: any }) {
       </div>
 
       <div className="px-6">
+        <ToolItem
+          title="Reset vector database"
+          description="Wipe out all existing data in your vector database in one click."
+          available={true}
+          linkTo={paths.tools.resetTool(organization)}
+        />
         <ToolItem
           title="Migrate vector database to another provider"
           description="Take all of your vectors to another connected vector database provider."
