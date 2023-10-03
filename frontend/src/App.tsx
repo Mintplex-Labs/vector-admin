@@ -27,6 +27,7 @@ const SystemSettingsView = lazy(() => import('./pages/SystemSettings'));
 const MigrateConnectionView = lazy(
   () => import('./pages/Tools/MigrateConnection')
 );
+const ResetConnectionView = lazy(() => import('./pages/Tools/ResetConnection'));
 
 function App() {
   return (
@@ -82,6 +83,10 @@ function App() {
           <Route
             path="/dashboard/:slug/tools/db-migration"
             element={<PrivateRoute Component={MigrateConnectionView} />}
+          />
+          <Route
+            path="/dashboard/:slug/tools/db-reset"
+            element={<PrivateRoute Component={ResetConnectionView} />}
           />
 
           <Route path="/auth/sign-up" element={<SignUp />} />
