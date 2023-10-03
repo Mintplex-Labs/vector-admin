@@ -12,7 +12,7 @@ export default function JobsList({ jobs }: { jobs: any[] }) {
       <div className="flex items-start justify-between">
         <div>
           <h4 className="mb-6 px-7.5 text-3xl font-semibold text-black dark:text-white">
-            All Background Jobs
+            Organization Background Jobs
           </h4>
         </div>
       </div>

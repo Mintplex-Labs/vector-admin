@@ -99,6 +99,13 @@ class Chroma {
     };
   }
 
+  async namespaceExists(_client, name = null) {
+    if (!name) throw new Error("No namespace value provided.");
+    const { client } = await this.connect();
+    const collection = await client.getCollection({ name }).catch(() => null);
+    return !!collection;
+  }
+
   async rawGet(collectionId, pageSize = 10, offset = 0) {
     return await fetch(
       `${this.config.settings.instanceURL}/api/v1/collections/${collectionId}/get`,

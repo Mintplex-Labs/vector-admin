@@ -2,17 +2,18 @@ import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { ContextWrapper } from './AuthContext';
 import PrivateRoute from './components/PrivateRoute';
+import AdminRoute from './components/AdminRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
-import { FullScreenLoader } from './components/Preloader';
-import UserManagementView from './pages/UsersView';
-import AdminRoute from './components/AdminRoute';
-import OrganizationSettingsView from './pages/OrganizationSettings';
 
+const UserManagementView = lazy(() => import('./pages/UsersView'));
 const OnboardingHome = lazy(() => import('./pages/Onboarding'));
+const OrganizationSettingsView = lazy(
+  () => import('./pages/OrganizationSettings')
+);
 const OrganizationDashboard = lazy(() => import('./pages/Dashboard'));
 const WorkspaceDashboard = lazy(() => import('./pages/WorkspaceDashboard'));
 const DocumentView = lazy(() => import('./pages/DocumentView'));
@@ -21,7 +22,11 @@ const OnboardingSecuritySetup = lazy(
   () => import('./pages/Onboarding/security')
 );
 const OrganizationJobsView = lazy(() => import('./pages/Jobs'));
+const OrganizationToolsView = lazy(() => import('./pages/Tools'));
 const SystemSettingsView = lazy(() => import('./pages/SystemSettings'));
+const MigrateConnectionView = lazy(
+  () => import('./pages/Tools/MigrateConnection')
+);
 
 function App() {
   return (
@@ -38,6 +43,11 @@ function App() {
           <Route
             path="/dashboard/:slug"
             element={<PrivateRoute Component={OrganizationDashboard} />}
+          />
+
+          <Route
+            path="/dashboard/:slug/all-tools"
+            element={<PrivateRoute Component={OrganizationToolsView} />}
           />
 
           <Route
@@ -69,6 +79,11 @@ function App() {
             element={<PrivateRoute Component={OnboardingSecuritySetup} />}
           />
 
+          <Route
+            path="/dashboard/:slug/tools/db-migration"
+            element={<PrivateRoute Component={MigrateConnectionView} />}
+          />
+
           <Route path="/auth/sign-up" element={<SignUp />} />
           <Route path="/auth/sign-in" element={<SignIn />} />
           <Route path="/system-setup" element={<SystemSetup />} />
@@ -87,10 +102,5 @@ function App() {
     </ContextWrapper>
   );
 }
-
-const Redirect = ({ to }: { to: any }) => {
-  if (!!window?.location) window.location = to;
-  return <FullScreenLoader />;
-};
 
 export default App;

@@ -6,6 +6,7 @@ const { documentProcessorEndpoints } = require("./document-processor");
 const { documentEndpoints } = require("./documents");
 const { jobEndpoints } = require("./jobs");
 const { organizationEndpoints } = require("./organizations");
+const { toolEndpoints } = require("./tools");
 const { userEndpoints } = require("./users");
 const { workspaceEndpoints } = require("./workspaces");
 
@@ -36,6 +37,7 @@ function v1Endpoints(app) {
   documentEndpoints(app);
   documentProcessorEndpoints(app);
   jobEndpoints(app);
+  toolEndpoints(app);
 }
 
 module.exports = { v1Endpoints };

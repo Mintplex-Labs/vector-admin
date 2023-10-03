@@ -3,6 +3,7 @@ const path = require("path");
 const { v5 } = require("uuid");
 const { fetchMetadata } = require("../utils/storage");
 const { DocumentVectors } = require("./documentVectors");
+const { selectConnector } = require("../utils/vectordatabases/providers");
 
 const WorkspaceDocument = {
   vectorFilenameRaw: function (documentName, workspaceId) {
@@ -157,6 +158,25 @@ const WorkspaceDocument = {
     }
 
     return totalBytes;
+  },
+  // Will get both the remote and local count of vectors to see if the numbers match.
+  vectorCount: async function (field = "organization_id", value = null) {
+    try {
+      const { OrganizationConnection } = require("./organizationConnection");
+      const connector = await OrganizationConnection.get({ [field]: value });
+      if (!connector) return { remoteCount: 0, localCount: 0 };
+      const vectorDb = selectConnector(connector);
+
+      return {
+        remoteCount: (await vectorDb.totalIndicies())?.result,
+        localCount: await DocumentVectors.count({
+          [field]: value,
+        }),
+      };
+    } catch (e) {
+      console.error(e);
+      return 0;
+    }
   },
 };
 
