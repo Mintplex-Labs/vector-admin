@@ -61,8 +61,7 @@ const ToolItem = ({
 }) => {
   const [show, setShow] = useState(false);
   return (
-    <div className="flex w-full items-center justify-between border-b border-gray-200 py-5 text-left text-gray-500 dark:border-gray-700 dark:text-gray-400"
-    >
+    <div className="flex w-full items-center justify-between border-b border-gray-200 py-5 text-left text-gray-500 dark:border-gray-700 dark:text-gray-400">
       <div className="flex w-full items-center justify-between pr-4">
         <div className="flex items-center gap-x-8">
           <div className="flex flex-col gap-y-2">
@@ -78,7 +77,10 @@ const ToolItem = ({
             <p className="text-sm font-normal">feature under development.</p>
           </div>
         ) : (
-          <a href={linkTo} className="flex items-center gap-x-1 rounded-md bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 text-slate-600 ">
+          <a
+            href={linkTo}
+            className="flex items-center gap-x-1 rounded-md bg-blue-600 px-4 py-1.5 text-slate-600 text-white hover:bg-blue-700 "
+          >
             <p className="text-sm font-normal ">Open tool &rarr;</p>
           </a>
         )}

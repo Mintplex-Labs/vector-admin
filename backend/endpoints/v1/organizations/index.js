@@ -596,6 +596,7 @@ function organizationEndpoints(app) {
           documents: "countForEntity",
           vectors: "calcVectors",
           "cache-size": "calcVectorCache",
+          vectorCounts: "vectorCount",
         };
 
         if (!Object.keys(methods).includes(statistic)) {
