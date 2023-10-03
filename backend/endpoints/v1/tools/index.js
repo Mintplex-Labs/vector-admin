@@ -69,10 +69,16 @@ function toolEndpoints(app) {
           status: "pending",
           organization_id: destinationOrg.id,
         });
-        //TODO - uncomment if (!!existingJobForOrg || !!existingJobForDestinationOrg) {
-        //   response.status(200).json({ success: false, message: "There is an existing migration job already running for these organizations." });
-        //   return;
-        // }
+        if (!!existingJobForOrg || !!existingJobForDestinationOrg) {
+          response
+            .status(200)
+            .json({
+              success: false,
+              message:
+                "There is an existing migration job already running for these organizations.",
+            });
+          return;
+        }
 
         await organizationMigrationJob(organization, destinationOrg, user);
         response
