@@ -257,7 +257,7 @@ export default function Sidebar({
                           >
                             <WorkspaceSearch
                               RenderComponent={WorkspaceItem}
-                              maxContainerHeight={200}
+                              maxContainerHeight={150}
                               canSearch={
                                 workspaces.length >=
                                 Organization.workspacePageSize
@@ -271,7 +271,7 @@ export default function Sidebar({
                                   dataLength={workspaces.length}
                                   next={continueLoadWorkspaces}
                                   hasMore={hasMoreWorkspaces}
-                                  height={200}
+                                  height={150}
                                   scrollableTarget="workspaces-sidebar"
                                   scrollThreshold={0.8}
                                   loader={
