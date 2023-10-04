@@ -11,8 +11,8 @@ const Telemetry = {
     if (!!result?.value) return result.value;
     return result?.value;
   },
-  connect: async function () {
-    const client = this.client();
+  connect: async function (force = false) {
+    const client = this.client(force);
     const distinctId = await this.findOrCreateId();
     return { client, distinctId };
   },
@@ -21,21 +21,23 @@ const Telemetry = {
       return this.stubDevelopmentEvents;
     return false;
   },
-  client: function () {
-    if (process.env.DISABLE_TELEMETRY === "true" || this.isDev()) return null;
+  client: function (force = false) {
+    if (process.env.DISABLE_TELEMETRY === "true") return null;
+    if (!force && this.isDev()) return null;
+
     const { PostHog } = require("posthog-node");
     return new PostHog(this.pubkey);
   },
-  sendTelemetry: async function (event, properties = {}) {
+  sendTelemetry: async function (event, properties = {}, force = false) {
     try {
-      if (this.isDev()) {
+      if (!force && this.isDev() && process.env.DISABLE_TELEMETRY !== "true") {
         console.log(`\x1b[33m[DEVELOPER MODE: TELEMETRY STUBBED]\x1b[0m`, {
           event,
           properties,
         });
       }
 
-      const { client, distinctId } = await this.connect();
+      const { client, distinctId } = await this.connect(force);
       if (!client) return;
       console.log(`\x1b[32m[TELEMETRY SENT]\x1b[0m`, {
         event,
