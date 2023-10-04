@@ -1,6 +1,5 @@
 {
   "name": "vector-admin-frontend",
-  "private": true,
   "type": "module",
   "scripts": {
     "start": "vite --open",

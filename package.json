@@ -1,6 +1,6 @@
 {
   "name": "vector-data-management-system",
-  "version": "0.0.2-beta",
+  "version": "0.0.2",
   "description": "A better way to manage vector data at scale for both businesses and developers via a normalized programmatic interface.",
   "author": "Timothy Carambat (Mintplex Labs)",
   "license": "MIT",
