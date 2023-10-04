@@ -7,6 +7,7 @@ const { SystemSettings } = require('../../../backend/models/systemSettings');
 const {
   WorkspaceDocument,
 } = require('../../../backend/models/workspaceDocument');
+const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
 
 const addPineconeDocuments = InngestClient.createFunction(
   { name: 'Add and Embed documents into PineconeDB' },
@@ -103,6 +104,7 @@ const addPineconeDocuments = InngestClient.createFunction(
 
       result = { ...result, message: `Document processing complete` };
       await Queue.updateJob(jobId, Queue.status.complete, result);
+      await vectorSpaceMetric();
       return { result };
     } catch (e) {
       const result = {

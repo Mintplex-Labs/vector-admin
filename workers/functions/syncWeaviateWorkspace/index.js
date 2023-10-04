@@ -10,6 +10,7 @@ const { deleteVectorCacheFile } = require('../../../backend/utils/storage');
 const {
   Weaviate,
 } = require('../../../backend/utils/vectordatabases/providers/weaviate');
+const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
 
 const syncWeaviateWorkspace = InngestClient.createFunction(
   { name: 'Sync Weaviate Workspace' },
@@ -56,6 +57,7 @@ const syncWeaviateWorkspace = InngestClient.createFunction(
           'Weaviate instance vector data has been synced. Workspaces data synced.',
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
+      await vectorSpaceMetric();
       return { result };
     } catch (e) {
       const result = {

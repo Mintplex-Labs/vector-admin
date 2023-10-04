@@ -12,6 +12,7 @@ const { DocumentVectors } = require('../../../backend/models/documentVectors');
 const {
   QDrant,
 } = require('../../../backend/utils/vectordatabases/providers/qdrant');
+const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
 
 const syncQDrantCluster = InngestClient.createFunction(
   { name: 'Sync Qdrant Instance' },
@@ -77,6 +78,7 @@ const syncQDrantCluster = InngestClient.createFunction(
         failedToSync,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
+      await vectorSpaceMetric();
       return { result };
     } catch (e) {
       const result = {

@@ -19,6 +19,7 @@ const {
 const { toChunks } = require('../../../backend/utils/vectordatabases/utils');
 const { v4 } = require('uuid');
 const { InngestClient } = require('../../utils/inngest');
+const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
 
 const migrateOrganization = InngestClient.createFunction(
   { name: 'Migrate all vector data from one vector db to another' },
@@ -170,6 +171,7 @@ const migrateOrganization = InngestClient.createFunction(
         },
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
+      await vectorSpaceMetric();
       return { result };
     } catch (e) {
       const result = {

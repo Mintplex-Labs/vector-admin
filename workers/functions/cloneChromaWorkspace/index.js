@@ -16,6 +16,7 @@ const { DocumentVectors } = require('../../../backend/models/documentVectors');
 const {
   OrganizationWorkspace,
 } = require('../../../backend/models/organizationWorkspace');
+const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
 
 const cloneChromaWorkspace = InngestClient.createFunction(
   { name: 'Clone workspace into ChromaDB' },
@@ -121,6 +122,7 @@ const cloneChromaWorkspace = InngestClient.createFunction(
         message: `Workspace ${workspace.name} embeddings cloned into ${clonedWorkspace.name} successfully.`,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
+      await vectorSpaceMetric();
       return { result };
     } catch (e) {
       const result = {

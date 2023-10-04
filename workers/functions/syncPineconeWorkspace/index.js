@@ -10,6 +10,7 @@ const {
 } = require('../../../backend/models/workspaceDocument');
 const { DocumentVectors } = require('../../../backend/models/documentVectors');
 const { deleteVectorCacheFile } = require('../../../backend/utils/storage');
+const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
 
 // Will sync ENTIRE workspace - from a fresh pull.
 // Ideally we should only be creating/deleting documents which are not known to the system already.
@@ -57,6 +58,7 @@ const syncPineconeWorkspace = InngestClient.createFunction(
           'Pinecone instance vector data has been synced. Workspace updated.',
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
+      await vectorSpaceMetric();
       return { result };
     } catch (e) {
       const result = {

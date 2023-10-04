@@ -13,6 +13,7 @@ const { DocumentVectors } = require('../../../backend/models/documentVectors');
 const {
   QDrant,
 } = require('../../../backend/utils/vectordatabases/providers/qdrant');
+const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
 
 const cloneQDrantDocument = InngestClient.createFunction(
   { name: 'Clone document into QDrant' },
@@ -99,6 +100,7 @@ const cloneQDrantDocument = InngestClient.createFunction(
         message: `Document ${document.name} cloned to ${destinationWs.name} completed`,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
+      await vectorSpaceMetric();
       return { result };
     } catch (e) {
       const result = {

@@ -10,6 +10,7 @@ const { deleteVectorCacheFile } = require('../../../backend/utils/storage');
 const {
   QDrant,
 } = require('../../../backend/utils/vectordatabases/providers/qdrant');
+const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
 
 const syncQDrantWorkspace = InngestClient.createFunction(
   { name: 'Sync QDrant Workspace' },
@@ -51,6 +52,7 @@ const syncQDrantWorkspace = InngestClient.createFunction(
           'QDrant instance vector data has been synced. Workspaces data synced.',
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
+      await vectorSpaceMetric();
       return { result };
     } catch (e) {
       const result = {

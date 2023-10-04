@@ -16,6 +16,7 @@ const {
 const {
   Weaviate,
 } = require('../../../backend/utils/vectordatabases/providers/weaviate');
+const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
 
 const cloneWeaviateWorkspace = InngestClient.createFunction(
   { name: 'Clone workspace into Weaviate' },
@@ -133,6 +134,7 @@ const cloneWeaviateWorkspace = InngestClient.createFunction(
         message: `Workspace ${workspace.name} embeddings cloned into ${clonedWorkspace.name} successfully.`,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
+      await vectorSpaceMetric();
       return { result };
     } catch (e) {
       const result = {

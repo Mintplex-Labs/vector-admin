@@ -12,6 +12,7 @@ const { DocumentVectors } = require('../../../backend/models/documentVectors');
 const {
   Weaviate,
 } = require('../../../backend/utils/vectordatabases/providers/weaviate');
+const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
 
 const syncWeaviateCluster = InngestClient.createFunction(
   { name: 'Sync Weaviate Instance' },
@@ -77,6 +78,7 @@ const syncWeaviateCluster = InngestClient.createFunction(
         failedToSync,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
+      await vectorSpaceMetric();
       return { result };
     } catch (e) {
       const result = {

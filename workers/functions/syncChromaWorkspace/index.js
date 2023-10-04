@@ -10,6 +10,7 @@ const {
 } = require('../../../backend/models/workspaceDocument');
 const { DocumentVectors } = require('../../../backend/models/documentVectors');
 const { deleteVectorCacheFile } = require('../../../backend/utils/storage');
+const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
 
 const syncChromaWorkspace = InngestClient.createFunction(
   { name: 'Sync Chroma Workspace' },
@@ -47,6 +48,7 @@ const syncChromaWorkspace = InngestClient.createFunction(
           'Chroma instance vector data has been synced. Workspaces data synced.',
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
+      await vectorSpaceMetric();
       return { result };
     } catch (e) {
       const result = {

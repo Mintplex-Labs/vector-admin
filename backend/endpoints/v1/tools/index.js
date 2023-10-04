@@ -119,13 +119,11 @@ function toolEndpoints(app) {
           organization_id: organization.id,
         });
         if (pendingJobs.length > 0) {
-          response
-            .status(200)
-            .json({
-              success: false,
-              message:
-                "There are pending jobs for this organization - you cannot reset it at this time.",
-            });
+          response.status(200).json({
+            success: false,
+            message:
+              "There are pending jobs for this organization - you cannot reset it at this time.",
+          });
           return;
         }
 

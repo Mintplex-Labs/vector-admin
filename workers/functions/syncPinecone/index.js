@@ -12,6 +12,7 @@ const {
   WorkspaceDocument,
 } = require('../../../backend/models/workspaceDocument');
 const { DocumentVectors } = require('../../../backend/models/documentVectors');
+const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
 
 const syncPineconeIndex = InngestClient.createFunction(
   { name: 'Sync Pinecone Instance' },
@@ -77,6 +78,7 @@ const syncPineconeIndex = InngestClient.createFunction(
         failedToSync,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
+      await vectorSpaceMetric();
       return { result };
     } catch (e) {
       const result = {

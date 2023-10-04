@@ -28,6 +28,13 @@ const Telemetry = {
   },
   sendTelemetry: async function (event, properties = {}) {
     try {
+      if (this.isDev()) {
+        console.log(`\x1b[33m[DEVELOPER MODE: TELEMETRY STUBBED]\x1b[0m`, {
+          event,
+          properties,
+        });
+      }
+
       const { client, distinctId } = await this.connect();
       if (!client) return;
       console.log(`\x1b[32m[TELEMETRY SENT]\x1b[0m`, {

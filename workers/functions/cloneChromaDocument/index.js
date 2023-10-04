@@ -13,6 +13,7 @@ const {
 const { toChunks } = require('../../../backend/utils/vectordatabases/utils');
 const { v4 } = require('uuid');
 const { DocumentVectors } = require('../../../backend/models/documentVectors');
+const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
 
 const cloneChromaDocument = InngestClient.createFunction(
   { name: 'Clone document into ChromaDB' },
@@ -99,6 +100,7 @@ const cloneChromaDocument = InngestClient.createFunction(
         message: `Document ${document.name} cloned to ${destinationWs.name} completed`,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
+      await vectorSpaceMetric();
       return { result };
     } catch (e) {
       const result = {

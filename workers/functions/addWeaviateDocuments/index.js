@@ -7,6 +7,7 @@ const {
 const {
   Weaviate,
 } = require('../../../backend/utils/vectordatabases/providers/weaviate');
+const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
 
 const addWeaviateDocuments = InngestClient.createFunction(
   { name: 'Add and Embed documents into Weaviate' },
@@ -91,6 +92,7 @@ const addWeaviateDocuments = InngestClient.createFunction(
 
       result = { ...result, message: `Document processing complete` };
       await Queue.updateJob(jobId, Queue.status.complete, result);
+      await vectorSpaceMetric();
       return { result };
     } catch (e) {
       const result = {

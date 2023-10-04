@@ -77,16 +77,12 @@ async function setupTelemetry() {
     return true;
   }
 
-  if (Telemetry.isDev()) {
+  if (!Telemetry.isDev()) {
     console.log(
-      `\x1b[33m[TELEMETRY STUBBED]\x1b[0m Anonymous Telemetry stubbed in development.`
+      `\x1b[32m[TELEMETRY ENABLED]\x1b[0m Anonymous Telemetry enabled. Telemetry helps Mintplex Labs Inc improve VectorAdmin.`
     );
-    return;
   }
 
-  console.log(
-    `\x1b[32m[TELEMETRY ENABLED]\x1b[0m Anonymous Telemetry enabled. Telemetry helps Mintplex Labs Inc improve VectorAdmin.`
-  );
   await Telemetry.findOrCreateId();
   await Telemetry.sendTelemetry("server_boot", {
     commit: getGitVersion(),

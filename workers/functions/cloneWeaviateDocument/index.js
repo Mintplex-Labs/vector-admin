@@ -13,6 +13,7 @@ const { DocumentVectors } = require('../../../backend/models/documentVectors');
 const {
   Weaviate,
 } = require('../../../backend/utils/vectordatabases/providers/weaviate');
+const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
 
 const cloneWeaviateDocument = InngestClient.createFunction(
   { name: 'Clone document into Weaviate' },
@@ -101,6 +102,7 @@ const cloneWeaviateDocument = InngestClient.createFunction(
         message: `Document ${document.name} cloned to ${destinationWs.name} completed`,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
+      await vectorSpaceMetric();
       return { result };
     } catch (e) {
       const result = {

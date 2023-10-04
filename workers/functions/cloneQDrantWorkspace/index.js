@@ -16,6 +16,7 @@ const {
 const {
   QDrant,
 } = require('../../../backend/utils/vectordatabases/providers/qdrant');
+const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
 
 const cloneQDrantWorkspace = InngestClient.createFunction(
   { name: 'Clone workspace into QDrant' },
@@ -129,6 +130,7 @@ const cloneQDrantWorkspace = InngestClient.createFunction(
         message: `Workspace ${workspace.name} embeddings cloned into ${clonedWorkspace.name} successfully.`,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
+      await vectorSpaceMetric();
       return { result };
     } catch (e) {
       const result = {
