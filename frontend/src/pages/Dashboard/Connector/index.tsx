@@ -33,7 +33,11 @@ export default function ConnectorCard({
           );
 
           if (!!result) {
-            if (result.remoteCount > result.localCount) setCanSync(true);
+            if (
+              result.remoteCount > 0 &&
+              result.remoteCount !== result.localCount
+            )
+              setCanSync(true);
           }
         }
 
