@@ -216,7 +216,7 @@ const NewConnectorModal = ({
         event.target == event.currentTarget && event.currentTarget?.close()
       }
     >
-      <div className="overflow-y-scroll rounded-sm bg-white p-[20px]">
+      <div className="rounded-sm bg-white p-[20px]">
         <div className="px-6.5 py-4">
           <h3 className="font-medium text-black dark:text-white">
             Connect to Vector Database
@@ -236,8 +236,8 @@ const NewConnectorModal = ({
         </div>
 
         <form hidden={loading} onSubmit={handleSubmit}>
-          <ul className="mx-6 grid w-full gap-6 md:grid-cols-3">
-            <li onClick={() => setType('chroma')}>
+          <ul className="mx-6 flex w-full flex-wrap gap-6">
+            <li onClick={() => setType('chroma')} className="w-[250px]">
               <input
                 name="type"
                 type="checkbox"
@@ -261,7 +261,7 @@ const NewConnectorModal = ({
                 </div>
               </label>
             </li>
-            <li onClick={() => setType('pinecone')}>
+            <li onClick={() => setType('pinecone')} className="w-[250px]">
               <input
                 name="type"
                 type="checkbox"
@@ -285,7 +285,7 @@ const NewConnectorModal = ({
                 </div>
               </label>
             </li>
-            <li onClick={() => setType('qdrant')}>
+            <li onClick={() => setType('qdrant')} className="w-[250px]">
               <input
                 name="type"
                 type="checkbox"
@@ -309,7 +309,7 @@ const NewConnectorModal = ({
                 </div>
               </label>
             </li>
-            <li onClick={() => setType('weaviate')}>
+            <li onClick={() => setType('weaviate')} className="w-[250px]">
               <input
                 name="type"
                 type="checkbox"
@@ -640,7 +640,7 @@ const UpdateConnectorModal = ({
         event.target == event.currentTarget && event.currentTarget?.close()
       }
     >
-      <div className="overflow-y-scroll rounded-sm bg-white p-[20px]">
+      <div className="rounded-sm bg-white p-[20px]">
         <div className="px-6.5 py-4">
           <h3 className="font-medium text-black dark:text-white">
             Update Vector Database Connection
@@ -659,8 +659,8 @@ const UpdateConnectorModal = ({
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
-            <ul className="mx-6 grid w-full gap-6 md:grid-cols-3">
-              <li onClick={() => setType('chroma')}>
+            <ul className="mx-6 flex w-full flex-wrap gap-6">
+              <li onClick={() => setType('chroma')} className="w-[250px]">
                 <input
                   name="type"
                   type="checkbox"
@@ -683,7 +683,7 @@ const UpdateConnectorModal = ({
                   </div>
                 </label>
               </li>
-              <li onClick={() => setType('pinecone')}>
+              <li onClick={() => setType('pinecone')} className="w-[250px]">
                 <input
                   name="type"
                   type="checkbox"
@@ -706,7 +706,7 @@ const UpdateConnectorModal = ({
                   </div>
                 </label>
               </li>
-              <li onClick={() => setType('qdrant')}>
+              <li onClick={() => setType('qdrant')} className="w-[250px]">
                 <input
                   name="type"
                   type="checkbox"
@@ -729,7 +729,7 @@ const UpdateConnectorModal = ({
                   </div>
                 </label>
               </li>
-              <li onClick={() => setType('weaviate')}>
+              <li onClick={() => setType('weaviate')} className="w-[250px]">
                 <input
                   name="type"
                   type="checkbox"
