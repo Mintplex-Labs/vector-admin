@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://twitter.com/tcarambat"><img src="https://github.com/Mintplex-Labs/vector-admin/blob/master/images/logo-light.png?raw=true" alt="VectorAdmin logo"></a>
+  <a href="https://vectoradmin.com"><img src="https://github.com/Mintplex-Labs/vector-admin/blob/master/images/logo-light.png?raw=true" alt="VectorAdmin logo"></a>
 </p>
 
 <p align="center">
