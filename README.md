@@ -19,7 +19,7 @@
   <a href="https://docs.vectoradmin.com/" target="_blank">
     Docs
   </a> |
-  <a href="https://my.mintplexlabs.com/aio-checkout?product=vectoradmin" target="_blank">
+  <a href="https://vectoradmin.com" target="_blank">
     Hosted Instance
   </a>
 </p>
