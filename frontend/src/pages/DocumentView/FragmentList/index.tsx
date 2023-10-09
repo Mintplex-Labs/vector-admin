@@ -211,7 +211,7 @@ const Fragment = ({
         </th>
         <td className="px-6 py-4">{fragment.vectorId}</td>
         <td className="px-6 py-4">
-          {truncate(data?.metadata?.text, 40)}
+          {data?.metadata?.text ? truncate(data?.metadata?.text, 40) : 'no text found.'}
           {!!data?.metadata?.text ? (
             <button
               className="text-blue-400"
