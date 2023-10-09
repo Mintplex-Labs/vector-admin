@@ -232,7 +232,7 @@ const Fragment = ({
           )}
         </td>
         <td className="px-6 py-4">
-          {Object.keys(metadata).length > 0 ? (
+          {Object.keys(metadata)?.length > 0 ? (
             <button
               onClick={() => {
                 document

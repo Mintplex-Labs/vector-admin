@@ -1,6 +1,7 @@
 {
   "name": "vector-admin-frontend",
   "type": "module",
+  "license": "MIT",
   "scripts": {
     "start": "vite --open",
     "build": "vite build",
