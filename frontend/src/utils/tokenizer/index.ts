@@ -7,6 +7,7 @@ export const MAX_TOKENS = {
 };
 
 export function countLLMTokens(input: string) {
+  if (input?.length === 0) return { tokens: [], length: 0 };
   const encoding = new Tiktoken(
     cl100k_base.bpe_ranks,
     cl100k_base.special_tokens,
