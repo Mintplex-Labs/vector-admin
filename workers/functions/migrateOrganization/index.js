@@ -58,8 +58,8 @@ const migrateOrganization = InngestClient.createFunction(
         await Queue.updateJob(jobId, Queue.status.pending, {
           message: `Working on namespace ${count} of ${workspaces.length}`,
         });
-        const existsInDestination = await destinationVectorDb.namespaceExists(
-          null,
+        const existsInDestination = await namespaceExists(
+          destinationVectorDb,
           workspace.fname
         );
         if (existsInDestination) {
@@ -184,6 +184,45 @@ const migrateOrganization = InngestClient.createFunction(
     }
   }
 );
+
+async function namespaceExists(vectorDBClient, namespace) {
+  if (vectorDBClient.name === 'pinecone') {
+    try {
+      const { pineconeIndex } = await vectorDBClient.connect();
+      return await vectorDBClient.namespaceExists(pineconeIndex, namespace);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  if (vectorDBClient.name === 'chroma') {
+    try {
+      return await vectorDBClient.namespaceExists(null, namespace);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  if (vectorDBClient.name === 'qdrant') {
+    try {
+      const { client } = await vectorDBClient.connect();
+      return await vectorDBClient.namespaceExists(client, namespace);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  if (vectorDBClient.name === 'weaviate') {
+    try {
+      const className = vectorDBClient.camelCase(namespace);
+      return await vectorDBClient.namespaceExists(null, className);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  return null;
+}
 
 async function createVectorSpace(vectorDBClient, namespace) {
   if (vectorDBClient.name === 'chroma') {
