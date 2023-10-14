@@ -143,6 +143,22 @@ async function paginateAndStore(
       files[documentName].currentLine =
         files[documentName].currentLine + 1 + totalLines;
     }
+
+    // When on the free starter tier upserts can be delayed anywhere from 10 - 60 seconds.
+    // So we need to sleep for this entire loop to ensure the RunID was saved + indexed.
+    // Ref: https://docs.pinecone.io/docs/starter-environment#limitations
+    if (pineconeClient.isStarterTier()) {
+      console.log(
+        `\x1b[34m[Sync Notice]\x1b[0m Pinecone Starter Tier detected - need to sleep ${pineconeClient.STARTER_TIER_UPSERT_DELAY}ms between upserts.`,
+        {
+          pineconeDocsLink:
+            'https://docs.pinecone.io/docs/starter-environment#limitations',
+        }
+      );
+      await new Promise((r) =>
+        setTimeout(r, pineconeClient.STARTER_TIER_UPSERT_DELAY)
+      );
+    }
   }
 
   console.log('Removing existing Workspace Documents & Document Vectors');

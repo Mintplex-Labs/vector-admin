@@ -10,12 +10,20 @@ class Pinecone {
   constructor(connector) {
     this.name = "pinecone";
     this.config = this.setConfig(connector);
+    this.STARTER_TIER_UPSERT_DELAY = 15_000;
   }
 
   setConfig(config) {
     var { type, settings } = config;
     if (typeof settings === "string") settings = JSON.parse(settings);
     return { type, settings };
+  }
+
+  // Docs: https://docs.pinecone.io/docs/projects#project-environment
+  // This tier does not allow namespace creation.
+  isStarterTier() {
+    const { settings } = this.config;
+    return settings.environment === "gcp-starter";
   }
 
   async connect() {
@@ -129,13 +137,13 @@ class Pinecone {
   }
 
   async namespaceExists(index, namespace = null) {
-    if (!namespace) throw new Error("No namespace value provided.");
+    if (namespace === null) throw new Error("No namespace value provided.");
     const { namespaces } = await index.describeIndexStats1();
     return namespaces.hasOwnProperty(namespace);
   }
 
   async namespace(name = null) {
-    if (!name) throw new Error("No namespace value provided.");
+    if (name === null) throw new Error("No namespace value provided.");
     const { pineconeIndex } = await this.connect();
     const { namespaces } = await pineconeIndex.describeIndexStats1();
     const collection = namespaces.hasOwnProperty(name)
@@ -393,7 +401,6 @@ class Pinecone {
 
   async getMetadata(namespace = "", vectorIds = []) {
     const { pineconeIndex } = await this.connect();
-
     const { vectors } = await pineconeIndex.fetch({
       ids: vectorIds,
       namespace,

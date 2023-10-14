@@ -16,10 +16,12 @@ export default function CreateWorkspaceModal({
   const [searching, setSearching] = useState(false);
   const [match, setMatch] = useState(null);
   const [imported, setImported] = useState(false);
+  const [error, setError] = useState(null);
 
   const searchForNamespace = async (e: any) => {
     setMatch(null);
     setSearching(true);
+    setError(null);
     const { match } = await Organization.vectorDBExists(
       organization.slug,
       e.target.value
@@ -32,6 +34,7 @@ export default function CreateWorkspaceModal({
     if (!match) return false;
     e.preventDefault();
     setLoading(true);
+    setError(null);
     const { workspace } = await Workspace.createAndImport(
       organization.slug,
       match
@@ -48,12 +51,14 @@ export default function CreateWorkspaceModal({
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setLoading(true);
-    const { workspace } = await Workspace.createNew(
+    setError(null);
+    const { workspace, error } = await Workspace.createNew(
       organization.slug,
       e.target.name.value
     );
     if (!workspace) {
       setLoading(false);
+      setError(error);
       return false;
     }
 
@@ -116,6 +121,11 @@ export default function CreateWorkspaceModal({
                 onChange={debouncedOnChange}
                 className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
               />
+              {error && (
+                <p className="my-1 rounded-lg border border-red-800 bg-red-600/10 p-1 px-2 text-sm text-red-600">
+                  Error: {error}
+                </p>
+              )}
             </div>
             <div className="flex flex-col gap-y-2">
               {!match ? (
@@ -130,6 +140,7 @@ export default function CreateWorkspaceModal({
                   <button
                     type="button"
                     onClick={() => {
+                      setError(null);
                       document
                         .getElementById('workspace-creation-modal')
                         ?.close();
@@ -167,10 +178,6 @@ export default function CreateWorkspaceModal({
                 </>
               )}
             </div>
-            <p className="my-2 rounded-lg border border-orange-800 bg-orange-100 p-2 text-center text-sm text-orange-800">
-              Once your workspace exists you can start adding documents via the
-              UI or API via code.
-            </p>
           </div>
         </form>
       )}

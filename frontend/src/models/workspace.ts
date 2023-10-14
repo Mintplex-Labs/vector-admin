@@ -26,7 +26,7 @@ const Workspace = {
         return null;
       });
 
-    if (!workspace) return { organization: null, error };
+    if (!workspace) return { workspace: null, error };
     return { workspace, error: null };
   },
   createAndImport: async (orgSlug: string, workspaceName: string) => {

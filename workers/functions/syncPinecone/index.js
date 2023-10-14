@@ -40,13 +40,20 @@ const syncPineconeIndex = InngestClient.createFunction(
 
       for (const collection of collections) {
         logger.info(
-          `Creating new workspace ${collection.name} for ${organization.name}`
+          `Creating new workspace ${collection.name || '(default)'} for ${
+            organization.name
+          }`
         );
+        if (collection.count === 0) continue;
+
         const { workspace } = await OrganizationWorkspace.create(
-          collection.name,
-          organization.id
+          collection.name === '' ? '(default)' : collection.name,
+          organization.id,
+          // allow fName to be empty string, but slug as (default) for no-namespace vectors.
+          // If there is a valid name - we use that.
+          collection.name === '' ? '' : null
         );
-        if (!workspace || collection.count === 0) continue;
+        if (!workspace) continue;
 
         logger.info(
           `Working on ${collection.count} embeddings of ${collection.name}`
@@ -162,6 +169,22 @@ async function paginateAndStore(
       files[documentName].fullText += text;
       files[documentName].currentLine =
         files[documentName].currentLine + 1 + totalLines;
+    }
+
+    // When on the free starter tier upserts can be delayed anywhere from 10 - 60 seconds.
+    // So we need to sleep for this entire loop to ensure the RunID was saved + indexed.
+    // Ref: https://docs.pinecone.io/docs/starter-environment#limitations
+    if (pineconeClient.isStarterTier()) {
+      console.log(
+        `\x1b[34m[Sync Notice]\x1b[0m Pinecone Starter Tier detected - need to sleep ${pineconeClient.STARTER_TIER_UPSERT_DELAY}ms between upserts.`,
+        {
+          pineconeDocsLink:
+            'https://docs.pinecone.io/docs/starter-environment#limitations',
+        }
+      );
+      await new Promise((r) =>
+        setTimeout(r, pineconeClient.STARTER_TIER_UPSERT_DELAY)
+      );
     }
   }
 
