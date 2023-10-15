@@ -281,13 +281,21 @@ function DestinationOrgCard({
   );
 }
 
+interface IDestination {
+  name: string;
+  connector: {
+    type: 'pinecone' | 'chroma' | 'qdrant' | 'weaviate';
+    settings: string;
+  };
+}
+
 function SubmitMigrationJob({
   organization,
   destination,
   totalVectorCount,
 }: {
   organization: any;
-  destination: any;
+  destination: IDestination;
   totalVectorCount: number;
 }) {
   const [status, setStatus] = useState<
@@ -333,6 +341,17 @@ function SubmitMigrationJob({
 
   return (
     <div className="mt-2 flex flex-col gap-y-1">
+      {isIneligibleConnector(destination) && (
+        <div className="my-2 flex flex-col gap-y-1">
+          <p className="mx-auto w-full rounded-lg bg-red-600/20 p-2 text-center text-sm text-red-800">
+            Namespace support for Pinecone db "{destination.name}" is not
+            supported.
+            <br />
+            Migration of namespaced data will not succeed.
+          </p>
+        </div>
+      )}
+
       <button
         onClick={submitMigration}
         className="full rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700"
@@ -347,4 +366,12 @@ function SubmitMigrationJob({
       </p>
     </div>
   );
+}
+
+function isIneligibleConnector(destination?: IDestination) {
+  if (!destination) return false;
+  if (destination.connector.type !== 'pinecone') return false;
+
+  const { environment } = JSON.parse(destination.connector.settings);
+  return environment === 'gcp-starter';
 }

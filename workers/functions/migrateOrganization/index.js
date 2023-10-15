@@ -58,26 +58,12 @@ const migrateOrganization = InngestClient.createFunction(
         await Queue.updateJob(jobId, Queue.status.pending, {
           message: `Working on namespace ${count} of ${workspaces.length}`,
         });
-        const existsInDestination = await namespaceExists(
-          destinationVectorDb,
-          workspace.fname
-        );
-        if (existsInDestination) {
-          skipped.push(workspace.fname);
-          count++;
-          continue;
-        }
 
-        const collection = await createVectorSpace(
+        const migratedWorkspace = await createMigrationWorkspace(
           destinationVectorDb,
-          workspace.fname
+          workspace,
+          destinationOrganization
         );
-        const { workspace: migratedWorkspace } =
-          await OrganizationWorkspace.create(
-            collection.name,
-            destinationOrganization.id
-          );
-
         if (!migratedWorkspace) {
           skipped.push(workspace.fname);
           count++;
@@ -184,6 +170,50 @@ const migrateOrganization = InngestClient.createFunction(
     }
   }
 );
+
+// Pinecone, which has a default empty namespace needs to be able to be ported.
+// since this namespace will exist for every pinecone instance we need to skip
+// the check + creation of workspace for the empty workspace and allow it to pass-through
+async function createMigrationWorkspace(
+  vectorDBClient,
+  workspace,
+  destinationOrganization
+) {
+  if (
+    vectorDBClient.name === 'pinecone' &&
+    vectorDBClient.isStarterTier() &&
+    workspace.fname !== ''
+  ) {
+    console.log(
+      `Destination Pinecone vector DB does not support namespace - so must skip upsert for ${workspace.fname}`
+    );
+    return null;
+  }
+
+  if (vectorDBClient.name === 'pinecone' && workspace.fname === '') {
+    const { workspace: migratedWorkspace } = await OrganizationWorkspace.create(
+      '(default)',
+      destinationOrganization.id,
+      ''
+    );
+    return migratedWorkspace;
+  }
+
+  // Otherwise migrate over as normal
+  const existsInDestination = await namespaceExists(
+    vectorDBClient,
+    workspace.fname
+  );
+  if (existsInDestination) return null;
+
+  const collection = await createVectorSpace(vectorDBClient, workspace.fname);
+  const { workspace: migratedWorkspace } = await OrganizationWorkspace.create(
+    collection.name,
+    destinationOrganization.id
+  );
+
+  return migratedWorkspace;
+}
 
 async function namespaceExists(vectorDBClient, namespace) {
   if (vectorDBClient.name === 'pinecone') {
