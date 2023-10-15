@@ -42,7 +42,7 @@ export default function OrgSettings({ organization }: { organization: any }) {
       return;
     }
 
-    window.location.replace(paths.home());
+    window.location.replace(paths.dashboard());
   };
 
   return (
