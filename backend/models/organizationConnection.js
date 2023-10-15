@@ -91,7 +91,7 @@ const OrganizationConnection = {
         data: validUpdates,
       });
 
-      if (!success) {
+      if (!updatedConnector) {
         console.error(message);
         return null;
       }
@@ -99,7 +99,7 @@ const OrganizationConnection = {
       return updatedConnector;
     } catch (e) {
       console.error(e.message);
-      return [];
+      return null;
     }
   },
 };

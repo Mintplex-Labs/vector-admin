@@ -20,7 +20,7 @@ export default function ConnectorCard({
   workspaces?: any[];
 }) {
   const [loading, setLoading] = useState(true);
-  const [connector, setConnector] = useState(null);
+  const [connector, setConnector] = useState<object | null>(null);
   const [canSync, setCanSync] = useState(false);
 
   useEffect(() => {
@@ -50,6 +50,26 @@ export default function ConnectorCard({
     }
     fetchConnector();
   }, []);
+
+  async function handleNewConnector(connector: object) {
+    if (!connector) return;
+    setLoading(true);
+
+    if (SUPPORTED_VECTOR_DBS.includes(connector.type)) {
+      const { value: result } = await Organization.stats(
+        organization.slug,
+        'vectorCounts'
+      );
+
+      if (!!result) {
+        if (result.remoteCount > 0 && result.remoteCount !== result.localCount)
+          setCanSync(true);
+      }
+    }
+
+    setConnector(connector);
+    setLoading(false);
+  }
 
   if (loading) {
     return (
@@ -93,7 +113,10 @@ export default function ConnectorCard({
             </button>
           </div>
         </div>
-        <NewConnectorModal organization={organization} onNew={setConnector} />
+        <NewConnectorModal
+          organization={organization}
+          onNew={handleNewConnector}
+        />
       </>
     );
   }
