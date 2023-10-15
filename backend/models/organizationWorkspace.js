@@ -53,7 +53,11 @@ const OrganizationWorkspace = {
     }
   },
 
-  create: async function (workspaceName = "", organizationId = 0) {
+  create: async function (
+    workspaceName = "",
+    organizationId = 0,
+    presetFName = null
+  ) {
     try {
       if (!workspaceName)
         return { workspace: null, message: "No Workspace name provided." };
@@ -69,7 +73,7 @@ const OrganizationWorkspace = {
         data: {
           name: workspaceName,
           slug,
-          fname: workspaceName,
+          fname: presetFName ?? workspaceName,
           uuid: this.makeKey(),
           organization_id: Number(organizationId),
         },

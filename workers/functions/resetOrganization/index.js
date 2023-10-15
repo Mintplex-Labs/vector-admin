@@ -1,3 +1,4 @@
+const { DocumentVectors } = require('../../../backend/models/documentVectors');
 const {
   OrganizationConnection,
 } = require('../../../backend/models/organizationConnection');
@@ -8,6 +9,7 @@ const { Queue } = require('../../../backend/models/queue');
 const {
   selectConnector,
 } = require('../../../backend/utils/vectordatabases/providers');
+const { toChunks } = require('../../../backend/utils/vectordatabases/utils');
 
 const { InngestClient } = require('../../utils/inngest');
 
@@ -24,18 +26,36 @@ const resetOrganization = InngestClient.createFunction(
 
     if (vectorDb.name === 'pinecone') {
       try {
-        const namespaces = await vectorDb.namespaces();
-        const { pineconeIndex } = await vectorDb.connect();
-        for (const collection of namespaces) {
-          await pineconeIndex.delete1({
-            namespace: collection.name,
-            deleteAll: true,
+        // Pinecone starter tier does not support `deleteAll`
+        // So here we must chunk delete ids in batches.
+        // Docs: https://docs.pinecone.io/docs/starter-environment#limitations
+        if (vectorDb.isStarterTier()) {
+          const vectors = await DocumentVectors.where({
+            organization_id: Number(organization.id),
           });
+          const vectorIds = vectors.map((vector) => vector.vectorId);
+          const chunksOfVectorIds = toChunks(vectorIds, 100);
+
+          const { pineconeIndex } = await vectorDb.connect();
+          for (const vectorIds of chunksOfVectorIds) {
+            await pineconeIndex.delete1({
+              ids: vectorIds,
+            });
+          }
+        } else {
+          const namespaces = await vectorDb.namespaces();
+          const { pineconeIndex } = await vectorDb.connect();
+          for (const collection of namespaces) {
+            await pineconeIndex.delete1({
+              namespace: collection.name,
+              deleteAll: true,
+            });
+          }
         }
 
         await removeWorkspaces(organization);
         result = {
-          message: `All namespaces deleted from Pinecone.`,
+          message: `All namespaces and vectors deleted from Pinecone.`,
         };
         await Queue.updateJob(jobId, Queue.status.complete, result);
         return { result };

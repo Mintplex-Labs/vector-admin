@@ -25,6 +25,7 @@ const { cloneWorkspaceJob } = require("../../../utils/jobs/cloneWorkspaceJob");
 const {
   workspaceDocumentSearch,
 } = require("../../../utils/search/workspaceDocuments");
+const { selectConnector } = require("../../../utils/vectordatabases/providers");
 
 process.env.NODE_ENV === "development"
   ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
@@ -65,6 +66,19 @@ function workspaceEndpoints(app) {
             workspace: null,
             error:
               "You need to connect to a vector database before doing this.",
+          });
+          return;
+        }
+
+        const vectorDBClient = selectConnector(connector);
+        if (
+          vectorDBClient.name === "pinecone" &&
+          vectorDBClient.isStarterTier()
+        ) {
+          response.status(200).json({
+            workspace: null,
+            error:
+              "Your Pinecone index does not allow namespace creation so you cannot perform this action.",
           });
           return;
         }
@@ -383,6 +397,19 @@ function workspaceEndpoints(app) {
         const connector = await OrganizationConnection.get({
           organization_id: Number(organization.id),
         });
+
+        const vectorDBClient = selectConnector(connector);
+        if (
+          vectorDBClient.name === "pinecone" &&
+          vectorDBClient.isStarterTier()
+        ) {
+          response.status(200).json({
+            success: false,
+            error:
+              "Your Pinecone index does not allow namespace creation so you cannot perform this action.",
+          });
+          return;
+        }
 
         await cloneWorkspaceJob(
           organization,

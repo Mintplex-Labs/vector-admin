@@ -1,4 +1,5 @@
 const { Queue } = require("../../../models/queue");
+const { selectConnector } = require("../../vectordatabases/providers");
 
 async function cloneDocumentJob(
   organization,
@@ -9,6 +10,15 @@ async function cloneDocumentJob(
 ) {
   const taskName = `${connector.type}/cloneDocument`;
   const jobData = { organization, workspace, document, connector };
+  const vectorDBClient = selectConnector(connector);
+
+  if (vectorDBClient.name === "pinecone" && vectorDBClient.isStarterTier()) {
+    return {
+      job: null,
+      error: `Your Pinecone index does not allow namespace creation so you cannot perform this action.`,
+    };
+  }
+
   const { job, error } = await Queue.create(
     taskName,
     jobData,
