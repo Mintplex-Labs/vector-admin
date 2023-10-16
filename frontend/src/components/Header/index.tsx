@@ -1,19 +1,20 @@
 import { Link } from 'react-router-dom';
-import Logo from '../images/logo/logo-light.png';
+import Logo from '../../images/logo/logo-light.png';
 import { CheckCircle, Copy } from 'react-feather';
 import { useEffect, useState } from 'react';
-import paths from '../utils/paths';
-import { STORE_TOKEN, STORE_USER } from '../utils/constants';
+import paths from '../../utils/paths';
+import { STORE_TOKEN, STORE_USER } from '../../utils/constants';
 import truncate from 'truncate';
+import Notifications from './Notifications';
 
-const Header = (props: {
+export default function Header(props: {
   entity?: any | null;
   property?: string;
   nameProp?: string;
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
   extendedItems?: any;
-}) => {
+}) {
   const [copied, setCopied] = useState(false);
   if (!props.entity) return null;
   const { entity, property, nameProp, extendedItems = <></> } = props;
@@ -105,22 +106,23 @@ const Header = (props: {
               </button>
               {extendedItems}
             </div>
-            <button
-              onClick={() => {
-                if (!window) return;
-                window.localStorage.removeItem(STORE_USER);
-                window.localStorage.removeItem(STORE_TOKEN);
-                window.location.replace(paths.home());
-              }}
-              className="rounded-lg px-4 py-2 text-slate-800 hover:bg-slate-200"
-            >
-              Logout
-            </button>
+            <div className="flex w-fit items-center gap-x-2">
+              <Notifications />
+              <button
+                onClick={() => {
+                  if (!window) return;
+                  window.localStorage.removeItem(STORE_USER);
+                  window.localStorage.removeItem(STORE_TOKEN);
+                  window.location.replace(paths.home());
+                }}
+                className="rounded-lg px-4 py-2 text-slate-800 hover:bg-slate-200"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </header>
   );
-};
-
-export default Header;
+}

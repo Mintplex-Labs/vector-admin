@@ -1,3 +1,4 @@
+import { INotification } from '../components/Header/Notifications';
 import { API_BASE } from '../utils/constants';
 import { baseHeaders, getAPIUrlString } from '../utils/request';
 
@@ -286,6 +287,33 @@ const Organization = {
       .catch((e) => {
         console.error(e);
         return { success: false, error: e.message };
+      });
+  },
+  notifications: async (
+    slug: string
+  ): Promise<{ notifications: INotification[] }> => {
+    return fetch(`${API_BASE}/v1/org/${slug}/notifications`, {
+      method: 'GET',
+      cache: 'no-cache',
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .then((res) => res.notifications || [])
+      .catch((e) => {
+        console.error(e);
+        return { notifications: [] };
+      });
+  },
+  markNotificationsSeen: async (slug: string): Promise<boolean> => {
+    return fetch(`${API_BASE}/v1/org/${slug}/notifications/mark-seen`, {
+      method: 'POST',
+      cache: 'no-cache',
+      headers: baseHeaders(),
+    })
+      .then((res) => res.ok)
+      .catch((e) => {
+        console.error(e);
+        return false;
       });
   },
 };
