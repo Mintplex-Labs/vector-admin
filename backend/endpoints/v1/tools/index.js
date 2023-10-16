@@ -1,4 +1,7 @@
 const { Organization } = require("../../../models/organization");
+const {
+  OrganizationConnection,
+} = require("../../../models/organizationConnection");
 const { Queue } = require("../../../models/queue");
 const {
   userFromSession,
@@ -51,6 +54,20 @@ function toolEndpoints(app) {
           return;
         }
 
+        const originalConnector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
+        if (!originalConnector) {
+          response
+            .status(200)
+            .json({
+              success: false,
+              message:
+                "No vector database is connected to the original organization.",
+            });
+          return;
+        }
+
         const destinationOrg = await Organization.get({
           id: Number(destinationOrgId),
         });
@@ -59,6 +76,20 @@ function toolEndpoints(app) {
             success: false,
             message: "Destination org does not exit.",
           });
+          return;
+        }
+
+        const destinationConnector = await OrganizationConnection.get({
+          organization_id: Number(destinationOrg.id),
+        });
+        if (!destinationConnector) {
+          response
+            .status(200)
+            .json({
+              success: false,
+              message:
+                "No vector database is connected to the destination organization.",
+            });
           return;
         }
 
@@ -111,6 +142,19 @@ function toolEndpoints(app) {
           response
             .status(200)
             .json({ success: false, message: "No org found." });
+          return;
+        }
+
+        const connector = await OrganizationConnection.get({
+          organization_id: Number(organization.id),
+        });
+        if (!connector) {
+          response
+            .status(200)
+            .json({
+              success: false,
+              message: "No vector database is connected to this organization.",
+            });
           return;
         }
 
