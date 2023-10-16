@@ -298,7 +298,6 @@ const Organization = {
       headers: baseHeaders(),
     })
       .then((res) => res.json())
-      .then((res) => res.notifications || [])
       .catch((e) => {
         console.error(e);
         return { notifications: [] };

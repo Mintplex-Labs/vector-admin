@@ -1,31 +1,14 @@
 import { useEffect, useState } from 'react';
-import { Bell, Info } from 'react-feather';
+import { AlertOctagon, AlertTriangle, Bell, Info } from 'react-feather';
 import { useParams } from 'react-router-dom';
 import Organization from '../../../models/organization';
-import moment from 'moment';
+import { databaseTimestampFromNow } from '../../../utils/data';
+import ChromaLogo from '../../../images/vectordbs/chroma.png';
+import PineconeLogo from '../../../images/vectordbs/pinecone.png';
+import qDrantLogo from '../../../images/vectordbs/qdrant.png';
+import WeaviateLogo from '../../../images/vectordbs/weaviate.png';
+
 const POLLING_INTERVAL = 30_000;
-const SAMPLE_NOTIFS = [
-  {
-    id: 1,
-    organization_id: 12,
-    seen: false,
-    textContent: 'Your Notification is here!',
-    symbol: 'info',
-    link: '/chroma/background-jobs',
-    target: '_blank',
-    createdAt: Math.floor(Number(new Date()) / 1_000) - 3600,
-  },
-  {
-    id: 1,
-    organization_id: 12,
-    seen: true,
-    textContent: 'Your Notification is here!',
-    symbol: 'info',
-    link: '/chroma/background-jobs',
-    target: '_blank',
-    createdAt: Math.floor(Number(new Date()) / 1_000) - 3600,
-  },
-] as INotification[];
 
 export type INotification = {
   id: number;
@@ -35,7 +18,8 @@ export type INotification = {
   symbol: string;
   link?: string;
   target?: '_blank' | 'self';
-  createdAt: number;
+  createdAt: string;
+  lastUpdatedAt: string;
 };
 
 export default function Notifications() {
@@ -61,7 +45,9 @@ export default function Notifications() {
       return;
     }
 
-    const { notifications } = await Organization.notifications(slug);
+    const { notifications: _notifications } = await Organization.notifications(
+      slug
+    );
     setNotifications(_notifications);
     setHasUnseen(_notifications.some((notif) => notif.seen === false));
     setLoading(false);
@@ -70,13 +56,12 @@ export default function Notifications() {
   useEffect(() => {
     if (!slug) return;
     fetchNotifications();
-    // TODO: Enable before merge.
-    // setTimeout(() => {
-    //   fetchNotifications();
-    // }, POLLING_INTERVAL);
+    setTimeout(() => {
+      fetchNotifications();
+    }, POLLING_INTERVAL);
   }, [slug]);
 
-  // if (loading || notifications.length === 0) return null;
+  if (loading || notifications.length === 0) return null;
 
   return (
     <div className="relative">
@@ -141,19 +126,33 @@ export default function Notifications() {
 function NotificationImage({ notification }: { notification: INotification }) {
   switch (notification.symbol) {
     case 'info':
-      return <Info className="rounded-full text-blue-500" size={20} />;
+      return <Info className="text-blue-500" size={20} />;
+    case 'warning':
+      return <AlertTriangle className="text-orange-500" size={20} />;
+    case 'error':
+      return <AlertOctagon className="text-red-600" size={20} />;
+    case 'chroma':
+      return <img className="h-10 w-10 rounded-full" src={ChromaLogo} />;
+    case 'pinecone':
+      return <img className="h-8 w-8 rounded-full" src={PineconeLogo} />;
+    case 'qdrant':
+      return <img className="h-8 w-8 rounded-full" src={qDrantLogo} />;
+    case 'weaviate':
+      return <img className="h-8 w-8 rounded-full" src={WeaviateLogo} />;
     default:
-      return <Info className="rounded-full text-blue-500" size={20} />;
+      return <Info className="text-blue-500" size={20} />;
   }
 }
 
 function Notification({ notification }: { notification: INotification }) {
   return (
     <a
+      key={notification.id}
       href={notification?.link || '#'}
       target={notification?.target || 'self'}
-      className={`flex px-4 py-3 hover:bg-gray-100 ${!notification.seen ? 'border-l-4 border-blue-600' : ''
-        }`}
+      className={`flex px-4 py-3 hover:bg-gray-100 ${
+        !notification.seen ? 'border-l-4 !border-l-blue-600' : ''
+      }`}
     >
       <div className="flex flex-shrink-0 items-center justify-center">
         <NotificationImage notification={notification} />
@@ -163,7 +162,7 @@ function Notification({ notification }: { notification: INotification }) {
           {notification.textContent}
         </div>
         <div className="text-xs text-blue-600">
-          {moment.unix(notification.createdAt).fromNow()}
+          {databaseTimestampFromNow(notification.createdAt)}
         </div>
       </div>
     </a>

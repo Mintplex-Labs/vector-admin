@@ -1386,5 +1386,169 @@
     "editview": {
       "readonly": false
     }
+  },
+  "organization_notifications": {
+    "slug": "organization_notifications",
+    "table": {
+      "name": "organization_notifications",
+      "pk": "id",
+      "verbose": "organization_notifications"
+    },
+    "columns": [
+      {
+        "name": "id",
+        "verbose": "id",
+        "control": {
+          "text": true
+        },
+        "type": "integer",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "organization_id",
+        "verbose": "organization_id",
+        "control": {
+          "text": true
+        },
+        "type": "integer",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "seen",
+        "verbose": "seen",
+        "control": {
+          "text": true
+        },
+        "type": "char",
+        "allowNull": false,
+        "defaultValue": "false",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "textContent",
+        "verbose": "textContent",
+        "control": {
+          "text": true
+        },
+        "type": "text",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "symbol",
+        "verbose": "symbol",
+        "control": {
+          "text": true
+        },
+        "type": "text",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "link",
+        "verbose": "link",
+        "control": {
+          "text": true
+        },
+        "type": "text",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "target",
+        "verbose": "target",
+        "control": {
+          "text": true
+        },
+        "type": "text",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "createdAt",
+        "verbose": "createdAt",
+        "control": {
+          "text": true
+        },
+        "type": "timestamp",
+        "allowNull": false,
+        "defaultValue": "CURRENT_TIMESTAMP",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "lastUpdatedAt",
+        "verbose": "lastUpdatedAt",
+        "control": {
+          "text": true
+        },
+        "type": "timestamp",
+        "allowNull": false,
+        "defaultValue": "CURRENT_TIMESTAMP",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      }
+    ],
+    "mainview": {
+      "show": true
+    },
+    "listview": {
+      "order": {},
+      "page": 25
+    },
+    "editview": {
+      "readonly": false
+    }
   }
 }

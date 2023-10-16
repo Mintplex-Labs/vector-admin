@@ -1,3 +1,4 @@
+const { Notification } = require("../../../models/notification");
 const { Organization } = require("../../../models/organization");
 const { OrganizationApiKey } = require("../../../models/organizationApiKey");
 const {
@@ -707,6 +708,89 @@ function organizationEndpoints(app) {
       } catch (e) {
         console.log(e.message, e);
         response.status(500).json({ success: false, error: e.message });
+      }
+    }
+  );
+
+  app.get(
+    "/v1/org/:orgSlug/notifications",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { orgSlug } = request.params;
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
+
+        const organization = await Organization.getWithOwner(user.id, {
+          slug: orgSlug,
+        });
+        if (!organization) {
+          response
+            .status(200)
+            .json({ notifications: [], error: "No orgs by that slug." });
+          return;
+        }
+
+        const unseenNotifications = await Notification.where(
+          {
+            organization_id: Number(organization.id),
+            seen: false,
+          },
+          10,
+          null,
+          { createdAt: "desc" }
+        );
+        const recentNotifications = await Notification.where(
+          {
+            organization_id: Number(organization.id),
+            id: {
+              notIn: unseenNotifications.map((notif) => notif.id),
+            },
+          },
+          10,
+          null,
+          { createdAt: "desc" }
+        );
+
+        const notifications = [...unseenNotifications, ...recentNotifications];
+
+        response.status(200).json({ notifications, error: null });
+      } catch (e) {
+        console.log(e.message, e);
+        response.status(500).json({ notifications: [], error: e.message });
+      }
+    }
+  );
+
+  app.post(
+    "/v1/org/:orgSlug/notifications/mark-seen",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { orgSlug } = request.params;
+        const user = await userFromSession(request);
+        if (!user) {
+          response.sendStatus(403).end();
+          return;
+        }
+
+        const organization = await Organization.getWithOwner(user.id, {
+          slug: orgSlug,
+        });
+        if (!organization) {
+          response
+            .status(200)
+            .json({ notifications: [], error: "No orgs by that slug." });
+          return;
+        }
+        await Notification.markSeenForOrg(organization.id);
+        response.sendStatus(200).end();
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
       }
     }
   );
