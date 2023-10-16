@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { AlertOctagon, AlertTriangle, Bell, Info } from 'react-feather';
 import { useParams } from 'react-router-dom';
 import Organization from '../../../models/organization';
@@ -15,7 +15,14 @@ export type INotification = {
   organization_id: number;
   seen: boolean;
   textContent: string;
-  symbol: string;
+  symbol?:
+    | 'info'
+    | 'warning'
+    | 'error'
+    | 'chroma'
+    | 'pinecone'
+    | 'weaviate'
+    | 'qdrant';
   link?: string;
   target?: '_blank' | 'self';
   createdAt: string;
@@ -61,7 +68,7 @@ export default function Notifications() {
     }, POLLING_INTERVAL);
   }, [slug]);
 
-  if (loading || notifications.length === 0) return null;
+  if (loading) return null;
 
   return (
     <div className="relative">
@@ -93,8 +100,8 @@ export default function Notifications() {
           {notifications.length === 0 ? (
             <div className="flex px-4 py-3 hover:bg-gray-100">
               <div className="w-full pl-3 text-center">
-                <div className="mb-1.5 text-sm text-gray-500">
-                  No notifications found.
+                <div className="mb-1.5 text-xs text-gray-500">
+                  no notifications
                 </div>
                 <div className="text-xs text-blue-600" />
               </div>
@@ -110,14 +117,6 @@ export default function Notifications() {
             </>
           )}
         </div>
-        {/* <a href="#" className="block py-2 text-sm font-medium text-center text-gray-900 rounded-b-lg bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white">
-          <div className="inline-flex items-center ">
-            <svg className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 14">
-              <path d="M10 0C4.612 0 0 5.336 0 7c0 1.742 3.546 7 10 7 6.454 0 10-5.258 10-7 0-1.664-4.612-7-10-7Zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z" />
-            </svg>
-            Mark all as seen
-          </div>
-        </a> */}
       </div>
     </div>
   );
@@ -144,16 +143,42 @@ function NotificationImage({ notification }: { notification: INotification }) {
   }
 }
 
-function Notification({ notification }: { notification: INotification }) {
+function NotificationWrapper({
+  notification,
+  children,
+}: {
+  notification: INotification;
+  children: ReactNode;
+}) {
+  if (!!notification.link) {
+    return (
+      <a
+        key={notification.id}
+        href={notification?.link || '#'}
+        target={notification?.target || 'self'}
+        className={`flex px-4 py-3 hover:bg-gray-100 ${
+          !notification.seen ? 'border-l-4 !border-l-blue-600' : ''
+        }`}
+      >
+        {children}
+      </a>
+    );
+  }
   return (
-    <a
+    <div
       key={notification.id}
-      href={notification?.link || '#'}
-      target={notification?.target || 'self'}
       className={`flex px-4 py-3 hover:bg-gray-100 ${
         !notification.seen ? 'border-l-4 !border-l-blue-600' : ''
       }`}
     >
+      {children}
+    </div>
+  );
+}
+
+function Notification({ notification }: { notification: INotification }) {
+  return (
+    <NotificationWrapper notification={notification}>
       <div className="flex flex-shrink-0 items-center justify-center">
         <NotificationImage notification={notification} />
       </div>
@@ -165,6 +190,6 @@ function Notification({ notification }: { notification: INotification }) {
           {databaseTimestampFromNow(notification.createdAt)}
         </div>
       </div>
-    </a>
+    </NotificationWrapper>
   );
 }
