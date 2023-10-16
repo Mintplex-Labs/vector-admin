@@ -21,19 +21,20 @@ model users {
 }
 
 model organizations {
-  id                       Int                        @id @default(autoincrement())
-  name                     String
-  slug                     String                     @unique
-  uuid                     String                     @unique
-  createdAt                DateTime                   @default(now())
-  lastUpdatedAt            DateTime                   @default(now())
-  organization_users       organization_users[]
-  organization_api_keys    organization_api_keys[]
-  organization_connections organization_connections[]
-  organization_workspaces  organization_workspaces[]
-  workspace_documents      workspace_documents[]
-  document_vectors         document_vectors[]
-  jobs                     jobs[]
+  id                         Int                          @id @default(autoincrement())
+  name                       String
+  slug                       String                       @unique
+  uuid                       String                       @unique
+  createdAt                  DateTime                     @default(now())
+  lastUpdatedAt              DateTime                     @default(now())
+  organization_users         organization_users[]
+  organization_api_keys      organization_api_keys[]
+  organization_connections   organization_connections[]
+  organization_workspaces    organization_workspaces[]
+  workspace_documents        workspace_documents[]
+  document_vectors           document_vectors[]
+  jobs                       jobs[]
+  organization_notifications organization_notifications[]
 }
 
 model organization_users {
@@ -127,4 +128,17 @@ model system_settings {
   value         String
   createdAt     DateTime @default(now())
   lastUpdatedAt DateTime @default(now())
+}
+
+model organization_notifications {
+  id              Int           @id @default(autoincrement())
+  organization_id Int
+  seen            Boolean       @default(false)
+  textContent     String
+  symbol          String?
+  link            String?
+  target          String?
+  createdAt       DateTime      @default(now())
+  lastUpdatedAt   DateTime      @default(now())
+  organization    organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 }
