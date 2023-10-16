@@ -28,7 +28,7 @@ const Notification = {
       return { notification, message: null };
     } catch (e) {
       console.error(e.message);
-      return null;
+      return { notification: null, message: e.message };
     }
   },
 
@@ -51,13 +51,13 @@ const Notification = {
     orderBy = null
   ) {
     try {
-      const workspaces = await prisma.organization_notifications.findMany({
+      const notifications = await prisma.organization_notifications.findMany({
         where: clause,
         ...(limit !== null ? { take: limit } : {}),
         ...(offset !== null ? { skip: offset } : {}),
         ...(orderBy !== null ? { orderBy } : {}),
       });
-      return workspaces;
+      return notifications;
     } catch (e) {
       console.error(e.message);
       return 0;
