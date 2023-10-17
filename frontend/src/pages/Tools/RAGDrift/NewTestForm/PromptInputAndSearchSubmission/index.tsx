@@ -71,6 +71,7 @@ export default function PromptInputAndSearchSubmission({
             </a>
           </p>
         </div>
+        <input name="promptType" value={prompt.type} type="hidden" />
         <textarea
           name="prompt"
           required={true}

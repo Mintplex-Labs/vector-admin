@@ -7,6 +7,7 @@ const {
   OrganizationWorkspace,
 } = require("../../../models/organizationWorkspace");
 const { Queue } = require("../../../models/queue");
+const { RagTest } = require("../../../models/ragTest");
 const { SystemSettings } = require("../../../models/systemSettings");
 const {
   userFromSession,
@@ -20,6 +21,10 @@ const {
   organizationResetJob,
 } = require("../../../utils/jobs/organizationResetJob");
 const { OpenAi } = require("../../../utils/openAi");
+const { createRagTest } = require("../../../utils/toolHelpers/RagTests/create");
+const {
+  workspaceSimilaritySearch,
+} = require("../../../utils/toolHelpers/workspaceSimilaritySearch");
 const { selectConnector } = require("../../../utils/vectordatabases/providers");
 
 process.env.NODE_ENV === "development"
@@ -183,19 +188,12 @@ function toolEndpoints(app) {
     }
   );
 
-  app.post(
-    "/v1/tools/org/:orgSlug/workspace-similarity-search",
+  app.get(
+    "/v1/tools/org/:orgSlug/rag-tests",
     [validSessionForUser],
     async function (request, response) {
       try {
-        let queryVector;
         const { orgSlug } = request.params;
-        const {
-          workspaceId,
-          input,
-          inputType = "text",
-          topK = 3,
-        } = reqBody(request);
         const user = await userFromSession(request);
         if (!user || user.role !== "admin") {
           response.sendStatus(403).end();
@@ -206,82 +204,143 @@ function toolEndpoints(app) {
           slug: orgSlug,
         });
         if (!organization) {
-          response.status(200).json({ results: [], error: "No org found." });
+          response.status(200).json({ ragTests: [], message: "No org found." });
           return;
         }
 
-        const workspace = await OrganizationWorkspace.get({
-          id: workspaceId,
-          organization_id: organization.id,
-        });
-        if (!workspace) {
-          response
-            .status(200)
-            .json({ results: [], error: "No workspace found." });
-          return;
-        }
-
-        const connector = await OrganizationConnection.get({
-          organization_id: Number(organization.id),
-        });
-        if (!connector) {
-          response.status(200).json({
-            results: [],
-            error: "No vector database is connected to this organization.",
-          });
-          return;
-        }
-
-        if (inputType === "text") {
-          if (input?.length === 0) {
-            response.status(200).json({
-              results: [],
-              error: "No input data to embed.",
-            });
-            return;
+        const tests = await RagTest.where(
+          {
+            organization_id: organization.id,
+          },
+          null,
+          { lastRun: "desc" },
+          {
+            id: true,
+            promptText: true,
+            frequencyType: true,
+            topk: true,
+            lastRun: true,
+            comparisons: false,
+            promptVector: false,
+            organization_rag_test_runs: {
+              select: {
+                id: true,
+                status: true,
+              },
+              orderBy: {
+                id: "desc",
+              },
+            },
           }
-
-          const openAiKey = (
-            await SystemSettings.get({ label: "open_ai_api_key" })
-          )?.value;
-          if (!openAiKey) {
-            response.status(200).json({
-              results: [],
-              error: "No embedding API key set - cannot embed text data.",
-            });
-            return;
-          }
-
-          const openai = new OpenAi(openAiKey);
-          queryVector = await openai.embedTextChunk(input);
-        } else {
-          queryVector = input;
-        }
-
-        if (!queryVector || queryVector?.length === 0) {
-          response.status(200).json({
-            results: [],
-            error: "Failed to embed or parse input data.",
-          });
-          return;
-        }
-
-        const vectorDb = selectConnector(connector);
-        const searchResults = await vectorDb.similarityResponse(
-          workspace.fname,
-          queryVector,
-          topK
         );
-        const results = searchResults.vectorIds.map((_, i) => {
-          return {
-            vectorId: searchResults.vectorIds[i],
-            text: searchResults.contextTexts[i],
-            metadata: searchResults.sourceDocuments[i],
-            score: searchResults.scores[i],
-          };
-        });
+        response.status(200).json({ ragTests: tests, message: null });
+        return;
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
 
-        response.status(200).json({ results, error: null });
+  app.get(
+    "/v1/tools/org/:orgSlug/rag-tests/:testId",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { orgSlug, testId } = request.params;
+        const user = await userFromSession(request);
+        if (!user || user.role !== "admin") {
+          response.sendStatus(403).end();
+          return;
+        }
+
+        const organization = await Organization.getWithOwner(user.id, {
+          slug: orgSlug,
+        });
+        if (!organization) {
+          response.status(200).json({ test: null, message: "No org found." });
+          return;
+        }
+
+        const test = await RagTest.get({ id: Number(testId) });
+        const runs = await RagTest.getRuns(test.id, {}, 10, {
+          createdAt: "desc",
+        });
+        response.status(200).json({ test, runs, message: null });
+        return;
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.delete(
+    "/v1/tools/org/:orgSlug/rag-tests/:testId",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { orgSlug, testId } = request.params;
+        const user = await userFromSession(request);
+        if (!user || user.role !== "admin") {
+          response.sendStatus(403).end();
+          return;
+        }
+
+        const organization = await Organization.getWithOwner(user.id, {
+          slug: orgSlug,
+        });
+        if (!organization) {
+          response.sendStatus(400).end();
+          return;
+        }
+
+        const test = await RagTest.get({ id: Number(testId) }, { id: true });
+        if (!test) {
+          response.sendStatus(400).end();
+          return;
+        }
+
+        await RagTest.delete({ id: test.id });
+        response.sendStatus(200).end();
+        return;
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.post(
+    "/v1/tools/org/:orgSlug/rag-tests/create",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const user = await userFromSession(request);
+        if (!user || user.role !== "admin") {
+          response.sendStatus(403).end();
+          return;
+        }
+
+        return await createRagTest(user, request, response);
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.post(
+    "/v1/tools/org/:orgSlug/workspace-similarity-search",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const user = await userFromSession(request);
+        if (!user || user.role !== "admin") {
+          response.sendStatus(403).end();
+          return;
+        }
+        return await workspaceSimilaritySearch(user, request, response);
       } catch (e) {
         console.log(e.message, e);
         response.sendStatus(500).end();
