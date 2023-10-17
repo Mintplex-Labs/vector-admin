@@ -43,6 +43,9 @@ const paths = {
     resetTool: function ({ slug }: { slug: string }) {
       return `/dashboard/${slug}/tools/db-reset`;
     },
+    ragDrift: function ({ slug }: { slug: string }) {
+      return `/dashboard/${slug}/tools/rag-drift`;
+    },
   },
   dashboard: function () {
     return '/dashboard';

@@ -379,28 +379,31 @@ class Weaviate {
     }
   }
 
-  async similarityResponse(namespace, queryVector) {
+  async similarityResponse(namespace, queryVector, topK = 4) {
     const { client } = await this.connect();
     const className = this.camelCase(namespace);
     const result = {
       vectorIds: [],
       contextTexts: [],
       sourceDocuments: [],
+      scores: [],
     };
     const fieldsForCollection = await this.fieldNamesForCollection(namespace);
-    const queryString = `${fieldsForCollection.join(" ")} _additional { id }`;
+    const queryString = `${fieldsForCollection.join(
+      " "
+    )} _additional { id certainty }`;
     const queryResponse = await client.graphql
       .get()
       .withClassName(className)
       .withFields(queryString)
       .withNearVector({ vector: queryVector })
-      .withLimit(4)
+      .withLimit(topK)
       .do();
 
     const responses = queryResponse?.data?.Get?.[className];
     responses.forEach((response) => {
       const {
-        _additional: { id },
+        _additional: { id, certainty },
         ...rest
       } = response;
       result.contextTexts.push(rest?.text || "");
@@ -409,6 +412,7 @@ class Weaviate {
         id,
       });
       result.vectorIds.push(id);
+      result.scores.push(certainty);
     });
 
     return result;

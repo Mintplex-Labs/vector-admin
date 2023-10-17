@@ -18,6 +18,13 @@ class Chroma {
     return { type, settings };
   }
 
+  distanceToScore(distance = null) {
+    if (distance === null || typeof distance !== "number") return 0.0;
+    if (distance >= 1.0) return 1;
+    if (distance <= 0) return 0;
+    return 1 - distance;
+  }
+
   async connect() {
     const { ChromaClient } = require("chromadb");
     const { type, settings } = this.config;
@@ -221,23 +228,25 @@ class Chroma {
     }
   }
 
-  async similarityResponse(namespace, queryVector) {
+  async similarityResponse(namespace, queryVector, topK = 4) {
     const { client } = await this.connect();
     const collection = await client.getCollection({ name: namespace });
     const result = {
       vectorIds: [],
       contextTexts: [],
       sourceDocuments: [],
+      scores: [],
     };
 
     const response = await collection.query({
       queryEmbeddings: queryVector,
-      nResults: 4,
+      nResults: topK,
     });
     response.ids[0].forEach((_, i) => {
       result.vectorIds.push(response.ids[0][i]);
       result.contextTexts.push(response.documents[0][i]);
       result.sourceDocuments.push(response.metadatas[0][i]);
+      result.scores.push(this.distanceToScore(response.distances[0][i]));
     });
 
     return result;

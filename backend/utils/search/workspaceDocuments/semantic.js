@@ -33,11 +33,8 @@ async function semanticSearch(workspace, query) {
 
   // From similarity search we can find all document vector DB items to infer their associated
   // document record.
-  const searchString = searchResults.vectorIds
-    .map((vid) => `'${vid}'`)
-    .join(",");
   const matchingDocumentVectors = await DocumentVectors.where({
-    vectorId: { in: { searchString } },
+    vectorId: { in: searchResults?.vectorIds || [] },
   });
   const docDbIds = new Set();
   matchingDocumentVectors.forEach((record) => docDbIds.add(record.document_id));

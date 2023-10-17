@@ -318,3 +318,11 @@ const Organization = {
 };
 
 export default Organization;
+export interface IOrganization {
+  id: number;
+  name: string;
+  slug: string;
+  uuid: string;
+  createdAt: string;
+  lastUpdatedAt: string;
+}

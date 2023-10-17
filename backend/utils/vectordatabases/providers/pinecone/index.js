@@ -374,18 +374,19 @@ class Pinecone {
     }
   }
 
-  async similarityResponse(namespace, queryVector) {
+  async similarityResponse(namespace, queryVector, topK = 4) {
     const { pineconeIndex } = await this.connect();
     const result = {
       vectorIds: [],
       contextTexts: [],
       sourceDocuments: [],
+      scores: [],
     };
     const response = await pineconeIndex.query({
       queryRequest: {
         namespace,
         vector: queryVector,
-        topK: 4,
+        topK,
         includeMetadata: true,
       },
     });
@@ -394,6 +395,7 @@ class Pinecone {
       result.vectorIds.push(match.id);
       result.contextTexts.push(match.metadata.text);
       result.sourceDocuments.push(match);
+      result.scores.push(match.score);
     });
 
     return result;
