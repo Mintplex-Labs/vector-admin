@@ -50,6 +50,25 @@ const Tools = {
         return { ragTests: [], message: e.message };
       });
   },
+  ragTest: async (
+    slug: string,
+    testId: string | number
+  ): Promise<{
+    test: IRagTest;
+    runs: IRagTestRun[];
+    message: null | string;
+  }> => {
+    return fetch(`${API_BASE}/v1/tools/org/${slug}/rag-tests/${testId}`, {
+      method: 'GET',
+      cache: 'no-cache',
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        return { test: [], runs: [], message: e.message };
+      });
+  },
   newRAGTest: async (
     slug: string,
     settings: object

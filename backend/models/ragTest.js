@@ -32,7 +32,21 @@ const RagTest = {
     }
   },
 
-  get: async function (clause = {}, select = {}) {
+  update: async function (testId = 0, updates = {}) {
+    try {
+      if (!testId) throw new Error("No RAG test run id provided for update");
+      const test = await prisma.organization_rag_tests.update({
+        where: { id: Number(testId) },
+        data: updates,
+      });
+      return { success: !!test, error: null };
+    } catch (e) {
+      console.error(e.message);
+      return { success: false, error: e.message };
+    }
+  },
+
+  get: async function (clause = {}, select = null) {
     try {
       const test = await prisma.organization_rag_tests.findFirst({
         where: clause,
@@ -89,12 +103,54 @@ const RagTest = {
     }
   },
 
+  createRun: async function (testId = 0, status = null, resultJson = {}) {
+    try {
+      const { Telemetry } = require("./telemetry");
+      const test = await this.get({ id: Number(testId) });
+      if (!test) throw new Error("Not a valid RAG Test id.");
+      if (!status) throw new Error("Invalid status for RAG test run.");
+
+      const newTestRun = await prisma.organization_rag_test_runs.create({
+        data: {
+          status,
+          results: resultJson,
+          rag_test_id: test.id,
+          organization_id: test.organization_id,
+          workspace_id: test.workspace_id,
+        },
+      });
+      if (!newTestRun)
+        throw new Error("Failed to create a valid RAG Test Run.");
+
+      await this.update(test.id, { lastRun: new Date() });
+      await Telemetry.sendTelemetry(`rag_test_run`);
+      return { run: newTestRun, error: null };
+    } catch (e) {
+      console.error(e.message);
+      return { run: null, error: e.message };
+    }
+  },
+
+  updateRun: async function (runId = 0, updates = {}) {
+    try {
+      if (!runId) throw new Error("No RAG test run id provided for update");
+      const run = await prisma.organization_rag_test_runs.update({
+        where: { id: Number(runId) },
+        data: updates,
+      });
+      return { success: !!run, error: null };
+    } catch (e) {
+      console.error(e.message);
+      return { success: false, error: e.message };
+    }
+  },
+
   getRuns: async function (
     testId,
     clause = {},
     limit = {},
     orderBy = {},
-    select = {}
+    select = null
   ) {
     try {
       const testRuns = await prisma.organization_rag_test_runs.findMany({

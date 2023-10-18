@@ -1,6 +1,15 @@
 const prisma = require("../utils/prisma");
 
 const Notification = {
+  symbols: {
+    info: "info",
+    warning: "warning",
+    error: "error",
+    chroma: "chroma",
+    pinecone: "pinecone",
+    qdrant: "qdrant",
+    weaviate: "weaviate",
+  },
   create: async function (organizationId = 0, notificationData = {}) {
     try {
       const {
@@ -8,6 +17,7 @@ const Notification = {
         symbol = null,
         link = null,
         target = null,
+        seen = false,
       } = notificationData;
       const notification = await prisma.organization_notifications.create({
         data: {
@@ -16,6 +26,7 @@ const Notification = {
           symbol,
           link,
           target,
+          seen,
         },
       });
 
@@ -29,6 +40,21 @@ const Notification = {
     } catch (e) {
       console.error(e.message);
       return { notification: null, message: e.message };
+    }
+  },
+
+  update: async function (notificationId = 0, updates = {}) {
+    try {
+      if (!notificationId)
+        throw new Error("No notification id provided for update");
+      const notification = await prisma.organization_notifications.update({
+        where: { id: Number(notificationId) },
+        data: updates,
+      });
+      return { success: !!notification, error: null };
+    } catch (e) {
+      console.error(e.message);
+      return { success: false, error: e.message };
     }
   },
 

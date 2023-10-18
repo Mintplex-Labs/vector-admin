@@ -4,7 +4,7 @@ import moment from 'moment';
 import paths from '../../../../utils/paths';
 import showToast from '../../../../utils/toast';
 import TestDetailsModal from '../TestDetails';
-import { useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 
 export default function RecentTestRuns({
   tests,
@@ -50,7 +50,7 @@ export default function RecentTestRuns({
           {tests.map((test) => (
             <TestItem
               key={test.id}
-              test={test}
+              item={test}
               onDelete={() => {
                 setTests(tests.filter((t) => t.id !== test.id));
               }}
@@ -62,88 +62,116 @@ export default function RecentTestRuns({
   );
 }
 
-function TestItem({ test, onDelete }: { test: IRagTest; onDelete: any }) {
-  const handleRemove = async () => {
-    if (
-      !window.confirm(
-        'Are you sure you want to remove this test? It will remove all of its settings and data'
-      )
-    )
-      return false;
-    const success = await Tools.deleteRagTest(test);
-    if (success) {
-      showToast(`RAG Test for ${test.workspace.name} was deleted`, 'success');
-      onDelete?.();
-      return;
-    }
-    showToast(`RAG Test failed to delete`, 'error');
-  };
+const TestItem = memo(
+  ({ item, onDelete }: { item: IRagTest; onDelete: any }) => {
+    const pollingInterval = useRef<NodeJS.Timeout | null>(null);
+    const [test, setTest] = useState<IRagTest>(item);
 
-  return (
-    <>
-      <div
-        id={`test-${test.id}`}
-        key={test.id}
-        className="flex w-full items-center gap-5 px-7.5 py-3 text-gray-600 hover:bg-gray-3 dark:hover:bg-meta-4"
-      >
-        <div className="flex w-full items-center gap-3">
-          <div className="flex w-4/12 ">
-            <div className="flex items-center gap-x-1 overflow-x-hidden">
-              <Box className="h-4 w-4" />
-              <span className="font-medium xl:block">
-                {test.workspace.name}
+    useEffect(() => {
+      async function pollChanges() {
+        if (!!pollingInterval.current) return;
+        pollingInterval.current = setInterval(async () => {
+          const { test: testUpdates, runs } = await Tools.ragTest(
+            test.organization.slug,
+            test.id
+          );
+          if (!testUpdates) return;
+          setTest({
+            ...test,
+            ...testUpdates,
+            organization_rag_test_runs: runs,
+          });
+        }, 30_000);
+      }
+      pollChanges();
+    }, []);
+
+    const handleRemove = async () => {
+      if (
+        !window.confirm(
+          'Are you sure you want to remove this test? It will remove all of its settings and data'
+        )
+      )
+        return false;
+      const success = await Tools.deleteRagTest(test);
+      if (success) {
+        showToast(`RAG Test for ${test.workspace.name} was deleted`, 'success');
+        onDelete?.();
+        !!pollingInterval.current && clearInterval(pollingInterval.current);
+        return;
+      }
+      showToast(`RAG Test failed to delete`, 'error');
+    };
+
+    return (
+      <>
+        <div
+          id={`test-${test.id}`}
+          key={test.id}
+          className="flex w-full items-center gap-5 px-7.5 py-3 text-gray-600 hover:bg-gray-3 dark:hover:bg-meta-4"
+        >
+          <div className="flex w-full items-center gap-3">
+            <div className="flex w-4/12 ">
+              <div className="flex items-center gap-x-1 overflow-x-hidden">
+                <Box className="h-4 w-4" />
+                <span className="font-medium xl:block">
+                  {test.workspace.name}
+                </span>
+              </div>
+            </div>
+            <div className="flex w-2/12 overflow-x-scroll">
+              <span className="font-medium">
+                {test.lastRun ? moment(test.lastRun).fromNow() : '--'}
+                <br />
+                {test.frequencyType !== 'demand' && (
+                  <p className="text-xs font-normal italic text-gray-400">
+                    Runs {test.frequencyType}
+                  </p>
+                )}
               </span>
             </div>
-          </div>
-          <div className="flex w-2/12 overflow-x-scroll">
-            <span className="font-medium">
-              {test.lastRun ? moment(test.lastRun).fromNow() : '--'}
-              <br />
-              {test.frequencyType !== 'demand' && (
-                <p className="text-xs font-normal italic text-gray-400">
-                  Runs {test.frequencyType}
-                </p>
-              )}
-            </span>
-          </div>
-          <div className="flex w-2/12">
-            <TestResultBadge test={test} />
-          </div>
-          <div className="flex w-4/12 items-center justify-between">
-            <button
-              type="button"
-              onClick={() => {
-                document
-                  .getElementById(`test-${test.id}-details-modal`)
-                  ?.showModal();
-              }}
-              className="rounded-lg px-2 py-1 text-blue-400 transition-all duration-300 hover:bg-blue-50 hover:text-blue-600"
-            >
-              Details
-            </button>
-            {test.organization_rag_test_runs.length > 0 && (
-              <a
-                href={paths.tools.ragTestRuns(test.organization.slug, test.id)}
-                className="rounded-lg px-2 py-1 text-gray-400 transition-all duration-300 hover:bg-gray-50 hover:text-gray-600"
+            <div className="flex w-2/12">
+              <TestResultBadge test={test} />
+            </div>
+            <div className="flex w-4/12 items-center justify-between">
+              <button
+                type="button"
+                onClick={() => {
+                  document
+                    .getElementById(`test-${test.id}-details-modal`)
+                    ?.showModal();
+                }}
+                className="rounded-lg px-2 py-1 text-blue-400 transition-all duration-300 hover:bg-blue-50 hover:text-blue-600"
               >
-                View Runs
-              </a>
-            )}
-            <RunNowButton test={test} />
-            <button
-              type="button"
-              onClick={handleRemove}
-              className="rounded-lg px-2 py-1 text-red-400 transition-all duration-300 hover:bg-red-100 hover:text-red-600"
-            >
-              <Trash size={20} />
-            </button>
+                Details
+              </button>
+              {test.organization_rag_test_runs.length > 0 && (
+                <a
+                  href={paths.tools.ragTestRuns(
+                    test.organization.slug,
+                    test.id
+                  )}
+                  className="rounded-lg px-2 py-1 text-gray-400 transition-all duration-300 hover:bg-gray-50 hover:text-gray-600"
+                >
+                  View Runs
+                </a>
+              )}
+              <RunNowButton test={test} />
+              <button
+                type="button"
+                onClick={handleRemove}
+                className="rounded-lg px-2 py-1 text-red-400 transition-all duration-300 hover:bg-red-100 hover:text-red-600"
+              >
+                <Trash size={20} />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <TestDetailsModal test={test} />
-    </>
-  );
-}
+        <TestDetailsModal test={test} />
+      </>
+    );
+  }
+);
 
 function RunNowButton({ test }: { test: IRagTest }) {
   const [loading, setLoading] = useState(false);
@@ -206,10 +234,10 @@ function TestResultBadge({ test }: { test: IRagTest }) {
     case 'complete':
       return (
         <span className="inline-block rounded bg-green-500 bg-opacity-25 px-2.5 py-0.5 text-sm font-medium text-green-500">
-          Passed
+          Passing
         </span>
       );
-    case 'alert':
+    case 'deviation_alert':
       return (
         <span className="inline-block rounded bg-orange-500 bg-opacity-25 px-2.5 py-0.5 text-sm font-medium text-orange-500">
           Drift detected

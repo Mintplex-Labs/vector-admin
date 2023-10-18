@@ -63,7 +63,7 @@ export default function Notifications() {
   useEffect(() => {
     if (!slug) return;
     fetchNotifications();
-    setTimeout(() => {
+    setInterval(() => {
       fetchNotifications();
     }, POLLING_INTERVAL);
   }, [slug]);

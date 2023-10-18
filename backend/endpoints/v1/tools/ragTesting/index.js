@@ -1,5 +1,4 @@
 const { Organization } = require("../../../../models/organization");
-const { Queue } = require("../../../../models/queue");
 const { RagTest } = require("../../../../models/ragTest");
 const {
   userFromSession,
@@ -11,9 +10,6 @@ const {
 const {
   createRagTest,
 } = require("../../../../utils/toolHelpers/RagTests/create");
-const {
-  workspaceSimilaritySearch,
-} = require("../../../../utils/toolHelpers/workspaceSimilaritySearch");
 
 process.env.NODE_ENV === "development"
   ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
