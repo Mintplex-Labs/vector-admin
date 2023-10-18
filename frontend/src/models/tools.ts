@@ -102,11 +102,11 @@ const Tools = {
         return { job: null, error: e.message };
       });
   },
-  deleteRagTest: async (test: IRagTest): Promise<boolean> => {
+  toggleRagTest: async (test: IRagTest): Promise<boolean> => {
     return fetch(
-      `${API_BASE}/v1/tools/org/${test.organization.slug}/rag-tests/${test.id}`,
+      `${API_BASE}/v1/tools/org/${test.organization.slug}/rag-tests/${test.id}/toggle-enabled`,
       {
-        method: 'DELETE',
+        method: 'POST',
         cache: 'no-cache',
         headers: baseHeaders(),
       }
@@ -157,9 +157,25 @@ export interface IRagEmbedding {
 }
 export interface IRagTestRun {
   id: number;
-  status: 'running' | 'failed' | 'complete' | 'alert';
-  result: object;
+  status: 'running' | 'failed' | 'complete' | 'deviation_alert';
+  results: IRagTestRunResult;
   createdAt: string;
+}
+export interface IRagTestRunResult {
+  errorLog: {
+    vectorId: string;
+    message: string;
+  }[];
+  newVectorIds: string[];
+  missingVectorIds: string[];
+  highScoreDeltaVectorIds: string[];
+  scoreMap: {
+    [vectorId: string]: {
+      baseScore: number;
+      newScore: number;
+      deltaScore: number;
+    };
+  };
 }
 export interface IRagTest {
   id: number;
@@ -169,6 +185,7 @@ export interface IRagTest {
   frequencyType: 'demand' | 'hourly' | 'daily' | 'weekly' | 'monthly';
   topK: number;
   lastRun?: string;
+  enabled: boolean;
   workspace: IWorkspace;
   organization: IOrganization;
   organization_rag_test_runs: IRagTestRun[];

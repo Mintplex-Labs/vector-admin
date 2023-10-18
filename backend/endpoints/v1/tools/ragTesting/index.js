@@ -3,6 +3,7 @@ const { RagTest } = require("../../../../models/ragTest");
 const {
   userFromSession,
   validSessionForUser,
+  reqBody,
 } = require("../../../../utils/http");
 const {
   createRagTestJobRun,
@@ -50,6 +51,7 @@ function ragTestingEndpoints(app) {
             frequencyType: true,
             topK: true,
             lastRun: true,
+            enabled: true,
             comparisons: true,
             promptVector: true,
             workspace: true,
@@ -94,7 +96,21 @@ function ragTestingEndpoints(app) {
           return;
         }
 
-        const test = await RagTest.get({ id: Number(testId) });
+        const test = await RagTest.get(
+          { id: Number(testId) },
+          {
+            id: true,
+            promptText: true,
+            frequencyType: true,
+            topK: true,
+            lastRun: true,
+            enabled: true,
+            comparisons: true,
+            promptVector: true,
+            workspace: true,
+            organization: true,
+          }
+        );
         const runs = await RagTest.getRuns(test.id, {}, 10, {
           createdAt: "desc",
         });
@@ -107,8 +123,8 @@ function ragTestingEndpoints(app) {
     }
   );
 
-  app.delete(
-    "/v1/tools/org/:orgSlug/rag-tests/:testId",
+  app.post(
+    "/v1/tools/org/:orgSlug/rag-tests/:testId/toggle-enabled",
     [validSessionForUser],
     async function (request, response) {
       try {
@@ -127,14 +143,19 @@ function ragTestingEndpoints(app) {
           return;
         }
 
-        const test = await RagTest.get({ id: Number(testId) }, { id: true });
+        const test = await RagTest.get(
+          { id: Number(testId) },
+          { id: true, enabled: true }
+        );
         if (!test) {
           response.sendStatus(400).end();
           return;
         }
 
-        await RagTest.delete({ id: test.id });
-        response.sendStatus(200).end();
+        const { success } = await RagTest.update(test.id, {
+          enabled: !test.enabled,
+        });
+        response.sendStatus(success ? 200 : 500).end();
         return;
       } catch (e) {
         console.log(e.message, e);

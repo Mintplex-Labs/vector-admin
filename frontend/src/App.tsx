@@ -29,6 +29,9 @@ const MigrateConnectionView = lazy(
 );
 const ResetConnectionView = lazy(() => import('./pages/Tools/ResetConnection'));
 const RAGTestingView = lazy(() => import('./pages/Tools/RAGTesting'));
+const RAGDriftTestRunsView = lazy(
+  () => import('./pages/Tools/RAGTesting/RecentRuns')
+);
 
 function App() {
   return (
@@ -92,6 +95,10 @@ function App() {
           <Route
             path="/dashboard/:slug/tools/rag-testing"
             element={<PrivateRoute Component={RAGTestingView} />}
+          />
+          <Route
+            path="/dashboard/:slug/tools/rag-testing/:testId"
+            element={<PrivateRoute Component={RAGDriftTestRunsView} />}
           />
 
           <Route path="/auth/sign-up" element={<SignUp />} />

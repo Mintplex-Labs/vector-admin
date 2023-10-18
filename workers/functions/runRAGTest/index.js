@@ -86,12 +86,11 @@ const runRAGTest = InngestClient.createFunction(
 
       highScoreDeltaVectorIds.forEach((vectorId) => {
         const delta = knownVectors[vectorId].deltaScore;
-        const sign = Math.sign(delta) < 0 ? '-' : '+';
         errorLog.push({
           vectorId,
-          message: `Know vector ${vectorId} had a score deviation greater than ${
+          message: `Known vector ${vectorId} had a relevancy score deviation greater than ±${
             DELTA_THRESHOLD * 100
-          }% with ${sign}${(delta * 100).toFixed(2)}%.`,
+          }% with ${(delta * 100).toFixed(2)}%.`,
         });
       });
 
@@ -110,6 +109,9 @@ const runRAGTest = InngestClient.createFunction(
           errorLog.length > 0 ? RagTest.status.alert : RagTest.status.complete,
         results: {
           errorLog,
+          newVectorIds,
+          missingVectorIds,
+          highScoreDeltaVectorIds,
           scoreMap: compactResult,
         },
       });

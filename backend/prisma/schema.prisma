@@ -152,9 +152,10 @@ model organization_rag_tests {
   frequencyType              String
   promptText                 String?
   promptVector               Float[]
-  topK                       Int?                         @default(3)
+  topK                       Int                          @default(3)
   comparisons                Json[]
   lastRun                    DateTime?
+  enabled                    Boolean                      @default(true)
   createdAt                  DateTime                     @default(now())
   lastUpdatedAt              DateTime                     @default(now())
   organization_id            Int

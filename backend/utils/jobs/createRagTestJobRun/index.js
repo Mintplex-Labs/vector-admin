@@ -8,13 +8,12 @@ async function createRagTestJobRun(organization, testId, user) {
     taskName,
   });
 
-  // TODO ENABLE for merge
-  // if (pendingJob) {
-  //   const pendingJobData = JSON.parse(pendingJob.data);
-  //   if (pendingJobData.testId === testId) {
-  //     return { job: null, error: "A job like this is currently running." };
-  //   }
-  // }
+  if (pendingJob) {
+    const pendingJobData = JSON.parse(pendingJob.data);
+    if (pendingJobData.testId === testId) {
+      return { job: null, error: "A job like this is currently running." };
+    }
+  }
 
   const jobData = { organization, testId };
   const { job, error } = await Queue.create(

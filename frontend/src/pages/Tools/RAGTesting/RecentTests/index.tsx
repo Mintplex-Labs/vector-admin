@@ -1,4 +1,4 @@
-import { Box, Loader, Trash } from 'react-feather';
+import { AlertTriangle, Box, Loader, Trash } from 'react-feather';
 import Tools, { IRagTest } from '../../../../models/tools';
 import moment from 'moment';
 import paths from '../../../../utils/paths';
@@ -33,7 +33,7 @@ export default function RecentTestRuns({
         <div className="mt-4 flex flex-col">
           <div className="border-b border-stroke px-4 pb-5 dark:border-strokedark md:px-6 xl:px-7.5">
             <div className="flex items-center gap-3">
-              <div className="w-4/12 ">
+              <div className="w-3/12 ">
                 <span className="font-medium">Target workspace</span>
               </div>
               <div className="w-2/12">
@@ -42,7 +42,7 @@ export default function RecentTestRuns({
               <div className="w-2/12">
                 <span className="font-medium">Run result</span>
               </div>
-              <div className="w-4/12 text-center">
+              <div className="w-5/12 text-center">
                 <span className="font-medium"></span>
               </div>
             </div>
@@ -86,23 +86,6 @@ const TestItem = memo(
       pollChanges();
     }, []);
 
-    const handleRemove = async () => {
-      if (
-        !window.confirm(
-          'Are you sure you want to remove this test? It will remove all of its settings and data'
-        )
-      )
-        return false;
-      const success = await Tools.deleteRagTest(test);
-      if (success) {
-        showToast(`RAG Test for ${test.workspace.name} was deleted`, 'success');
-        onDelete?.();
-        !!pollingInterval.current && clearInterval(pollingInterval.current);
-        return;
-      }
-      showToast(`RAG Test failed to delete`, 'error');
-    };
-
     return (
       <>
         <div
@@ -111,7 +94,7 @@ const TestItem = memo(
           className="flex w-full items-center gap-5 px-7.5 py-3 text-gray-600 hover:bg-gray-3 dark:hover:bg-meta-4"
         >
           <div className="flex w-full items-center gap-3">
-            <div className="flex w-4/12 ">
+            <div className="flex w-3/12 ">
               <div className="flex items-center gap-x-1 overflow-x-hidden">
                 <Box className="h-4 w-4" />
                 <span className="font-medium xl:block">
@@ -133,7 +116,7 @@ const TestItem = memo(
             <div className="flex w-2/12">
               <TestResultBadge test={test} />
             </div>
-            <div className="flex w-4/12 items-center justify-between">
+            <div className="flex w-5/12 items-center justify-between">
               <button
                 type="button"
                 onClick={() => {
@@ -157,13 +140,7 @@ const TestItem = memo(
                 </a>
               )}
               <RunNowButton test={test} />
-              <button
-                type="button"
-                onClick={handleRemove}
-                className="rounded-lg px-2 py-1 text-red-400 transition-all duration-300 hover:bg-red-100 hover:text-red-600"
-              >
-                <Trash size={20} />
-              </button>
+              <EnableDisableButton test={test} onChange={setTest} />
             </div>
           </div>
         </div>
@@ -172,6 +149,60 @@ const TestItem = memo(
     );
   }
 );
+
+function EnableDisableButton({
+  test,
+  onChange,
+}: {
+  test: IRagTest;
+  onChange: (test: IRagTest) => void;
+}) {
+  const [status, setStatus] = useState(test.enabled);
+  const [loading, setLoading] = useState(false);
+  const toggleStatus = async () => {
+    setLoading(true);
+    const success = await Tools.toggleRagTest(test);
+    if (success) {
+      setStatus(!status);
+      showToast(`This test is now ${status ? 'disabled' : 'enabled'}.`, 'info');
+      onChange({ ...test, enabled: !status });
+    } else {
+      showToast(
+        `Could not ${status ? 'disable' : 'enable'} this test.`,
+        'info'
+      );
+    }
+    setLoading(false);
+  };
+
+  if (test.frequencyType === 'demand') return null;
+  return (
+    <>
+      <i className="hidden text-green-400 text-red-400 hover:bg-green-600 hover:bg-red-600 disabled:bg-green-600 disabled:bg-red-600" />
+      <button
+        type="button"
+        disabled={loading}
+        onClick={toggleStatus}
+        className={`flex items-center gap-x-2 rounded-lg px-2 py-1 text-${
+          status ? 'red' : 'green'
+        }-400 transition-all duration-300 hover:bg-${
+          status ? 'red' : 'green'
+        }-600 hover:text-white disabled:bg-${
+          status ? 'red' : 'green'
+        }-600 disabled:text-white`}
+      >
+        {loading ? (
+          <>
+            <Loader className="animate-spin" size={14} />
+            <p>Updating...</p>
+          </>
+        ) : (
+          <>{status ? 'Disable Test' : 'Enable Test'}</>
+        )}
+      </button>
+    </>
+  );
+}
 
 function RunNowButton({ test }: { test: IRagTest }) {
   const [loading, setLoading] = useState(false);
@@ -188,6 +219,7 @@ function RunNowButton({ test }: { test: IRagTest }) {
     setLoading(false);
   };
 
+  if (!test.enabled) return null;
   return (
     <button
       type="button"
@@ -239,9 +271,12 @@ function TestResultBadge({ test }: { test: IRagTest }) {
       );
     case 'deviation_alert':
       return (
-        <span className="inline-block rounded bg-orange-500 bg-opacity-25 px-2.5 py-0.5 text-sm font-medium text-orange-500">
-          Drift detected
-        </span>
+        <a href={paths.tools.ragTestRuns(test.organization.slug, test.id)}>
+          <span className="inline-block flex items-center gap-x-1 rounded bg-orange-500 bg-opacity-25 px-2.5 py-0.5 text-sm font-medium text-orange-500">
+            <AlertTriangle size={12} />
+            Drift detected
+          </span>
+        </a>
       );
     default:
       return (
