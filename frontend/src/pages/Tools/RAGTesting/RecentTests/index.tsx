@@ -1,9 +1,10 @@
-import { Box, Trash } from 'react-feather';
+import { Box, Loader, Trash } from 'react-feather';
 import Tools, { IRagTest } from '../../../../models/tools';
 import moment from 'moment';
 import paths from '../../../../utils/paths';
 import showToast from '../../../../utils/toast';
 import TestDetailsModal from '../TestDetails';
+import { useState } from 'react';
 
 export default function RecentTestRuns({
   tests,
@@ -127,9 +128,7 @@ function TestItem({ test, onDelete }: { test: IRagTest; onDelete: any }) {
                 View Runs
               </a>
             )}
-            <button className="rounded-lg px-2 py-1 text-orange-400 transition-all duration-300 hover:bg-orange-600 hover:text-white">
-              Run now
-            </button>
+            <RunNowButton test={test} />
             <button
               onClick={handleRemove}
               className="rounded-lg px-2 py-1 text-red-400 transition-all duration-300 hover:bg-red-100 hover:text-red-600"
@@ -141,6 +140,39 @@ function TestItem({ test, onDelete }: { test: IRagTest; onDelete: any }) {
       </div>
       <TestDetailsModal test={test} />
     </>
+  );
+}
+
+function RunNowButton({ test }: { test: IRagTest }) {
+  const [loading, setLoading] = useState(false);
+  const handleRunNow = async () => {
+    setLoading(true);
+    const { job, error } = await Tools.runRagTest(test);
+    if (job) {
+      showToast(`RAG Test is now running in background jobs`, 'success');
+      setLoading(false);
+      return;
+    }
+
+    showToast(error || 'Rag test could not be run.', 'error');
+    setLoading(false);
+  };
+
+  return (
+    <button
+      disabled={loading}
+      onClick={handleRunNow}
+      className="flex items-center gap-x-2 rounded-lg px-2 py-1 text-orange-400 transition-all duration-300 hover:bg-orange-600 hover:text-white disabled:bg-orange-600 disabled:text-white"
+    >
+      {loading ? (
+        <>
+          <Loader className="animate-spin" size={14} />
+          <p>Running</p>
+        </>
+      ) : (
+        'Run now'
+      )}
+    </button>
   );
 }
 

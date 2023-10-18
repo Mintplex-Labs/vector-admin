@@ -66,6 +66,23 @@ const Tools = {
         return { test: null, error: e.message };
       });
   },
+  runRagTest: async (
+    test: IRagTest
+  ): Promise<{ job: object | null; error: null | string }> => {
+    return fetch(
+      `${API_BASE}/v1/tools/org/${test.organization.slug}/rag-tests/${test.id}/run`,
+      {
+        method: 'POST',
+        cache: 'no-cache',
+        headers: baseHeaders(),
+      }
+    )
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        return { job: null, error: e.message };
+      });
+  },
   deleteRagTest: async (test: IRagTest): Promise<boolean> => {
     return fetch(
       `${API_BASE}/v1/tools/org/${test.organization.slug}/rag-tests/${test.id}`,
