@@ -23,7 +23,7 @@ export default function ToolsList({ organization }: { organization: any }) {
           title="Retrieval Drift Testing & Alerts"
           description="Catch context drift in production before it reaches your customers as your vector store changes over time."
           available={true}
-          linkTo={paths.tools.ragDrift(organization)}
+          linkTo={paths.tools.ragTests(organization)}
         />
         <ToolItem
           title="Migrate vector database to another provider"

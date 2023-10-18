@@ -54,12 +54,12 @@ async function createRagTest(user, request, response) {
     return;
   }
 
-  const newRagTest = await RagTest.create(
+  const { test: newRagTest } = await RagTest.create(
     {
       frequencyType: frequency,
       promptText: promptType === "text" ? prompt : null,
       promptVector: queryVector,
-      topk: Number(topK),
+      topK: Number(topK),
       comparisons: embeddings,
     },
     organization.id,

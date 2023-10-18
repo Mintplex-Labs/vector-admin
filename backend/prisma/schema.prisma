@@ -152,7 +152,7 @@ model organization_rag_tests {
   frequencyType              String
   promptText                 String?
   promptVector               Float[]
-  topk                       Int?                         @default(3)
+  topK                       Int?                         @default(3)
   comparisons                Json[]
   lastRun                    DateTime?
   createdAt                  DateTime                     @default(now())

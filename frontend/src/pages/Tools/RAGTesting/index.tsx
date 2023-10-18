@@ -7,8 +7,9 @@ import paths from '../../../utils/paths';
 import AppLayout from '../../../layout/AppLayout';
 import { useParams } from 'react-router-dom';
 import Organization, { IOrganization } from '../../../models/organization';
-import Tools from '../../../models/tools';
-import NewTestForm from './NewTestForm';
+import Tools, { IRagTest } from '../../../models/tools';
+import NewTestForm, { NewTestFormModal } from './NewTestForm';
+import RecentTestRuns from './RecentTests';
 
 export default function RAGDriftTesting() {
   const { user } = useUser();
@@ -16,7 +17,7 @@ export default function RAGDriftTesting() {
   const [loading, setLoading] = useState<boolean>(true);
   const [organizations, setOrganizations] = useState<IOrganization[]>([]);
   const [organization, setOrganization] = useState<IOrganization | null>(null);
-  const [ragTests, setRagTests] = useState<object[]>([]);
+  const [ragTests, setRagTests] = useState<IRagTest[]>([]);
 
   useEffect(() => {
     async function userOrgs() {
@@ -87,12 +88,21 @@ export default function RAGDriftTesting() {
           ) : (
             <>
               {ragTests.length > 0 ? (
-                <p>show tests here.</p>
+                <>
+                  <RecentTestRuns tests={ragTests} setTests={setRagTests} />
+                  <NewTestFormModal
+                    organization={organization}
+                    postCreate={(test: IRagTest) => {
+                      setRagTests([test, ...ragTests]);
+                      document.getElementById('new-rag-test-modal')?.close();
+                    }}
+                  />
+                </>
               ) : (
                 <NewTestForm
                   organization={organization}
-                  postCreate={(test: object) =>
-                    setRagTests([...ragTests, test])
+                  postCreate={(test: IRagTest) =>
+                    setRagTests([test, ...ragTests])
                   }
                 />
               )}

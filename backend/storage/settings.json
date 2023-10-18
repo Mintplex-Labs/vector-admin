@@ -1551,202 +1551,6 @@
       "readonly": false
     }
   },
-  "organization_rag_tests": {
-    "slug": "organization_rag_tests",
-    "table": {
-      "name": "organization_rag_tests",
-      "pk": "id",
-      "verbose": "organization_rag_tests"
-    },
-    "columns": [
-      {
-        "name": "id",
-        "verbose": "id",
-        "control": {
-          "text": true
-        },
-        "type": "integer",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "frequencyType",
-        "verbose": "frequencyType",
-        "control": {
-          "text": true
-        },
-        "type": "text",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "promptText",
-        "verbose": "promptText",
-        "control": {
-          "text": true
-        },
-        "type": "text",
-        "allowNull": true,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "promptVector",
-        "verbose": "promptVector",
-        "control": {
-          "text": true
-        },
-        "type": "ARRAY",
-        "allowNull": true,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "topk",
-        "verbose": "topk",
-        "control": {
-          "text": true
-        },
-        "type": "integer",
-        "allowNull": true,
-        "defaultValue": "3",
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "comparisons",
-        "verbose": "comparisons",
-        "control": {
-          "text": true
-        },
-        "type": "ARRAY",
-        "allowNull": true,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "lastRun",
-        "verbose": "lastRun",
-        "control": {
-          "text": true
-        },
-        "type": "timestamp",
-        "allowNull": true,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "createdAt",
-        "verbose": "createdAt",
-        "control": {
-          "text": true
-        },
-        "type": "timestamp",
-        "allowNull": false,
-        "defaultValue": "CURRENT_TIMESTAMP",
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "lastUpdatedAt",
-        "verbose": "lastUpdatedAt",
-        "control": {
-          "text": true
-        },
-        "type": "timestamp",
-        "allowNull": false,
-        "defaultValue": "CURRENT_TIMESTAMP",
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "organization_id",
-        "verbose": "organization_id",
-        "control": {
-          "text": true
-        },
-        "type": "integer",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "workspace_id",
-        "verbose": "workspace_id",
-        "control": {
-          "text": true
-        },
-        "type": "integer",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      }
-    ],
-    "mainview": {
-      "show": true
-    },
-    "listview": {
-      "order": {},
-      "page": 25
-    },
-    "editview": {
-      "readonly": false
-    }
-  },
   "organization_rag_test_runs": {
     "slug": "organization_rag_test_runs",
     "table": {
@@ -1860,6 +1664,202 @@
         "type": "integer",
         "allowNull": false,
         "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      }
+    ],
+    "mainview": {
+      "show": true
+    },
+    "listview": {
+      "order": {},
+      "page": 25
+    },
+    "editview": {
+      "readonly": false
+    }
+  },
+  "organization_rag_tests": {
+    "slug": "organization_rag_tests",
+    "table": {
+      "name": "organization_rag_tests",
+      "pk": "id",
+      "verbose": "organization_rag_tests"
+    },
+    "columns": [
+      {
+        "name": "id",
+        "verbose": "id",
+        "control": {
+          "text": true
+        },
+        "type": "integer",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "frequencyType",
+        "verbose": "frequencyType",
+        "control": {
+          "text": true
+        },
+        "type": "text",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "promptText",
+        "verbose": "promptText",
+        "control": {
+          "text": true
+        },
+        "type": "text",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "promptVector",
+        "verbose": "promptVector",
+        "control": {
+          "text": true
+        },
+        "type": "ARRAY",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "comparisons",
+        "verbose": "comparisons",
+        "control": {
+          "text": true
+        },
+        "type": "ARRAY",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "lastRun",
+        "verbose": "lastRun",
+        "control": {
+          "text": true
+        },
+        "type": "timestamp",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "createdAt",
+        "verbose": "createdAt",
+        "control": {
+          "text": true
+        },
+        "type": "timestamp",
+        "allowNull": false,
+        "defaultValue": "CURRENT_TIMESTAMP",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "lastUpdatedAt",
+        "verbose": "lastUpdatedAt",
+        "control": {
+          "text": true
+        },
+        "type": "timestamp",
+        "allowNull": false,
+        "defaultValue": "CURRENT_TIMESTAMP",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "organization_id",
+        "verbose": "organization_id",
+        "control": {
+          "text": true
+        },
+        "type": "integer",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "workspace_id",
+        "verbose": "workspace_id",
+        "control": {
+          "text": true
+        },
+        "type": "integer",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "topK",
+        "verbose": "topK",
+        "control": {
+          "text": true
+        },
+        "type": "integer",
+        "allowNull": true,
+        "defaultValue": "3",
         "listview": {
           "show": true
         },

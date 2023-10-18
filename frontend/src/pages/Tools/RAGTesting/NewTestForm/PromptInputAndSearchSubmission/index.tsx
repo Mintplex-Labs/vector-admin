@@ -77,7 +77,7 @@ export default function PromptInputAndSearchSubmission({
           required={true}
           onChange={debouncedInput}
           rows={8}
-          className="focus:ring-primary-500 focus:border-primary-500 block w-3/4 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+          className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
           placeholder="ex: 'What is VectorAdmin?' or [0.2,0.81,0.89,...,0.05,0.93,0.91,0.17]"
         ></textarea>
         {!!error && (
@@ -126,7 +126,7 @@ function CurrentSimilaritySearch({ organization, prompt, formData }) {
   if (!formData || !prompt.input || !workspaceId) return null;
   if (loading) {
     return (
-      <div className="flex w-3/4 animate-pulse items-center justify-center rounded-lg bg-gray-100 p-4">
+      <div className="flex w-full animate-pulse items-center justify-center rounded-lg bg-gray-100 p-4">
         <p className="animate-none text-gray-600">
           finding top {topK} similar embeddings for {workspaceName}.
         </p>
@@ -136,14 +136,14 @@ function CurrentSimilaritySearch({ organization, prompt, formData }) {
 
   if (error) {
     return (
-      <div className="flex w-3/4 items-center justify-center rounded-lg bg-red-100 p-4">
+      <div className="flex w-full items-center justify-center rounded-lg bg-red-100 p-4">
         <p className="text-red-700">{error}</p>
       </div>
     );
   }
 
   if (similarEmbeddings.length === 0) {
-    <div className="rounded-lgflex w-3/4 items-center justify-center bg-gray-100 p-4">
+    <div className="rounded-lgflex w-full items-center justify-center bg-gray-100 p-4">
       <p className="text-gray-600">
         Could not find any similar embeddings in {workspaceName}.
       </p>
@@ -151,33 +151,35 @@ function CurrentSimilaritySearch({ organization, prompt, formData }) {
   }
 
   return (
-    <div className="flex w-3/4 flex-col">
+    <div className="flex w-full flex-col">
       <p className="text-sm text-gray-600">
         If these results look okay to you - click "Create RAG test" to save this
         test.
       </p>
-      {similarEmbeddings.map((embedding, i) => {
-        return (
-          <Fragment key={i}>
-            <input
-              name={`embeddings_${i}`}
-              value={JSON.stringify(embedding)}
-              type="hidden"
-            />
-            <div className="flex w-full flex-col rounded-lg border border-gray-300 bg-gray-50 p-2 px-4">
-              <div className="flex w-full items-center justify-between border-b border-gray-200 py-1">
-                <p className="text-sm text-gray-600">{embedding.vectorId}</p>
-                <p className="text-sm text-gray-600">
-                  Similarity {(embedding.score * 100.0).toFixed(2)}%
-                </p>
+      <div className="flex flex-col gap-y-2">
+        {similarEmbeddings.map((embedding, i) => {
+          return (
+            <Fragment key={i}>
+              <input
+                name={`embeddings_${i}`}
+                value={JSON.stringify(embedding)}
+                type="hidden"
+              />
+              <div className="flex w-full flex-col rounded-lg border border-gray-300 bg-gray-50 p-2 px-4">
+                <div className="flex w-full items-center justify-between border-b border-gray-200 py-1">
+                  <p className="text-sm text-gray-600">{embedding.vectorId}</p>
+                  <p className="text-sm text-gray-600">
+                    Similarity {(embedding.score * 100.0).toFixed(2)}%
+                  </p>
+                </div>
+                <pre className="whitespace-break my-2 overflow-scroll text-gray-600">
+                  {JSON.stringify(embedding.metadata || {}, null, 2)}
+                </pre>
               </div>
-              <pre className="whitespace-break my-2 overflow-scroll text-gray-600">
-                {JSON.stringify(embedding.metadata || {}, null, 2)}
-              </pre>
-            </div>
-          </Fragment>
-        );
-      })}
+            </Fragment>
+          );
+        })}
+      </div>
       <button
         type="submit"
         className="my-2 w-full rounded-lg bg-blue-600 py-2 text-white hover:bg-blue-700"

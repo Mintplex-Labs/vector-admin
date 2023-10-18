@@ -1,5 +1,7 @@
 import { API_BASE } from '../utils/constants';
 import { baseHeaders } from '../utils/request';
+import { IOrganization } from './organization';
+import { IWorkspace } from './workspace';
 
 const Tools = {
   migrateOrg: async (
@@ -36,7 +38,7 @@ const Tools = {
   },
   ragTests: async (
     slug: string
-  ): Promise<{ ragTests: []; message: null | string }> => {
+  ): Promise<{ ragTests: IRagTest[]; message: null | string }> => {
     return fetch(`${API_BASE}/v1/tools/org/${slug}/rag-tests`, {
       method: 'GET',
       cache: 'no-cache',
@@ -51,7 +53,7 @@ const Tools = {
   newRAGTest: async (
     slug: string,
     settings: object
-  ): Promise<{ test: object | null; error: null | string }> => {
+  ): Promise<{ test: IRagTest | null; error: null | string }> => {
     return fetch(`${API_BASE}/v1/tools/org/${slug}/rag-tests/create`, {
       method: 'POST',
       cache: 'no-cache',
@@ -62,6 +64,21 @@ const Tools = {
       .catch((e) => {
         console.error(e);
         return { test: null, error: e.message };
+      });
+  },
+  deleteRagTest: async (test: IRagTest): Promise<boolean> => {
+    return fetch(
+      `${API_BASE}/v1/tools/org/${test.organization.slug}/rag-tests/${test.id}`,
+      {
+        method: 'DELETE',
+        cache: 'no-cache',
+        headers: baseHeaders(),
+      }
+    )
+      .then((res) => res.ok)
+      .catch((e) => {
+        console.error(e);
+        return false;
       });
   },
 
@@ -96,3 +113,28 @@ const Tools = {
 };
 
 export default Tools;
+
+export interface IRagEmbedding {
+  vectorId: string;
+  metadata: object;
+  score: number;
+}
+export interface IRagTestRun {
+  id: number;
+  status: 'running' | 'failed' | 'complete' | 'alert';
+  result: object;
+  createdAt: string;
+}
+export interface IRagTest {
+  id: number;
+  promptText?: string;
+  promptVector: number[];
+  comparisons: IRagEmbedding[];
+  frequencyType: 'demand' | 'hourly' | 'daily' | 'weekly' | 'monthly';
+  topK: number;
+  lastRun?: string;
+  workspace: IWorkspace;
+  organization: IOrganization;
+  organization_rag_test_runs: IRagTestRun[];
+  createdAt: string;
+}

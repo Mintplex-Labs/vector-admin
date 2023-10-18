@@ -3,12 +3,8 @@ const { Organization } = require("../../../models/organization");
 const {
   OrganizationConnection,
 } = require("../../../models/organizationConnection");
-const {
-  OrganizationWorkspace,
-} = require("../../../models/organizationWorkspace");
 const { Queue } = require("../../../models/queue");
 const { RagTest } = require("../../../models/ragTest");
-const { SystemSettings } = require("../../../models/systemSettings");
 const {
   userFromSession,
   validSessionForUser,
@@ -20,12 +16,10 @@ const {
 const {
   organizationResetJob,
 } = require("../../../utils/jobs/organizationResetJob");
-const { OpenAi } = require("../../../utils/openAi");
 const { createRagTest } = require("../../../utils/toolHelpers/RagTests/create");
 const {
   workspaceSimilaritySearch,
 } = require("../../../utils/toolHelpers/workspaceSimilaritySearch");
-const { selectConnector } = require("../../../utils/vectordatabases/providers");
 
 process.env.NODE_ENV === "development"
   ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
@@ -218,10 +212,12 @@ function toolEndpoints(app) {
             id: true,
             promptText: true,
             frequencyType: true,
-            topk: true,
+            topK: true,
             lastRun: true,
-            comparisons: false,
-            promptVector: false,
+            comparisons: true,
+            promptVector: true,
+            workspace: true,
+            organization: true,
             organization_rag_test_runs: {
               select: {
                 id: true,

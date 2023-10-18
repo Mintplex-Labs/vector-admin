@@ -6,11 +6,15 @@ import PromptInputAndSearchSubmission from './PromptInputAndSearchSubmission';
 import { IOrganization } from '../../../../models/organization';
 
 export default function NewTestForm({
+  title,
   organization,
   postCreate,
+  classOverrides,
 }: {
+  title?: string;
   organization: IOrganization;
-  postCreate: ([any]: any) => void;
+  postCreate?: ([any]: any) => void;
+  classOverrides?: string;
 }) {
   const [formData, setFormData] = useState<FormData | null>(null);
   const [saving, setSaving] = useState(false);
@@ -38,7 +42,16 @@ export default function NewTestForm({
     }
 
     const { test, error } = await Tools.newRAGTest(organization.slug, data);
-    if (!!test) postCreate?.(test);
+    if (!!test)
+      postCreate?.({
+        ...test,
+        organization,
+        workspace: {
+          id: form.get('workspaceId'),
+          name: form.get('workspaceName'),
+        },
+        organization_rag_test_runs: [],
+      });
     if (error) {
       setError(error);
       setSaving(false);
@@ -47,9 +60,14 @@ export default function NewTestForm({
 
   const debouncedFormChange = debounce(handleFormChange, 500);
   return (
-    <div className="w-full rounded-lg border border-gray-200 bg-gray-50/20 p-2">
+    <div
+      className={
+        classOverrides ??
+        'w-full rounded-lg border border-gray-200 bg-gray-50/20 p-2'
+      }
+    >
       <h2 className="mb-4 text-2xl font-bold text-gray-900">
-        Create your first RAG test
+        {title || 'Create your first RAG test'}
       </h2>
 
       {error && (
@@ -96,7 +114,7 @@ function FrequencySelection() {
       <select
         name="frequency"
         required={true}
-        className="block w-3/4 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+        className={`block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500`}
       >
         <option value="demand" selected>
           Do not run automatically
@@ -133,5 +151,36 @@ function TopKSelection() {
         required={true}
       />
     </div>
+  );
+}
+
+export function NewTestFormModal({
+  organization,
+  postCreate,
+}: {
+  organization: IOrganization;
+  postCreate?: ([any]: any) => void;
+}) {
+  return (
+    <dialog
+      id={`new-rag-test-modal`}
+      className="my-4 h-auto w-1/2 rounded-lg px-4"
+    >
+      <NewTestForm
+        title="Create a new RAG Test"
+        organization={organization}
+        postCreate={postCreate}
+        classOverrides="w-full overflow-scroll mx-auto p-4"
+      />
+      <button
+        type="button"
+        onClick={() => {
+          document.getElementById('new-rag-test-modal')?.close();
+        }}
+        className="my-2 flex w-full justify-center rounded bg-transparent p-3 font-medium text-slate-500 hover:bg-slate-200"
+      >
+        Cancel
+      </button>
+    </dialog>
   );
 }
