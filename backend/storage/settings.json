@@ -1,10 +1,10 @@
 {
-  "_prisma_migrations": {
-    "slug": "_prisma_migrations",
+  "organization_workspaces": {
+    "slug": "organization_workspaces",
     "table": {
-      "name": "_prisma_migrations",
+      "name": "organization_workspaces",
       "pk": "id",
-      "verbose": "_prisma_migrations"
+      "verbose": "organization_workspaces"
     },
     "columns": [
       {
@@ -13,7 +13,7 @@
         "control": {
           "text": true
         },
-        "type": "varchar(36)",
+        "type": "integer",
         "allowNull": false,
         "defaultValue": null,
         "listview": {
@@ -24,94 +24,14 @@
         }
       },
       {
-        "name": "checksum",
-        "verbose": "checksum",
-        "control": {
-          "text": true
-        },
-        "type": "varchar(64)",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "finished_at",
-        "verbose": "finished_at",
-        "control": {
-          "text": true
-        },
-        "type": "timestamp",
-        "allowNull": true,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "migration_name",
-        "verbose": "migration_name",
-        "control": {
-          "text": true
-        },
-        "type": "varchar(255)",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "logs",
-        "verbose": "logs",
+        "name": "name",
+        "verbose": "name",
         "control": {
           "text": true
         },
         "type": "text",
-        "allowNull": true,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "rolled_back_at",
-        "verbose": "rolled_back_at",
-        "control": {
-          "text": true
-        },
-        "type": "timestamp",
-        "allowNull": true,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "started_at",
-        "verbose": "started_at",
-        "control": {
-          "text": true
-        },
-        "type": "timestamp",
         "allowNull": false,
-        "defaultValue": "now()",
+        "defaultValue": null,
         "listview": {
           "show": true
         },
@@ -120,14 +40,94 @@
         }
       },
       {
-        "name": "applied_steps_count",
-        "verbose": "applied_steps_count",
+        "name": "slug",
+        "verbose": "slug",
+        "control": {
+          "text": true
+        },
+        "type": "text",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "uuid",
+        "verbose": "uuid",
+        "control": {
+          "text": true
+        },
+        "type": "text",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "organization_id",
+        "verbose": "organization_id",
         "control": {
           "text": true
         },
         "type": "integer",
         "allowNull": false,
-        "defaultValue": "0",
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "createdAt",
+        "verbose": "createdAt",
+        "control": {
+          "text": true
+        },
+        "type": "timestamp",
+        "allowNull": false,
+        "defaultValue": "CURRENT_TIMESTAMP",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "lastUpdatedAt",
+        "verbose": "lastUpdatedAt",
+        "control": {
+          "text": true
+        },
+        "type": "timestamp",
+        "allowNull": false,
+        "defaultValue": "CURRENT_TIMESTAMP",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "fname",
+        "verbose": "fname",
+        "control": {
+          "text": true
+        },
+        "type": "text",
+        "allowNull": false,
+        "defaultValue": null,
         "listview": {
           "show": true
         },
@@ -1239,154 +1239,6 @@
       "readonly": false
     }
   },
-  "organization_workspaces": {
-    "slug": "organization_workspaces",
-    "table": {
-      "name": "organization_workspaces",
-      "pk": "id",
-      "verbose": "organization_workspaces"
-    },
-    "columns": [
-      {
-        "name": "id",
-        "verbose": "id",
-        "control": {
-          "text": true
-        },
-        "type": "integer",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "name",
-        "verbose": "name",
-        "control": {
-          "text": true
-        },
-        "type": "text",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "slug",
-        "verbose": "slug",
-        "control": {
-          "text": true
-        },
-        "type": "text",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "uuid",
-        "verbose": "uuid",
-        "control": {
-          "text": true
-        },
-        "type": "text",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "organization_id",
-        "verbose": "organization_id",
-        "control": {
-          "text": true
-        },
-        "type": "integer",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "createdAt",
-        "verbose": "createdAt",
-        "control": {
-          "text": true
-        },
-        "type": "timestamp",
-        "allowNull": false,
-        "defaultValue": "CURRENT_TIMESTAMP",
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "lastUpdatedAt",
-        "verbose": "lastUpdatedAt",
-        "control": {
-          "text": true
-        },
-        "type": "timestamp",
-        "allowNull": false,
-        "defaultValue": "CURRENT_TIMESTAMP",
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "fname",
-        "verbose": "fname",
-        "control": {
-          "text": true
-        },
-        "type": "text",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      }
-    ],
-    "mainview": {
-      "show": true
-    },
-    "listview": {
-      "order": {},
-      "page": 25
-    },
-    "editview": {
-      "readonly": false
-    }
-  },
   "organization_notifications": {
     "slug": "organization_notifications",
     "table": {
@@ -1551,6 +1403,202 @@
       "readonly": false
     }
   },
+  "organization_rag_tests": {
+    "slug": "organization_rag_tests",
+    "table": {
+      "name": "organization_rag_tests",
+      "pk": "id",
+      "verbose": "organization_rag_tests"
+    },
+    "columns": [
+      {
+        "name": "id",
+        "verbose": "id",
+        "control": {
+          "text": true
+        },
+        "type": "integer",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "frequencyType",
+        "verbose": "frequencyType",
+        "control": {
+          "text": true
+        },
+        "type": "text",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "promptText",
+        "verbose": "promptText",
+        "control": {
+          "text": true
+        },
+        "type": "text",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "promptVector",
+        "verbose": "promptVector",
+        "control": {
+          "text": true
+        },
+        "type": "ARRAY",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "topK",
+        "verbose": "topK",
+        "control": {
+          "text": true
+        },
+        "type": "integer",
+        "allowNull": true,
+        "defaultValue": "3",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "comparisons",
+        "verbose": "comparisons",
+        "control": {
+          "text": true
+        },
+        "type": "ARRAY",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "lastRun",
+        "verbose": "lastRun",
+        "control": {
+          "text": true
+        },
+        "type": "timestamp",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "createdAt",
+        "verbose": "createdAt",
+        "control": {
+          "text": true
+        },
+        "type": "timestamp",
+        "allowNull": false,
+        "defaultValue": "CURRENT_TIMESTAMP",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "lastUpdatedAt",
+        "verbose": "lastUpdatedAt",
+        "control": {
+          "text": true
+        },
+        "type": "timestamp",
+        "allowNull": false,
+        "defaultValue": "CURRENT_TIMESTAMP",
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "organization_id",
+        "verbose": "organization_id",
+        "control": {
+          "text": true
+        },
+        "type": "integer",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "workspace_id",
+        "verbose": "workspace_id",
+        "control": {
+          "text": true
+        },
+        "type": "integer",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      }
+    ],
+    "mainview": {
+      "show": true
+    },
+    "listview": {
+      "order": {},
+      "page": 25
+    },
+    "editview": {
+      "readonly": false
+    }
+  },
   "organization_rag_test_runs": {
     "slug": "organization_rag_test_runs",
     "table": {
@@ -1683,12 +1731,12 @@
       "readonly": false
     }
   },
-  "organization_rag_tests": {
-    "slug": "organization_rag_tests",
+  "_prisma_migrations": {
+    "slug": "_prisma_migrations",
     "table": {
-      "name": "organization_rag_tests",
+      "name": "_prisma_migrations",
       "pk": "id",
-      "verbose": "organization_rag_tests"
+      "verbose": "_prisma_migrations"
     },
     "columns": [
       {
@@ -1697,7 +1745,7 @@
         "control": {
           "text": true
         },
-        "type": "integer",
+        "type": "varchar(36)",
         "allowNull": false,
         "defaultValue": null,
         "listview": {
@@ -1708,28 +1756,60 @@
         }
       },
       {
-        "name": "frequencyType",
-        "verbose": "frequencyType",
+        "name": "checksum",
+        "verbose": "checksum",
+        "control": {
+          "text": true
+        },
+        "type": "varchar(64)",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "finished_at",
+        "verbose": "finished_at",
+        "control": {
+          "text": true
+        },
+        "type": "timestamp",
+        "allowNull": true,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "migration_name",
+        "verbose": "migration_name",
+        "control": {
+          "text": true
+        },
+        "type": "varchar(255)",
+        "allowNull": false,
+        "defaultValue": null,
+        "listview": {
+          "show": true
+        },
+        "editview": {
+          "show": true
+        }
+      },
+      {
+        "name": "logs",
+        "verbose": "logs",
         "control": {
           "text": true
         },
         "type": "text",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "promptText",
-        "verbose": "promptText",
-        "control": {
-          "text": true
-        },
-        "type": "text",
         "allowNull": true,
         "defaultValue": null,
         "listview": {
@@ -1740,40 +1820,8 @@
         }
       },
       {
-        "name": "promptVector",
-        "verbose": "promptVector",
-        "control": {
-          "text": true
-        },
-        "type": "ARRAY",
-        "allowNull": true,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "comparisons",
-        "verbose": "comparisons",
-        "control": {
-          "text": true
-        },
-        "type": "ARRAY",
-        "allowNull": true,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "lastRun",
-        "verbose": "lastRun",
+        "name": "rolled_back_at",
+        "verbose": "rolled_back_at",
         "control": {
           "text": true
         },
@@ -1788,14 +1836,14 @@
         }
       },
       {
-        "name": "createdAt",
-        "verbose": "createdAt",
+        "name": "started_at",
+        "verbose": "started_at",
         "control": {
           "text": true
         },
         "type": "timestamp",
         "allowNull": false,
-        "defaultValue": "CURRENT_TIMESTAMP",
+        "defaultValue": "now()",
         "listview": {
           "show": true
         },
@@ -1804,62 +1852,14 @@
         }
       },
       {
-        "name": "lastUpdatedAt",
-        "verbose": "lastUpdatedAt",
-        "control": {
-          "text": true
-        },
-        "type": "timestamp",
-        "allowNull": false,
-        "defaultValue": "CURRENT_TIMESTAMP",
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "organization_id",
-        "verbose": "organization_id",
+        "name": "applied_steps_count",
+        "verbose": "applied_steps_count",
         "control": {
           "text": true
         },
         "type": "integer",
         "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "workspace_id",
-        "verbose": "workspace_id",
-        "control": {
-          "text": true
-        },
-        "type": "integer",
-        "allowNull": false,
-        "defaultValue": null,
-        "listview": {
-          "show": true
-        },
-        "editview": {
-          "show": true
-        }
-      },
-      {
-        "name": "topK",
-        "verbose": "topK",
-        "control": {
-          "text": true
-        },
-        "type": "integer",
-        "allowNull": true,
-        "defaultValue": "3",
+        "defaultValue": "0",
         "listview": {
           "show": true
         },
