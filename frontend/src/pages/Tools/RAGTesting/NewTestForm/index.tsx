@@ -164,7 +164,7 @@ export function NewTestFormModal({
   return (
     <dialog
       id={`new-rag-test-modal`}
-      className="my-4 h-auto w-1/2 rounded-lg px-4"
+      className="my-4 h-fit w-1/2 rounded-lg px-4"
     >
       <NewTestForm
         title="Create a new RAG Test"
