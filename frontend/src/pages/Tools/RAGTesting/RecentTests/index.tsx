@@ -111,6 +111,7 @@ function TestItem({ test, onDelete }: { test: IRagTest; onDelete: any }) {
           </div>
           <div className="flex w-4/12 items-center justify-between">
             <button
+              type='button'
               onClick={() => {
                 document
                   .getElementById(`test-${test.id}-details-modal`)
@@ -130,6 +131,7 @@ function TestItem({ test, onDelete }: { test: IRagTest; onDelete: any }) {
             )}
             <RunNowButton test={test} />
             <button
+              type='button'
               onClick={handleRemove}
               className="rounded-lg px-2 py-1 text-red-400 transition-all duration-300 hover:bg-red-100 hover:text-red-600"
             >
@@ -160,6 +162,7 @@ function RunNowButton({ test }: { test: IRagTest }) {
 
   return (
     <button
+      type='button'
       disabled={loading}
       onClick={handleRunNow}
       className="flex items-center gap-x-2 rounded-lg px-2 py-1 text-orange-400 transition-all duration-300 hover:bg-orange-600 hover:text-white disabled:bg-orange-600 disabled:text-white"
