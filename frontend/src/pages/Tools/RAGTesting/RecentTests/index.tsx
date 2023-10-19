@@ -18,7 +18,7 @@ export default function RecentTestRuns({
       <div className="w-full">
         <div className="flex items-center gap-x-2">
           <p className="text-xl font-semibold text-gray-800">
-            Recently Run RAG Tests
+            Recently Run Context Drift tests
           </p>
           <button
             onClick={() => {
@@ -150,7 +150,7 @@ const TestItem = memo(
   }
 );
 
-function EnableDisableButton({
+export function EnableDisableButton({
   test,
   onChange,
 }: {
@@ -210,12 +210,15 @@ function RunNowButton({ test }: { test: IRagTest }) {
     setLoading(true);
     const { job, error } = await Tools.runRagTest(test);
     if (job) {
-      showToast(`RAG Test is now running in background jobs`, 'success');
+      showToast(
+        `Context Drift text is now running in background jobs`,
+        'success'
+      );
       setLoading(false);
       return;
     }
 
-    showToast(error || 'Rag test could not be run.', 'error');
+    showToast(error || 'Context Drift text could not be run.', 'error');
     setLoading(false);
   };
 

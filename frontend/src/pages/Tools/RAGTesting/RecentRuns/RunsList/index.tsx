@@ -12,7 +12,6 @@ import showToast from '../../../../../utils/toast';
 import { useState } from 'react';
 import { IRagTestRun } from '../../../../../models/tools';
 import { StringDiff, DiffMethod } from 'react-string-diff';
-// import DOMPurify from 'dompurify';
 
 export default function RunsList({
   test,
@@ -194,12 +193,15 @@ function ReRunTest({ test }: { test: IRagTest }) {
     setLoading(true);
     const { job, error } = await Tools.runRagTest(test);
     if (job) {
-      showToast(`RAG Test is now running in background jobs`, 'success');
+      showToast(
+        `Context Drift test is now running in background jobs`,
+        'success'
+      );
       setLoading(false);
       return;
     }
 
-    showToast(error || 'Rag test could not be run.', 'error');
+    showToast(error || 'Context Drift test could not be run.', 'error');
     setLoading(false);
   };
 
@@ -327,6 +329,8 @@ function ScoreComp({ run }: { run: IRagTestRun }) {
         <ul className="ml-4 list-disc">
           {Object.entries(vectorMap).map(([key, values], i) => {
             const { newScore, deltaScore } = values;
+            // This will show red and negative for really small deltas (-1e4);
+            // May want to change this in future.
             const color = Math.sign(deltaScore) < 0 ? 'red' : 'green';
 
             return (

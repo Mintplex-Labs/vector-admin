@@ -67,7 +67,7 @@ export default function NewTestForm({
       }
     >
       <h2 className="mb-4 text-2xl font-bold text-gray-900">
-        {title || 'Create your first RAG test'}
+        {title || 'Create your first Context Drift test'}
       </h2>
 
       {error && (
@@ -167,7 +167,7 @@ export function NewTestFormModal({
       className="my-4 h-fit w-1/2 rounded-lg px-4"
     >
       <NewTestForm
-        title="Create a new RAG Test"
+        title="Create a new test"
         organization={organization}
         postCreate={postCreate}
         classOverrides="w-full overflow-scroll mx-auto p-4"

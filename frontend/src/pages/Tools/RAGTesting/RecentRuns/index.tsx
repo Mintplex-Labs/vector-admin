@@ -9,6 +9,7 @@ import { useParams } from 'react-router-dom';
 import Organization, { IOrganization } from '../../../../models/organization';
 import Tools, { IRagTest, IRagTestRun } from '../../../../models/tools';
 import RunsList from './RunsList';
+import { EnableDisableButton } from '../RecentTests';
 
 export default function RAGDriftTestRuns() {
   const { user } = useUser();
@@ -64,13 +65,22 @@ export default function RAGDriftTestRuns() {
       workspaces={[]}
     >
       <div className="flex-1 rounded-sm bg-white px-6 pb-6">
+        <a
+          href={paths.tools.ragTests(organization)}
+          className="my-2 text-sm text-blue-500 underline"
+        >
+          &larr; back to tests
+        </a>
         <div className="flex items-start justify-between">
-          <div className="mb-6">
-            <h4 className="text-3xl font-semibold text-black">
-              RAG Test #{test.id} recent runs
-            </h4>
+          <div className="mb-6 w-3/4">
+            <div className="flex w-full items-center justify-between">
+              <h4 className="text-3xl font-semibold text-black">
+                Context Drift test #{test.id} recent runs
+              </h4>
+              <EnableDisableButton test={test} onChange={setTest} />
+            </div>
             <p className="mt-2 w-full text-gray-600">
-              These are all of the recent runs of this specific RAG Test.
+              These are all of the recent runs of this specific test.
             </p>
           </div>
         </div>

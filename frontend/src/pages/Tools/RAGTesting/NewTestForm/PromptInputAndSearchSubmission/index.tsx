@@ -153,7 +153,7 @@ function CurrentSimilaritySearch({ organization, prompt, formData }) {
   return (
     <div className="flex w-full flex-col">
       <p className="text-sm text-gray-600">
-        If these results look okay to you - click "Create RAG test" to save this
+        If these results look okay to you - click "Create test" to save this
         test.
       </p>
       <div className="flex flex-col gap-y-2">
@@ -184,7 +184,7 @@ function CurrentSimilaritySearch({ organization, prompt, formData }) {
         type="submit"
         className="my-2 w-full rounded-lg bg-blue-600 py-2 text-white hover:bg-blue-700"
       >
-        Create RAG test
+        Create test
       </button>
     </div>
   );

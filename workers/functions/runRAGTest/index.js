@@ -29,7 +29,7 @@ const runRAGTest = InngestClient.createFunction(
       const connector = await OrganizationConnection.get({
         organization_id: Number(organization.id),
       });
-      if (!test) throw new Error(`No RAG test found for id ${testId}`);
+      if (!test) throw new Error(`No test found for id ${testId}`);
       if (!connector) throw new Error(`No vector database connection found.`);
 
       const errorLog = [];
@@ -133,7 +133,7 @@ const runRAGTest = InngestClient.createFunction(
       // If test failed - push to notifications
       if (errorLog.length > 0) {
         await Notification.create(test.organization_id, {
-          textContent: 'Your RAG test did not pass.',
+          textContent: 'Your Context Drift test did not pass.',
           symbol: Notification.symbols.error,
           link: `dashboard/${organization.slug}/tools/rag-testing/${test.id}`,
           target: '_blank',
@@ -141,7 +141,7 @@ const runRAGTest = InngestClient.createFunction(
       }
 
       result = {
-        message: `RAG test #${test.id} completed without exiting. Test run was logged.`,
+        message: `Context Drift test #${test.id} completed without exiting. Test run was logged.`,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
       return { result };
