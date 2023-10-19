@@ -27,14 +27,14 @@ const RagTest = {
 
       if (!newTest) {
         console.error("FAILED TO CREATE RAG TEST.");
-        return { job: null, error: "Could not create RAG Test" };
+        return { test: null, error: "Could not create RAG Test" };
       }
 
       await Telemetry.sendTelemetry(`rag_test_created`);
       return { test: newTest, error: null };
     } catch (e) {
       console.error(e.message);
-      return null;
+      return { test: null, error: e.message };
     }
   },
 
