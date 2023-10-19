@@ -11,6 +11,8 @@ import paths from '../../../../../utils/paths';
 import showToast from '../../../../../utils/toast';
 import { useState } from 'react';
 import { IRagTestRun } from '../../../../../models/tools';
+import { StringDiff, DiffMethod } from 'react-string-diff';
+// import DOMPurify from 'dompurify';
 
 export default function RunsList({
   test,
@@ -175,6 +177,7 @@ function TestRunItem({
         <div className="my-2 flex w-full flex-col gap-y-4 rounded-lg border border-gray-100 bg-gray-50 p-4">
           <ChangeLog run={run} />
           <ScoreComp run={run} />
+          <TextComp run={run} comparisons={test.comparisons} />
           <NewVectorsFound run={run} />
           <MissingVector run={run} />
         </div>
@@ -315,14 +318,14 @@ function ChangeLog({ run }: { run: IRagTestRun }) {
 }
 
 function ScoreComp({ run }: { run: IRagTestRun }) {
-  const { scoreMap = {} } = run.results;
+  const { vectorMap = {} } = run.results;
 
   return (
     <div className="flex w-full flex-col gap-y-2">
       <p className="text-lg font-semibold text-gray-700">Relevancy Scores:</p>
-      {Object.keys(scoreMap).length > 0 ? (
+      {Object.keys(vectorMap).length > 0 ? (
         <ul className="ml-4 list-disc">
-          {Object.entries(scoreMap).map(([key, values], i) => {
+          {Object.entries(vectorMap).map(([key, values], i) => {
             const { newScore, deltaScore } = values;
             const color = Math.sign(deltaScore) < 0 ? 'red' : 'green';
 
@@ -345,6 +348,97 @@ function ScoreComp({ run }: { run: IRagTestRun }) {
         </ul>
       ) : (
         <p className="text-sm text-gray-600">no reported scores on this run.</p>
+      )}
+    </div>
+  );
+}
+
+function TextComp({
+  run,
+  comparisons,
+}: {
+  run: IRagTestRun;
+  comparisons: IRagTest['comparisons'];
+}) {
+  const { vectorMap = {} } = run.results;
+  const hasDiffs = Object.entries(vectorMap).some(([key, values]) => {
+    const { textContent = null } = values;
+    const comparison = comparisons.find((comp) => comp.vectorId === key);
+    if (!comparison) return false;
+    return (
+      (!!textContent && !!comparison) ||
+      !!comparison.hasOwnProperty('text') ||
+      comparison.text !== textContent
+    );
+  });
+
+  return (
+    <div className="flex w-full flex-col gap-y-2">
+      <p className="text-lg font-semibold text-gray-700">Text chunk diffs</p>
+      {hasDiffs ? (
+        <ul className="ml-4 list-disc">
+          {Object.entries(vectorMap).map(([key, values], i) => {
+            const { textContent = null } = values;
+            const comparison = comparisons.find(
+              (comp) => comp.vectorId === key
+            );
+            if (
+              !textContent ||
+              !comparison ||
+              !comparison.hasOwnProperty('text') ||
+              comparison.text === textContent
+            )
+              return null;
+
+            return (
+              <li
+                key={`${run.id}_text_comp_${i}`}
+                className="flex items-center gap-x-1 text-sm"
+              >
+                <details className="flex flex-col">
+                  <summary className="w-full cursor-pointer text-sm text-gray-700">
+                    Text chunk diff for <b>{key}</b>
+                  </summary>
+                  <div className="mt-2 rounded-lg border border-gray-500 bg-gray-100 p-2">
+                    <StringDiff
+                      oldValue={comparison.text ?? ''}
+                      newValue={textContent}
+                      method={DiffMethod.WordsWithSpace}
+                      className="text-gray-700"
+                      styles={{
+                        added: {
+                          fontFamily: 'monospace',
+                          backgroundColor: '#def7ec',
+                          margin: '0px 2px 0px 2px',
+                          padding: '0px 4px',
+                          borderRadius: '2px',
+                          color: '#04553f',
+                        },
+                        removed: {
+                          fontFamily: 'monospace',
+                          textDecoration: 'line-through',
+                          backgroundColor: '#fce8e8',
+                          margin: '0px 2px 0px 2px',
+                          padding: '0px 4px',
+                          borderRadius: '2px',
+                          color: '#9b1d1c',
+                        },
+                        default: {
+                          fontFamily: 'monospace',
+                          whiteSpace: 'break-spaces',
+                        },
+                      }}
+                    />
+                  </div>
+                </details>
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <p className="text-sm text-gray-600">
+          no reported text chunk diffs on this run.
+        </p>
       )}
     </div>
   );

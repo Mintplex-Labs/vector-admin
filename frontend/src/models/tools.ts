@@ -152,6 +152,7 @@ export default Tools;
 
 export interface IRagEmbedding {
   vectorId: string;
+  text?: string;
   metadata: object;
   score: number;
 }
@@ -169,11 +170,12 @@ export interface IRagTestRunResult {
   newVectorIds: string[];
   missingVectorIds: string[];
   highScoreDeltaVectorIds: string[];
-  scoreMap: {
+  vectorMap: {
     [vectorId: string]: {
       baseScore: number;
       newScore: number;
       deltaScore: number;
+      textContent?: string | null;
     };
   };
 }

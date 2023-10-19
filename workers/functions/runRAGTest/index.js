@@ -39,11 +39,12 @@ const runRAGTest = InngestClient.createFunction(
       });
 
       const vectorDB = selectConnector(connector);
-      const { vectorIds, scores } = await vectorDB.similarityResponse(
-        workspace.fname,
-        test.promptVector,
-        test.topK
-      );
+      const { vectorIds, contextTexts, scores } =
+        await vectorDB.similarityResponse(
+          workspace.fname,
+          test.promptVector,
+          test.topK
+        );
 
       // Check if searched vectorIds all appear in known ids
       const newVectorIds = vectorIds.filter(
@@ -59,8 +60,11 @@ const runRAGTest = InngestClient.createFunction(
         knownVectors.hasOwnProperty(id)
       );
       matchedVectorIds.forEach((vectorId, i) => {
+        // idx wont be -1 because matchedVectorIds already
+        // checked this vectorId was returned.
+        const matchingIdx = vectorIds.indexOf(vectorId);
         const currentScore = knownVectors[vectorId].score;
-        const score = scores[i];
+        const score = scores[matchingIdx];
         const signMultiple = score < currentScore ? -1 : 1;
         const delta = (currentScore - score) * signMultiple;
 
@@ -68,6 +72,10 @@ const runRAGTest = InngestClient.createFunction(
           highScoreDeltaVectorIds.push(vectorId);
         knownVectors[vectorId].newScore = score;
         knownVectors[vectorId].deltaScore = delta;
+
+        // Append the text content of the search to the data so we
+        // can compare with testing text later.
+        knownVectors[vectorId].textContent = contextTexts[matchingIdx];
       });
 
       newVectorIds.forEach((vectorId) => {
@@ -96,11 +104,17 @@ const runRAGTest = InngestClient.createFunction(
 
       const compactResult = {};
       Object.keys(knownVectors).map((vector) => {
-        const { score: baseScore, newScore, deltaScore } = knownVectors[vector];
+        const {
+          score: baseScore,
+          newScore,
+          deltaScore,
+          textContent,
+        } = knownVectors[vector];
         compactResult[vector] = {
           baseScore,
           newScore,
           deltaScore,
+          textContent,
         };
       });
 
@@ -112,7 +126,7 @@ const runRAGTest = InngestClient.createFunction(
           newVectorIds,
           missingVectorIds,
           highScoreDeltaVectorIds,
-          scoreMap: compactResult,
+          vectorMap: compactResult,
         },
       });
 
