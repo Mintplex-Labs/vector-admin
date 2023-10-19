@@ -14,6 +14,10 @@ const {
 const {
   organizationResetJob,
 } = require("../../../utils/jobs/organizationResetJob");
+const {
+  workspaceSimilaritySearch,
+} = require("../../../utils/toolHelpers/workspaceSimilaritySearch");
+const { ragTestingEndpoints } = require("./ragTesting");
 
 process.env.NODE_ENV === "development"
   ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
@@ -21,6 +25,7 @@ process.env.NODE_ENV === "development"
 
 function toolEndpoints(app) {
   if (!app) return;
+  ragTestingEndpoints(app);
 
   app.post(
     "/v1/tools/org/:orgSlug/migrate",
@@ -58,13 +63,11 @@ function toolEndpoints(app) {
           organization_id: Number(organization.id),
         });
         if (!originalConnector) {
-          response
-            .status(200)
-            .json({
-              success: false,
-              message:
-                "No vector database is connected to the original organization.",
-            });
+          response.status(200).json({
+            success: false,
+            message:
+              "No vector database is connected to the original organization.",
+          });
           return;
         }
 
@@ -83,13 +86,11 @@ function toolEndpoints(app) {
           organization_id: Number(destinationOrg.id),
         });
         if (!destinationConnector) {
-          response
-            .status(200)
-            .json({
-              success: false,
-              message:
-                "No vector database is connected to the destination organization.",
-            });
+          response.status(200).json({
+            success: false,
+            message:
+              "No vector database is connected to the destination organization.",
+          });
           return;
         }
 
@@ -149,12 +150,10 @@ function toolEndpoints(app) {
           organization_id: Number(organization.id),
         });
         if (!connector) {
-          response
-            .status(200)
-            .json({
-              success: false,
-              message: "No vector database is connected to this organization.",
-            });
+          response.status(200).json({
+            success: false,
+            message: "No vector database is connected to this organization.",
+          });
           return;
         }
 
@@ -175,6 +174,24 @@ function toolEndpoints(app) {
         response
           .status(200)
           .json({ success: true, message: "Migration job queued." });
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.post(
+    "/v1/tools/org/:orgSlug/workspace-similarity-search",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const user = await userFromSession(request);
+        if (!user || user.role !== "admin") {
+          response.sendStatus(403).end();
+          return;
+        }
+        return await workspaceSimilaritySearch(user, request, response);
       } catch (e) {
         console.log(e.message, e);
         response.sendStatus(500).end();

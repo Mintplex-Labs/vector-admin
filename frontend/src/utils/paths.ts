@@ -43,6 +43,15 @@ const paths = {
     resetTool: function ({ slug }: { slug: string }) {
       return `/dashboard/${slug}/tools/db-reset`;
     },
+    ragTests: function ({ slug }: { slug: string }) {
+      return `/dashboard/${slug}/tools/rag-testing`;
+    },
+    ragTestEdit: function (slug: string, testId: number) {
+      return `/dashboard/${slug}/tools/rag-testing/${testId}/edit`;
+    },
+    ragTestRuns: function (slug: string, testId: number) {
+      return `/dashboard/${slug}/tools/rag-testing/${testId}`;
+    },
   },
   dashboard: function () {
     return '/dashboard';

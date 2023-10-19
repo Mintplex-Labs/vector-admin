@@ -35,6 +35,8 @@ model organizations {
   document_vectors           document_vectors[]
   jobs                       jobs[]
   organization_notifications organization_notifications[]
+  organization_rag_tests     organization_rag_tests[]
+  organization_rag_test_runs organization_rag_test_runs[]
 }
 
 model organization_users {
@@ -67,17 +69,19 @@ model organization_connections {
 }
 
 model organization_workspaces {
-  id                  Int                   @id @default(autoincrement())
-  name                String
-  slug                String                @unique
-  uuid                String                @unique
-  fname               String // foreign name of the namespace/collection in vector db
-  organization_id     Int
-  createdAt           DateTime              @default(now())
-  lastUpdatedAt       DateTime              @default(now())
-  organization        organizations         @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  workspace_documents workspace_documents[]
-  document_vectors    document_vectors[]
+  id                         Int                          @id @default(autoincrement())
+  name                       String
+  slug                       String                       @unique
+  uuid                       String                       @unique
+  fname                      String // foreign name of the namespace/collection in vector db
+  organization_id            Int
+  createdAt                  DateTime                     @default(now())
+  lastUpdatedAt              DateTime                     @default(now())
+  organization               organizations                @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  workspace_documents        workspace_documents[]
+  document_vectors           document_vectors[]
+  organization_rag_tests     organization_rag_tests[]
+  organization_rag_test_runs organization_rag_test_runs[]
 }
 
 model workspace_documents {
@@ -141,4 +145,35 @@ model organization_notifications {
   createdAt       DateTime      @default(now())
   lastUpdatedAt   DateTime      @default(now())
   organization    organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+}
+
+model organization_rag_tests {
+  id                         Int                          @id @default(autoincrement())
+  frequencyType              String
+  promptText                 String?
+  promptVector               Float[]
+  topK                       Int                          @default(3)
+  comparisons                Json[]
+  lastRun                    DateTime?
+  enabled                    Boolean                      @default(true)
+  createdAt                  DateTime                     @default(now())
+  lastUpdatedAt              DateTime                     @default(now())
+  organization_id            Int
+  workspace_id               Int
+  organization               organizations                @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  workspace                  organization_workspaces      @relation(fields: [workspace_id], references: [id], onDelete: Cascade)
+  organization_rag_test_runs organization_rag_test_runs[]
+}
+
+model organization_rag_test_runs {
+  id                    Int                     @id @default(autoincrement())
+  status                String
+  results               Json
+  createdAt             DateTime                @default(now())
+  rag_test_id           Int
+  organization_id       Int
+  workspace_id          Int
+  organization          organizations           @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  workspace             organization_workspaces @relation(fields: [workspace_id], references: [id], onDelete: Cascade)
+  organization_rag_test organization_rag_tests  @relation(fields: [rag_test_id], references: [id], onDelete: Cascade)
 }

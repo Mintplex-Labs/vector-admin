@@ -67,7 +67,7 @@ const Organization = {
         where: { id: Number(orgId) },
         data: validUpdates,
       });
-      return { success: !!organization, error };
+      return { success: !!organization, error: null };
     } catch (e) {
       console.error(e.message);
       return { success: false, error: e.message };

@@ -200,3 +200,14 @@ const Workspace = {
 };
 
 export default Workspace;
+export interface IWorkspace {
+  id: number;
+  name: string;
+  slug: string;
+  fname: string;
+  uuid: string;
+  organization_id: number;
+  createdAt: string;
+  lastUpdatedAt: number;
+  documentCount: number;
+}

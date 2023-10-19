@@ -756,7 +756,6 @@ function organizationEndpoints(app) {
         );
 
         const notifications = [...unseenNotifications, ...recentNotifications];
-
         response.status(200).json({ notifications, error: null });
       } catch (e) {
         console.log(e.message, e);

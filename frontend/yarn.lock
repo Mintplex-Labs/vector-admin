@@ -1225,6 +1225,11 @@ didyoumean@^1.2.2:
   resolved "https://registry.yarnpkg.com/didyoumean/-/didyoumean-1.2.2.tgz#989346ffe9e839b4555ecf5666edea0d3e8ad037"
   integrity sha512-gxtyfqMg7GKyhQmb056K7M3xszy/myH8w+B4RT+QXBQsvAOdc3XymqDDPHx1BgPgsdAA5SIifona89YtRATDzw==
 
+diff@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/diff/-/diff-4.0.2.tgz#60f3aecb89d5fae520c11aa19efc2bb982aade7d"
+  integrity sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==
+
 dlv@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/dlv/-/dlv-1.1.3.tgz#5c198a8a11453596e751494d49874bc7732f2e79"
@@ -2191,6 +2196,13 @@ react-router@6.16.0:
   integrity sha512-VT4Mmc4jj5YyjpOi5jOf0I+TYzGpvzERy4ckNSvSh2RArv8LLoCxlsZ2D+tc7zgjxcY34oTz2hZaeX5RVprKqA==
   dependencies:
     "@remix-run/router" "1.9.0"
+
+react-string-diff@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/react-string-diff/-/react-string-diff-0.2.0.tgz#4afd8705ab4cbc92c576ce7c8f0d0c78a4a54242"
+  integrity sha512-wB8Dr2T8CD/nuRMSEs9PHQ08e+o4a65SmkMZYrZRIEFzrbFpyrb9GuDmBwE7dxqcw06CqrLWXEuibUDJQX60LQ==
+  dependencies:
+    diff "^4.0.2"
 
 react-syntax-highlighter@^12.2.1:
   version "12.2.1"

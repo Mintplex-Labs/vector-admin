@@ -195,17 +195,18 @@ class QDrant {
     }
   }
 
-  async similarityResponse(namespace, queryVector) {
+  async similarityResponse(namespace, queryVector, topK = 4) {
     const { client } = await this.connect();
     const result = {
       vectorIds: [],
       contextTexts: [],
       sourceDocuments: [],
+      scores: [],
     };
 
     const responses = await client.search(namespace, {
       vector: queryVector,
-      limit: 4,
+      limit: topK,
       with_payload: true,
     });
 
@@ -216,6 +217,7 @@ class QDrant {
         id: response.id,
       });
       result.vectorIds.push(response.id);
+      result.scores.push(response.score);
     });
 
     return result;

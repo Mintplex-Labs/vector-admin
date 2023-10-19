@@ -9,21 +9,21 @@ export default function ToolsList({ organization }: { organization: any }) {
       <div className="flex items-start justify-between">
         <div className="mb-6 px-6">
           <h4 className="text-3xl font-semibold text-black dark:text-white">
-            Organization Tools
+            Advanced management tools
           </h4>
           <p className="text-gray-600">
             below are a list of advanced {APP_NAME} only tools and services that
-            you can use to manage your vectorized data.
+            you can use to manage your connected vector database.
           </p>
         </div>
       </div>
 
       <div className="px-6">
         <ToolItem
-          title="Reset vector database"
-          description="Wipe out all existing data in your vector database in one click."
+          title="Automatic context drift detection"
+          description={`Catch "context drift" by detecting changes in your vector databases similarity searches before they cause problems.`}
           available={true}
-          linkTo={paths.tools.resetTool(organization)}
+          linkTo={paths.tools.ragTests(organization)}
         />
         <ToolItem
           title="Migrate vector database to another provider"
@@ -37,9 +37,10 @@ export default function ToolsList({ organization }: { organization: any }) {
           available={false}
         />
         <ToolItem
-          title="Workspace Unit Testing & Alerts"
-          description="Ensure that your workspaces responds with the correct context and responses as embeddings change over time using various metrics."
-          available={false}
+          title="Reset vector database"
+          description="Wipe out all existing data in your vector database in one click."
+          available={true}
+          linkTo={paths.tools.resetTool(organization)}
         />
       </div>
     </div>

@@ -63,7 +63,7 @@ export default function Notifications() {
   useEffect(() => {
     if (!slug) return;
     fetchNotifications();
-    setTimeout(() => {
+    setInterval(() => {
       fetchNotifications();
     }, POLLING_INTERVAL);
   }, [slug]);
@@ -91,7 +91,7 @@ export default function Notifications() {
 
       <div
         hidden={!showNotifs}
-        className="absolute right-0 top-10 z-99 w-[20rem] divide-y divide-gray-100 rounded-lg bg-white shadow"
+        className="absolute right-0 top-10 z-99 max-h-[50vh] w-[20rem] divide-y divide-gray-100 overflow-y-scroll rounded-lg bg-white shadow"
       >
         <div className="block rounded-t-lg bg-blue-100/50 bg-gray-50 px-4 py-2 text-center font-medium text-blue-700">
           Recent Notifications
