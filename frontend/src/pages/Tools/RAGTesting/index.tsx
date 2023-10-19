@@ -66,10 +66,15 @@ export default function RAGDriftTesting() {
         <div className="flex items-start justify-between">
           <div className="mb-6">
             <h4 className="text-3xl font-semibold text-black">
-              Retrieval Augmented Generation (RAG) testing
+              RAG Context drift testing
             </h4>
             <p className="mt-2 w-3/4 text-gray-600">
-              <b>What is RAG testing?</b>
+              <b>What is "Context drift"?</b>
+              <br />
+              <i>"Context Drift"</i> is what happens when your vector database
+              changes over time and what was a good LLM response suddenly
+              changes and gives vastly different answers.
+              <br />
               <br />
               Often, you depend on high quality and current context snippets to
               answer user prompts in LLM chatbot applications. As your
@@ -77,7 +82,7 @@ export default function RAGDriftTesting() {
               documents being referenced will change. This can often lead to
               vastly different LLM responses for a fixed prompt. This tool will
               proactively alert you that deviations have occurred for a fixed
-              prompt.
+              prompt so you can catch them quickly.
               <br />
             </p>
           </div>

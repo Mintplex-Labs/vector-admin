@@ -205,11 +205,17 @@ function ragTestingEndpoints(app) {
           return;
         }
 
-        const test = await RagTest.get({ id: Number(testId) }, { id: true });
-        if (!test) {
+        const test = await RagTest.get(
+          { id: Number(testId) },
+          { id: true, enabled: true }
+        );
+        if (!test || !test.enabled) {
           response
             .status(200)
-            .json({ success: false, error: "No test found for that id." });
+            .json({
+              success: false,
+              error: "No enabled test found for that id.",
+            });
           return;
         }
 

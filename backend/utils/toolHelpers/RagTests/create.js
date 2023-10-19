@@ -27,7 +27,6 @@ async function createRagTest(user, request, response) {
     return;
   }
 
-  console.log(workspaceId);
   const workspace = await OrganizationWorkspace.get({
     id: Number(workspaceId),
     organization_id: organization.id,

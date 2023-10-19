@@ -20,8 +20,8 @@ export default function ToolsList({ organization }: { organization: any }) {
 
       <div className="px-6">
         <ToolItem
-          title="Retrieval Drift Testing & Alerts"
-          description="Catch context drift in production before it reaches your customers as your vector store changes over time."
+          title="Automatic context drift detection"
+          description={`Catch "context drift" by detecting changes in your vector databases similarity searches before they cause problems.`}
           available={true}
           linkTo={paths.tools.ragTests(organization)}
         />
