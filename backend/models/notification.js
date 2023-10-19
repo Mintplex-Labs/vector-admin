@@ -86,7 +86,7 @@ const Notification = {
       return notifications;
     } catch (e) {
       console.error(e.message);
-      return 0;
+      return [];
     }
   },
 
