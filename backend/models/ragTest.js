@@ -129,7 +129,7 @@ const RagTest = {
         throw new Error("Failed to create a valid RAG Test Run.");
 
       await this.update(test.id, { lastRun: new Date() });
-      await Telemetry.sendTelemetry(`rag_test_run`);
+      await Telemetry.sendTelemetry(`rag_test_run`, {}, true);
       return { run: newTestRun, error: null };
     } catch (e) {
       console.error(e.message);
