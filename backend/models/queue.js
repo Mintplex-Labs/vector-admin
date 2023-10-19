@@ -83,8 +83,9 @@ const Queue = {
       });
   },
 
-  updateJob: async function (jobId, status, result) {
+  updateJob: async function (jobId = null, status, result) {
     try {
+      if (!jobId) return null;
       const updatedJob = await prisma.jobs.update({
         where: { id: Number(jobId) },
         data: {

@@ -1,6 +1,12 @@
 const prisma = require("../utils/prisma");
 
 const RagTest = {
+  schedules: {
+    hourly: "hourly",
+    daily: "daily",
+    weekly: "weekly",
+    monthly: "monthly",
+  },
   status: {
     running: "running",
     failed: "failed",

@@ -36,6 +36,7 @@ const { addWeaviateDocuments } = require("./functions/addWeaviateDocuments");
 const { migrateOrganization } = require("./functions/migrateOrganization");
 const { resetOrganization } = require("./functions/resetOrganization");
 const { runRAGTest } = require("./functions/runRAGTest");
+const { runHourlyRagTest, runDailyRagTest, runWeeklyRagTest, runMonthlyRagTest } = require("./functions/cron/ragTesting");
 const app = express();
 
 app.use(cors({ origin: true }));
@@ -104,6 +105,12 @@ app.use(
 
     // RAGTesting
     runRAGTest,
+
+    // Cron Jobs
+    runHourlyRagTest,
+    runDailyRagTest,
+    runWeeklyRagTest,
+    runMonthlyRagTest,
   ], { landingPage: true })
 );
 

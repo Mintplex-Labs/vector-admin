@@ -12,13 +12,13 @@ const {
 } = require('../../../backend/utils/vectordatabases/providers');
 const { InngestClient } = require('../../utils/inngest');
 
-const DELTA_THRESHOLD = 0.3;
+const DELTA_THRESHOLD = 0.25;
 const runRAGTest = InngestClient.createFunction(
   { name: 'RAG Test for Workspace' },
   { event: 'rag-test/run' },
   async ({ event, step: _step, logger }) => {
     var result = {};
-    const { organization, testId, jobId } = event.data;
+    const { organization, testId, jobId = null } = event.data;
     const { run } = await RagTest.createRun(testId, RagTest.status.running);
 
     try {
