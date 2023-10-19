@@ -210,12 +210,10 @@ function ragTestingEndpoints(app) {
           { id: true, enabled: true }
         );
         if (!test || !test.enabled) {
-          response
-            .status(200)
-            .json({
-              success: false,
-              error: "No enabled test found for that id.",
-            });
+          response.status(200).json({
+            success: false,
+            error: "No enabled test found for that id.",
+          });
           return;
         }
 
