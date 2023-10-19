@@ -118,6 +118,7 @@ const Notification = {
       seen: false,
     });
     const notificationIds = unseenNotifications.map((notif) => notif.id);
+    if (notificationIds.length === 0) return;
     await prisma.organization_notifications.updateMany({
       where: {
         id: {

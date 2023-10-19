@@ -746,9 +746,13 @@ function organizationEndpoints(app) {
         const recentNotifications = await Notification.where(
           {
             organization_id: Number(organization.id),
-            id: {
-              notIn: unseenNotifications.map((notif) => notif.id),
-            },
+            ...(unseenNotifications.length > 0
+              ? {
+                  id: {
+                    notIn: unseenNotifications.map((notif) => notif.id),
+                  },
+                }
+              : {}),
           },
           10,
           null,
