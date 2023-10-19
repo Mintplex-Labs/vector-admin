@@ -6,7 +6,7 @@ const runHourlyRagTest = InngestClient.createFunction(
     id: 'rag-testing-hourly-cron',
     name: 'RAG Test for Workspace - Hourly Cron',
   },
-  { cron: 'TZ=America/Los_Angeles * * * * *' },
+  { cron: 'TZ=America/Los_Angeles 0 * * * *' },
   async () => {
     try {
       console.log(`\n\x1b[33m[CRON: Running hourly RAG Test Cron]\x1b[0m`);
