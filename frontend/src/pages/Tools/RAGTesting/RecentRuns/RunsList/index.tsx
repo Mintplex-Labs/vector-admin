@@ -370,8 +370,9 @@ function TextComp({
     const comparison = comparisons.find((comp) => comp.vectorId === key);
     if (!comparison) return false;
     return (
-      (!!textContent && !!comparison) ||
-      !!comparison.hasOwnProperty('text') ||
+      !!textContent &&
+      !!comparison &&
+      !!comparison.hasOwnProperty('text') &&
       comparison.text !== textContent
     );
   });
