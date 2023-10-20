@@ -4,7 +4,11 @@ const { OpenAi } = require("../openAi");
 async function promptToVector(input, type = "text") {
   if (input.length === 0)
     return { queryVector: null, error: "No input data to embed." };
-  if (type === "vector") return { queryVector: input, error: null };
+  if (type === "vector")
+    return {
+      queryVector: typeof input === "string" ? JSON.parse(input) : input,
+      error: null,
+    };
 
   const openAiKey = (await SystemSettings.get({ label: "open_ai_api_key" }))
     ?.value;

@@ -86,7 +86,7 @@ function TestDetails({ test }: { test: IRagTest }) {
           <li className="flex w-full items-center gap-x-2">
             <b className="whitespace-nowrap">Prompt Text:</b>
             <p className="whitespace-normal break-all">
-              {`"${test.promptText}"` || '--'}
+              {test.promptText ? `"${test.promptText}"` : '--'}
             </p>
           </li>
 
