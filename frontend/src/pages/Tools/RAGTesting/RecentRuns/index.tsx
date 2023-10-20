@@ -9,7 +9,9 @@ import { useParams } from 'react-router-dom';
 import Organization, { IOrganization } from '../../../../models/organization';
 import Tools, { IRagTest, IRagTestRun } from '../../../../models/tools';
 import RunsList from './RunsList';
-import { EnableDisableButton } from '../RecentTests';
+import { EnableDisableButton, RunNowButton } from '../RecentTests';
+import showToast from '../../../../utils/toast';
+import { Loader } from 'react-feather';
 
 export default function RAGDriftTestRuns() {
   const { user } = useUser();
@@ -77,7 +79,11 @@ export default function RAGDriftTestRuns() {
               <h4 className="text-3xl font-semibold text-black">
                 Context Drift test #{test.id} recent runs
               </h4>
-              <EnableDisableButton test={test} onChange={setTest} />
+              <div className="flex items-center gap-x-6">
+                <RunNowButton test={test} />
+                <EnableDisableButton test={test} onChange={setTest} />
+                <DeleteTestButton test={test} />
+              </div>
             </div>
             <p className="mt-2 w-full text-gray-600">
               These are all of the recent runs of this specific test.
@@ -89,5 +95,47 @@ export default function RAGDriftTestRuns() {
         </div>
       </div>
     </AppLayout>
+  );
+}
+
+function DeleteTestButton({ test }: { test: IRagTest }) {
+  const [loading, setLoading] = useState(false);
+  const confirmDelete = async () => {
+    if (
+      !window.confirm(
+        "Are you sure you want to remove this test and it's associated data?\n\nThis cannot be undone."
+      )
+    )
+      return false;
+
+    setLoading(true);
+    const success = await Tools.deleteRagTest(test);
+    if (success) {
+      window.location.replace(paths.tools.ragTests(test.organization));
+    } else {
+      showToast(`Could test could not be deleted.`, 'info');
+    }
+    setLoading(false);
+  };
+
+  return (
+    <>
+      <i className="hidden text-green-400 text-red-400 hover:bg-green-600 hover:bg-red-600 disabled:bg-green-600 disabled:bg-red-600" />
+      <button
+        type="button"
+        disabled={loading}
+        onClick={confirmDelete}
+        className={`flex items-center gap-x-2 rounded-lg px-2 py-1 text-red-400 transition-all duration-300 hover:bg-red-600 hover:text-white disabled:bg-red-600 disabled:text-white`}
+      >
+        {loading ? (
+          <>
+            <Loader className="animate-spin" size={14} />
+            <p>Deleting...</p>
+          </>
+        ) : (
+          <>Delete Test</>
+        )}
+      </button>
+    </>
   );
 }

@@ -204,7 +204,7 @@ export function EnableDisableButton({
   );
 }
 
-function RunNowButton({ test }: { test: IRagTest }) {
+export function RunNowButton({ test }: { test: IRagTest }) {
   const [loading, setLoading] = useState(false);
   const handleRunNow = async () => {
     setLoading(true);

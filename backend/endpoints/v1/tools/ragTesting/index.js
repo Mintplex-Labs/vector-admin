@@ -123,6 +123,42 @@ function ragTestingEndpoints(app) {
     }
   );
 
+  app.delete(
+    "/v1/tools/org/:orgSlug/rag-tests/:testId",
+    [validSessionForUser],
+    async function (request, response) {
+      try {
+        const { orgSlug, testId } = request.params;
+        const user = await userFromSession(request);
+        if (!user || user.role !== "admin") {
+          response.sendStatus(403).end();
+          return;
+        }
+
+        const organization = await Organization.getWithOwner(user.id, {
+          slug: orgSlug,
+        });
+        if (!organization) {
+          response.sendStatus(200).end();
+          return;
+        }
+
+        const test = await RagTest.get({ id: Number(testId) }, { id: true });
+        if (!test) {
+          response.sendStatus(400).end();
+          return;
+        }
+
+        await RagTest.delete({ id: test.id });
+        response.sendStatus(200).end();
+        return;
+      } catch (e) {
+        console.log(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
   app.post(
     "/v1/tools/org/:orgSlug/rag-tests/:testId/toggle-enabled",
     [validSessionForUser],

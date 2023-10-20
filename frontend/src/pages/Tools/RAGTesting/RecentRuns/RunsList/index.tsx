@@ -159,8 +159,7 @@ function TestRunItem({
           <div className="flex w-4/12">
             <RunIssueList run={run} />
           </div>
-          <div className="flex w-4/12 items-center justify-between">
-            <ReRunTest test={test} />
+          <div className="flex w-4/12 items-center justify-end">
             <div>
               <ChevronDown
                 className={`duration-300ms transition-all ${
@@ -182,48 +181,6 @@ function TestRunItem({
         </div>
       </div>
     </div>
-  );
-}
-
-function ReRunTest({ test }: { test: IRagTest }) {
-  const [loading, setLoading] = useState(false);
-  const handleRunNow = async (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setLoading(true);
-    const { job, error } = await Tools.runRagTest(test);
-    if (job) {
-      showToast(
-        `Context Drift test is now running in background jobs`,
-        'success'
-      );
-      setLoading(false);
-      return;
-    }
-
-    showToast(error || 'Context Drift test could not be run.', 'error');
-    setLoading(false);
-  };
-
-  return (
-    <button
-      type="button"
-      disabled={loading}
-      onClick={handleRunNow}
-      className="flex items-center gap-x-2 rounded-lg px-2 py-1 text-orange-400 transition-all duration-300 hover:bg-orange-600 hover:text-white disabled:bg-orange-600 disabled:text-white"
-    >
-      {loading ? (
-        <>
-          <Loader className="animate-spin" size={14} />
-          <p>Running</p>
-        </>
-      ) : (
-        <>
-          <RefreshCw size={14} />
-          <p>Run again</p>
-        </>
-      )}
-    </button>
   );
 }
 
