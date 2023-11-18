@@ -26,8 +26,10 @@ services:
     build:
       context: ../.
       dockerfile: ./docker/Dockerfile
-      args:
-        DATABASE_CONNECTION_STRING: ${DATABASE_CONNECTION_STRING}
+    volumes:
+      - "./.env:/app/backend/.env"
+      - "../backend/storage:/app/backend/storage"
+      - "../document-processor/hotdir/:/app/document-processor/hotdir"
     ports:
       - "3001:3001"
       - "3355:3355"
