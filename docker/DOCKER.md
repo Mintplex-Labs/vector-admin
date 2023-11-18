@@ -14,6 +14,21 @@ Run this command first to get a dockerized Postgres container running:
 `docker-compose up -d --build postgres`
 
 ## Run from Docker pre-built image
+- `docker pull mintplexlabs/vectoradmin:master` to pull in latest image
+- Run the command with env variables and image defined.
+`docker run -d -p 3001:3001 \
+-e SERVER_PORT="3001" \
+-e JWT_SECRET="your-random-string-here" \
+-e SYS_EMAIL="root@vectoradmin.com" \
+-e SYS_PASSWORD="password" \
+-e INNGEST_EVENT_KEY="background_workers" \
+-e INNGEST_SIGNING_KEY="random-string-goes-here" \
+-e INNGEST_LANDING_PAGE="true" \
+-e DATABASE_CONNECTION_STRING="postgresql://vectoradmin:password@xxxxxxx:5432/vdbms" \
+mintplexlabs/vectoradmin:master`
+
+
+## Build docker image from source
 - `git clone git@github.com:Mintplex-Labs/vector-admin.git`
 - `cd vector-admin`
 - `cd docker/`
@@ -26,32 +41,10 @@ SYS_PASSWORD="password"
 DATABASE_CONNECTION_STRING="postgresql://vectoradmin:password@host.docker.internal:5433/vdbms" # Valid PG Connection string.
 INNGEST_SIGNING_KEY="some-random-string"
 ```
+- `docker-compose up -d --build vector-admin`
 
 
-
-<!-- 
-## Setup ENVs for Docker image
-- `git clone` this repo and `cd vector-admin` to get to the root directory.
-- `yarn dev:setup`
-- `cd docker/`
-- `cp .env.example .env` to create the `.env` file.
-- Edit `.env` file and update the variables. **please** update all of the following:
-```shell
-JWT_SECRET="some-random-string"
-SYS_EMAIL="root@vectoradmin.com"
-SYS_PASSWORD="password"
-DATABASE_CONNECTION_STRING="postgresql://vectoradmin:password@host.docker.internal:5433/vdbms" # PG Connection string.
-INNGEST_SIGNING_KEY="some-random-string"
-```
-
-
-**Boot up vector-admin**
-- `docker-compose up -d --build vector-admin` to build the image - this will take a few moments.
-
-Your docker host will show the image as online once the build process is completed. This will build the app to `http://localhost:3001`. -->
-
-
-## How to use the user interface
+## How to use the user interface and login for the first time.
 - To access the full application, visit `http://localhost:3001` in your browser.
 - You first login will require you to use the `SYS_EMAIL` and `SYS_PASSWORD` set in the `.env` file. After onboarding this login will be permanently disabled.
 
