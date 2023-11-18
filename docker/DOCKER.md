@@ -46,8 +46,7 @@ INNGEST_SIGNING_KEY="some-random-string"
 
 ## How to use the user interface and login for the first time.
 - To access the full application, visit `http://localhost:3001` in your browser.
-- You first login will require you to use the `SYS_EMAIL` and `SYS_PASSWORD` set in the `.env` file. After onboarding this login will be permanently disabled.
-
+- You first login will require you to use the `SYS_EMAIL` and `SYS_PASSWORD` set via ENV during build or run. After onboarding this login will be permanently disabled.
 
 # Connecting to a Vector Database
 
