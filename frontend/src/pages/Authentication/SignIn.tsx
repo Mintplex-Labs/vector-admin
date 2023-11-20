@@ -1,12 +1,9 @@
 import { Link } from 'react-router-dom';
-import LogoDark from '../../images/logo/logo-dark.png';
-import Logo from '../../images/logo/logo-light.png';
 import DefaultLayout from '../../layout/DefaultLayout';
-import ManageSvg from '../../images/undraws/manage.svg';
 import SignInImg from '../../images/undraws/sign-in.png';
 import PreLoader from '../../components/Preloader';
 import { useEffect, useState } from 'react';
-import { CheckCircle, Key, Mail, XCircle } from 'react-feather';
+import { CheckCircle, XCircle } from 'react-feather';
 import User from '../../models/user';
 import { APP_NAME, STORE_TOKEN, STORE_USER } from '../../utils/constants';
 import paths from '../../utils/paths';
