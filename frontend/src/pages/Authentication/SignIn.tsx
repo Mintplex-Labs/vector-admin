@@ -183,7 +183,7 @@ function LoginForm({ handleSubmit }: { handleSubmit: any }) {
                 type="email"
                 name="email"
                 placeholder="Enter your email"
-                className="h-11 w-[300px] rounded-lg bg-neutral-800/60 p-2.5"
+                className="h-11 w-[300px] rounded-lg bg-neutral-800/60 p-2.5 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
               />
             </div>
           </div>
@@ -196,7 +196,7 @@ function LoginForm({ handleSubmit }: { handleSubmit: any }) {
                 name="password"
                 min={8}
                 placeholder={`Your ${APP_NAME} password`}
-                className="h-11 w-[300px] rounded-lg bg-neutral-800/60 p-2.5"
+                className="h-11 w-[300px] rounded-lg bg-neutral-800/60 p-2.5 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
               />
             </div>
           </div>
@@ -205,7 +205,7 @@ function LoginForm({ handleSubmit }: { handleSubmit: any }) {
             <button
               type="submit"
               className="h-11
-               w-[300px] items-center rounded-lg bg-white p-4 text-center text-sm font-bold leading-tight text-neutral-700"
+               w-[300px] items-center rounded-lg bg-white p-2 text-center text-sm font-bold leading-tight text-neutral-700 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
             >
               Sign In
             </button>
@@ -214,7 +214,10 @@ function LoginForm({ handleSubmit }: { handleSubmit: any }) {
           <div className="mt-6 text-center text-sm text-white/90">
             <p>
               Don't have a {APP_NAME} account?{' '}
-              <Link to={paths.signUp()} className="font-semibold">
+              <Link
+                to={paths.signUp()}
+                className="font-semibold transition-all duration-300 hover:underline"
+              >
                 Sign Up
               </Link>
             </p>
