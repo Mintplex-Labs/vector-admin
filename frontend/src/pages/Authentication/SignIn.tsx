@@ -167,12 +167,12 @@ function LoginForm({ handleSubmit }: { handleSubmit: any }) {
       />
       <div className="relative z-10 flex flex-col items-center">
         <div className="mb-3 flex justify-center gap-x-2 text-center">
-          <span className="text-2xl font-bold text-white">Login to</span>
+          <span className="text-2xl font-bold text-white">Log in to</span>
           <span className="text-2xl font-bold text-sky-300"> VectorAdmin</span>
         </div>
         <div className="mb-11 w-[308.65px] text-center">
           <span className="mt-3 text-sm text-white text-opacity-90">
-            Welcome back, please login to your account.
+            Welcome back, please log in to your account.
           </span>
         </div>
         <form onSubmit={handleSubmit} className="z-10">
