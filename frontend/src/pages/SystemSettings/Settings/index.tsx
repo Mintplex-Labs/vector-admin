@@ -149,8 +149,7 @@ function DebugCredentials({ settings }: { settings: {} }) {
             Database Debug Credentials
           </p>
           <p className="text-sm text-gray-600">
-            Use these credentials to login for direct application database
-            access.
+            Use these credentials to for direct application database access.
             <br />
             Changes done via the database admin UI will <b>not</b> impact
             connected vector databases.

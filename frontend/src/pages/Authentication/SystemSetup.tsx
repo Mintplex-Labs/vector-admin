@@ -165,8 +165,8 @@ function LoginForm({ handleSubmit }: { handleSubmit: any }) {
       <p className="mb-1.5 text-sm text-gray-600 ">
         By default {APP_NAME} creates a temporary root account so you can set up
         a system admin account. After creation of this account the root account
-        will no longer be accessible and you will use these credentials to login
-        going forward.
+        will no longer be accessible and you will use these credentials to log
+        in going forward.
         <br />
         <br />
         If you lose your password you will never be able to recover it - so keep

@@ -41,3 +41,12 @@ dialog::backdrop {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(2px);
 }
+
+.login-input-gradient {
+  background: linear-gradient(
+    180deg,
+    rgba(61, 65, 71, 0.3) 0%,
+    rgba(44, 47, 53, 0.3) 100%
+  ) !important;
+  box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.25);
+}
