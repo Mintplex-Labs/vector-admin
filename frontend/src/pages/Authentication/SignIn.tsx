@@ -183,7 +183,7 @@ function LoginForm({ handleSubmit }: { handleSubmit: any }) {
                 type="email"
                 name="email"
                 placeholder="Enter your email"
-                className="h-11 w-[300px] rounded-lg bg-neutral-800/60 p-2.5 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
+                className="h-11 w-[300px] rounded-lg bg-neutral-800/60 p-2.5 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90 focus:scale-105"
               />
             </div>
           </div>
@@ -196,7 +196,7 @@ function LoginForm({ handleSubmit }: { handleSubmit: any }) {
                 name="password"
                 min={8}
                 placeholder={`Your ${APP_NAME} password`}
-                className="h-11 w-[300px] rounded-lg bg-neutral-800/60 p-2.5 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
+                className="h-11 w-[300px] rounded-lg bg-neutral-800/60 p-2.5 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90 focus:scale-105"
               />
             </div>
           </div>
