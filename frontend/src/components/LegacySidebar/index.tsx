@@ -18,7 +18,6 @@ import useUser from '../../hooks/useUser';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import WorkspaceSearch, { WorkspaceItem } from './WorkspaceSearch';
 import CreateOrganizationModal from './CreateOrganizationModal';
-import OrganizationTab from './OrganizationTab';
 
 interface SidebarProps {
   organization: any;
@@ -96,20 +95,14 @@ export default function Sidebar({
     <>
       <aside
         ref={sidebar}
-        className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-main duration-300 ease-linear lg:static lg:translate-x-0 ${
+        className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-slate-900 duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* <!-- SIDEBAR HEADER --> */}
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
           <NavLink to={paths.dashboard()}>
-            <div className="flex w-full justify-center">
-              <img
-                src={Logo}
-                alt="Logo"
-                className="mx-5 my-2.5 h-[22px] w-[140px]"
-              />
-            </div>
+            <img src={Logo} alt="Logo" />
           </NavLink>
 
           <button
@@ -198,7 +191,19 @@ export default function Sidebar({
                           <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
                             {organizations.map((org: any, i: number) => {
                               return (
-                                <OrganizationTab i={i} organization={org} />
+                                <li key={i}>
+                                  <NavLink
+                                    key={org.id}
+                                    reloadDocument={true}
+                                    to={paths.organization(org)}
+                                    className={({ isActive }) =>
+                                      'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                      (isActive && '!text-white')
+                                    }
+                                  >
+                                    {org.name}
+                                  </NavLink>
+                                </li>
                               );
                             })}
                           </ul>
