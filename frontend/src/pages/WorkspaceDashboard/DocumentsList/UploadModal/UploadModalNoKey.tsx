@@ -57,7 +57,7 @@ export default function UploadModalNoKey() {
               </div>
             </div>
             <p className="my-2 p-2 text-center text-sm text-orange-800">
-              This key will only be used for the embedding of documnets you
+              This key will only be used for the embedding of documents you
               upload via {APP_NAME}.
             </p>
           </form>
