@@ -63,49 +63,43 @@ const OnboardingFlow = () => {
 
   return (
     <DefaultLayout>
-      <div className="">
-        <div className="flex flex-wrap items-center">
-          <div className="hidden w-full xl:block xl:w-1/2">
-            <div>
-              <img src={Onboarding} alt="Illustration" />
-            </div>
-          </div>
-
-          <div className="w-full border-stroke xl:w-1/2">
-            <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
-              <>
-                <div
-                  style={{
-                    background: `
-                                radial-gradient(circle at center, transparent 40%, black 100%),
-                                linear-gradient(180deg, #85F8FF 0%, #65A6F2 100%)`,
-                    width: '575px',
-                    filter: 'blur(150px)',
-                    opacity: '0.5',
-                  }}
-                  className="absolute right-0 top-0 z-0 h-full w-full"
-                />
-                <div className="relative z-10 flex items-center justify-center">
-                  {loading ? (
-                    <PreLoader />
-                  ) : (
-                    <CurrentStep
-                      setCurrentStep={setCurrentStep}
-                      userDetails={userDetails}
-                      setUserDetails={setUserDetails}
-                      errorMessage={errorMessage}
-                      setErrorMessage={setErrorMessage}
-                      organization={organization}
-                      setOrganization={setOrganization}
-                      loading={loading}
-                      setLoading={setLoading}
-                      connector={connector}
-                      setConnector={setConnector}
-                    />
-                  )}
-                </div>
-              </>
-            </div>
+      <div className="relative flex h-screen">
+        <div className="fixed left-0 top-0 hidden h-full w-1/2 items-center justify-center md:flex">
+          <img
+            src={Onboarding}
+            alt="Illustration"
+            className="max-w-xs md:max-w-sm lg:max-w-lg"
+          />
+        </div>
+        <div className="relative ml-auto h-full w-full md:w-1/2">
+          <div
+            style={{
+              background: `
+            radial-gradient(circle at center, transparent 40%, black 100%),
+            linear-gradient(180deg, #85F8FF 0%, #65A6F2 100%)`,
+              filter: 'blur(150px)',
+              opacity: '0.5',
+            }}
+            className="absolute left-1/2 top-1/2 z-0 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 transform rounded-full"
+          />
+          <div className="relative z-10 flex h-full w-full items-center justify-center px-4 md:px-8 lg:px-12">
+            {loading ? (
+              <PreLoader />
+            ) : (
+              <CurrentStep
+                setCurrentStep={setCurrentStep}
+                userDetails={userDetails}
+                setUserDetails={setUserDetails}
+                errorMessage={errorMessage}
+                setErrorMessage={setErrorMessage}
+                organization={organization}
+                setOrganization={setOrganization}
+                loading={loading}
+                setLoading={setLoading}
+                connector={connector}
+                setConnector={setConnector}
+              />
+            )}
           </div>
         </div>
       </div>

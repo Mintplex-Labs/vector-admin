@@ -68,7 +68,7 @@ export default function ConnectVectorDB({
         Connect your vector database
       </div>
       <form onSubmit={handleSubmit}>
-        <div className="mb-6 grid grid-cols-2 gap-4">
+        <div className="mb-6 grid max-w-125 grid-cols-1 gap-4 md:grid-cols-2">
           <VectorDBOption
             name="Chroma"
             value="chroma"
