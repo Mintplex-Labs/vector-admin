@@ -28,12 +28,8 @@ export default function SyncVectorDB({
             'vectorCounts'
           );
 
-          if (!!result) {
-            if (
-              result.remoteCount > 0 &&
-              result.remoteCount !== result.localCount
-            )
-              setRemoteCount(result.remoteCount);
+          setRemoteCount(result.remoteCount);
+          if (result.remoteCount > 0) {
             setCanSync(true);
           }
         }
@@ -79,11 +75,13 @@ export default function SyncVectorDB({
           <span className="text-white text-opacity-40">05</span>
         </div>
         <div className="mb-3 text-2xl font-medium text-white">
-          Welcome to VectorAdmin!
+          Your vector database is connected
         </div>
         <div className="flex w-[400px] flex-col gap-y-2">
           <span className="text-sm font-light text-white text-opacity-90">
             You have successfully connected your vector database to VectorAdmin.
+            You can now create new embeddings, migrate from an existing
+            database, and manage your vector database.
           </span>
         </div>
         <form onSubmit={handleGoToDashboard}>
