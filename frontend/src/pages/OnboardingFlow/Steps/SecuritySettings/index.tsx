@@ -1,12 +1,20 @@
-import { useState } from 'react';
+import { FormEvent } from 'react';
 import System from '../../../../models/system';
 import showToast from '../../../../utils/toast';
 
-export default function SecuritySettings({ setCurrentStep, setLoading }) {
-  const handleSubmit = async (e: any) => {
+type SecuritySettingsProps = {
+  setCurrentStep: (step: string) => void;
+  setLoading: (loading: boolean) => void;
+};
+
+export default function SecuritySettings({
+  setCurrentStep,
+  setLoading,
+}: SecuritySettingsProps) {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    const form = new FormData(e.target);
+    const form = new FormData(e.currentTarget);
     const data = {
       allow_account_creation: form.get('allow-account-creation') === 'yes',
       account_creation_domain_scope: form.get('domain-restriction') || null,

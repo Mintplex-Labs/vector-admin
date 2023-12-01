@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import VectorDBOption from '../../../../components/VectorDBOption';
 import ChromaLogo from '../../../../images/vectordbs/chroma.png';
 import PineconeLogo from '../../../../images/vectordbs/pinecone.png';
@@ -7,22 +7,29 @@ import WeaviateLogo from '../../../../images/vectordbs/weaviate.png';
 import Organization from '../../../../models/organization';
 import showToast from '../../../../utils/toast';
 
+type ConnectVectorDBProps = {
+  setCurrentStep: (step: string) => void;
+  organization: any;
+  setLoading: (loading: boolean) => void;
+  setConnector: (connector: any) => void;
+};
+
 export default function ConnectVectorDB({
   setCurrentStep,
   organization,
   setLoading,
   setConnector,
-}) {
+}: ConnectVectorDBProps) {
   const [vectorDB, setVectorDB] = useState('chroma');
 
-  const updateVectorChoice = (selection) => {
+  const updateVectorChoice = (selection: string) => {
     setVectorDB(selection);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    const form = new FormData(e.target);
+    const form = new FormData(e.currentTarget);
     const data = { type: vectorDB };
 
     for (var [key, value] of form.entries()) {

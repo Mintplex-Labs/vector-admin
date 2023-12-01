@@ -1,16 +1,23 @@
+import { FormEvent } from 'react';
 import Organization from '../../../../models/organization';
 import showToast from '../../../../utils/toast';
+
+type CreateOrganizationProps = {
+  setCurrentStep: (step: string) => void;
+  setOrganization: (organization: any) => void;
+  setLoading: (loading: boolean) => void;
+};
 
 export default function CreateOrganization({
   setCurrentStep,
   setOrganization,
   setLoading,
-}) {
-  const handleSubmit = async (e: any) => {
+}: CreateOrganizationProps) {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
-    const form = new FormData(e.target);
+    const form = new FormData(e.currentTarget);
     const name = form.get('organization-name');
 
     const { organization, error } = await Organization.create(name);

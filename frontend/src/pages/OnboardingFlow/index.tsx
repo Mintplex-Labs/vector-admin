@@ -9,7 +9,17 @@ import CreateOrganization from './Steps/CreateOrganization';
 import ConnectVectorDB from './Steps/ConnectVectorDB';
 import SyncVectorDB from './Steps/SyncVectorDB';
 
-const STEPS = {
+type Step = {
+  title: string;
+  description: string;
+  component: React.ComponentType<any>;
+};
+
+type Steps = {
+  [key: string]: Step;
+};
+
+const STEPS: Steps = {
   custom_login: {
     title: 'Create your custom login',
     description:

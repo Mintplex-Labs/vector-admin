@@ -1,14 +1,23 @@
+import { FormEvent } from 'react';
 import useUser from '../../../../hooks/useUser';
 import User from '../../../../models/user';
 import showToast from '../../../../utils/toast';
 
-export default function CustomLogin({ setCurrentStep, setLoading }) {
+type CustomLoginProps = {
+  setCurrentStep: (step: string) => void;
+  setLoading: (loading: boolean) => void;
+};
+
+export default function CustomLogin({
+  setCurrentStep,
+  setLoading,
+}: CustomLoginProps) {
   const { user } = useUser();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    const form = new FormData(e.target);
+    const form = new FormData(e.currentTarget);
     const data = {
       email: form.get('email'),
       password: form.get('password'),

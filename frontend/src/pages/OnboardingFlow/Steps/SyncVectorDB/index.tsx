@@ -1,11 +1,21 @@
-import { useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { SUPPORTED_VECTOR_DBS } from '../../../../utils/constants';
 import Organization from '../../../../models/organization';
 import { nFormatter } from '../../../../utils/numbers';
 import paths from '../../../../utils/paths';
 import showToast from '../../../../utils/toast';
 
-export default function SyncVectorDB({ connector, organization, setLoading }) {
+type SyncVectorDBProps = {
+  connector: any;
+  organization: any;
+  setLoading: (loading: boolean) => void;
+};
+
+export default function SyncVectorDB({
+  connector,
+  organization,
+  setLoading,
+}: SyncVectorDBProps) {
   const [canSync, setCanSync] = useState(false);
   const [remoteCount, setRemoteCount] = useState(0);
 
@@ -37,12 +47,12 @@ export default function SyncVectorDB({ connector, organization, setLoading }) {
     fetchConnector();
   }, []);
 
-  const handleGoToDashboard = (e) => {
+  const handleGoToDashboard = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     window.location.replace(paths.organization({ slug: organization.slug }));
   };
 
-  const handleSyncConnector = async (e) => {
+  const handleSyncConnector = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { job, error } = await Organization.syncConnector(
       organization.slug,
