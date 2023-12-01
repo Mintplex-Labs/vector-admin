@@ -4,10 +4,16 @@ import ChromaLogo from '../../../../images/vectordbs/chroma.png';
 import PineconeLogo from '../../../../images/vectordbs/pinecone.png';
 import QDrantLogo from '../../../../images/vectordbs/qdrant.png';
 import WeaviateLogo from '../../../../images/vectordbs/weaviate.png';
+import Organization from '../../../../models/organization';
+import showToast from '../../../../utils/toast';
 
-export default function ConnectVectorDB({ setCurrentStep }) {
+export default function ConnectVectorDB({
+  setCurrentStep,
+  organization,
+  setLoading,
+  setConnector,
+}) {
   const [vectorDB, setVectorDB] = useState('chroma');
-  const [settings, setSettings] = useState({});
 
   const updateVectorChoice = (selection) => {
     setVectorDB(selection);
@@ -15,7 +21,34 @@ export default function ConnectVectorDB({ setCurrentStep }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setCurrentStep('sync_vector_db');
+    setLoading(true);
+    const form = new FormData(e.target);
+    const data = { type: vectorDB };
+
+    for (var [key, value] of form.entries()) {
+      if (key.includes('::')) {
+        const [mainKey, subKey] = key.split('::');
+        if (!data.hasOwnProperty(mainKey)) data[mainKey] = {};
+        data[mainKey][subKey] = value;
+      } else {
+        data[key] = value;
+      }
+    }
+
+    const { connector, error } = await Organization.addConnector(
+      organization.slug,
+      data
+    );
+
+    if (connector) {
+      showToast('Vector database connected successfully', 'success');
+      setConnector(connector);
+      setCurrentStep('sync_vector_db');
+    } else {
+      showToast(`Error connecting vector database: ${error}`, 'error');
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -74,13 +107,12 @@ export default function ConnectVectorDB({ setCurrentStep }) {
                   Pinecone DB API Key
                 </label>
                 <input
+                  name="settings::apiKey"
+                  autoComplete="off"
                   type="password"
-                  name="PineConeKey"
                   className="block w-full rounded-lg bg-neutral-800/60 p-2.5 text-sm text-white shadow-lg transition-all duration-300 focus:scale-105"
                   placeholder="Pinecone API Key"
-                  defaultValue={settings?.PineConeKey ? '*'.repeat(20) : ''}
                   required={true}
-                  autoComplete="off"
                   spellCheck={false}
                 />
               </div>
@@ -91,12 +123,11 @@ export default function ConnectVectorDB({ setCurrentStep }) {
                 </label>
                 <input
                   type="text"
-                  name="PineConeEnvironment"
+                  name="settings::environment"
+                  autoComplete="off"
                   className="block w-full rounded-lg bg-neutral-800/60 p-2.5 text-sm text-white shadow-lg transition-all duration-300 focus:scale-105"
                   placeholder="us-gcp-west-1"
-                  defaultValue={settings?.PineConeEnvironment}
                   required={true}
-                  autoComplete="off"
                   spellCheck={false}
                 />
               </div>
@@ -107,10 +138,9 @@ export default function ConnectVectorDB({ setCurrentStep }) {
                 </label>
                 <input
                   type="text"
-                  name="PineConeIndex"
+                  name="settings::index"
                   className="block w-full rounded-lg bg-neutral-800/60 p-2.5 text-sm text-white shadow-lg transition-all duration-300 focus:scale-105"
                   placeholder="my-index"
-                  defaultValue={settings?.PineConeIndex}
                   required={true}
                   autoComplete="off"
                   spellCheck={false}
@@ -127,10 +157,9 @@ export default function ConnectVectorDB({ setCurrentStep }) {
                 </label>
                 <input
                   type="url"
-                  name="ChromaEndpoint"
+                  name="settings::instanceURL"
                   className="block w-full rounded-lg bg-neutral-800/60 p-2.5 text-sm text-white shadow-lg transition-all duration-300 focus:scale-105"
                   placeholder="http://localhost:8000"
-                  defaultValue={settings?.ChromaEndpoint}
                   required={true}
                   autoComplete="off"
                   spellCheck={false}
@@ -142,10 +171,9 @@ export default function ConnectVectorDB({ setCurrentStep }) {
                   API Header
                 </label>
                 <input
-                  name="ChromaApiHeader"
+                  name="settings::authTokenHeader"
                   autoComplete="off"
                   type="text"
-                  defaultValue={settings?.ChromaApiHeader}
                   className="block w-full rounded-lg bg-neutral-800/60 p-2.5 text-sm text-white shadow-lg transition-all duration-300 focus:scale-105"
                   placeholder="X-Api-Key"
                 />
@@ -156,10 +184,9 @@ export default function ConnectVectorDB({ setCurrentStep }) {
                   API Key
                 </label>
                 <input
-                  name="ChromaApiKey"
+                  name="settings::authToken"
                   autoComplete="off"
                   type="password"
-                  defaultValue={settings?.ChromaApiKey ? '*'.repeat(20) : ''}
                   className="block w-full rounded-lg bg-neutral-800/60 p-2.5 text-sm text-white shadow-lg transition-all duration-300 focus:scale-105"
                   placeholder="sk-myApiKeyToAccessMyChromaInstance"
                 />
@@ -183,10 +210,9 @@ export default function ConnectVectorDB({ setCurrentStep }) {
                 </label>
                 <input
                   type="url"
-                  name="QdrantEndpoint"
+                  name="settings::clusterUrl"
                   className="block w-full rounded-lg bg-neutral-800/60 p-2.5 text-sm text-white shadow-lg transition-all duration-300 focus:scale-105"
                   placeholder="http://localhost:6633"
-                  defaultValue={settings?.QdrantEndpoint}
                   required={true}
                   autoComplete="off"
                   spellCheck={false}
@@ -199,10 +225,9 @@ export default function ConnectVectorDB({ setCurrentStep }) {
                 </label>
                 <input
                   type="password"
-                  name="QdrantApiKey"
+                  name="settings::apiKey"
                   className="block w-full rounded-lg bg-neutral-800/60 p-2.5 text-sm text-white shadow-lg transition-all duration-300 focus:scale-105"
-                  placeholder="wOeqxsYP4....1244sba"
-                  defaultValue={settings?.QdrantApiKey}
+                  placeholder="ee1051-xxxx-xxxx-xxxx"
                   autoComplete="off"
                   spellCheck={false}
                 />
@@ -218,10 +243,9 @@ export default function ConnectVectorDB({ setCurrentStep }) {
                 </label>
                 <input
                   type="url"
-                  name="WeaviateEndpoint"
+                  name="settings::clusterUrl"
                   className="block w-full rounded-lg bg-neutral-800/60 p-2.5 text-sm text-white shadow-lg transition-all duration-300 focus:scale-105"
                   placeholder="http://localhost:8080"
-                  defaultValue={settings?.WeaviateEndpoint}
                   required={true}
                   autoComplete="off"
                   spellCheck={false}
@@ -234,10 +258,9 @@ export default function ConnectVectorDB({ setCurrentStep }) {
                 </label>
                 <input
                   type="password"
-                  name="WeaviateApiKey"
+                  name="settings::apiKey"
                   className="block w-full rounded-lg bg-neutral-800/60 p-2.5 text-sm text-white shadow-lg transition-all duration-300 focus:scale-105"
                   placeholder="sk-123Abcweaviate"
-                  defaultValue={settings?.WeaviateApiKey}
                   autoComplete="off"
                   spellCheck={false}
                 />

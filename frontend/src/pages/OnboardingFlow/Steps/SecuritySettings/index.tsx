@@ -1,7 +1,28 @@
 import { useState } from 'react';
+import System from '../../../../models/system';
+import showToast from '../../../../utils/toast';
 
-export default function SecuritySettings({ setCurrentStep }) {
-  const [allowAccountCreation, setAllowAccountCreation] = useState(true);
+export default function SecuritySettings({ setCurrentStep, setLoading }) {
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    setLoading(true);
+    const form = new FormData(e.target);
+    const data = {
+      allow_account_creation: form.get('allow-account-creation') === 'yes',
+      account_creation_domain_scope: form.get('domain-restriction') || null,
+    };
+
+    const { success, error } = await System.updateSettings(data);
+
+    if (success) {
+      showToast('Security settings saved successfully', 'success');
+      setCurrentStep('create_organization');
+    } else {
+      showToast(`Error setting security settings: ${error}`, 'error');
+    }
+
+    setLoading(false);
+  };
 
   return (
     <div>
@@ -17,14 +38,21 @@ export default function SecuritySettings({ setCurrentStep }) {
         specific domains, or disable them totally and users must first be
         created by an admin user.
       </div>
-      <form onSubmit={() => setCurrentStep('create_organization')}>
+      <form onSubmit={handleSubmit}>
         <div className="mt-7 w-[300px] text-sm font-medium text-white">
           Allow account creation
         </div>
-        {/* TODO: make button work */}
-        <div className="mb-4 mt-2 inline-flex h-5 w-9 items-center justify-start rounded-xl bg-white bg-opacity-20 p-0.5">
-          <div className="h-4 w-4 rounded-full bg-white shadow" />
-        </div>
+        <label className="relative mb-4 mt-2 inline-flex cursor-pointer items-center">
+          <input
+            type="checkbox"
+            name="allow-account-creation"
+            value="yes"
+            className="peer sr-only"
+            defaultChecked={false}
+          />
+          <div className="peer h-5 w-9 rounded-full bg-white/20 after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"></div>
+          <span className="ml-3 text-sm font-medium text-gray-300"></span>
+        </label>
         <div className="w-[300px]">
           <span className="text-sm font-medium text-white">
             Account domain restriction{' '}
@@ -38,7 +66,7 @@ export default function SecuritySettings({ setCurrentStep }) {
         </div>
         <div className="mb-6">
           <input
-            required={true}
+            required={false}
             type="text"
             name="domain-restriction"
             title="Please enter a valid domain (e.g., yourdomain.xyz)"

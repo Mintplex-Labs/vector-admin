@@ -1,4 +1,29 @@
-export default function CreateOrganization({ setCurrentStep }) {
+import Organization from '../../../../models/organization';
+import showToast from '../../../../utils/toast';
+
+export default function CreateOrganization({
+  setCurrentStep,
+  setOrganization,
+  setLoading,
+}) {
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const form = new FormData(e.target);
+    const name = form.get('organization-name');
+
+    const { organization, error } = await Organization.create(name);
+    if (organization) {
+      showToast('Organization created successfully', 'success');
+      setOrganization(organization);
+      setCurrentStep('connect_vector_db');
+    } else {
+      showToast(`Error creating organization: ${error}`, 'error');
+    }
+
+    setLoading(false);
+  };
   return (
     <div>
       <div className="mb-8 font-semibold uppercase text-white">
@@ -17,7 +42,7 @@ export default function CreateOrganization({ setCurrentStep }) {
           at least one.
         </span>
       </div>
-      <form onSubmit={() => setCurrentStep('connect_vector_db')}>
+      <form onSubmit={handleSubmit}>
         <div className="mb-4 mt-6 w-[300px] text-sm font-medium text-white">
           Organization Name
         </div>

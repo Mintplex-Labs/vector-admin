@@ -60,7 +60,9 @@ const SignIn = () => {
         window.location.replace(paths.organization(orgs[0]));
         return;
       }
-      setStage('ready');
+      // setStage('ready');
+      // TODO: check if user has any organizations
+      window.location.replace(paths.onboardingSetup());
     }
     checkOnboardingStage();
   }, []);

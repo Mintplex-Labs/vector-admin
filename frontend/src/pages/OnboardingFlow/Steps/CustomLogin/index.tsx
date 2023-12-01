@@ -1,4 +1,29 @@
-export default function CustomLogin({ setCurrentStep }) {
+import useUser from '../../../../hooks/useUser';
+import User from '../../../../models/user';
+import showToast from '../../../../utils/toast';
+
+export default function CustomLogin({ setCurrentStep, setLoading }) {
+  const { user } = useUser();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const form = new FormData(e.target);
+    const data = {
+      email: form.get('email'),
+      password: form.get('password'),
+    };
+    const { success, error } = await User.update(user.id, data);
+
+    if (success) {
+      showToast('Login created successfully', 'success');
+      setCurrentStep('security_settings');
+    } else {
+      showToast(`Error creating login: ${error}`, 'error');
+    }
+    setLoading(false);
+  };
+
   return (
     <div>
       <div className="mb-8 font-semibold uppercase text-white">
@@ -12,7 +37,7 @@ export default function CustomLogin({ setCurrentStep }) {
         This will be your account login information moving forward. The previous
         default login will become obsolete.{' '}
       </div>
-      <form onSubmit={() => setCurrentStep('security_settings')}>
+      <form onSubmit={handleSubmit}>
         <div className="mb-3.5 mt-7">
           <div className="">
             <input

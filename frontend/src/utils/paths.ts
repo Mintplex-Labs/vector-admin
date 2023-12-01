@@ -27,6 +27,9 @@ const paths = {
       return `/onboarding/${slug}/roles`;
     },
   },
+  onboardingSetup: function () {
+    return '/onboarding-setup';
+  },
   settings: function () {
     return '/system-settings';
   },
