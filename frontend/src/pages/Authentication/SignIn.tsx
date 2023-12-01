@@ -53,7 +53,7 @@ const SignIn = () => {
       window.localStorage.setItem(STORE_USER, JSON.stringify(user));
       window.localStorage.setItem(STORE_TOKEN, token);
       window.location.replace(
-        user.role === 'root' ? paths.systemSetup() : paths.dashboard()
+        user.role === 'root' ? paths.onboardingSetup() : paths.dashboard()
       );
     }
   };

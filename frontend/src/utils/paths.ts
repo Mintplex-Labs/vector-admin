@@ -13,9 +13,6 @@ const paths = {
   get home() {
     return this.root;
   },
-  systemSetup: function () {
-    return '/system-setup';
-  },
   onboarding: {
     orgName: function () {
       return '/onboarding';
@@ -26,6 +23,9 @@ const paths = {
     roles: function ({ slug }: { slug: string }) {
       return `/onboarding/${slug}/roles`;
     },
+  },
+  onboardingSetup: function () {
+    return '/onboarding-setup';
   },
   settings: function () {
     return '/system-settings';
