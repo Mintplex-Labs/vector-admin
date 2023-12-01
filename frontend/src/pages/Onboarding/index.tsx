@@ -60,8 +60,7 @@ const SignIn = () => {
         window.location.replace(paths.organization(orgs[0]));
         return;
       }
-      // setStage('ready');
-      // TODO: check if user has any organizations
+      // Redirect to onboarding if no orgs exist
       window.location.replace(paths.onboardingSetup());
     }
     checkOnboardingStage();
