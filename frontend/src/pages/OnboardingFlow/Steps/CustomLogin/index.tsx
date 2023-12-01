@@ -1,7 +1,7 @@
 import { FormEvent } from 'react';
-import useUser from '../../../../hooks/useUser';
 import User from '../../../../models/user';
 import showToast from '../../../../utils/toast';
+import { STORE_TOKEN, STORE_USER } from '../../../../utils/constants';
 
 type CustomLoginProps = {
   setCurrentStep: (step: string) => void;
@@ -12,19 +12,23 @@ export default function CustomLogin({
   setCurrentStep,
   setLoading,
 }: CustomLoginProps) {
-  const { user } = useUser();
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     const form = new FormData(e.currentTarget);
     const data = {
-      email: form.get('email'),
-      password: form.get('password'),
+      email: form.get('email') as string,
+      password: form.get('password') as string,
     };
-    const { success, error } = await User.update(user.id, data);
 
-    if (success) {
+    const { user, token, error } = await User.transferRootOwnership(
+      data.email,
+      data.password
+    );
+
+    if (!!token) {
+      window.localStorage.setItem(STORE_USER, JSON.stringify(user));
+      window.localStorage.setItem(STORE_TOKEN, token);
       showToast('Login created successfully', 'success');
       setCurrentStep('security_settings');
     } else {
