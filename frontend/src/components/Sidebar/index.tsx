@@ -19,6 +19,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import WorkspaceSearch, { WorkspaceItem } from './WorkspaceSearch';
 import CreateOrganizationModal from './CreateOrganizationModal';
 import OrganizationTab from './OrganizationTab';
+import { SquaresFour, Plus } from '@phosphor-icons/react';
 
 interface SidebarProps {
   organization: any;
@@ -96,23 +97,26 @@ export default function Sidebar({
     <>
       <aside
         ref={sidebar}
-        className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-main duration-300 ease-linear lg:static lg:translate-x-0 ${
+        className={`max-w-72.5 absolute left-0 top-0 z-9999 flex h-screen min-w-[220px] flex-col overflow-y-hidden bg-main duration-300 ease-linear lg:static lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* <!-- SIDEBAR HEADER --> */}
-        <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
-          <NavLink to={paths.dashboard()}>
-            <div className="flex w-full justify-center">
+        <div className="flex">
+          <NavLink
+            to={paths.dashboard()}
+            className="flex w-full shrink-0 justify-center"
+          >
+            <div className="flex w-full justify-center rounded-br-[14px] bg-main-2">
               <img
                 src={Logo}
                 alt="Logo"
-                className="mx-5 my-2.5 h-[22px] w-[140px]"
+                className="w-full max-w-[180px] object-cover p-4"
               />
             </div>
           </NavLink>
 
-          <button
+          {/* <button
             ref={trigger}
             onClick={() => setSidebarOpen(!sidebarOpen)}
             aria-controls="sidebar"
@@ -133,27 +137,30 @@ export default function Sidebar({
                 fill=""
               />
             </svg>
-          </button>
+          </button> */}
         </div>
         {/* <!-- SIDEBAR HEADER --> */}
 
         <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
           {/* <!-- Sidebar Menu --> */}
-          <nav className="mt-5 px-4 py-4 lg:mt-9 lg:px-6">
+          <nav className="m-4 rounded-xl border-2 border-white/20 p-4 px-4 py-4 lg:px-6">
             {/* <!-- Menu Group --> */}
             <div>
-              <div className="mb-4 ml-4 flex flex w-full items-center justify-between">
-                <h3 className="text-sm font-semibold text-bodydark2">MENU</h3>
+              <div className="mb-3.5 flex items-center justify-between">
+                <div className="flex w-full items-center gap-x-1">
+                  <SquaresFour className="h-4 w-4 text-white/60" />
+                  <div className="text-xs font-medium uppercase tracking-widest text-white/60">
+                    Organizations
+                  </div>
+                </div>
                 <button
                   onClick={() => {
                     document
                       .getElementById('organization-creation-modal')
                       ?.showModal();
                   }}
-                  type="button"
-                  className="rounded-lg px-4 px-4 py-1 py-1 text-sm font-semibold text-bodydark2 hover:bg-slate-800 hover:text-slate-200"
                 >
-                  + New Org
+                  <Plus className="h-4 w-4 text-sky-400" weight="regular" />
                 </button>
               </div>
 
@@ -167,35 +174,13 @@ export default function Sidebar({
                   {(handleClick, open) => {
                     return (
                       <React.Fragment>
-                        <NavLink
-                          to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                            (pathname === '/' ||
-                              pathname.includes('dashboard')) &&
-                            'bg-graydark dark:bg-meta-4'
-                          }`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            sidebarExpanded
-                              ? handleClick()
-                              : setSidebarExpanded(true);
-                          }}
-                        >
-                          <Command className="h-4 w-4" />
-                          Organizations
-                          <ChevronUp
-                            className={`absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 fill-current ${
-                              open && 'rotate-180'
-                            }`}
-                          />
-                        </NavLink>
                         {/* <!-- Dropdown Menu Start --> */}
                         <div
                           className={`translate transform overflow-hidden ${
                             !open && 'hidden'
                           }`}
                         >
-                          <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
+                          <ul className="mb-5.5 mt-3 flex flex-col gap-3">
                             {organizations.map((org: any, i: number) => {
                               return (
                                 <OrganizationTab i={i} organization={org} />

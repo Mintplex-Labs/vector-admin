@@ -18,5 +18,8 @@
     "prisma:setup": "yarn prisma:generate && yarn prisma:migrate",
     "prisma:reset": "cd backend && npx prisma db push --force-reset"
   },
-  "private": false
+  "private": false,
+  "dependencies": {
+    "@phosphor-icons/react": "^2.0.15"
+  }
 }
