@@ -17,10 +17,13 @@ const OrganizationSettingsView = lazy(
 const OrganizationDashboard = lazy(() => import('./pages/Dashboard'));
 const WorkspaceDashboard = lazy(() => import('./pages/WorkspaceDashboard'));
 const DocumentView = lazy(() => import('./pages/DocumentView'));
-const SystemSetup = lazy(() => import('./pages/Authentication/SystemSetup'));
 const OnboardingSecuritySetup = lazy(
   () => import('./pages/Onboarding/security')
 );
+
+// Onboarding v2
+const OnboardingFlow = lazy(() => import('./pages/OnboardingFlow'));
+
 const OrganizationJobsView = lazy(() => import('./pages/Jobs'));
 const OrganizationToolsView = lazy(() => import('./pages/Tools'));
 const SystemSettingsView = lazy(() => import('./pages/SystemSettings'));
@@ -75,6 +78,7 @@ function App() {
             element={<PrivateRoute Component={DocumentView} />}
           />
 
+          <Route path="/onboarding-setup" element={<OnboardingFlow />} />
           <Route
             path="/onboarding"
             element={<PrivateRoute Component={OnboardingHome} />}
@@ -103,7 +107,6 @@ function App() {
 
           <Route path="/auth/sign-up" element={<SignUp />} />
           <Route path="/auth/sign-in" element={<SignIn />} />
-          <Route path="/system-setup" element={<SystemSetup />} />
           <Route
             path="/system-settings"
             element={<AdminRoute Component={SystemSettingsView} />}
