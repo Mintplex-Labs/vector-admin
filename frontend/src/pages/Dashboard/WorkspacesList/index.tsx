@@ -5,7 +5,6 @@ import moment from 'moment';
 import { nFormatter } from '../../../utils/numbers';
 import { FileText } from 'react-feather';
 import truncate from 'truncate';
-import CreateWorkspaceModal from './CreateWorkspaceModal';
 import Organization from '../../../models/organization';
 import WorkspaceSearch from '../../../components/Sidebar/WorkspaceSearch';
 
@@ -89,7 +88,6 @@ export default function WorkspacesList({
           )}
         </div>
       </WorkspaceSearch>
-      <CreateWorkspaceModal organization={organization} />
     </div>
   );
 }

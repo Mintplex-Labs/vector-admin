@@ -3,21 +3,10 @@ import { NavLink, useLocation, useParams } from 'react-router-dom';
 import Logo from '../../images/logo/logo-light.png';
 import SidebarLinkGroup from '../SidebarLinkGroup';
 import paths from '../../utils/paths';
-import {
-  Box,
-  Briefcase,
-  ChevronUp,
-  Command,
-  Package,
-  Radio,
-  Tool,
-  Users,
-} from 'react-feather';
-import Organization from '../../models/organization';
 import useUser from '../../hooks/useUser';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import WorkspaceSearch, { WorkspaceItem } from './WorkspaceSearch';
 import CreateOrganizationModal from './CreateOrganizationModal';
+import OrganizationTab from './OrganizationTab';
+import { SquaresFour, Plus } from '@phosphor-icons/react';
 
 interface SidebarProps {
   organization: any;
@@ -55,6 +44,12 @@ export default function Sidebar({
     loadMoreWorkspaces?.();
     return true;
   }
+
+  const sortedOrganizations = organizations.sort((a, b) => {
+    if (a.slug === slug) return -1;
+    if (b.slug === slug) return 1;
+    return 0;
+  });
 
   // close on click outside
   useEffect(() => {
@@ -95,14 +90,23 @@ export default function Sidebar({
     <>
       <aside
         ref={sidebar}
-        className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-slate-900 duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
+        className={`max-w-72.5 absolute left-0 top-0 z-9999 flex h-screen min-w-[220px] flex-col overflow-y-hidden bg-main duration-300 ease-linear lg:static lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* <!-- SIDEBAR HEADER --> */}
-        <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
-          <NavLink to={paths.dashboard()}>
-            <img src={Logo} alt="Logo" />
+        <div className="flex">
+          <NavLink
+            to={paths.dashboard()}
+            className="flex w-full shrink-0 justify-center"
+          >
+            <div className="flex w-full justify-center rounded-br-[14px] bg-main-bg">
+              <img
+                src={Logo}
+                alt="Logo"
+                className="w-full max-w-[180px] object-cover p-4"
+              />
+            </div>
           </NavLink>
 
           <button
@@ -132,269 +136,173 @@ export default function Sidebar({
 
         <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
           {/* <!-- Sidebar Menu --> */}
-          <nav className="mt-5 px-4 py-4 lg:mt-9 lg:px-6">
-            {/* <!-- Menu Group --> */}
-            <div>
-              <div className="mb-4 ml-4 flex flex w-full items-center justify-between">
-                <h3 className="text-sm font-semibold text-bodydark2">MENU</h3>
-                <button
-                  onClick={() => {
-                    document
-                      .getElementById('organization-creation-modal')
-                      ?.showModal();
-                  }}
-                  type="button"
-                  className="rounded-lg px-4 px-4 py-1 py-1 text-sm font-semibold text-bodydark2 hover:bg-slate-800 hover:text-slate-200"
-                >
-                  + New Org
-                </button>
-              </div>
-
-              <ul className="mb-6 flex flex-col gap-1.5">
-                {/* <!-- Menu Item Dashboard --> */}
-                <SidebarLinkGroup
-                  activeCondition={
-                    pathname === '/' || pathname.includes('dashboard')
-                  }
-                >
-                  {(handleClick, open) => {
-                    return (
-                      <React.Fragment>
-                        <NavLink
-                          to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                            (pathname === '/' ||
-                              pathname.includes('dashboard')) &&
-                            'bg-graydark dark:bg-meta-4'
-                          }`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            sidebarExpanded
-                              ? handleClick()
-                              : setSidebarExpanded(true);
-                          }}
-                        >
-                          <Command className="h-4 w-4" />
-                          Organizations
-                          <ChevronUp
-                            className={`absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 fill-current ${
-                              open && 'rotate-180'
-                            }`}
-                          />
-                        </NavLink>
-                        {/* <!-- Dropdown Menu Start --> */}
-                        <div
-                          className={`translate transform overflow-hidden ${
-                            !open && 'hidden'
-                          }`}
-                        >
-                          <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
-                            {organizations.map((org: any, i: number) => {
-                              return (
-                                <li key={i}>
-                                  <NavLink
-                                    key={org.id}
-                                    reloadDocument={true}
-                                    to={paths.organization(org)}
-                                    className={({ isActive }) =>
-                                      'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                      (isActive && '!text-white')
-                                    }
-                                  >
-                                    {org.name}
-                                  </NavLink>
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </div>
-                        {/* <!-- Dropdown Menu End --> */}
-                      </React.Fragment>
-                    );
-                  }}
-                </SidebarLinkGroup>
-                {/* <!-- Menu Item Dashboard --> */}
-              </ul>
-            </div>
-
-            {!!slug && workspaces?.length > 0 && (
+          <div className="no-scrollbar m-4 h-screen flex-grow overflow-y-auto rounded-xl border-2 border-white/20">
+            <nav className="p-4 px-4 py-4 lg:px-6">
+              {/* <!-- Menu Group --> */}
               <div>
+                <div className="mb-3.5 flex items-center justify-between">
+                  <div className="flex w-full items-center gap-x-1">
+                    <SquaresFour
+                      className="text-white/60"
+                      size={20}
+                      weight="bold"
+                    />
+                    <div className="text-xs font-medium uppercase tracking-widest text-white/60">
+                      Organizations
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      document
+                        .getElementById('organization-creation-modal')
+                        ?.showModal();
+                    }}
+                  >
+                    <Plus className="text-sky-400" size={17} weight="bold" />
+                  </button>
+                </div>
+
                 <ul className="mb-6 flex flex-col gap-1.5">
                   {/* <!-- Menu Item Dashboard --> */}
                   <SidebarLinkGroup
-                    activeCondition={pathname.includes('dashboard')}
+                    activeCondition={
+                      pathname === '/' || pathname.includes('dashboard')
+                    }
                   >
-                    {(handleClick, open) => {
+                    {() => {
                       return (
                         <React.Fragment>
-                          <NavLink
-                            to="#"
-                            className={`group relative flex items-center gap-2.5 rounded-t-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                              (pathname === '/' ||
-                                pathname.includes('dashboard')) &&
-                              'bg-graydark dark:bg-meta-4'
-                            }`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              sidebarExpanded
-                                ? handleClick()
-                                : setSidebarExpanded(true);
-                            }}
-                          >
-                            <Box className="h-4 w-4" />
-                            Workspaces
-                            <ChevronUp
-                              className={`absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 fill-current ${
-                                open && 'rotate-180'
-                              }`}
-                            />
-                          </NavLink>
                           {/* <!-- Dropdown Menu Start --> */}
-                          <div
-                            className={`translate transform overflow-hidden ${
-                              !open && 'hidden'
-                            }`}
-                          >
-                            <WorkspaceSearch
-                              RenderComponent={WorkspaceItem}
-                              maxContainerHeight={150}
-                              canSearch={
-                                workspaces.length >=
-                                Organization.workspacePageSize
-                              }
+                          <div>
+                            <ul
+                              className="mb-5.5 mt-3 flex flex-col gap-3"
+                              id="organization-list"
                             >
-                              <ul
-                                id="workspaces-sidebar"
-                                className="no-scrollbar mb-5.5 mt-4 flex flex-col gap-1 pl-6"
-                              >
-                                <InfiniteScroll
-                                  dataLength={workspaces.length}
-                                  next={continueLoadWorkspaces}
-                                  hasMore={hasMoreWorkspaces}
-                                  height={150}
-                                  scrollableTarget="workspaces-sidebar"
-                                  scrollThreshold={0.8}
-                                  loader={
-                                    <div className="ml-2 flex h-[30px] w-3/4 animate-pulse items-center justify-center rounded-sm bg-slate-800 px-4">
-                                      <p className="text-xs text-slate-500 ">
-                                        loading...
-                                      </p>
-                                    </div>
-                                  }
-                                >
-                                  {workspaces?.map(
-                                    (workspace: any, i: number) => (
-                                      <WorkspaceItem
-                                        key={i}
-                                        workspace={workspace}
-                                        slug={slug}
-                                      />
-                                    )
-                                  )}
-                                </InfiniteScroll>
-                              </ul>
-                            </WorkspaceSearch>
+                              {sortedOrganizations.map(
+                                (org: any, i: number) => {
+                                  return (
+                                    <OrganizationTab
+                                      key={org.id}
+                                      i={i}
+                                      workspaces={workspaces}
+                                      organization={org}
+                                      hasMoreWorkspaces={hasMoreWorkspaces}
+                                      loadMoreWorkspaces={loadMoreWorkspaces}
+                                    />
+                                  );
+                                }
+                              )}
+                            </ul>
                           </div>
                           {/* <!-- Dropdown Menu End --> */}
                         </React.Fragment>
                       );
                     }}
                   </SidebarLinkGroup>
+                  {/* <!-- Menu Item Dashboard --> */}
                 </ul>
               </div>
-            )}
 
-            <div>
-              {!!organization && (
-                <ul className="mb-6 flex flex-col gap-1.5">
-                  {user?.role === 'admin' && (
-                    <>
-                      <li>
-                        <div className={`translate transform overflow-hidden`}>
-                          <NavLink
-                            to={paths.toolsHome(organization)}
-                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                              (pathname === '/' ||
-                                pathname.includes('all-tools')) &&
-                              'bg-graydark dark:bg-meta-4'
-                            }`}
+              {/* Quick actions */}
+              {/* <div>
+                {!!organization && (
+                  <ul className="mb-6 flex flex-col gap-1.5">
+                    {user?.role === 'admin' && (
+                      <>
+                        <li>
+                          <div
+                            className={`translate transform overflow-hidden`}
                           >
-                            <Package className="h-4 w-4" />
-                            Tools & More
-                          </NavLink>
-                        </div>
-                      </li>
-                      <li>
-                        <div className={`translate transform overflow-hidden`}>
-                          <NavLink
-                            to={paths.users()}
-                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                              (pathname === '/' ||
-                                pathname.includes('users')) &&
-                              'bg-graydark dark:bg-meta-4'
-                            }`}
+                            <NavLink
+                              to={paths.toolsHome(organization)}
+                              className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                                (pathname === '/' ||
+                                  pathname.includes('all-tools')) &&
+                                'bg-graydark dark:bg-meta-4'
+                              }`}
+                            >
+                              <Package className="h-4 w-4" />
+                              Tools & More
+                            </NavLink>
+                          </div>
+                        </li>
+                        <li>
+                          <div
+                            className={`translate transform overflow-hidden`}
                           >
-                            <Users className="h-4 w-4" />
-                            User Management
-                          </NavLink>
-                        </div>
-                      </li>
-                      <li>
-                        <div className={`translate transform overflow-hidden`}>
-                          <NavLink
-                            to={paths.organizationSettings(organization)}
-                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                              (pathname === '/' ||
-                                pathname.includes(
-                                  `${organization?.slug}/settings`
-                                )) &&
-                              'bg-graydark dark:bg-meta-4'
-                            }`}
+                            <NavLink
+                              to={paths.users()}
+                              className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                                (pathname === '/' ||
+                                  pathname.includes('users')) &&
+                                'bg-graydark dark:bg-meta-4'
+                              }`}
+                            >
+                              <Users className="h-4 w-4" />
+                              User Management
+                            </NavLink>
+                          </div>
+                        </li>
+                        <li>
+                          <div
+                            className={`translate transform overflow-hidden`}
                           >
-                            <Briefcase className="h-4 w-4" />
-                            Organization Settings
-                          </NavLink>
-                        </div>
-                      </li>
-                    </>
-                  )}
+                            <NavLink
+                              to={paths.organizationSettings(organization)}
+                              className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                                (pathname === '/' ||
+                                  pathname.includes(
+                                    `${organization?.slug}/settings`
+                                  )) &&
+                                'bg-graydark dark:bg-meta-4'
+                              }`}
+                            >
+                              <Briefcase className="h-4 w-4" />
+                              Organization Settings
+                            </NavLink>
+                          </div>
+                        </li>
+                      </>
+                    )}
 
-                  {user?.role === 'admin' && (
+                    {user?.role === 'admin' && (
+                      <li>
+                        <div className={`translate transform overflow-hidden`}>
+                          <NavLink
+                            to={paths.settings()}
+                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                              (pathname === '/' ||
+                                pathname.includes('system-settings')) &&
+                              'bg-graydark dark:bg-meta-4'
+                            }`}
+                          >
+                            <Tool className="h-4 w-4" />
+                            System Settings
+                          </NavLink>
+                        </div>
+                      </li>
+                    )}
+
                     <li>
                       <div className={`translate transform overflow-hidden`}>
                         <NavLink
-                          to={paths.settings()}
+                          to={paths.jobs(organization)}
                           className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                            (pathname === '/' ||
-                              pathname.includes('system-settings')) &&
+                            (pathname === '/' || pathname.includes('jobs')) &&
                             'bg-graydark dark:bg-meta-4'
                           }`}
                         >
-                          <Tool className="h-4 w-4" />
-                          System Settings
+                          <Radio className="h-4 w-4" />
+                          Background Jobs
                         </NavLink>
                       </div>
                     </li>
-                  )}
+                  </ul>
+                )}
+              </div> */}
+            </nav>
+          </div>
 
-                  <li>
-                    <div className={`translate transform overflow-hidden`}>
-                      <NavLink
-                        to={paths.jobs(organization)}
-                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === '/' || pathname.includes('jobs')) &&
-                          'bg-graydark dark:bg-meta-4'
-                        }`}
-                      >
-                        <Radio className="h-4 w-4" />
-                        Background Jobs
-                      </NavLink>
-                    </div>
-                  </li>
-                </ul>
-              )}
-            </div>
-          </nav>
           {/* <!-- Sidebar Menu --> */}
         </div>
       </aside>
