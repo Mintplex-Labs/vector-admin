@@ -6,13 +6,14 @@ import truncate from 'truncate';
 import Organization from '../../../models/organization';
 import { debounce } from 'lodash';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import CreateWorkspaceModal from '../../../pages/Dashboard/WorkspacesList/CreateWorkspaceModal';
 
 type OrganizationTabProps = {
   organization: any;
   i: number;
   workspaces: any;
   hasMoreWorkspaces: boolean;
-  loadMoreWorkspaces: VoidFunction;
+  loadMoreWorkspaces?: VoidFunction;
 };
 
 const debouncedSearch = debounce(
@@ -40,13 +41,12 @@ export default function OrganizationTab({
   hasMoreWorkspaces,
   loadMoreWorkspaces,
 }: OrganizationTabProps) {
+  const { slug } = useParams();
   const [isActive, setIsActive] = useState(false);
   const [menuOpen, setMenuOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
-
-  const { slug } = useParams();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -57,7 +57,7 @@ export default function OrganizationTab({
   );
 
   const loadMoreWorkspacesAndScrollToBottom = async () => {
-    loadMoreWorkspaces();
+    loadMoreWorkspaces?.();
     const organizationList = document.getElementById('organization-list');
     if (organizationList) {
       organizationList.scrollTop = organizationList.scrollHeight;
@@ -82,7 +82,7 @@ export default function OrganizationTab({
         to={paths.organization(organization)}
         className={({ isActive: active }) => {
           setIsActive(active);
-          return `group relative flex items-center justify-between rounded-lg border border-transparent bg-main-2 px-4 py-3 font-medium text-white duration-300 ease-in-out hover:border-sky-400 hover:text-white ${
+          return `group relative flex w-[13vw] items-center justify-between rounded-lg border border-transparent bg-main-2 px-4 py-3 font-medium text-white duration-300 ease-in-out hover:border-sky-400 hover:text-white ${
             active ? 'border-sky-400 !text-white' : ''
           }`;
         }}
@@ -194,6 +194,7 @@ export default function OrganizationTab({
               </div>
             </div>
           )}
+          <CreateWorkspaceModal organization={organization} />
         </>
       )}
     </li>
