@@ -186,7 +186,10 @@ export default function Sidebar({
                             !open && 'hidden'
                           }`}
                         >
-                          <ul className="mb-5.5 mt-3 flex flex-col gap-3">
+                          <ul
+                            className="mb-5.5 mt-3 flex flex-col gap-3"
+                            id="organization-list"
+                          >
                             {sortedOrganizations.map((org: any, i: number) => {
                               return (
                                 <OrganizationTab
@@ -194,6 +197,8 @@ export default function Sidebar({
                                   i={i}
                                   workspaces={workspaces}
                                   organization={org}
+                                  hasMoreWorkspaces={hasMoreWorkspaces}
+                                  loadMoreWorkspaces={loadMoreWorkspaces}
                                 />
                               );
                             })}

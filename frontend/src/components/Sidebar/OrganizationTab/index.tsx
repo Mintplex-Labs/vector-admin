@@ -10,11 +10,14 @@ import {
 import truncate from 'truncate';
 import Organization from '../../../models/organization';
 import { debounce } from 'lodash';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 type OrganizationTabProps = {
   organization: any;
   i: number;
   workspaces: any;
+  hasMoreWorkspaces: boolean;
+  loadMoreWorkspaces: VoidFunction;
 };
 
 const debouncedSearch = debounce(
@@ -39,6 +42,8 @@ export default function OrganizationTab({
   organization,
   workspaces,
   i,
+  hasMoreWorkspaces,
+  loadMoreWorkspaces,
 }: OrganizationTabProps) {
   const [isActive, setIsActive] = useState(false);
   const [menuOpen, setMenuOpen] = useState(true);
@@ -50,6 +55,18 @@ export default function OrganizationTab({
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+  };
+
+  const renderWorkspaceItem = (workspace: any) => (
+    <WorkspaceItem key={workspace.id} workspace={workspace} slug={slug} />
+  );
+
+  const loadMoreWorkspacesAndScrollToBottom = async () => {
+    loadMoreWorkspaces();
+    const organizationList = document.getElementById('organization-list');
+    if (organizationList) {
+      organizationList.scrollTop = organizationList.scrollHeight;
+    }
   };
 
   useEffect(() => {
@@ -123,11 +140,7 @@ export default function OrganizationTab({
           </div>
 
           {isSearching ? (
-            <div className="mt-2">
-              <div className="flex w-full animate-pulse items-center justify-center rounded-sm text-xs text-white/60">
-                <p className="p-1">Loading...</p>
-              </div>
-            </div>
+            <LoadingWorkspaceItem />
           ) : searchTerm !== '' && searchResults.length > 0 ? (
             <div className="mt-2">
               {searchResults.map((workspace, idx) => (
@@ -136,9 +149,20 @@ export default function OrganizationTab({
             </div>
           ) : searchTerm === '' ? (
             <div className="mt-2">
-              {workspaces.map((workspace, idx) => (
-                <WorkspaceItem key={idx} workspace={workspace} slug={slug} />
-              ))}
+              <InfiniteScroll
+                dataLength={
+                  isSearching ? searchResults.length : workspaces.length
+                }
+                scrollableTarget="organization-list"
+                height={200}
+                next={loadMoreWorkspacesAndScrollToBottom}
+                hasMore={hasMoreWorkspaces}
+                loader={<LoadingWorkspaceItem />}
+              >
+                {isSearching
+                  ? searchResults.map(renderWorkspaceItem)
+                  : workspaces.map(renderWorkspaceItem)}
+              </InfiniteScroll>
             </div>
           ) : (
             <div className="mt-2">
@@ -167,5 +191,15 @@ function WorkspaceItem({ workspace, slug }: any) {
         {truncate(workspace.name, 24)}
       </NavLink>
     </li>
+  );
+}
+
+function LoadingWorkspaceItem() {
+  return (
+    <div className="mt-2">
+      <div className="flex w-full animate-pulse items-center justify-center rounded-sm text-xs text-white/60">
+        <p className="p-1">Loading...</p>
+      </div>
+    </div>
   );
 }
