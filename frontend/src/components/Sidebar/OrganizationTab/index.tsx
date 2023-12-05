@@ -1,12 +1,7 @@
 import { NavLink, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import paths from '../../../utils/paths';
-import {
-  CaretDown,
-  SquaresFour,
-  Plus,
-  MagnifyingGlass,
-} from '@phosphor-icons/react';
+import { CaretDown, Plus, MagnifyingGlass } from '@phosphor-icons/react';
 import truncate from 'truncate';
 import Organization from '../../../models/organization';
 import { debounce } from 'lodash';
@@ -110,8 +105,21 @@ export default function OrganizationTab({
       {isActive && menuOpen && (
         <>
           <div className="mb-3.5 mt-4 flex items-center justify-between px-3">
-            <div className="flex w-full items-center gap-x-1">
-              <SquaresFour className="h-4 w-4 text-white/60" />
+            <div className="flex w-full items-center gap-x-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="12"
+                viewBox="0 0 16 12"
+                fill="none"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M7.20098 8.16845H13.601C14.0426 8.16845 14.401 8.52685 14.401 8.96845C14.401 9.41005 14.0426 9.76845 13.601 9.76845H7.20098C6.75938 9.76845 6.40098 9.41005 6.40098 8.96845C6.40098 8.52685 6.75938 8.16845 7.20098 8.16845ZM7.20098 2.56845H13.601C14.0426 2.56845 14.401 2.92685 14.401 3.36845C14.401 3.81005 14.0426 4.16845 13.601 4.16845H7.20098C6.75938 4.16845 6.40098 3.81005 6.40098 3.36845C6.40098 2.92685 6.75938 2.56845 7.20098 2.56845ZM4.80098 4.16845C4.80098 5.05245 5.51698 5.76845 6.40098 5.76845H14.401C15.285 5.76845 16.001 5.05245 16.001 4.16845V2.56845C16.001 1.68445 15.285 0.96845 14.401 0.96845H6.40098C5.51698 0.96845 4.80098 1.68445 4.80098 2.56845H1.60098L1.60098 0.854024H0.000976562V8.16767C0.000976562 9.05167 0.717782 9.76845 1.60178 9.76845H1.77617H4.80098C4.80098 10.6525 5.51698 11.3685 6.40098 11.3685H14.401C15.285 11.3685 16.001 10.6525 16.001 9.76845V8.16845C16.001 7.28445 15.285 6.56845 14.401 6.56845H6.40098C5.51698 6.56845 4.80098 7.28445 4.80098 8.16845H2.39778C1.95778 8.16845 1.60098 7.81158 1.60098 7.37158V4.16845H4.80098Z"
+                  fill="#A8A9AB"
+                />
+              </svg>
               <div className="text-xs font-medium uppercase tracking-widest text-white/60">
                 Workspaces
               </div>
@@ -123,7 +131,7 @@ export default function OrganizationTab({
                   ?.showModal();
               }}
             >
-              <Plus className="h-4 w-4 text-sky-400" weight="regular" />
+              <Plus className="text-sky-400" size={17} weight="bold" />
             </button>
           </div>
           <div className="mx-3 flex items-center rounded-full bg-main-2 p-2">
@@ -147,28 +155,42 @@ export default function OrganizationTab({
                 <WorkspaceItem key={idx} workspace={workspace} slug={slug} />
               ))}
             </div>
-          ) : searchTerm === '' ? (
+          ) : searchTerm !== '' && searchResults.length === 0 ? (
+            <div className="mt-2">
+              <div className="flex w-full items-center justify-center rounded-sm text-xs text-white/60">
+                <p className="p-1">No results found.</p>
+              </div>
+            </div>
+          ) : workspaces.length > 0 ? (
             <div className="mt-2">
               <InfiniteScroll
-                dataLength={
-                  isSearching ? searchResults.length : workspaces.length
-                }
-                // className="rounded-lg bg-main-2"
+                dataLength={workspaces.length}
                 scrollableTarget="organization-list"
-                height={200}
+                height={workspaces.length > 5 ? 150 : workspaces.length * 30}
                 next={loadMoreWorkspacesAndScrollToBottom}
                 hasMore={hasMoreWorkspaces}
                 loader={<LoadingWorkspaceItem />}
               >
-                {isSearching
-                  ? searchResults.map(renderWorkspaceItem)
-                  : workspaces.map(renderWorkspaceItem)}
+                {workspaces.map(renderWorkspaceItem)}
               </InfiniteScroll>
             </div>
           ) : (
             <div className="mt-2">
-              <div className="flex w-full items-center justify-center rounded-sm text-xs text-white/60">
-                <p className="p-1">No results found.</p>
+              <div className="flex w-48 items-center justify-center rounded-sm text-xs text-white/60">
+                <p className="p-1">
+                  No workspaces,{' '}
+                  <button
+                    onClick={() => {
+                      document
+                        .getElementById('workspace-creation-modal')
+                        ?.showModal();
+                    }}
+                    className="italic underline hover:cursor-pointer"
+                  >
+                    create
+                  </button>
+                  .
+                </p>
               </div>
             </div>
           )}

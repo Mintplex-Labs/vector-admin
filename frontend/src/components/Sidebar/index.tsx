@@ -3,20 +3,7 @@ import { NavLink, useLocation, useParams } from 'react-router-dom';
 import Logo from '../../images/logo/logo-light.png';
 import SidebarLinkGroup from '../SidebarLinkGroup';
 import paths from '../../utils/paths';
-import {
-  Box,
-  Briefcase,
-  ChevronUp,
-  Command,
-  Package,
-  Radio,
-  Tool,
-  Users,
-} from 'react-feather';
-import Organization from '../../models/organization';
 import useUser from '../../hooks/useUser';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import WorkspaceSearch, { WorkspaceItem } from './WorkspaceSearch';
 import CreateOrganizationModal from './CreateOrganizationModal';
 import OrganizationTab from './OrganizationTab';
 import { SquaresFour, Plus } from '@phosphor-icons/react';
@@ -122,7 +109,7 @@ export default function Sidebar({
             </div>
           </NavLink>
 
-          {/* <button
+          <button
             ref={trigger}
             onClick={() => setSidebarOpen(!sidebarOpen)}
             aria-controls="sidebar"
@@ -143,7 +130,7 @@ export default function Sidebar({
                 fill=""
               />
             </svg>
-          </button> */}
+          </button>
         </div>
         {/* <!-- SIDEBAR HEADER --> */}
 
@@ -155,7 +142,11 @@ export default function Sidebar({
               <div>
                 <div className="mb-3.5 flex items-center justify-between">
                   <div className="flex w-full items-center gap-x-1">
-                    <SquaresFour className="h-4 w-4 text-white/60" />
+                    <SquaresFour
+                      className="text-white/60"
+                      size={20}
+                      weight="bold"
+                    />
                     <div className="text-xs font-medium uppercase tracking-widest text-white/60">
                       Organizations
                     </div>
@@ -167,7 +158,7 @@ export default function Sidebar({
                         ?.showModal();
                     }}
                   >
-                    <Plus className="h-4 w-4 text-sky-400" weight="regular" />
+                    <Plus className="text-sky-400" size={17} weight="bold" />
                   </button>
                 </div>
 
@@ -178,15 +169,11 @@ export default function Sidebar({
                       pathname === '/' || pathname.includes('dashboard')
                     }
                   >
-                    {(handleClick, open) => {
+                    {() => {
                       return (
                         <React.Fragment>
                           {/* <!-- Dropdown Menu Start --> */}
-                          <div
-                            className={`translate transform overflow-hidden ${
-                              !open && 'hidden'
-                            }`}
-                          >
+                          <div>
                             <ul
                               className="mb-5.5 mt-3 flex flex-col gap-3"
                               id="organization-list"
@@ -216,94 +203,8 @@ export default function Sidebar({
                 </ul>
               </div>
 
-              {!!slug && workspaces?.length > 0 && (
-                <div>
-                  <ul className="mb-6 flex flex-col gap-1.5">
-                    {/* <!-- Menu Item Dashboard --> */}
-                    <SidebarLinkGroup
-                      activeCondition={pathname.includes('dashboard')}
-                    >
-                      {(handleClick, open) => {
-                        return (
-                          <React.Fragment>
-                            <NavLink
-                              to="#"
-                              className={`group relative flex items-center gap-2.5 rounded-t-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                                (pathname === '/' ||
-                                  pathname.includes('dashboard')) &&
-                                'bg-graydark dark:bg-meta-4'
-                              }`}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                sidebarExpanded
-                                  ? handleClick()
-                                  : setSidebarExpanded(true);
-                              }}
-                            >
-                              <Box className="h-4 w-4" />
-                              Workspaces
-                              <ChevronUp
-                                className={`absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 fill-current ${
-                                  open && 'rotate-180'
-                                }`}
-                              />
-                            </NavLink>
-                            {/* <!-- Dropdown Menu Start --> */}
-                            <div
-                              className={`translate transform overflow-hidden ${
-                                !open && 'hidden'
-                              }`}
-                            >
-                              <WorkspaceSearch
-                                RenderComponent={WorkspaceItem}
-                                maxContainerHeight={150}
-                                canSearch={
-                                  workspaces.length >=
-                                  Organization.workspacePageSize
-                                }
-                              >
-                                <ul
-                                  id="workspaces-sidebar"
-                                  className="no-scrollbar mb-5.5 mt-4 flex flex-col gap-1 pl-6"
-                                >
-                                  <InfiniteScroll
-                                    dataLength={workspaces.length}
-                                    next={continueLoadWorkspaces}
-                                    hasMore={hasMoreWorkspaces}
-                                    height={150}
-                                    scrollableTarget="workspaces-sidebar"
-                                    scrollThreshold={0.8}
-                                    loader={
-                                      <div className="ml-2 flex h-[30px] w-3/4 animate-pulse items-center justify-center rounded-sm bg-slate-800 px-4">
-                                        <p className="text-xs text-slate-500 ">
-                                          loading...
-                                        </p>
-                                      </div>
-                                    }
-                                  >
-                                    {workspaces?.map(
-                                      (workspace: any, i: number) => (
-                                        <WorkspaceItem
-                                          key={i}
-                                          workspace={workspace}
-                                          slug={slug}
-                                        />
-                                      )
-                                    )}
-                                  </InfiniteScroll>
-                                </ul>
-                              </WorkspaceSearch>
-                            </div>
-                            {/* <!-- Dropdown Menu End --> */}
-                          </React.Fragment>
-                        );
-                      }}
-                    </SidebarLinkGroup>
-                  </ul>
-                </div>
-              )}
-
-              <div>
+              {/* Quick actions */}
+              {/* <div>
                 {!!organization && (
                   <ul className="mb-6 flex flex-col gap-1.5">
                     {user?.role === 'admin' && (
@@ -398,7 +299,7 @@ export default function Sidebar({
                     </li>
                   </ul>
                 )}
-              </div>
+              </div> */}
             </nav>
           </div>
 
