@@ -18,7 +18,5 @@
     "prisma:setup": "yarn prisma:generate && yarn prisma:migrate",
     "prisma:reset": "cd backend && npx prisma db push --force-reset"
   },
-  "private": false,
-  "dependencies": {
-  }
+  "private": false
 }
