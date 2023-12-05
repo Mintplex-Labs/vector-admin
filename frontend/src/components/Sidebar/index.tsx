@@ -58,6 +58,12 @@ export default function Sidebar({
     return true;
   }
 
+  const sortedOrganizations = organizations.sort((a, b) => {
+    if (a.slug === slug) return -1;
+    if (b.slug === slug) return 1;
+    return 0;
+  });
+
   // close on click outside
   useEffect(() => {
     const clickHandler = ({ target }: MouseEvent) => {
@@ -107,7 +113,7 @@ export default function Sidebar({
             to={paths.dashboard()}
             className="flex w-full shrink-0 justify-center"
           >
-            <div className="flex w-full justify-center rounded-br-[14px] bg-main-2">
+            <div className="flex w-full justify-center rounded-br-[14px] bg-main-bg">
               <img
                 src={Logo}
                 alt="Logo"
@@ -181,9 +187,14 @@ export default function Sidebar({
                           }`}
                         >
                           <ul className="mb-5.5 mt-3 flex flex-col gap-3">
-                            {organizations.map((org: any, i: number) => {
+                            {sortedOrganizations.map((org: any, i: number) => {
                               return (
-                                <OrganizationTab i={i} organization={org} />
+                                <OrganizationTab
+                                  key={org.id}
+                                  i={i}
+                                  workspaces={workspaces}
+                                  organization={org}
+                                />
                               );
                             })}
                           </ul>

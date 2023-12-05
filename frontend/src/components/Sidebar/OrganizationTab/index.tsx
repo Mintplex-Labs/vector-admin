@@ -1,5 +1,5 @@
-import { NavLink } from 'react-router-dom';
-import { useState } from 'react';
+import { NavLink, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import paths from '../../../utils/paths';
 import {
   CaretDown,
@@ -7,11 +7,33 @@ import {
   Plus,
   MagnifyingGlass,
 } from '@phosphor-icons/react';
+import truncate from 'truncate';
+import Organization from '../../../models/organization';
+import { debounce } from 'lodash';
 
 type OrganizationTabProps = {
   organization: any;
   i: number;
+  workspaces: any;
 };
+
+const debouncedSearch = debounce(
+  async (searchTerm, setResults, setIsSearching, slug) => {
+    if (!slug) return;
+    setIsSearching(true);
+
+    const { workspacesResults = [] } = await Organization.searchWorkspaces(
+      slug,
+      1, // Page 1
+      30, // 30 results per page
+      searchTerm
+    );
+
+    setResults(workspacesResults);
+    setIsSearching(false);
+  },
+  500
+);
 
 export default function OrganizationTab({
   organization,
@@ -19,26 +41,48 @@ export default function OrganizationTab({
   i,
 }: OrganizationTabProps) {
   const [isActive, setIsActive] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const { slug } = useParams();
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  useEffect(() => {
+    if (searchTerm !== '') {
+      setIsSearching(true);
+      debouncedSearch(searchTerm, setSearchResults, setIsSearching, slug);
+    } else {
+      setSearchResults(workspaces);
+      setIsSearching(false);
+    }
+  }, [searchTerm, slug]);
 
   return (
     <li key={i}>
       <NavLink
         key={organization.id}
-        reloadDocument={true}
+        reloadDocument={!isActive}
         to={paths.organization(organization)}
         className={({ isActive: active }) => {
           setIsActive(active);
-          return `group relative flex items-center justify-between rounded-lg bg-main-2 px-4 py-3 font-medium text-white duration-300 ease-in-out hover:text-white ${
-            active ? '!text-white' : ''
+          return `group relative flex items-center justify-between rounded-lg border border-transparent bg-main-2 px-4 py-3 font-medium text-white duration-300 ease-in-out hover:border-sky-400 hover:text-white ${
+            active ? 'border-sky-400 !text-white' : ''
           }`;
         }}
       >
-        <div className="flex w-full flex-col">
+        <div className="flex w-full flex-col" onClick={toggleMenu}>
           <div className="flex w-full items-center justify-between">
-            <div>{organization.name}</div>
+            <div className={`${isActive ? 'text-sky-400' : 'text-white/60'}`}>
+              {truncate(organization.name, 19)}
+            </div>
             <div
               className={`transition-all duration-300 ${
-                isActive ? '' : 'rotate-180'
+                isActive && menuOpen ? 'text-sky-400' : 'rotate-180 '
               }`}
             >
               <CaretDown weight="bold" />
@@ -46,7 +90,7 @@ export default function OrganizationTab({
           </div>
         </div>
       </NavLink>
-      {isActive && (
+      {isActive && menuOpen && (
         <>
           <div className="mb-3.5 mt-4 flex items-center justify-between px-3">
             <div className="flex w-full items-center gap-x-1">
@@ -65,24 +109,63 @@ export default function OrganizationTab({
               <Plus className="h-4 w-4 text-sky-400" weight="regular" />
             </button>
           </div>
-          <div className="mx-3 rounded-full bg-main-2 p-2">
-            <MagnifyingGlass className="ml-1 h-4 w-4 text-white/60" />
+          <div className="mx-3 flex items-center rounded-full bg-main-2 p-2">
+            <MagnifyingGlass
+              className="mx-1 h-4 w-4 text-white/60"
+              weight="bold"
+            />
+            <input
+              type="text"
+              placeholder="Search"
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="border-none bg-transparent text-sm text-white/60 placeholder-white/60 focus:outline-none"
+            />
           </div>
 
-          {/* Render workspaces here */}
-          <div className="mx-3">
-            <div className="mt-3 text-sm font-normal leading-tight text-white hover:cursor-pointer hover:underline">
-              Workspace 1
+          {isSearching ? (
+            <div className="mt-2">
+              <div className="flex w-full animate-pulse items-center justify-center rounded-sm text-xs text-white/60">
+                <p className="p-1">Loading...</p>
+              </div>
             </div>
-            <div className="mt-3 text-sm font-normal leading-tight text-white hover:cursor-pointer hover:underline">
-              Workspace 2
+          ) : searchTerm !== '' && searchResults.length > 0 ? (
+            <div className="mt-2">
+              {searchResults.map((workspace, idx) => (
+                <WorkspaceItem key={idx} workspace={workspace} slug={slug} />
+              ))}
             </div>
-            <div className="mt-3 text-sm font-normal leading-tight text-white hover:cursor-pointer hover:underline">
-              Workspace 3
+          ) : searchTerm === '' ? (
+            <div className="mt-2">
+              {workspaces.map((workspace, idx) => (
+                <WorkspaceItem key={idx} workspace={workspace} slug={slug} />
+              ))}
             </div>
-          </div>
+          ) : (
+            <div className="mt-2">
+              <div className="flex w-full items-center justify-center rounded-sm text-xs text-white/60">
+                <p className="p-1">No results found.</p>
+              </div>
+            </div>
+          )}
         </>
       )}
+    </li>
+  );
+}
+
+function WorkspaceItem({ workspace, slug }: any) {
+  return (
+    <li className="mx-5 mt-1">
+      <NavLink
+        to={paths.workspace(slug, workspace.slug)}
+        className={({ isActive }) => {
+          return `text-sm font-normal leading-tight text-sky-400 hover:cursor-pointer hover:text-sky-400 hover:underline ${
+            isActive ? 'text-sky-400' : 'text-white/60'
+          }`;
+        }}
+      >
+        {truncate(workspace.name, 24)}
+      </NavLink>
     </li>
   );
 }
