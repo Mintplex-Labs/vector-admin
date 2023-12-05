@@ -149,248 +149,259 @@ export default function Sidebar({
 
         <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
           {/* <!-- Sidebar Menu --> */}
-          <nav className="m-4 rounded-xl border-2 border-white/20 p-4 px-4 py-4 lg:px-6">
-            {/* <!-- Menu Group --> */}
-            <div>
-              <div className="mb-3.5 flex items-center justify-between">
-                <div className="flex w-full items-center gap-x-1">
-                  <SquaresFour className="h-4 w-4 text-white/60" />
-                  <div className="text-xs font-medium uppercase tracking-widest text-white/60">
-                    Organizations
-                  </div>
-                </div>
-                <button
-                  onClick={() => {
-                    document
-                      .getElementById('organization-creation-modal')
-                      ?.showModal();
-                  }}
-                >
-                  <Plus className="h-4 w-4 text-sky-400" weight="regular" />
-                </button>
-              </div>
-
-              <ul className="mb-6 flex flex-col gap-1.5">
-                {/* <!-- Menu Item Dashboard --> */}
-                <SidebarLinkGroup
-                  activeCondition={
-                    pathname === '/' || pathname.includes('dashboard')
-                  }
-                >
-                  {(handleClick, open) => {
-                    return (
-                      <React.Fragment>
-                        {/* <!-- Dropdown Menu Start --> */}
-                        <div
-                          className={`translate transform overflow-hidden ${
-                            !open && 'hidden'
-                          }`}
-                        >
-                          <ul
-                            className="mb-5.5 mt-3 flex flex-col gap-3"
-                            id="organization-list"
-                          >
-                            {sortedOrganizations.map((org: any, i: number) => {
-                              return (
-                                <OrganizationTab
-                                  key={org.id}
-                                  i={i}
-                                  workspaces={workspaces}
-                                  organization={org}
-                                  hasMoreWorkspaces={hasMoreWorkspaces}
-                                  loadMoreWorkspaces={loadMoreWorkspaces}
-                                />
-                              );
-                            })}
-                          </ul>
-                        </div>
-                        {/* <!-- Dropdown Menu End --> */}
-                      </React.Fragment>
-                    );
-                  }}
-                </SidebarLinkGroup>
-                {/* <!-- Menu Item Dashboard --> */}
-              </ul>
-            </div>
-
-            {!!slug && workspaces?.length > 0 && (
+          <div className="no-scrollbar m-4 h-screen flex-grow overflow-y-auto rounded-xl border-2 border-white/20">
+            <nav className="p-4 px-4 py-4 lg:px-6">
+              {/* <!-- Menu Group --> */}
               <div>
+                <div className="mb-3.5 flex items-center justify-between">
+                  <div className="flex w-full items-center gap-x-1">
+                    <SquaresFour className="h-4 w-4 text-white/60" />
+                    <div className="text-xs font-medium uppercase tracking-widest text-white/60">
+                      Organizations
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      document
+                        .getElementById('organization-creation-modal')
+                        ?.showModal();
+                    }}
+                  >
+                    <Plus className="h-4 w-4 text-sky-400" weight="regular" />
+                  </button>
+                </div>
+
                 <ul className="mb-6 flex flex-col gap-1.5">
                   {/* <!-- Menu Item Dashboard --> */}
                   <SidebarLinkGroup
-                    activeCondition={pathname.includes('dashboard')}
+                    activeCondition={
+                      pathname === '/' || pathname.includes('dashboard')
+                    }
                   >
                     {(handleClick, open) => {
                       return (
                         <React.Fragment>
-                          <NavLink
-                            to="#"
-                            className={`group relative flex items-center gap-2.5 rounded-t-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                              (pathname === '/' ||
-                                pathname.includes('dashboard')) &&
-                              'bg-graydark dark:bg-meta-4'
-                            }`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              sidebarExpanded
-                                ? handleClick()
-                                : setSidebarExpanded(true);
-                            }}
-                          >
-                            <Box className="h-4 w-4" />
-                            Workspaces
-                            <ChevronUp
-                              className={`absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 fill-current ${
-                                open && 'rotate-180'
-                              }`}
-                            />
-                          </NavLink>
                           {/* <!-- Dropdown Menu Start --> */}
                           <div
                             className={`translate transform overflow-hidden ${
                               !open && 'hidden'
                             }`}
                           >
-                            <WorkspaceSearch
-                              RenderComponent={WorkspaceItem}
-                              maxContainerHeight={150}
-                              canSearch={
-                                workspaces.length >=
-                                Organization.workspacePageSize
-                              }
+                            <ul
+                              className="mb-5.5 mt-3 flex flex-col gap-3"
+                              id="organization-list"
                             >
-                              <ul
-                                id="workspaces-sidebar"
-                                className="no-scrollbar mb-5.5 mt-4 flex flex-col gap-1 pl-6"
-                              >
-                                <InfiniteScroll
-                                  dataLength={workspaces.length}
-                                  next={continueLoadWorkspaces}
-                                  hasMore={hasMoreWorkspaces}
-                                  height={150}
-                                  scrollableTarget="workspaces-sidebar"
-                                  scrollThreshold={0.8}
-                                  loader={
-                                    <div className="ml-2 flex h-[30px] w-3/4 animate-pulse items-center justify-center rounded-sm bg-slate-800 px-4">
-                                      <p className="text-xs text-slate-500 ">
-                                        loading...
-                                      </p>
-                                    </div>
-                                  }
-                                >
-                                  {workspaces?.map(
-                                    (workspace: any, i: number) => (
-                                      <WorkspaceItem
-                                        key={i}
-                                        workspace={workspace}
-                                        slug={slug}
-                                      />
-                                    )
-                                  )}
-                                </InfiniteScroll>
-                              </ul>
-                            </WorkspaceSearch>
+                              {sortedOrganizations.map(
+                                (org: any, i: number) => {
+                                  return (
+                                    <OrganizationTab
+                                      key={org.id}
+                                      i={i}
+                                      workspaces={workspaces}
+                                      organization={org}
+                                      hasMoreWorkspaces={hasMoreWorkspaces}
+                                      loadMoreWorkspaces={loadMoreWorkspaces}
+                                    />
+                                  );
+                                }
+                              )}
+                            </ul>
                           </div>
                           {/* <!-- Dropdown Menu End --> */}
                         </React.Fragment>
                       );
                     }}
                   </SidebarLinkGroup>
+                  {/* <!-- Menu Item Dashboard --> */}
                 </ul>
               </div>
-            )}
 
-            <div>
-              {!!organization && (
-                <ul className="mb-6 flex flex-col gap-1.5">
-                  {user?.role === 'admin' && (
-                    <>
-                      <li>
-                        <div className={`translate transform overflow-hidden`}>
-                          <NavLink
-                            to={paths.toolsHome(organization)}
-                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                              (pathname === '/' ||
-                                pathname.includes('all-tools')) &&
-                              'bg-graydark dark:bg-meta-4'
-                            }`}
-                          >
-                            <Package className="h-4 w-4" />
-                            Tools & More
-                          </NavLink>
-                        </div>
-                      </li>
-                      <li>
-                        <div className={`translate transform overflow-hidden`}>
-                          <NavLink
-                            to={paths.users()}
-                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                              (pathname === '/' ||
-                                pathname.includes('users')) &&
-                              'bg-graydark dark:bg-meta-4'
-                            }`}
-                          >
-                            <Users className="h-4 w-4" />
-                            User Management
-                          </NavLink>
-                        </div>
-                      </li>
-                      <li>
-                        <div className={`translate transform overflow-hidden`}>
-                          <NavLink
-                            to={paths.organizationSettings(organization)}
-                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                              (pathname === '/' ||
-                                pathname.includes(
-                                  `${organization?.slug}/settings`
-                                )) &&
-                              'bg-graydark dark:bg-meta-4'
-                            }`}
-                          >
-                            <Briefcase className="h-4 w-4" />
-                            Organization Settings
-                          </NavLink>
-                        </div>
-                      </li>
-                    </>
-                  )}
+              {!!slug && workspaces?.length > 0 && (
+                <div>
+                  <ul className="mb-6 flex flex-col gap-1.5">
+                    {/* <!-- Menu Item Dashboard --> */}
+                    <SidebarLinkGroup
+                      activeCondition={pathname.includes('dashboard')}
+                    >
+                      {(handleClick, open) => {
+                        return (
+                          <React.Fragment>
+                            <NavLink
+                              to="#"
+                              className={`group relative flex items-center gap-2.5 rounded-t-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                                (pathname === '/' ||
+                                  pathname.includes('dashboard')) &&
+                                'bg-graydark dark:bg-meta-4'
+                              }`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                sidebarExpanded
+                                  ? handleClick()
+                                  : setSidebarExpanded(true);
+                              }}
+                            >
+                              <Box className="h-4 w-4" />
+                              Workspaces
+                              <ChevronUp
+                                className={`absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 fill-current ${
+                                  open && 'rotate-180'
+                                }`}
+                              />
+                            </NavLink>
+                            {/* <!-- Dropdown Menu Start --> */}
+                            <div
+                              className={`translate transform overflow-hidden ${
+                                !open && 'hidden'
+                              }`}
+                            >
+                              <WorkspaceSearch
+                                RenderComponent={WorkspaceItem}
+                                maxContainerHeight={150}
+                                canSearch={
+                                  workspaces.length >=
+                                  Organization.workspacePageSize
+                                }
+                              >
+                                <ul
+                                  id="workspaces-sidebar"
+                                  className="no-scrollbar mb-5.5 mt-4 flex flex-col gap-1 pl-6"
+                                >
+                                  <InfiniteScroll
+                                    dataLength={workspaces.length}
+                                    next={continueLoadWorkspaces}
+                                    hasMore={hasMoreWorkspaces}
+                                    height={150}
+                                    scrollableTarget="workspaces-sidebar"
+                                    scrollThreshold={0.8}
+                                    loader={
+                                      <div className="ml-2 flex h-[30px] w-3/4 animate-pulse items-center justify-center rounded-sm bg-slate-800 px-4">
+                                        <p className="text-xs text-slate-500 ">
+                                          loading...
+                                        </p>
+                                      </div>
+                                    }
+                                  >
+                                    {workspaces?.map(
+                                      (workspace: any, i: number) => (
+                                        <WorkspaceItem
+                                          key={i}
+                                          workspace={workspace}
+                                          slug={slug}
+                                        />
+                                      )
+                                    )}
+                                  </InfiniteScroll>
+                                </ul>
+                              </WorkspaceSearch>
+                            </div>
+                            {/* <!-- Dropdown Menu End --> */}
+                          </React.Fragment>
+                        );
+                      }}
+                    </SidebarLinkGroup>
+                  </ul>
+                </div>
+              )}
 
-                  {user?.role === 'admin' && (
+              <div>
+                {!!organization && (
+                  <ul className="mb-6 flex flex-col gap-1.5">
+                    {user?.role === 'admin' && (
+                      <>
+                        <li>
+                          <div
+                            className={`translate transform overflow-hidden`}
+                          >
+                            <NavLink
+                              to={paths.toolsHome(organization)}
+                              className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                                (pathname === '/' ||
+                                  pathname.includes('all-tools')) &&
+                                'bg-graydark dark:bg-meta-4'
+                              }`}
+                            >
+                              <Package className="h-4 w-4" />
+                              Tools & More
+                            </NavLink>
+                          </div>
+                        </li>
+                        <li>
+                          <div
+                            className={`translate transform overflow-hidden`}
+                          >
+                            <NavLink
+                              to={paths.users()}
+                              className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                                (pathname === '/' ||
+                                  pathname.includes('users')) &&
+                                'bg-graydark dark:bg-meta-4'
+                              }`}
+                            >
+                              <Users className="h-4 w-4" />
+                              User Management
+                            </NavLink>
+                          </div>
+                        </li>
+                        <li>
+                          <div
+                            className={`translate transform overflow-hidden`}
+                          >
+                            <NavLink
+                              to={paths.organizationSettings(organization)}
+                              className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                                (pathname === '/' ||
+                                  pathname.includes(
+                                    `${organization?.slug}/settings`
+                                  )) &&
+                                'bg-graydark dark:bg-meta-4'
+                              }`}
+                            >
+                              <Briefcase className="h-4 w-4" />
+                              Organization Settings
+                            </NavLink>
+                          </div>
+                        </li>
+                      </>
+                    )}
+
+                    {user?.role === 'admin' && (
+                      <li>
+                        <div className={`translate transform overflow-hidden`}>
+                          <NavLink
+                            to={paths.settings()}
+                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                              (pathname === '/' ||
+                                pathname.includes('system-settings')) &&
+                              'bg-graydark dark:bg-meta-4'
+                            }`}
+                          >
+                            <Tool className="h-4 w-4" />
+                            System Settings
+                          </NavLink>
+                        </div>
+                      </li>
+                    )}
+
                     <li>
                       <div className={`translate transform overflow-hidden`}>
                         <NavLink
-                          to={paths.settings()}
+                          to={paths.jobs(organization)}
                           className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                            (pathname === '/' ||
-                              pathname.includes('system-settings')) &&
+                            (pathname === '/' || pathname.includes('jobs')) &&
                             'bg-graydark dark:bg-meta-4'
                           }`}
                         >
-                          <Tool className="h-4 w-4" />
-                          System Settings
+                          <Radio className="h-4 w-4" />
+                          Background Jobs
                         </NavLink>
                       </div>
                     </li>
-                  )}
+                  </ul>
+                )}
+              </div>
+            </nav>
+          </div>
 
-                  <li>
-                    <div className={`translate transform overflow-hidden`}>
-                      <NavLink
-                        to={paths.jobs(organization)}
-                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === '/' || pathname.includes('jobs')) &&
-                          'bg-graydark dark:bg-meta-4'
-                        }`}
-                      >
-                        <Radio className="h-4 w-4" />
-                        Background Jobs
-                      </NavLink>
-                    </div>
-                  </li>
-                </ul>
-              )}
-            </div>
-          </nav>
           {/* <!-- Sidebar Menu --> */}
         </div>
       </aside>

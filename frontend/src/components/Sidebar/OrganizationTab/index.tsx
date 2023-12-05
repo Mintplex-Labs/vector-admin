@@ -153,6 +153,7 @@ export default function OrganizationTab({
                 dataLength={
                   isSearching ? searchResults.length : workspaces.length
                 }
+                // className="rounded-lg bg-main-2"
                 scrollableTarget="organization-list"
                 height={200}
                 next={loadMoreWorkspacesAndScrollToBottom}
