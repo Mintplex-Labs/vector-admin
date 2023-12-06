@@ -75,14 +75,14 @@ export default function FragmentList({
 
   return (
     <>
-      <div className="col-span-12 flex-1 rounded-sm dark:border-strokedark dark:bg-boxdark xl:col-span-4">
+      <div className="col-span-12 h-screen flex-1 rounded-sm dark:border-strokedark dark:bg-boxdark xl:col-span-4">
         <div className="flex items-start justify-between">
           <div className="mb-6 flex flex-col gap-y-1 px-7.5 ">
             <div className="flex items-center gap-x-2">
-              <h4 className="text-3xl font-semibold text-black dark:text-white">
-                Embeddings Overview for Document #{document.id}
-              </h4>
-              <button
+              <div className="w-48 text-sm font-bold uppercase tracking-wide text-white">
+                embeddings overview
+              </div>
+              {/* <button
                 type="button"
                 onClick={() =>
                   window.document
@@ -98,10 +98,10 @@ export default function FragmentList({
                 className="rounded-lg px-4 py-2 text-sm text-slate-400 hover:bg-red-50 hover:text-red-600"
               >
                 Delete Document
-              </button>
+              </button> */}
             </div>
 
-            <p className="text-sm text-slate-500">{document?.name}</p>
+            {/* <p className="text-sm text-slate-500">{document?.name}</p> */}
           </div>
         </div>
 

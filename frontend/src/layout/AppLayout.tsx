@@ -42,7 +42,7 @@ const AppLayout = ({
           loadMoreWorkspaces={loadMoreWorkspaces}
         />
 
-        <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+        <div className="w-full overflow-x-hidden">
           {!!headerEntity && (
             <div className="flex w-full items-center">
               <Header
@@ -56,7 +56,7 @@ const AppLayout = ({
             </div>
           )}
           <main>
-            <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+            <div className="mx-auto max-w-screen-2xl bg-main p-4 md:p-6 2xl:p-10">
               {children}
             </div>
           </main>

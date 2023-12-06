@@ -82,7 +82,7 @@ export default function OrganizationTab({
         to={paths.organization(organization)}
         className={({ isActive: active }) => {
           setIsActive(active);
-          return `group relative flex w-[13vw] items-center justify-between rounded-lg border border-transparent bg-main-2 px-4 py-3 font-medium text-white duration-300 ease-in-out hover:border-sky-400 hover:text-white ${
+          return `group relative flex w-full items-center justify-between rounded-lg border border-transparent bg-main-2 px-4 py-3 font-medium text-white duration-300 ease-in-out hover:border-sky-400 hover:text-white ${
             active ? 'border-sky-400 !text-white' : ''
           }`;
         }}

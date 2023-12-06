@@ -90,7 +90,7 @@ export default function SearchView({
           <div className="relative flex">
             <button
               onClick={() => setShowSearchMethods(!showSearchMethods)}
-              className="z-10 inline-flex flex-shrink-0 items-center rounded-l-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-center text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-700"
+              className="z-10 inline-flex h-9 flex-shrink-0 items-center rounded-[100px] bg-zinc-700 px-5 text-center text-sm font-medium text-white hover:bg-opacity-60 focus:outline-none"
               type="button"
             >
               {SEARCH_MODES[searchBy].display}
@@ -128,7 +128,7 @@ export default function SearchView({
               <input
                 type="search"
                 name="query"
-                className="z-20 block w-full rounded-r-lg border border-l-2 border-gray-300 border-l-gray-50 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:border-l-gray-700  dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500"
+                className="z-20 block w-full rounded-[100px] bg-main-2 p-2.5 text-sm"
                 placeholder={SEARCH_MODES[searchBy].placeholder}
                 required
               />
