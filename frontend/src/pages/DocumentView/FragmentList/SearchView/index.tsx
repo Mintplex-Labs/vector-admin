@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 import { ChevronDown, Search, Loader } from 'react-feather';
+import { CaretDown, Plus, MagnifyingGlass, X } from '@phosphor-icons/react';
 import Document from '../../../../models/document';
 
 export type ISearchTypes = 'semantic' | 'exactText' | 'metadata' | 'vectorId';
@@ -84,24 +85,34 @@ export default function SearchView({
   };
 
   return (
-    <div className="w-full flex-1 rounded-sm py-6">
+    <div className="w-full flex-1">
       <div className="flex items-center">
         <form ref={formEl} onSubmit={handleSearch} className="w-full">
           <div className="relative flex">
             <button
               onClick={() => setShowSearchMethods(!showSearchMethods)}
-              className="z-10 inline-flex h-9 flex-shrink-0 items-center rounded-[100px] bg-zinc-700 px-5 text-center text-sm font-medium text-white hover:bg-opacity-60 focus:outline-none"
+              className="z-10 inline-flex h-9 flex-shrink-0 items-center rounded-[100px] bg-zinc-700 px-5 text-center text-sm font-medium text-white transition-all duration-300 hover:bg-zinc-800 focus:outline-none"
               type="button"
             >
               {SEARCH_MODES[searchBy].display}
-              <ChevronDown size={18} />
+              <div
+                className={`ml-2 transition-all duration-300 ${
+                  showSearchMethods ? '' : 'rotate-180'
+                }`}
+              >
+                <CaretDown size={16} weight="bold" />
+              </div>
             </button>
             <div
-              hidden={!showSearchMethods}
-              className="absolute left-0 top-12 z-99 w-44 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700"
+              className={`absolute left-0 top-12 z-99 w-44 divide-y divide-gray-100 rounded-lg bg-zinc-700 shadow ${
+                showSearchMethods ? 'slide-down' : 'slide-up'
+              }`}
+              style={{
+                animationDuration: '0.15s',
+              }}
             >
               <ul
-                className="py-2 text-sm text-gray-700 dark:text-gray-200"
+                className="py-2 text-sm text-white"
                 aria-labelledby="dropdown-button"
               >
                 {Object.keys(SEARCH_MODES).map((_key, i) => {
@@ -115,7 +126,7 @@ export default function SearchView({
                           setFragments([]);
                         }}
                         type="button"
-                        className="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                        className="inline-flex w-full px-4 py-2  hover:bg-zinc-800"
                       >
                         {SEARCH_MODES[method].display}
                       </button>
@@ -128,29 +139,41 @@ export default function SearchView({
               <input
                 type="search"
                 name="query"
-                className="z-20 block w-full rounded-[100px] bg-main-2 p-2.5 text-sm"
+                className="z-20 -ml-4 block h-9 w-full rounded-r-[100px] bg-main-2 pl-8 text-sm text-white focus:outline-none"
                 placeholder={SEARCH_MODES[searchBy].placeholder}
                 required
               />
               <button
                 type="submit"
                 disabled={searching}
-                className="absolute right-0 top-0 h-full rounded-r-lg border border-blue-700 bg-blue-700 p-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                className="absolute right-0 top-0 mr-4.5 flex h-full p-2.5 text-sm font-medium text-white focus:outline-none"
               >
                 {searching ? (
                   <Loader size={18} className="animate-spin" />
                 ) : (
-                  <Search size={18} />
+                  <MagnifyingGlass
+                    className="text-sky-400 transition-all duration-300 hover:text-sky-700"
+                    size={18}
+                    weight="bold"
+                  />
                 )}
                 <span className="sr-only">Search</span>
               </button>
             </div>
-            <button
-              onClick={clearSearch}
-              type="button"
-              className="ml-2 flex items-center rounded-lg px-4 py-2 text-center text-black hover:bg-gray-200"
-            >
-              X
+
+            {/* clear search button */}
+            {/* <div className="flex items-center justify-center">
+              <button
+                onClick={clearSearch}
+                type="button"
+                className="flex items-center rounded-full bg-main-2 p-1 text-center text-white"
+              >
+                <X className="h-4 w-4" weight="bold" />
+              </button>
+            </div> */}
+
+            <button className="flex items-center justify-center rounded-[100px] bg-sky-400 px-2.5 text-xs">
+              <div className="font-bold uppercase text-black">Upload</div>
             </button>
           </div>
         </form>

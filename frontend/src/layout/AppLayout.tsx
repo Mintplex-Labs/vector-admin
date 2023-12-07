@@ -30,7 +30,7 @@ const AppLayout = ({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="dark:bg-boxdark-2 dark:text-bodydark">
+    <div className="bg-main-bg px-4 pt-4">
       <div className="flex h-screen overflow-hidden">
         <Sidebar
           workspaces={workspaces}
@@ -56,9 +56,7 @@ const AppLayout = ({
             </div>
           )}
           <main>
-            <div className="mx-auto max-w-screen-2xl bg-main p-4 md:p-6 2xl:p-10">
-              {children}
-            </div>
+            <div className="mx-auto bg-main pr-6 pt-6">{children}</div>
           </main>
         </div>
       </div>

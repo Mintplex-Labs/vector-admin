@@ -2,13 +2,13 @@ import { lazy, memo, useEffect, useState } from 'react';
 import PreLoader from '../../../components/Preloader';
 import Document from '../../../models/document';
 import truncate from 'truncate';
-import moment from 'moment';
 import pluralize from 'pluralize';
 import { useParams } from 'react-router-dom';
 import paths from '../../../utils/paths';
 import DocumentListPagination from '../../../components/DocumentPaginator';
 import SearchView from './SearchView';
 import MetadataEditor from './MetadataEditor';
+import { Trash } from '@phosphor-icons/react';
 const DeleteEmbeddingConfirmation = lazy(
   () => import('./DeleteEmbeddingConfirmation')
 );
@@ -75,77 +75,80 @@ export default function FragmentList({
 
   return (
     <>
-      <div className="col-span-12 h-screen flex-1 rounded-sm dark:border-strokedark dark:bg-boxdark xl:col-span-4">
-        <div className="flex items-start justify-between">
-          <div className="mb-6 flex flex-col gap-y-1 px-7.5 ">
-            <div className="flex items-center gap-x-2">
-              <div className="w-48 text-sm font-bold uppercase tracking-wide text-white">
+      <div className="h-screen rounded-sm">
+        <div className="">
+          <div className="flex flex-col">
+            <div className="mb-6 flex w-full items-center justify-between gap-x-12">
+              <div className="ml-4 w-48 text-sm font-bold uppercase tracking-wide text-white">
                 embeddings overview
               </div>
-              {/* <button
-                type="button"
-                onClick={() =>
-                  window.document
-                    .getElementById(`copy-document-${document.id}-modal`)
-                    ?.showModal()
-                }
-                className="rounded-lg px-4 py-2 text-sm text-blue-400 hover:bg-blue-50 hover:text-blue-600"
-              >
-                Clone Document
-              </button>
-              <button
-                onClick={deleteDocument}
-                className="rounded-lg px-4 py-2 text-sm text-slate-400 hover:bg-red-50 hover:text-red-600"
-              >
-                Delete Document
-              </button> */}
+              <SearchView
+                searchMode={searchMode}
+                setSearchMode={setSearchMode}
+                document={document}
+                FragmentItem={Fragment}
+                canEdit={canEdit}
+              />
             </div>
-
-            {/* <p className="text-sm text-slate-500">{document?.name}</p> */}
+            {/* <button
+              type="button"
+              onClick={() =>
+                window.document
+                  .getElementById(`copy-document-${document.id}-modal`)
+                  ?.showModal()
+              }
+              className="rounded-lg px-4 py-2 text-sm text-blue-400 hover:bg-blue-50 hover:text-blue-600"
+            >
+              Clone Document
+            </button>
+            <button
+              onClick={deleteDocument}
+              className="rounded-lg px-4 py-2 text-sm text-slate-400 hover:bg-red-50 hover:text-red-600"
+            >
+              Delete Document
+            </button>
+            <p className="text-sm text-slate-500">{document?.name}</p> */}
           </div>
         </div>
 
-        <SearchView
-          searchMode={searchMode}
-          setSearchMode={setSearchMode}
-          document={document}
-          FragmentItem={Fragment}
-          canEdit={canEdit}
-        />
-        <div hidden={searchMode} className="px-6">
+        <div
+          hidden={searchMode}
+          className="h-full rounded-lg border-2 border-white/20"
+        >
           {loading ? (
-            <div>
+            <div className="mt-48 flex h-full w-full justify-center">
               <PreLoader />
             </div>
           ) : (
-            <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-              <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                  <th scope="col" className="px-6 py-3">
-                    #
+            <table className="w-full rounded-xl text-left text-xs font-medium text-white text-opacity-80">
+              <thead>
+                <tr className="mt-10">
+                  <th
+                    scope="col"
+                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                  >
+                    Vector ID
                   </th>
-                  <th scope="col" className="px-6 py-3">
-                    Vector DB Id
-                  </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th
+                    scope="col"
+                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                  >
                     Text Chunk
                   </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th
+                    scope="col"
+                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                  >
                     Metadata
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Last Updated
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Actions
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {fragments.map((fragment) => {
+                {fragments.map((fragment, index) => {
                   return (
                     <Fragment
                       key={fragment.id}
+                      index={index}
                       fragment={fragment}
                       sourceDoc={sourceDoc}
                       canEdit={canEdit}
@@ -174,11 +177,13 @@ const Fragment = ({
   sourceDoc,
   canEdit,
   connector,
+  index,
 }: {
   fragment: any;
   sourceDoc: any;
   canEdit: boolean;
   connector: any;
+  index: number;
 }) => {
   const [data, setData] = useState(null);
   const [metadata, setMetadata] = useState({});
@@ -201,20 +206,18 @@ const Fragment = ({
     <>
       <tr
         id={`embedding-row-${fragment.id}`}
-        className="border-b bg-white transition-all duration-300 dark:border-gray-700 dark:bg-gray-800"
+        className={`h-9 transition-all duration-300 ${
+          index % 2 === 0 ? 'bg-main-2' : 'bg-main'
+        }`}
       >
-        <th
-          scope="row"
-          className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
-        >
-          {fragment.id}
-        </th>
-        <td className="px-6 py-4">{fragment.vectorId}</td>
-        <td className="px-6 py-4">
+        <td className="px-6 text-sm font-bold text-white">
+          {fragment.vectorId}
+        </td>
+        <td className="px-6 ">
           {truncate(data?.metadata?.text, 40)}
           {!!data?.metadata?.text ? (
             <button
-              className="text-blue-400"
+              className="rounded-lg px-2 py-1 text-sky-400 transition-all duration-300 hover:text-opacity-80"
               onClick={() => {
                 document.getElementById(`${fragment.id}-text`)?.showModal();
               }}
@@ -231,18 +234,21 @@ const Fragment = ({
             </>
           )}
         </td>
-        <td className="px-6 py-4">
+        <td className="px-6 ">
           {Object.keys(metadata)?.length > 0 ? (
             <button
-              onClick={() => {
+              onClick={() =>
                 document
                   .getElementById(`${fragment.id}-metadata-editor`)
-                  ?.showModal();
-              }}
-              className="rounded-full bg-blue-200 px-2 py-[1px] text-center text-blue-700 hover:bg-blue-300"
+                  ?.showModal()
+              }
             >
-              +{Object.keys(metadata).length} metadata{' '}
-              {pluralize('item', Object.keys(metadata).length)}
+              <div className="flex h-5 w-[62px] items-center justify-center rounded-[84px] bg-white bg-opacity-10 px-2 py-1">
+                <div className="text-[10px] text-white">
+                  +{Object.keys(metadata).length}{' '}
+                  {pluralize('item', Object.keys(metadata).length)}
+                </div>
+              </div>
             </button>
           ) : (
             <>
@@ -263,32 +269,31 @@ const Fragment = ({
             </>
           )}
         </td>
-        <td className="px-6 py-4">
-          {moment(fragment.lastUpdatedAt).fromNow()}
-        </td>
-        <td className="flex items-center gap-x-4 px-6 py-4">
-          <button
-            type="button"
-            onClick={() => {
-              document
-                .getElementById(`${fragment.id}-edit-embedding`)
-                ?.showModal();
-            }}
-            className="rounded-lg px-2 py-1 text-blue-400 transition-all duration-300 hover:bg-blue-50 hover:text-blue-600"
-          >
-            Edit
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              document
-                .getElementById(`${fragment.id}-delete-embedding`)
-                ?.showModal();
-            }}
-            className="rounded-lg px-2 py-1 text-red-400 transition-all duration-300 hover:bg-red-50 hover:text-red-600"
-          >
-            Delete
-          </button>
+        <td>
+          <div className="flex items-center gap-x-4 px-4">
+            <button
+              type="button"
+              onClick={() => {
+                document
+                  .getElementById(`${fragment.id}-edit-embedding`)
+                  ?.showModal();
+              }}
+              className="rounded-lg px-2 py-1 text-sky-400 transition-all duration-300 hover:bg-blue-50"
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                document
+                  .getElementById(`${fragment.id}-delete-embedding`)
+                  ?.showModal();
+              }}
+              className="rounded-lg px-2 py-1 text-white transition-all duration-300 hover:bg-red-50 hover:text-red-600"
+            >
+              <Trash size={16} />
+            </button>
+          </div>
         </td>
       </tr>
       {!!data && !!fragment && (

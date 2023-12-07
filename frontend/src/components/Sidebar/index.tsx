@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
-import Logo from '../../images/logo/logo-light.png';
+import LogoSky from '../../images/logo/logo-sky.svg';
 import SidebarLinkGroup from '../SidebarLinkGroup';
 import paths from '../../utils/paths';
 import useUser from '../../hooks/useUser';
@@ -100,12 +100,8 @@ export default function Sidebar({
             to={paths.dashboard()}
             className="flex w-full shrink-0 justify-center"
           >
-            <div className="flex w-full justify-center rounded-br-[14px] bg-main-bg">
-              <img
-                src={Logo}
-                alt="Logo"
-                className="w-full max-w-[180px] object-cover p-4"
-              />
+            <div className="flex h-[62px] w-full items-center justify-center rounded-br-[14px] bg-main-bg">
+              <img src={LogoSky} alt="Logo" className="w-[170px]" />
             </div>
           </NavLink>
 
