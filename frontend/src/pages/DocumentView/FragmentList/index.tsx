@@ -75,7 +75,7 @@ export default function FragmentList({
 
   return (
     <>
-      <div className="h-screen rounded-sm">
+      <div className="h-screen bg-main">
         <div className="">
           <div className="flex flex-col">
             <div className="mb-6 flex w-full items-center justify-between gap-x-12">
@@ -90,6 +90,7 @@ export default function FragmentList({
                 canEdit={canEdit}
               />
             </div>
+
             {/* <button
               type="button"
               onClick={() =>
@@ -113,7 +114,7 @@ export default function FragmentList({
 
         <div
           hidden={searchMode}
-          className="h-full rounded-lg border-2 border-white/20"
+          className="h-full flex-grow overflow-y-auto rounded-xl border-2 border-white/20 bg-main"
         >
           {loading ? (
             <div className="mt-48 flex h-full w-full justify-center">
@@ -160,13 +161,13 @@ export default function FragmentList({
             </table>
           )}
         </div>
-        {!searchMode && (
+        {/* {!searchMode && (
           <DocumentListPagination
             pageCount={totalPages}
             currentPage={currentPage}
             gotoPage={handlePageChange}
           />
-        )}
+        )} */}
       </div>
     </>
   );

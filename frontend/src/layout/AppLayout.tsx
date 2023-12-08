@@ -42,7 +42,7 @@ const AppLayout = ({
           loadMoreWorkspaces={loadMoreWorkspaces}
         />
 
-        <div className="w-full overflow-x-hidden">
+        <div className="no-scrollbar w-full overflow-x-hidden overflow-y-hidden">
           {!!headerEntity && (
             <div className="flex w-full items-center">
               <Header
@@ -56,7 +56,9 @@ const AppLayout = ({
             </div>
           )}
           <main>
-            <div className="mx-auto bg-main pr-6 pt-6">{children}</div>
+            <div className="mx-auto rounded-tr-xl bg-main pr-6 pt-6">
+              {children}
+            </div>
           </main>
         </div>
       </div>

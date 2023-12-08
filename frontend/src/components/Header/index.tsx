@@ -124,11 +124,24 @@ export default function Header(props: {
     //     </div>
     //   </div>
     // </header>
-    <header className=" flex w-full rounded-t-lg bg-main p-4">
-      <div>
-        <div className="w-fit rounded-lg border-2 border-white/20 px-5 py-2 text-sky-400">
-          Organization {'>'} Workspace 1 {'>'} Document 1 (placeholder info)
+    <header className="mr-26 flex h-[76px] w-full rounded-t-xl bg-main">
+      <div className="flex w-full justify-between p-4">
+        {/* <div className="w-fit rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
+          Organization {'>'} Workspace 1 {'>'} Document 1
         </div>
+        <div className="flex gap-x-3">
+          <button className="inline-flex h-11 w-[74px] flex-col items-center justify-center gap-2.5 rounded-lg bg-white bg-opacity-10 px-5 py-2.5 transition-all duration-300 hover:bg-opacity-5">
+            <div className="h-[25.53px] w-11 text-center font-['Satoshi'] text-base font-bold text-white">
+              Clone
+            </div>
+          </button>
+          <button className="inline-flex h-11 w-[74px] flex-col items-center justify-center gap-2.5 rounded-lg border border-white border-opacity-20 px-3.5 py-2.5 transition-all duration-300 hover:bg-red-500">
+            <div className="h-[25.53px] w-[59px] text-center font-['Satoshi'] text-base font-bold text-white">
+              Delete
+            </div>
+          </button>
+        </div> */}
+        {extendedItems}
       </div>
     </header>
   );

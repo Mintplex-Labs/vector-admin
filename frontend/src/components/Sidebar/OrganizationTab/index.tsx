@@ -221,7 +221,7 @@ function WorkspaceItem({ workspace, slug }: any) {
           }`;
         }}
       >
-        {truncate(workspace.name, 24)}
+        {truncate(workspace.name, 23)}
       </NavLink>
     </li>
   );

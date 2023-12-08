@@ -172,7 +172,13 @@ export default function SearchView({
               </button>
             </div> */}
 
-            <button className="flex items-center justify-center rounded-[100px] bg-sky-400 px-2.5 text-xs">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('upload-document-modal')?.showModal();
+              }}
+              className="flex w-18 items-center justify-center rounded-[100px] bg-sky-400 px-2.5 text-xs"
+            >
               <div className="font-bold uppercase text-black">Upload</div>
             </button>
           </div>
