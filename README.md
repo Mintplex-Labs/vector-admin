@@ -80,7 +80,7 @@ The below instructions will **not** work on Windows.
 - `cd document-processor && python3.9 -m virtual-env v-env && source v-env/bin/activate && pip install -r requirements.txt`
 
 In separate terminal windows from project root:
-  - `yarn dev:server`
+  - `yarn prisma:setup` to create DB migration and client and then run `yarn dev:server`
   - `yarn dev:frontend`
   - `yarn dev:workers`
   - `cd document-processor && flask run --host '0.0.0.0' --port 8888`

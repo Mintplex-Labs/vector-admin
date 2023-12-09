@@ -30,7 +30,7 @@ async function metadataSearch(document, query) {
   const matchingVectorIds = await findKeyValueInDoc(document, query);
   if (matchingVectorIds.length === 0) return { fragments: [], error: null };
 
-  const queryString = matchingVectorIds.map((vid) => `'${vid}'`).join(",");
+  const queryString = matchingVectorIds.map((vid) => vid);
   const fragments = await DocumentVectors.where(
     { vectorId: { in: queryString } },
     100
