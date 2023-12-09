@@ -27,7 +27,7 @@ async function exactTextSearch(document, query) {
   const matchingVectorIds = await findTextInDoc(document, query);
   if (matchingVectorIds.length === 0) return { fragments: [], error: null };
 
-  const queryString = matchingVectorIds.map((vid) => `'${vid}'`).join(",");
+  const queryString = matchingVectorIds.map((vid) => vid);
   const fragments = await DocumentVectors.where(
     { vectorId: { in: queryString } },
     100
