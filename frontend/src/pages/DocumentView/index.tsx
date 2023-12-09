@@ -13,6 +13,8 @@ import Organization from '../../models/organization';
 import { APP_NAME } from '../../utils/constants';
 import { CaretDown } from '@phosphor-icons/react';
 import truncate from 'truncate';
+import UploadDocumentModal from './UploadModal';
+import UploadModalNoKey from './UploadModal/UploadModalNoKey';
 
 export default function DocumentView() {
   const { user } = useUser();
@@ -133,6 +135,12 @@ export default function DocumentView() {
         workspace={workspace}
         workspaces={workspaces}
       />
+
+      {canEdit ? (
+        <UploadDocumentModal workspaces={workspaces} />
+      ) : (
+        <UploadModalNoKey />
+      )}
     </AppLayout>
   );
 }

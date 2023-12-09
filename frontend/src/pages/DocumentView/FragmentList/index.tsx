@@ -90,25 +90,6 @@ export default function FragmentList({
                 canEdit={canEdit}
               />
             </div>
-
-            {/* <button
-              type="button"
-              onClick={() =>
-                window.document
-                  .getElementById(`copy-document-${document.id}-modal`)
-                  ?.showModal()
-              }
-              className="rounded-lg px-4 py-2 text-sm text-blue-400 hover:bg-blue-50 hover:text-blue-600"
-            >
-              Clone Document
-            </button>
-            <button
-              onClick={deleteDocument}
-              className="rounded-lg px-4 py-2 text-sm text-slate-400 hover:bg-red-50 hover:text-red-600"
-            >
-              Delete Document
-            </button>
-            <p className="text-sm text-slate-500">{document?.name}</p> */}
           </div>
         </div>
 
@@ -244,7 +225,7 @@ const Fragment = ({
                   ?.showModal()
               }
             >
-              <div className="flex h-5 w-[62px] items-center justify-center rounded-[84px] bg-white bg-opacity-10 px-2 py-1">
+              <div className="flex h-5 items-center justify-center rounded-[84px] bg-white bg-opacity-10 px-2 py-1 hover:opacity-75">
                 <div className="text-[10px] text-white">
                   +{Object.keys(metadata).length}{' '}
                   {pluralize('item', Object.keys(metadata).length)}
@@ -262,9 +243,9 @@ const Fragment = ({
                       .getElementById(`${fragment.id}-metadata-editor`)
                       ?.showModal();
                   }}
-                  className="rounded-full bg-blue-200 px-2 py-[1px] text-center text-blue-700 hover:bg-blue-300"
+                  className="flex h-5 items-center justify-center rounded-[84px] bg-white bg-opacity-10 px-2 py-1"
                 >
-                  <p>none</p>
+                  <p className="text-[10px] text-white">none</p>
                 </button>
               )}
             </>
