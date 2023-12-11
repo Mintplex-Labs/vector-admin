@@ -9,6 +9,7 @@ import DocumentListPagination from '../../../components/DocumentPaginator';
 import SearchView from './SearchView';
 import MetadataEditor from './MetadataEditor';
 import { Trash } from '@phosphor-icons/react';
+import { SEARCH_MODES } from '../../../utils/constants';
 const DeleteEmbeddingConfirmation = lazy(
   () => import('./DeleteEmbeddingConfirmation')
 );
@@ -33,6 +34,10 @@ export default function FragmentList({
   const [sourceDoc, setSourceDoc] = useState(null);
   const [totalFragments, setTotalFragments] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchFragments, setSearchFragments] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [searchBy, setSearchBy] = useState<ISearchTypes>('exactText');
+  const [searchTerm, setSearchTerm] = useState('');
   const totalPages = Math.ceil(totalFragments / PAGE_SIZE);
 
   const handlePageChange = (page: number) => {
@@ -73,6 +78,10 @@ export default function FragmentList({
     getFragments(currentPage);
   }, [document, currentPage]);
 
+  useEffect(() => {
+    console.log('searchFragments', searchFragments);
+  }, [searchFragments]);
+
   return (
     <>
       <div className="h-screen bg-main">
@@ -88,18 +97,30 @@ export default function FragmentList({
                 document={document}
                 FragmentItem={Fragment}
                 canEdit={canEdit}
+                setSearchFragments={setSearchFragments}
+                setSearching={setSearching}
+                searching={searching}
+                searchBy={searchBy}
+                setSearchBy={setSearchBy}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
               />
             </div>
           </div>
         </div>
 
-        <div
-          hidden={searchMode}
-          className="h-full flex-grow overflow-y-auto rounded-xl border-2 border-white/20 bg-main"
-        >
-          {loading ? (
-            <div className="mt-48 flex h-full w-full justify-center">
-              <PreLoader />
+        <div className="h-full flex-grow overflow-y-auto rounded-xl border-2 border-white/20 bg-main">
+          {loading || searching ? (
+            <div className="flex h-full w-full items-center justify-center">
+              <div className="flex flex-col items-center justify-center gap-y-4 text-center">
+                <PreLoader />
+                {searching && (
+                  <p className="text-white text-opacity-80">
+                    Running {SEARCH_MODES[searchBy].display} for{' '}
+                    <code className="px-2">"{searchTerm}"</code>
+                  </p>
+                )}
+              </div>
             </div>
           ) : (
             <table className="w-full rounded-xl text-left text-xs font-medium text-white text-opacity-80">
@@ -126,18 +147,20 @@ export default function FragmentList({
                 </tr>
               </thead>
               <tbody>
-                {fragments.map((fragment, index) => {
-                  return (
-                    <Fragment
-                      key={fragment.id}
-                      index={index}
-                      fragment={fragment}
-                      sourceDoc={sourceDoc}
-                      canEdit={canEdit}
-                      connector={connector}
-                    />
-                  );
-                })}
+                {(searchMode ? searchFragments : fragments).map(
+                  (fragment, index) => {
+                    return (
+                      <Fragment
+                        key={fragment.id}
+                        index={index}
+                        fragment={fragment}
+                        sourceDoc={sourceDoc}
+                        canEdit={canEdit}
+                        connector={connector}
+                      />
+                    );
+                  }
+                )}
               </tbody>
             </table>
           )}

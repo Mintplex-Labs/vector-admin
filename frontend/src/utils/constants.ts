@@ -9,3 +9,24 @@ export const SUPPORTED_VECTOR_DBS = [
   'qdrant',
   'weaviate',
 ];
+
+export const SEARCH_MODES = {
+  exactText: {
+    display: 'Fuzzy Text Search',
+    placeholder: 'Find embedding via a fuzzy text match on your query.',
+  },
+  semantic: {
+    display: 'Semantic Search',
+    placeholder:
+      'Search with natural language finding the most similar embedding by meaning. Use of this search will cost OpenAI credits to embed the query.',
+  },
+  metadata: {
+    display: 'Metadata',
+    placeholder:
+      'Find embedding by exact key:value pair. Formatted as key:value_to_look_for',
+  },
+  vectorId: {
+    display: 'Vector Id',
+    placeholder: 'Find by a specific vector ID',
+  },
+};

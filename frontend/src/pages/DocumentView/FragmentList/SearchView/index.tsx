@@ -6,8 +6,9 @@ import {
   useState,
 } from 'react';
 import { Loader } from 'react-feather';
-import { CaretDown, MagnifyingGlass } from '@phosphor-icons/react';
+import { CaretDown, MagnifyingGlass, X } from '@phosphor-icons/react';
 import Document from '../../../../models/document';
+import { set } from 'lodash';
 
 export type ISearchTypes = 'semantic' | 'exactText' | 'metadata' | 'vectorId';
 
@@ -38,25 +39,34 @@ export default function SearchView({
   document,
   FragmentItem,
   canEdit,
+  setSearchFragments,
+  setSearching,
+  searching,
+  searchBy,
+  setSearchBy,
+  searchTerm,
+  setSearchTerm,
 }: {
   searchMode: boolean;
   document: object;
   setSearchMode: Dispatch<SetStateAction<boolean>>;
   FragmentItem: (props: any) => JSX.Element;
   canEdit: boolean;
+  setSearchFragments: Dispatch<SetStateAction<[]>>;
+  setSearching: Dispatch<SetStateAction<boolean>>;
+  searching: boolean;
+  searchBy: ISearchTypes;
+  setSearchBy: Dispatch<SetStateAction<ISearchTypes>>;
+  searchTerm: string;
+  setSearchTerm: Dispatch<SetStateAction<string>>;
 }) {
   const formEl = useRef<HTMLFormElement>(null);
-  const [searching, setSearching] = useState(false);
   const [showSearchMethods, setShowSearchMethods] = useState(false);
-  const [searchBy, setSearchBy] = useState<ISearchTypes>('exactText');
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [fragments, setFragments] = useState([]);
   const [sourceDoc, setSourceDoc] = useState(null);
 
-  const clearSearch = () => {
+  const clearSearch = (e: SyntheticEvent<HTMLElement, SubmitEvent>) => {
+    e.preventDefault();
     setSearchBy('exactText');
-    setSearchTerm('');
-    setFragments([]);
     setSearching(false);
     setSearchMode(false);
     setSourceDoc(null);
@@ -71,26 +81,17 @@ export default function SearchView({
     setSearching(true);
     setSearchTerm(query);
 
-    console.log('searchBy', searchBy);
-    console.log('query', query);
-
     const matches = await Document.searchEmbeddings(
       document.id,
       searchBy,
       query
     );
 
-    // console.log('matches', matches);
-
-    // const vectorIds = matches.map((fragment) => fragment.vectorId);
-
-    // console.log('vectorIds', vectorIds);
-    // console.log('document.id', document.id);
-    // const metadataForIds = await Document.metadatas(document.id, vectorIds);
-
-    // setSourceDoc(metadataForIds);
-    // setFragments(matches);
-    // setSearching(false);
+    const vectorIds = matches.map((fragment) => fragment.vectorId);
+    const metadataForIds = await Document.metadatas(document.id, vectorIds);
+    setSourceDoc(metadataForIds);
+    setSearchFragments(matches);
+    setSearching(false);
   };
 
   return (
@@ -133,7 +134,7 @@ export default function SearchView({
                           onClick={() => {
                             setSearchBy(method);
                             setShowSearchMethods(false);
-                            setFragments([]);
+                            setSearchMode(false);
                           }}
                           type="button"
                           className="inline-flex w-full px-4 py-2  hover:bg-zinc-800"
@@ -147,7 +148,6 @@ export default function SearchView({
               </div>
               <div className="relative w-full">
                 <input
-                  type="search"
                   name="query"
                   className="z-20 -ml-4 block h-9 w-full rounded-r-[100px] bg-main-2 pl-8 text-sm text-white focus:outline-none"
                   placeholder={SEARCH_MODES[searchBy].placeholder}
@@ -159,7 +159,15 @@ export default function SearchView({
                   className="absolute right-0 top-0 mr-4.5 flex h-full p-2.5 text-sm font-medium text-white focus:outline-none"
                 >
                   {searching ? (
-                    <Loader size={18} className="animate-spin" />
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-solid border-white border-t-transparent" />
+                  ) : searchMode ? (
+                    <button onClick={clearSearch}>
+                      <X
+                        size={16}
+                        className="text-sky-400 transition-all duration-300 hover:text-sky-700"
+                        weight="bold"
+                      />
+                    </button>
                   ) : (
                     <MagnifyingGlass
                       className="text-sky-400 transition-all duration-300 hover:text-sky-700"
@@ -185,7 +193,7 @@ export default function SearchView({
           </form>
         </div>
 
-        <div hidden={!searchMode} className="h-auto w-auto">
+        {/* <div hidden={!searchMode} className="h-auto w-auto">
           {searching ? (
             <div>
               <div className="flex min-h-[40vh] w-full px-8">
@@ -258,7 +266,7 @@ export default function SearchView({
               )}
             </>
           )}
-        </div>
+        </div> */}
       </div>
 
       {/* {canUpload ? (
