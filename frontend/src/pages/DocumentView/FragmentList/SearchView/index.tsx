@@ -9,29 +9,9 @@ import { Loader } from 'react-feather';
 import { CaretDown, MagnifyingGlass, X } from '@phosphor-icons/react';
 import Document from '../../../../models/document';
 import { set } from 'lodash';
+import { SEARCH_MODES } from '../../../../utils/constants';
 
 export type ISearchTypes = 'semantic' | 'exactText' | 'metadata' | 'vectorId';
-
-const SEARCH_MODES = {
-  exactText: {
-    display: 'Fuzzy Text Search',
-    placeholder: 'Find embedding via a fuzzy text match on your query.',
-  },
-  semantic: {
-    display: 'Semantic Search',
-    placeholder:
-      'Search with natural language finding the most similar embedding by meaning. Use of this search will cost OpenAI credits to embed the query.',
-  },
-  metadata: {
-    display: 'Metadata',
-    placeholder:
-      'Find embedding by exact key:value pair. Formatted as key:value_to_look_for',
-  },
-  vectorId: {
-    display: 'Vector Id',
-    placeholder: 'Find by a specific vector ID',
-  },
-};
 
 export default function SearchView({
   searchMode,
@@ -88,6 +68,11 @@ export default function SearchView({
     );
 
     const vectorIds = matches.map((fragment) => fragment.vectorId);
+    if (vectorIds.length === 0) {
+      setSearching(false);
+      setSearchFragments([]);
+      return;
+    }
     const metadataForIds = await Document.metadatas(document.id, vectorIds);
     setSourceDoc(metadataForIds);
     setSearchFragments(matches);
@@ -153,30 +138,33 @@ export default function SearchView({
                   placeholder={SEARCH_MODES[searchBy].placeholder}
                   required
                 />
-                <button
-                  type="submit"
-                  disabled={searching}
-                  className="absolute right-0 top-0 mr-4.5 flex h-full p-2.5 text-sm font-medium text-white focus:outline-none"
-                >
-                  {searching ? (
+                {searching ? (
+                  <div className="absolute right-0 top-0 mr-4.5 flex h-full p-2.5 text-sm font-medium text-white focus:outline-none">
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-solid border-white border-t-transparent" />
-                  ) : searchMode ? (
-                    <button onClick={clearSearch}>
-                      <X
-                        size={16}
-                        className="text-sky-400 transition-all duration-300 hover:text-sky-700"
-                        weight="bold"
-                      />
-                    </button>
-                  ) : (
+                  </div>
+                ) : searchMode ? (
+                  <button
+                    onClick={clearSearch}
+                    className="absolute right-0 top-0 mr-4.5 flex h-full items-center justify-center p-2.5 text-sm font-medium text-white focus:outline-none"
+                  >
+                    <X
+                      size={16}
+                      className="text-sky-400 transition-all duration-300 hover:text-sky-700"
+                      weight="bold"
+                    />
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    className="absolute right-0 top-0 mr-4.5 flex h-full items-center justify-center p-2.5 text-sm font-medium text-white focus:outline-none"
+                  >
                     <MagnifyingGlass
                       className="text-sky-400 transition-all duration-300 hover:text-sky-700"
                       size={18}
                       weight="bold"
                     />
-                  )}
-                  <span className="sr-only">Search</span>
-                </button>
+                  </button>
+                )}
               </div>
               <button
                 onClick={(e) => {
@@ -192,88 +180,7 @@ export default function SearchView({
             </div>
           </form>
         </div>
-
-        {/* <div hidden={!searchMode} className="h-auto w-auto">
-          {searching ? (
-            <div>
-              <div className="flex min-h-[40vh] w-full px-8">
-                <div className="flex flex h-auto w-full flex-col items-center justify-center gap-y-2 rounded-lg bg-slate-50">
-                  <Loader size={15} className="animate-spin rounded-sm" />
-                  <p className="text-sm">
-                    Running {SEARCH_MODES[searchBy].display} for{' '}
-                    <code className="bg-gray-200 px-2">"{searchTerm}"</code>
-                  </p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <>
-              {fragments.length > 0 ? (
-                <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-                  <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                      <th scope="col" className="px-6 py-3">
-                        #
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                        Vector DB Id
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                        Text Chunk
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                        Last Updated
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {fragments.map((fragment) => {
-                      return (
-                        <FragmentItem
-                          key={fragment.id}
-                          fragment={fragment}
-                          sourceDoc={sourceDoc}
-                          canEdit={canEdit}
-                        />
-                      );
-                    })}
-                  </tbody>
-                </table>
-              ) : (
-                <>
-                  <div>
-                    <div className="flex min-h-[40vh] w-full px-8">
-                      <div className="flex flex h-auto w-full flex-col items-center justify-center gap-y-2 rounded-lg bg-slate-50">
-                        {!!searchTerm ? (
-                          <p className="text-sm">
-                            No results on {SEARCH_MODES[searchBy].display} for{' '}
-                            <code className="bg-gray-200 px-2">
-                              "{searchTerm}"
-                            </code>
-                          </p>
-                        ) : (
-                          <p className="text-sm">
-                            Type in a query to search for an embedding
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-            </>
-          )}
-        </div> */}
       </div>
-
-      {/* {canUpload ? (
-        <UploadDocumentModal workspaces={workspaces} />
-      ) : (
-        <UploadModalNoKey />
-      )} */}
     </>
   );
 }

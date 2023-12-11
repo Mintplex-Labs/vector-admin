@@ -77,11 +77,6 @@ export default function FragmentList({
   useEffect(() => {
     getFragments(currentPage);
   }, [document, currentPage]);
-
-  useEffect(() => {
-    console.log('searchFragments', searchFragments);
-  }, [searchFragments]);
-
   return (
     <>
       <div className="h-screen bg-main">
@@ -164,6 +159,26 @@ export default function FragmentList({
               </tbody>
             </table>
           )}
+          {searchMode && searchFragments.length === 0 && (
+            <div className="flex h-full w-full items-center justify-center">
+              <div className="flex flex-col items-center justify-center gap-y-4 text-center">
+                <p className="text-white text-opacity-80">
+                  No results found on {SEARCH_MODES[searchBy].display} for{' '}
+                  <code className="px-2">"{searchTerm}"</code>
+                </p>
+              </div>
+            </div>
+          )}
+          {fragments.length === 0 && !searching && (
+            <div className="flex h-full w-full items-center justify-center">
+              <div className="flex flex-col items-center justify-center gap-y-4 text-center">
+                <p className="text-white text-opacity-80">
+                  No vectors found for this document.
+                  <code className="px-2">"{searchTerm}"</code>
+                </p>
+              </div>
+            </div>
+          )}
         </div>
         {/* {!searchMode && (
           <DocumentListPagination
@@ -219,7 +234,7 @@ const Fragment = ({
           {fragment.vectorId}
         </td>
         <td className="px-6 ">
-          {truncate(data?.metadata?.text, 40)}
+          {truncate(data?.metadata?.text, 30)}
           {!!data?.metadata?.text ? (
             <button
               className="rounded-lg px-2 py-1 text-sky-400 transition-all duration-300 hover:text-opacity-80"
@@ -249,7 +264,7 @@ const Fragment = ({
               }
             >
               <div className="flex h-5 items-center justify-center rounded-[84px] bg-white bg-opacity-10 px-2 py-1 hover:opacity-75">
-                <div className="text-[10px] text-white">
+                <div className="whitespace-nowrap text-[10px] text-white">
                   +{Object.keys(metadata).length}{' '}
                   {pluralize('item', Object.keys(metadata).length)}
                 </div>
