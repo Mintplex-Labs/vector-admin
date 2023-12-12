@@ -8,6 +8,7 @@ module.exports = {
   theme: {
     fontFamily: {
       satoshi: ['Satoshi', 'sans-serif'],
+      jetbrains: ['JetBrainsMono-Light', 'sans-serif'],
     },
     screens: {
       '2xsm': '375px',

@@ -14,6 +14,13 @@ import DocumentsList from './DocumentsList';
 import Workspace from '../../models/workspace';
 import { APP_NAME } from '../../utils/constants';
 import { titleCase } from 'title-case';
+import { CaretDown } from '@phosphor-icons/react';
+import truncate from 'truncate';
+
+import ChromaLogo from '../../images/vectordbs/chroma.png';
+import PineconeLogo from '../../images/vectordbs/pinecone-inverted.png';
+import qDrantLogo from '../../images/vectordbs/qdrant.png';
+import WeaviateLogo from '../../images/vectordbs/weaviate.png';
 
 export default function WorkspaceDashboard() {
   const { user } = useUser();
@@ -116,27 +123,14 @@ export default function WorkspaceDashboard() {
       hasMoreWorkspaces={hasMoreWorkspaces}
       loadMoreWorkspaces={fetchWorkspaces}
       headerExtendedItems={
-        <div className="flex items-center gap-x-4">
-          <button
-            type="button"
-            onClick={() =>
-              document
-                .getElementById(`clone-workspace-${workspace?.id}-modal`)
-                ?.showModal()
-            }
-            className="rounded-lg px-4 py-2 text-sm text-blue-400 hover:bg-blue-50 hover:text-blue-600"
-          >
-            Clone Workspace
-          </button>
-          <button
-            onClick={deleteWorkspace}
-            className="rounded-lg px-4 py-2 text-sm text-slate-400 hover:bg-red-50 hover:text-red-600"
-          >
-            Delete Workspace
-          </button>
-        </div>
+        <WorkspaceViewHeader
+          organization={organization}
+          workspace={workspace}
+          connector={connector}
+        />
       }
     >
+      <Statistics organization={organization} workspace={workspace} />
       {!!organization && (
         <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
           <ConnectorCard
@@ -147,8 +141,6 @@ export default function WorkspaceDashboard() {
           <ApiKeyCard organization={organization} />
         </div>
       )}
-
-      <Statistics organization={organization} workspace={workspace} />
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
         <div className="col-span-12 xl:col-span-12">
           <DocumentsList
@@ -265,3 +257,80 @@ const CloneWorkspaceModal = memo(({ workspace }: { workspace: any }) => {
     </dialog>
   );
 });
+
+function WorkspaceViewHeader({ organization, workspace, connector }: any) {
+  const { slug, workspaceSlug } = useParams();
+
+  let logo;
+  switch (connector?.type) {
+    case 'chroma':
+      logo = ChromaLogo;
+      break;
+    case 'qdrant':
+      logo = qDrantLogo;
+      break;
+    case 'weaviate':
+      logo = WeaviateLogo;
+      break;
+    default:
+      logo = PineconeLogo;
+  }
+
+  console.log('connector: ', connector);
+
+  return (
+    <>
+      <div className=" mr-10 w-full rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
+        <div className="flex items-center gap-x-2">
+          <a
+            href={paths.organization(organization)}
+            className="text-sky-400 hover:cursor-pointer hover:underline"
+          >
+            {truncate(organization?.name, 20)}
+          </a>
+          <div className="text-sky-400" style={{ transform: 'rotate(270deg)' }}>
+            <CaretDown weight="bold" />
+          </div>
+          <span className="text-white">{truncate(workspace?.name, 20)}</span>
+        </div>
+      </div>
+      <div className="flex gap-x-3">
+        <button
+          // onClick={deleteDocument}
+          className="flex h-11 w-11 items-center justify-center rounded-lg border-2 border-white border-opacity-20 transition-all duration-300 hover:bg-opacity-5"
+        >
+          <img
+            src={logo}
+            alt="Connector logo"
+            className="h-full p-1 grayscale"
+          />
+        </button>
+
+        <button
+          // onClick={cloneDocument}
+          className="inline-flex h-11 w-[74px] flex-col items-center justify-center gap-2.5 rounded-lg bg-white bg-opacity-10 px-5 py-2.5 transition-all duration-300 hover:bg-opacity-5"
+        >
+          <div className="h-[25.53px] w-11 text-center font-['Satoshi'] text-base font-bold text-white">
+            Sync
+          </div>
+        </button>
+        <button
+          // onClick={cloneDocument}
+          className="inline-flex h-11 w-[74px] flex-col items-center justify-center gap-2.5 rounded-lg bg-white bg-opacity-10 px-5 py-2.5 transition-all duration-300 hover:bg-opacity-5"
+        >
+          <div className="h-[25.53px] w-11 text-center font-['Satoshi'] text-base font-bold text-white">
+            Clone
+          </div>
+        </button>
+        <button
+          // onClick={deleteDocument}
+          className="inline-flex h-11 w-[74px] flex-col items-center justify-center gap-2.5 rounded-lg border-2 border-white border-opacity-20 px-3.5 py-2.5 transition-all duration-300 hover:bg-red-500"
+        >
+          <div className="h-[25.53px] w-[59px] text-center font-['Satoshi'] text-base font-bold text-white">
+            Delete
+          </div>
+        </button>
+      </div>
+    </>
+  );
+}
