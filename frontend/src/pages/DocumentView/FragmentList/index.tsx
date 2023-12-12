@@ -154,7 +154,7 @@ export default function FragmentList({
               </div>
             </div>
           )}
-          {fragments.length === 0 && !searching && (
+          {!searchMode && fragments.length === 0 && !searching && !loading && (
             <div className="flex h-full w-full items-center justify-center">
               <div className="flex flex-col items-center justify-center gap-y-4 text-center">
                 <p className="text-white text-opacity-80">
