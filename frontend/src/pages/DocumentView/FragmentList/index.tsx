@@ -4,12 +4,11 @@ import Document from '../../../models/document';
 import truncate from 'truncate';
 import pluralize from 'pluralize';
 import { useParams } from 'react-router-dom';
-import paths from '../../../utils/paths';
 import DocumentListPagination from '../../../components/DocumentPaginator';
 import SearchView from './SearchView';
 import MetadataEditor from './MetadataEditor';
 import { Trash } from '@phosphor-icons/react';
-import { SEARCH_MODES } from '../../../utils/constants';
+import { ISearchTypes, SEARCH_MODES } from '../../../utils/constants';
 const DeleteEmbeddingConfirmation = lazy(
   () => import('./DeleteEmbeddingConfirmation')
 );
@@ -27,7 +26,6 @@ export default function FragmentList({
   document: any;
   canEdit: boolean;
 }) {
-  const { slug, workspaceSlug } = useParams();
   const [loading, setLoading] = useState(true);
   const [searchMode, setSearchMode] = useState(false);
   const [fragments, setFragments] = useState([]);
@@ -42,19 +40,6 @@ export default function FragmentList({
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-  };
-
-  const deleteDocument = async () => {
-    if (!document) return false;
-    if (
-      !confirm(
-        'Are you sure you want to delete this document? This will remove the document from your vector database and remove it from the cache. This process cannot be undone.'
-      )
-    )
-      return false;
-    const success = await Document.delete(document.id);
-    if (!success) return false;
-    window.location.replace(paths.workspace(slug, workspaceSlug));
   };
 
   const getFragments = async (page = 1) => {
@@ -79,7 +64,7 @@ export default function FragmentList({
   }, [document, currentPage]);
   return (
     <>
-      <div className="h-screen bg-main">
+      <div className="max-h-[100vh] bg-main">
         <div className="">
           <div className="flex flex-col">
             <div className="mb-6 flex w-full items-center justify-between gap-x-12">
@@ -180,13 +165,13 @@ export default function FragmentList({
             </div>
           )}
         </div>
-        {/* {!searchMode && (
+        {!searchMode && (
           <DocumentListPagination
             pageCount={totalPages}
             currentPage={currentPage}
             gotoPage={handlePageChange}
           />
-        )} */}
+        )}
       </div>
     </>
   );

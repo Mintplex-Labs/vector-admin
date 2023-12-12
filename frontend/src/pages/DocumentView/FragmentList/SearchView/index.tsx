@@ -5,13 +5,9 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Loader } from 'react-feather';
 import { CaretDown, MagnifyingGlass, X } from '@phosphor-icons/react';
 import Document from '../../../../models/document';
-import { set } from 'lodash';
-import { SEARCH_MODES } from '../../../../utils/constants';
-
-export type ISearchTypes = 'semantic' | 'exactText' | 'metadata' | 'vectorId';
+import { SEARCH_MODES, ISearchTypes } from '../../../../utils/constants';
 
 export default function SearchView({
   searchMode,
@@ -156,7 +152,7 @@ export default function SearchView({
                 ) : (
                   <button
                     type="submit"
-                    className="absolute right-0 top-0 mr-4.5 flex h-full items-center justify-center p-2.5 text-sm font-medium text-white focus:outline-none"
+                    className="absolute -right-1 top-0 mr-4.5 flex h-full items-center justify-center rounded-r-[100px] bg-[#303237] p-2.5 text-sm font-medium text-white focus:outline-none"
                   >
                     <MagnifyingGlass
                       className="text-sky-400 transition-all duration-300 hover:text-sky-700"
