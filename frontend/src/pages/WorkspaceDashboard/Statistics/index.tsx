@@ -4,6 +4,7 @@ import { humanFileSize, nFormatter } from '../../../utils/numbers';
 import moment from 'moment';
 import pluralize from 'pluralize';
 import Workspace from '../../../models/workspace';
+import { Copy } from '@phosphor-icons/react';
 
 const Statistics = ({
   organization,
@@ -106,15 +107,31 @@ const Statistics = ({
     //     </div>
     //   </div>
     // </div>
-    <div className="-mt-6 ml-4 w-full rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
-      <div className="flex items-center justify-between">
-        <span className="font-jetbrains uppercase text-white">Vectors: 0</span>
-        <span className="font-jetbrains uppercase text-white">
-          Vector Cache: 0 MiB
-        </span>
-        <span className="font-jetbrains uppercase text-white">
-          Dimensions: 1536
-        </span>
+    <div className="flex w-full justify-between">
+      <div className="-mt-6 ml-4 w-full rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
+        <div className="flex items-center justify-between whitespace-nowrap">
+          <span className="font-jetbrains uppercase text-white">
+            Vectors: 0
+          </span>
+          <span className="font-jetbrains uppercase text-white">
+            Vector Cache: 0 MiB
+          </span>
+          <span className="font-jetbrains uppercase text-white">
+            Dimensions: 1536
+          </span>
+        </div>
+      </div>
+
+      <div className="-mt-6 ml-4 mr-24 w-fit rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
+        <div className="flex items-center justify-between">
+          <span className="whitespace-nowrap font-jetbrains text-white">
+            ID:{' '}
+            <span className=" font-jetbrainsbold">org-185QN2sdfg184y6hdr</span>
+          </span>
+          <div className="pl-2 hover:cursor-pointer">
+            <Copy className="h-5 w-5 text-white" weight="fill" />
+          </div>
+        </div>
       </div>
     </div>
   );

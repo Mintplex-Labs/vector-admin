@@ -276,8 +276,6 @@ function WorkspaceViewHeader({ organization, workspace, connector }: any) {
       logo = PineconeLogo;
   }
 
-  console.log('connector: ', connector);
-
   return (
     <>
       <div className=" mr-10 w-full rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">

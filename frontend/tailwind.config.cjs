@@ -9,6 +9,7 @@ module.exports = {
     fontFamily: {
       satoshi: ['Satoshi', 'sans-serif'],
       jetbrains: ['JetBrainsMono-Light', 'sans-serif'],
+      jetbrainsbold: ['JetBrainsMono-Bold', 'sans-serif'],
     },
     screens: {
       '2xsm': '375px',
