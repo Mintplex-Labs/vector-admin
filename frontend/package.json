@@ -17,6 +17,7 @@
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",
     "@metamask/jazzicon": "^2.0.0",
+    "@phosphor-icons/react": "^2.0.15",
     "jsvectormap": "^1.5.1",
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
