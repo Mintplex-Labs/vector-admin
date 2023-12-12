@@ -10,6 +10,7 @@ export const SUPPORTED_VECTOR_DBS = [
   'weaviate',
 ];
 
+export type ISearchTypes = 'semantic' | 'exactText' | 'metadata' | 'vectorId';
 export const SEARCH_MODES = {
   exactText: {
     display: 'Fuzzy Text Search',

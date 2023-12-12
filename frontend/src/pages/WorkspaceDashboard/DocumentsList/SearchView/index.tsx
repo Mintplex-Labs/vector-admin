@@ -5,29 +5,7 @@ import truncate from 'truncate';
 import moment from 'moment';
 import paths from '../../../../utils/paths';
 import Workspace from '../../../../models/workspace';
-
-export type ISearchTypes = 'semantic' | 'exactText' | 'metadata' | 'vectorId';
-
-const SEARCH_MODES = {
-  exactText: {
-    display: 'Fuzzy Text Search',
-    placeholder: 'Find documents via a fuzzy text match on your query.',
-  },
-  semantic: {
-    display: 'Semantic Search',
-    placeholder:
-      'Search with natural language finding the most similar text by meaning. Use of this search will cost OpenAI credits to embed the query.',
-  },
-  metadata: {
-    display: 'Metadata',
-    placeholder:
-      'Find documents by exact key:value pair. Formatted as key:value_to_look_for',
-  },
-  vectorId: {
-    display: 'Vector Id',
-    placeholder: 'Find a document which contains a specific vector ID',
-  },
-};
+import { SEARCH_MODES, ISearchTypes } from '../../../../utils/constants';
 
 export default function SearchView({
   organization,
