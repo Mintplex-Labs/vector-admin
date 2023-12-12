@@ -64,7 +64,10 @@ export default function FragmentList({
   }, [document, currentPage]);
   return (
     <>
-      <div className="max-h-[100vh] bg-main">
+      <div
+        className="flex h-screen flex-col overflow-hidden bg-main transition-all duration-300"
+        style={{ height: `calc(100vh - ${searchMode ? '130px' : '100px'})` }}
+      >
         <div className="">
           <div className="flex flex-col">
             <div className="mb-6 flex w-full items-center justify-between gap-x-12">
@@ -89,7 +92,7 @@ export default function FragmentList({
           </div>
         </div>
 
-        <div className="h-full flex-grow overflow-y-auto rounded-xl border-2 border-white/20 bg-main">
+        <div className="flex-grow overflow-y-auto rounded-xl border-2 border-white/20 bg-main">
           {loading || searching ? (
             <div className="flex h-full w-full items-center justify-center">
               <div className="flex flex-col items-center justify-center gap-y-4 text-center">
@@ -104,7 +107,7 @@ export default function FragmentList({
             </div>
           ) : (
             <table className="w-full rounded-xl text-left text-xs font-medium text-white text-opacity-80">
-              <thead>
+              <thead className="sticky top-0 w-full bg-main">
                 <tr className="mt-10">
                   <th
                     scope="col"
@@ -123,6 +126,12 @@ export default function FragmentList({
                     className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
                   >
                     Metadata
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                  >
+                    {' '}
                   </th>
                 </tr>
               </thead>
@@ -144,7 +153,7 @@ export default function FragmentList({
               </tbody>
             </table>
           )}
-          {searchMode && searchFragments.length === 0 && (
+          {searchMode && searchFragments.length === 0 && !searching && (
             <div className="flex h-full w-full items-center justify-center">
               <div className="flex flex-col items-center justify-center gap-y-4 text-center">
                 <p className="text-white text-opacity-80">

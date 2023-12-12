@@ -122,7 +122,7 @@ export default function DocumentView() {
       }
     >
       <div className="grid grid-cols-12">
-        <div className="col-span-12 xl:col-span-12">
+        <div className="col-span-12 h-screen bg-main xl:col-span-12">
           <FragmentList
             connector={connector}
             document={document}
