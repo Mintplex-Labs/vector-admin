@@ -220,7 +220,7 @@ const Fragment = ({
     <>
       <tr
         id={`embedding-row-${fragment.id}`}
-        className={`h-9 transition-all duration-300 ${
+        className={`h-9 hover:bg-white/10 ${
           index % 2 === 0 ? 'bg-main-2' : 'bg-main'
         }`}
       >
@@ -241,7 +241,7 @@ const Fragment = ({
           ) : (
             <>
               {loading ? (
-                <div className="h-[20px] w-[80px] animate-pulse rounded-md bg-slate-200" />
+                <div className="h-[20px] w-[80px] animate-pulse rounded-md bg-white/20" />
               ) : (
                 <p>no text found.</p>
               )}
@@ -267,7 +267,7 @@ const Fragment = ({
           ) : (
             <>
               {loading ? (
-                <div className="h-[20px] w-[80px] animate-pulse rounded-md bg-slate-200" />
+                <div className="h-[20px] w-[80px] animate-pulse rounded-md bg-white/20" />
               ) : (
                 <button
                   onClick={() => {

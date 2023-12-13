@@ -131,7 +131,7 @@ export default function WorkspaceDashboard() {
       }
     >
       <Statistics organization={organization} workspace={workspace} />
-      {!!organization && (
+      {/* {!!organization && (
         <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
           <ConnectorCard
             knownConnector={connector}
@@ -150,7 +150,14 @@ export default function WorkspaceDashboard() {
             workspaces={workspaces}
           />
         </div>
-      </div>
+      </div> */}
+
+      <DocumentsList
+        knownConnector={connector}
+        organization={organization}
+        workspace={workspace}
+        workspaces={workspaces}
+      />
       <CloneWorkspaceModal workspace={workspace} />
     </AppLayout>
   );
@@ -259,8 +266,6 @@ const CloneWorkspaceModal = memo(({ workspace }: { workspace: any }) => {
 });
 
 function WorkspaceViewHeader({ organization, workspace, connector }: any) {
-  const { slug, workspaceSlug } = useParams();
-
   let logo;
   switch (connector?.type) {
     case 'chroma':

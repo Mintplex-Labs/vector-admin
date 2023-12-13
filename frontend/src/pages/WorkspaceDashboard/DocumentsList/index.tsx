@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useRef } from 'react';
 import paths from '../../../utils/paths';
 import moment from 'moment';
 import { AlertOctagon, FileText, Search } from 'react-feather';
@@ -11,10 +11,17 @@ import UploadDocumentModal from './UploadModal';
 import UploadModalNoKey from './UploadModal/UploadModalNoKey';
 import Document from '../../../models/document';
 import useQuery from '../../../hooks/useQuery';
-import { APP_NAME } from '../../../utils/constants';
+import { APP_NAME, SEARCH_MODES } from '../../../utils/constants';
 import { useParams } from 'react-router-dom';
 import DocumentListPagination from '../../../components/DocumentPaginator';
 import SearchView from './SearchView';
+import {
+  CaretDown,
+  File,
+  MagnifyingGlass,
+  Trash,
+  X,
+} from '@phosphor-icons/react';
 
 export default function DocumentsList({
   knownConnector,
@@ -36,6 +43,8 @@ export default function DocumentsList({
   const [currentPage, setCurrentPage] = useState(
     Number(query.get('docPage')) || 1
   );
+  const [showSearchMethods, setShowSearchMethods] = useState(false);
+  const formEl = useRef<HTMLFormElement>(null);
 
   function updatePage(pgNum: number) {
     const setTo = pgNum <= 0 ? 1 : pgNum;
@@ -106,13 +115,24 @@ export default function DocumentsList({
 
   return (
     <>
-      <div className="col-span-12 flex-1 rounded-sm border border-stroke bg-white py-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
+      <div
+        className="flex h-screen flex-col overflow-hidden bg-main py-6 transition-all duration-300"
+        style={{ height: `calc(100vh - ${searchMode ? '130px' : '130px'})` }}
+      >
         <div className="flex items-start justify-between px-4">
           <div className="mb-6 flex items-center gap-x-2">
-            <h4 className="px-4 text-xl font-semibold text-black dark:text-white">
-              Documents {totalDocuments! > 0 ? `(${totalDocuments})` : ''}
-            </h4>
-            <button
+            <div className="flex items-center gap-x-1">
+              <span className="font-['Plus Jakarta Sans'] text-sm font-bold uppercase leading-[18px] tracking-wide text-white">
+                Documents
+              </span>
+              <span className="font-['JetBrains Mono'] text-sm font-bold uppercase leading-[18px] tracking-wide text-white">
+                {' '}
+              </span>
+              <span className="font-['JetBrains Mono'] text-sm font-extrabold uppercase leading-[18px] tracking-wide text-white">
+                ({workspace?.documentCount})
+              </span>
+            </div>
+            {/* <button
               onClick={() => setSearchMode(true)}
               className="group flex items-center gap-2 rounded-lg bg-transparent px-4 py-2 hover:bg-blue-300/20"
             >
@@ -123,7 +143,114 @@ export default function DocumentsList({
               <p className="pointer-events-none text-gray-600 transition-all duration-[300ms] group-hover:text-blue-600">
                 Search documents
               </p>
-            </button>
+            </button> */}
+            <>
+              <div className="w-full flex-1">
+                <div className="flex items-center">
+                  <form
+                    ref={formEl}
+                    onSubmit={() => console.log('search')}
+                    className="w-full"
+                  >
+                    <div className="relative flex">
+                      <button
+                        onClick={() => setShowSearchMethods(!showSearchMethods)}
+                        className="z-10 inline-flex h-9 flex-shrink-0 items-center rounded-[100px] bg-zinc-700 px-5 text-center text-sm font-medium text-white transition-all duration-300 hover:bg-zinc-800 focus:outline-none"
+                        type="button"
+                      >
+                        {SEARCH_MODES['exactText'].display}
+                        <div
+                          className={`ml-2 transition-all duration-300 ${
+                            showSearchMethods ? '' : 'rotate-180'
+                          }`}
+                        >
+                          <CaretDown size={16} weight="bold" />
+                        </div>
+                      </button>
+                      <div
+                        className={`absolute left-0 top-12 z-99 w-44 divide-y divide-gray-100 rounded-lg bg-zinc-700 shadow ${
+                          showSearchMethods ? 'slide-down' : 'slide-up'
+                        }`}
+                        style={{
+                          animationDuration: '0.15s',
+                        }}
+                      >
+                        <ul
+                          className="py-2 text-sm text-white"
+                          aria-labelledby="dropdown-button"
+                        >
+                          {Object.keys(SEARCH_MODES).map((_key, i) => {
+                            const method = _key as ISearchTypes;
+                            return (
+                              <li key={i}>
+                                <button
+                                  onClick={() => {
+                                    setSearchBy(method);
+                                    setShowSearchMethods(false);
+                                    setSearchMode(false);
+                                  }}
+                                  type="button"
+                                  className="inline-flex w-full px-4 py-2  hover:bg-zinc-800"
+                                >
+                                  {SEARCH_MODES[method].display}
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                      <div className="relative w-full">
+                        <input
+                          name="query"
+                          className="z-20 -ml-4 block h-9 w-full rounded-r-[100px] bg-main-2 pl-8 text-sm text-white focus:outline-none"
+                          required
+                        />
+                        {false ? (
+                          <div className="absolute right-0 top-0 mr-4.5 flex h-full p-2.5 text-sm font-medium text-white focus:outline-none">
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-solid border-white border-t-transparent" />
+                          </div>
+                        ) : searchMode ? (
+                          <button
+                            // onClick={clearSearch}
+                            className="absolute right-0 top-0 mr-4.5 flex h-full items-center justify-center p-2.5 text-sm font-medium text-white focus:outline-none"
+                          >
+                            <X
+                              size={16}
+                              className="text-sky-400 transition-all duration-300 hover:text-sky-700"
+                              weight="bold"
+                            />
+                          </button>
+                        ) : (
+                          <button
+                            type="submit"
+                            className="absolute -right-1 top-0 mr-4.5 flex h-full items-center justify-center rounded-r-[100px] bg-[#303237] p-2.5 text-sm font-medium text-white focus:outline-none"
+                          >
+                            <MagnifyingGlass
+                              className="text-sky-400 transition-all duration-300 hover:text-sky-700"
+                              size={18}
+                              weight="bold"
+                            />
+                          </button>
+                        )}
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.document
+                            ?.getElementById('upload-document-modal')
+                            ?.showModal();
+                        }}
+                        className="flex w-18 items-center justify-center rounded-[100px] bg-sky-400 px-2.5 text-xs"
+                      >
+                        <div className="font-bold uppercase text-black">
+                          Upload
+                        </div>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </>
           </div>
           {!!knownConnector ? (
             <button
@@ -147,38 +274,114 @@ export default function DocumentsList({
         </div>
 
         {documents.length > 0 ? (
-          <div>
-            <div className="border-b border-stroke px-4 pb-5 dark:border-strokedark md:px-6 xl:px-7.5">
-              <div className="flex items-center gap-3">
-                <div className="w-2/12 xl:w-3/12">
-                  <span className="font-medium">Document Name</span>
-                </div>
-                <div className="w-6/12 2xsm:w-5/12 md:w-3/12">
-                  <span className="font-medium">Workspace</span>
-                </div>
-                <div className="hidden w-4/12 md:block xl:w-3/12">
-                  <span className="font-medium">Created</span>
-                </div>
-                <div className="w-5/12 2xsm:w-4/12 md:w-3/12 xl:w-2/12">
-                  <span className="font-medium">Status</span>
-                </div>
-                <div className="hidden w-2/12 text-center 2xsm:block md:w-1/12">
-                  <span className="font-medium"></span>
-                </div>
-              </div>
-            </div>
-            <>
+          <div className="flex-grow overflow-y-auto rounded-xl border-2 border-white/20 bg-main">
+            <table className="w-full rounded-xl text-left text-xs font-medium text-white text-opacity-80">
+              <thead className="sticky top-0 w-full bg-main">
+                <tr className="mt-10">
+                  <th
+                    scope="col"
+                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                  >
+                    Name
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                  >
+                    Date
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                  >
+                    Vectors
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                  >
+                    {' '}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {documents.map((document, index) => (
+                  <>
+                    <tr
+                      key={document?.id}
+                      id={`document-row-${document?.id}`}
+                      className={`h-9 hover:bg-white/10 ${
+                        index % 2 === 0 ? 'bg-main-2' : 'bg-main'
+                      }`}
+                    >
+                      <td className="flex items-center gap-x-1 px-6 py-2 text-sm font-light text-white">
+                        <File size={16} weight="fill" />
+                        <p>{truncate(document?.name, 35)}</p>
+                      </td>
+                      <td className="px-6 ">
+                        {moment(document?.createdAt).format('lll')}
+                      </td>
+                      <td className="px-6 ">Cached</td>
+                      <td className="px-6">
+                        <div className="flex items-center gap-x-4">
+                          <div className=" flex items-center gap-x-6">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                window.document
+                                  .getElementById(
+                                    `copy-document-${document?.id}-modal`
+                                  )
+                                  ?.showModal()
+                              }
+                              className="rounded-lg px-2 py-1 text-gray-400 transition-all duration-300 hover:bg-gray-50 hover:text-gray-600"
+                            >
+                              Clone
+                            </button>
+                            <a
+                              href={paths.document(
+                                organization.slug,
+                                document?.workspace.slug,
+                                document?.id
+                              )}
+                              className="rounded-lg px-2 py-1 text-sky-400 transition-all duration-300 hover:bg-blue-50"
+                            >
+                              Details
+                            </a>
+                            <button
+                              type="button"
+                              onClick={() => deleteDocument(document?.id)}
+                              className="rounded-lg px-2 py-1 text-white transition-all duration-300 hover:bg-red-50 hover:text-red-600"
+                            >
+                              <Trash size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <CopyDocToModal
+                      key={`copy-document-${document?.id}`}
+                      document={document}
+                      workspace={workspace}
+                      workspaces={workspaces}
+                    />
+                  </>
+                ))}
+              </tbody>
+            </table>
+            {/* <>
               {documents.map((document) => {
+                console.log(document);
                 return (
                   <div
                     id={`document-row-${document.id}`}
                     key={document.id}
-                    className="flex w-full items-center gap-5 px-7.5 py-3 text-gray-600 hover:bg-gray-3 dark:hover:bg-meta-4"
+                    className="flex w-full items-center gap-5 px-7.5 py-3 text-white"
                   >
                     <div className="flex w-full items-center gap-3">
                       <div className="w-2/12 xl:w-3/12">
                         <div className="flex items-center gap-x-1">
-                          <FileText className="h-4 w-4" />
+                          <File className="h-4 w-4" weight="fill" />
                           <span className="hidden font-medium xl:block">
                             {truncate(document.name, 20)}
                           </span>
@@ -242,7 +445,7 @@ export default function DocumentsList({
                   </div>
                 );
               })}
-            </>
+            </> */}
           </div>
         ) : (
           <>

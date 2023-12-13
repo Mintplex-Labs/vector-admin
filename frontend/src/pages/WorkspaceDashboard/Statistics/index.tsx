@@ -5,6 +5,7 @@ import moment from 'moment';
 import pluralize from 'pluralize';
 import Workspace from '../../../models/workspace';
 import { Copy } from '@phosphor-icons/react';
+import truncate from 'truncate';
 
 const Statistics = ({
   organization,
@@ -25,6 +26,17 @@ const Statistics = ({
     status: 'loading',
     value: 0,
   });
+
+  const [clipboardMessage, setClipboardMessage] = useState('');
+  const handleCopyToClipboard = async (text: any) => {
+    if ('clipboard' in navigator) {
+      await navigator.clipboard.writeText(text);
+      setClipboardMessage('Copied to clipboard!');
+      setTimeout(() => {
+        setClipboardMessage('');
+      }, 2000);
+    }
+  };
 
   useEffect(() => {
     async function collectStats() {
@@ -111,26 +123,41 @@ const Statistics = ({
       <div className="-mt-6 ml-4 w-full rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
         <div className="flex items-center justify-between whitespace-nowrap">
           <span className="font-jetbrains uppercase text-white">
-            Vectors: 0
+            {pluralize('Vector', vectors.value)}:{' '}
+            <span className=" font-jetbrainsbold">
+              {nFormatter(vectors.value)}
+            </span>
           </span>
           <span className="font-jetbrains uppercase text-white">
-            Vector Cache: 0 MiB
+            Vector Cache:{' '}
+            <span className=" font-jetbrainsbold">
+              {humanFileSize(cache.value)}
+            </span>
           </span>
           <span className="font-jetbrains uppercase text-white">
-            Dimensions: 1536
+            Dimensions: <span className=" font-jetbrainsbold">1536</span>
           </span>
         </div>
       </div>
 
-      <div className="-mt-6 ml-4 mr-24 w-fit rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
+      <div className=" -mt-6 ml-4 mr-24 w-fit min-w-[303px] rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
         <div className="flex items-center justify-between">
           <span className="whitespace-nowrap font-jetbrains text-white">
             ID:{' '}
-            <span className=" font-jetbrainsbold">org-185QN2sdfg184y6hdr</span>
+            <span
+              className={`font-jetbrainsbold transition-all duration-300 ${
+                clipboardMessage ? 'animate-pulse text-sky-400' : ''
+              }`}
+            >
+              {clipboardMessage || truncate(workspace?.uuid, 18)}
+            </span>
           </span>
-          <div className="pl-2 hover:cursor-pointer">
-            <Copy className="h-5 w-5 text-white" weight="fill" />
-          </div>
+          <button
+            onClick={() => handleCopyToClipboard(workspace?.uuid)}
+            className="pl-2 text-white transition-all duration-300 hover:cursor-pointer hover:text-sky-400"
+          >
+            <Copy size={20} weight="fill" />
+          </button>
         </div>
       </div>
     </div>
