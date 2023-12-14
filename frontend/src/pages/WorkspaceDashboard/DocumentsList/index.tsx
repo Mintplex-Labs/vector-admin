@@ -1,7 +1,6 @@
 import { memo, useRef } from 'react';
 import paths from '../../../utils/paths';
 import moment from 'moment';
-import { AlertOctagon, FileText, Search } from 'react-feather';
 // import { CodeBlock, vs2015 } from 'react-code-blocks';
 import { useEffect, useState } from 'react';
 import truncate from 'truncate';
@@ -15,13 +14,7 @@ import { APP_NAME, ISearchTypes, SEARCH_MODES } from '../../../utils/constants';
 import { useParams } from 'react-router-dom';
 import DocumentListPagination from '../../../components/DocumentPaginator';
 import SearchView from './SearchView';
-import {
-  CaretDown,
-  File,
-  MagnifyingGlass,
-  Trash,
-  X,
-} from '@phosphor-icons/react';
+import { File, Trash } from '@phosphor-icons/react';
 import PreLoader from '../../../components/Preloader';
 
 export default function DocumentsList({
@@ -41,13 +34,10 @@ export default function DocumentsList({
   const [documents, setDocuments] = useState([]);
   const [totalDocuments, setTotalDocuments] = useState(0);
   const [canUpload, setCanUpload] = useState(false);
-  const [searchBy, setSearchBy] = useState<ISearchTypes>('exactText');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(
     Number(query.get('docPage')) || 1
   );
-  const [showSearchMethods, setShowSearchMethods] = useState(false);
-  const formEl = useRef<HTMLFormElement>(null);
 
   function updatePage(pgNum: number) {
     const setTo = pgNum <= 0 ? 1 : pgNum;
@@ -172,10 +162,10 @@ export default function DocumentsList({
   return (
     <>
       <div
-        className="flex h-screen flex-col overflow-hidden bg-main py-6 transition-all duration-300"
-        style={{ height: `calc(100vh - ${searchMode ? '130px' : '130px'})` }}
+        className="mb-9 flex h-screen flex-col overflow-hidden bg-main py-6 transition-all duration-300"
+        style={{ height: `calc(100vh - ${searchMode ? '210px' : '210px'})` }}
       >
-        <div className="flex items-start justify-between px-4">
+        <div className="flex items-start items-center justify-between px-4">
           <div className="mb-6 flex items-center gap-x-6">
             <div className="flex items-center gap-x-1">
               <span className="font-['Plus Jakarta Sans'] text-sm font-bold uppercase leading-[18px] tracking-wide text-white">
@@ -188,18 +178,16 @@ export default function DocumentsList({
                 ({workspace?.documentCount})
               </span>
             </div>
-            <SearchView
-              searchMode={searchMode}
-              organization={organization}
-              workspace={workspace}
-              workspaces={workspaces}
-              stopSearching={() => setSearchMode(false)}
-              deleteDocument={deleteDocument}
-              setSearchMode={setSearchMode}
-              handleSearchResults={handleSearchResults}
-              setLoading={setLoading}
-            />
           </div>
+          <SearchView
+            searchMode={searchMode}
+            organization={organization}
+            workspace={workspace}
+            stopSearching={() => setSearchMode(false)}
+            setSearchMode={setSearchMode}
+            handleSearchResults={handleSearchResults}
+            setLoading={setLoading}
+          />
         </div>
 
         <div className="flex-grow overflow-y-auto rounded-xl border-2 border-white/20 bg-main">
@@ -486,95 +474,3 @@ export const CopyDocToModal = memo(
     );
   }
 );
-
-// const CodeExampleModal = ({ organization }: { organization: any }) => {
-//   // Rework this to be an upload modal.
-//   return (
-//     <dialog id="document-code-modal" className="w-1/2 rounded-lg">
-//       <div className="rounded-sm bg-white dark:border-strokedark dark:bg-boxdark">
-//         <div className="px-6.5 py-4 dark:border-strokedark">
-//           <h3 className="font-medium text-black dark:text-white">
-//             Adding documents to Conifer
-//           </h3>
-//           <p className="text-sm text-gray-500">
-//             You can begin managing documents with the code you have already
-//             written. Our library currently only supports NodeJS environments.
-//           </p>
-//         </div>
-
-//         <p className="my-2 rounded-lg border border-orange-800 bg-orange-100 p-2 text-center text-sm text-orange-800">
-//           During the Pinecone Hackathon the library is a standalone fork of
-//           langchainJS, but ideally it would eventually be live in the main
-//           LangchainJS repo :)
-//           <br />
-//           We werent able to add uploading or deleting docs via the UI but how
-//           cool would that be. It can be done via the library though.
-//         </p>
-
-//         <div className="max-h-[50vh] w-full overflow-y-scroll bg-slate-50">
-//           <CodeBlock
-//             theme={vs2015}
-//             text={`/* How to sync documents to Pinecone and Conifer with LangchainJS
-// Be sure you have the correct packages installed!
-// example: package.json
-// {
-//   "dependencies": {
-//     "@mintplex-labs/langchain": "https://gitpkg.now.sh/Mintplex-Labs/langchainjs/langchain?conifer",
-//     ...other deps
-// }
-// */
-
-// // Now write code as you usually would!
-// import { PineconeClient } from "@pinecone-database/pinecone";
-// import { PineconeStore } from "@mintplex-labs/langchain/dist/vectorstores/pinecone.js"
-// import { ConiferVDBMS } from "@mintplex-labs/langchain/dist/vdbms/conifer.js"
-// import { OpenAIEmbeddings } from "langchain/embeddings/openai";
-
-// const client = new PineconeClient();
-// await client.init({
-//   apiKey: 'my-pinecone-api-key',
-//   environment: 'us-central-gcp',
-// });
-
-// const pineconeIndex = client.Index('hackathon');
-// const coniferInstance = new ConiferVDBMS({
-//   orgId: '${organization.orgId}',
-//   workspaceId: 'workspace-xxxx', // Get from workspace page.
-//   apiKey: 'ck-xxx' // Get from the api key at the top of the page.
-// })
-
-// // Split documents with LangChain text splitter as you normally would
-
-// await PineconeStore.fromDocumentsVerbose(
-//   documents,
-//   new OpenAIEmbeddings({ openAIApiKey: 'sk-xxxxxxxx' }),
-//   {
-//     pineconeIndex,
-//     namespace:' testing-collection',
-//   },
-//   coniferInstance
-// )
-
-// // Documents will now exist in Conifer!
-// // More CRUD methods available at ${window.location.origin}/api-docs
-// `}
-//             language="javascript"
-//             showLineNumbers={false}
-//           />
-//         </div>
-
-//         <div className="mt-4 flex flex-col gap-y-2">
-//           <button
-//             type="button"
-//             onClick={() => {
-//               document.getElementById('document-code-modal')?.close();
-//             }}
-//             className="flex w-full justify-center rounded bg-transparent p-3 font-medium text-slate-500 hover:bg-slate-200"
-//           >
-//             Close Preview
-//           </button>
-//         </div>
-//       </div>
-//     </dialog>
-//   );
-// };

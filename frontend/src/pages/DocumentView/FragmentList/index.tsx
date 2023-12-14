@@ -175,11 +175,13 @@ export default function FragmentList({
           )}
         </div>
         {!searchMode && (
-          <DocumentListPagination
-            pageCount={totalPages}
-            currentPage={currentPage}
-            gotoPage={handlePageChange}
-          />
+          <div className="mt-14">
+            <DocumentListPagination
+              pageCount={totalPages}
+              currentPage={currentPage}
+              gotoPage={handlePageChange}
+            />
+          </div>
         )}
       </div>
     </>

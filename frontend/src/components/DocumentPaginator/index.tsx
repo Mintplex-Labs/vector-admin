@@ -43,8 +43,10 @@ export default function DocumentListPagination({
     if (currentPage < pageCount) gotoPage(currentPage + 1);
   };
 
+  if (pageCount < 2) return <div className="mb-18"></div>;
+
   return (
-    <div className="my-4 mb-8 flex justify-center">
+    <div className="my-4 -mt-8 mb-8 flex justify-center">
       {hasPrevious && (
         <button
           onClick={goToPrevious}

@@ -1,19 +1,11 @@
 import { SyntheticEvent, useRef, useState } from 'react';
-import { ChevronDown, FileText, Search, Loader } from 'react-feather';
-import { CopyDocToModal } from '..';
-import truncate from 'truncate';
-import moment from 'moment';
-import paths from '../../../../utils/paths';
 import Workspace from '../../../../models/workspace';
 import { SEARCH_MODES, ISearchTypes } from '../../../../utils/constants';
 import { CaretDown, MagnifyingGlass, X } from '@phosphor-icons/react';
 
 export default function SearchView({
-  organization,
   workspace,
-  workspaces,
   stopSearching,
-  deleteDocument,
   searchMode,
   setSearchMode,
   handleSearchResults,
@@ -21,25 +13,17 @@ export default function SearchView({
 }: {
   organization: object;
   workspace: object;
-  workspaces: object[];
   stopSearching: VoidFunction;
-  deleteDocument: (documentId: number) => void;
   searchMode: boolean;
   setSearchMode: (searchMode: boolean) => void;
   handleSearchResults: (results: any) => void;
   setLoading: (loading: boolean) => void;
 }) {
   const formEl = useRef<HTMLFormElement>(null);
-  const [searching, setSearching] = useState(false);
   const [showSearchMethods, setShowSearchMethods] = useState(false);
   const [searchBy, setSearchBy] = useState<ISearchTypes>('exactText');
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [documents, setDocuments] = useState([]);
   const clearSearch = () => {
     setSearchBy('exactText');
-    setSearchTerm('');
-    setDocuments([]);
-    setSearching(false);
     stopSearching();
     (formEl.current as HTMLFormElement).reset();
   };
@@ -50,24 +34,20 @@ export default function SearchView({
     const formData = new FormData(e.target as any);
     const query = formData.get('query') as string;
 
-    setSearching(true);
-    setSearchTerm(query);
     const matches = await Workspace.searchDocuments(
       workspace.id,
       searchBy,
       query
     );
-    setDocuments(matches);
-    setSearching(false);
 
     setLoading(false);
     handleSearchResults(matches);
   };
 
   return (
-    <div className="flex items-center">
-      <form ref={formEl} onSubmit={handleSearch} className="w-full">
-        <div className="relative flex">
+    <div className="relative -mt-6 ml-6 flex w-full items-center">
+      <form ref={formEl} onSubmit={handleSearch} className="flex w-full flex-1">
+        <div className="flex w-full">
           <button
             onClick={() => setShowSearchMethods(!showSearchMethods)}
             className="z-10 inline-flex h-9 flex-shrink-0 items-center rounded-[100px] bg-zinc-700 px-5 text-center text-sm font-medium text-white transition-all duration-300 hover:bg-zinc-800 focus:outline-none"
@@ -118,7 +98,7 @@ export default function SearchView({
             <input
               name="query"
               placeholder={SEARCH_MODES[searchBy].placeholder}
-              className="z-20 -ml-4 block h-9 w-full rounded-r-[100px] bg-main-2 pl-8 text-sm text-white focus:outline-none"
+              className=" z-20 -ml-4 block h-9 w-full rounded-r-[100px] bg-main-2 pl-8 text-sm text-white focus:outline-none"
               required
             />
             {false ? (
@@ -157,7 +137,7 @@ export default function SearchView({
                 ?.getElementById('upload-document-modal')
                 ?.showModal();
             }}
-            className="flex w-18 items-center justify-center rounded-[100px] bg-sky-400 px-2.5 text-xs"
+            className="ml-2 flex w-18 items-center justify-center rounded-[100px] bg-sky-400 px-2.5 text-xs"
           >
             <div className="font-bold uppercase text-black">Upload</div>
           </button>
