@@ -17,6 +17,7 @@ export default function SearchView({
   searchMode,
   setSearchMode,
   handleSearchResults,
+  setLoading,
 }: {
   organization: object;
   workspace: object;
@@ -26,6 +27,7 @@ export default function SearchView({
   searchMode: boolean;
   setSearchMode: (searchMode: boolean) => void;
   handleSearchResults: (results: any) => void;
+  setLoading: (loading: boolean) => void;
 }) {
   const formEl = useRef<HTMLFormElement>(null);
   const [searching, setSearching] = useState(false);
@@ -44,6 +46,7 @@ export default function SearchView({
   const handleSearch = async (e: SyntheticEvent<HTMLElement, SubmitEvent>) => {
     e.preventDefault();
     setSearchMode(true);
+    setLoading(true);
     const formData = new FormData(e.target as any);
     const query = formData.get('query') as string;
 
@@ -57,6 +60,7 @@ export default function SearchView({
     setDocuments(matches);
     setSearching(false);
 
+    setLoading(false);
     handleSearchResults(matches);
   };
 

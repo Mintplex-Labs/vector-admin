@@ -22,6 +22,7 @@ import {
   Trash,
   X,
 } from '@phosphor-icons/react';
+import PreLoader from '../../../components/Preloader';
 
 export default function DocumentsList({
   knownConnector,
@@ -94,18 +95,77 @@ export default function DocumentsList({
 
   if (loading) {
     return (
-      <div className="col-span-12 flex-1 rounded-sm border border-stroke bg-main py-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
-        <div className="flex items-start justify-between px-4">
-          <div>
-            <h4 className="mb-6 px-4 text-xl font-semibold text-black dark:text-white">
-              Documents {totalDocuments! > 0 ? `(${totalDocuments})` : ''}
-            </h4>
+      <>
+        <div
+          className="flex h-screen flex-col overflow-hidden bg-main py-6 transition-all duration-300"
+          style={{ height: `calc(100vh - ${searchMode ? '130px' : '130px'})` }}
+        >
+          <div className="flex items-start justify-between px-4">
+            <div className="mb-6 flex items-center gap-x-6">
+              <div className="flex items-center gap-x-1">
+                <span className="font-['Plus Jakarta Sans'] text-sm font-bold uppercase leading-[18px] tracking-wide text-white">
+                  Documents
+                </span>
+                <span className="font-['JetBrains Mono'] text-sm font-bold uppercase leading-[18px] tracking-wide text-white">
+                  {' '}
+                </span>
+                <span className="font-['JetBrains Mono'] text-sm font-extrabold uppercase leading-[18px] tracking-wide text-white">
+                  ({workspace?.documentCount})
+                </span>
+              </div>
+              <SearchView
+                searchMode={searchMode}
+                organization={organization}
+                workspace={workspace}
+                workspaces={workspaces}
+                stopSearching={() => setSearchMode(false)}
+                deleteDocument={deleteDocument}
+                setSearchMode={setSearchMode}
+                handleSearchResults={handleSearchResults}
+              />
+            </div>
+          </div>
+
+          <div className="flex-grow overflow-y-auto rounded-xl border-2 border-white/20 bg-main">
+            <table className="w-full rounded-xl text-left text-xs font-medium text-white text-opacity-80">
+              <thead className="sticky top-0 w-full border-b-2 border-white/20 bg-main ">
+                <tr className="mt-10">
+                  <th
+                    scope="col"
+                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                  >
+                    Name
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                  >
+                    Date
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                  >
+                    Vectors
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                  >
+                    {' '}
+                  </th>
+                </tr>
+              </thead>
+            </table>
+
+            <div className="-mt-10 flex h-full w-full items-center justify-center">
+              <div className="flex flex-col items-center justify-center gap-y-4 text-center">
+                <PreLoader />
+              </div>
+            </div>
           </div>
         </div>
-        <div className="flex h-60 w-full items-center justify-center px-7.5">
-          <div className="h-full w-full animate-pulse rounded-lg bg-slate-100" />
-        </div>
-      </div>
+      </>
     );
   }
 
@@ -137,6 +197,7 @@ export default function DocumentsList({
               deleteDocument={deleteDocument}
               setSearchMode={setSearchMode}
               handleSearchResults={handleSearchResults}
+              setLoading={setLoading}
             />
           </div>
         </div>
@@ -202,6 +263,16 @@ export default function DocumentsList({
               </tbody>
             )}
           </table>
+
+          {searchMode && searchResults?.length === 0 && (
+            <div className="-mt-10 flex h-full w-full items-center justify-center">
+              <div className="flex flex-col items-center justify-center gap-y-4 text-center">
+                <div className="text-center font-medium text-white text-opacity-40">
+                  No documents found
+                </div>
+              </div>
+            </div>
+          )}
 
           {documents?.length === 0 && (
             <div className="-mt-10 flex h-full w-full items-center justify-center">
