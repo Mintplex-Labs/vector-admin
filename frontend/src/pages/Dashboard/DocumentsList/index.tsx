@@ -59,7 +59,7 @@ export default function DocumentsList({
 
   if (loading) {
     return (
-      <div className="col-span-12 flex-1 rounded-sm border border-stroke bg-white py-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
+      <div className="col-span-12 flex-1 rounded-sm border border-stroke bg-main py-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
         <div className="flex items-start justify-between px-4">
           <div>
             <h4 className="mb-6 px-4 text-xl font-semibold text-black dark:text-white">

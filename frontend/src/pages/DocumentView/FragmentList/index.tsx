@@ -107,7 +107,7 @@ export default function FragmentList({
             </div>
           ) : (
             <table className="w-full rounded-xl text-left text-xs font-medium text-white text-opacity-80">
-              <thead className="sticky top-0 w-full bg-main">
+              <thead className="sticky top-0 w-full border-b-2 border-white/20 bg-main">
                 <tr className="mt-10">
                   <th
                     scope="col"

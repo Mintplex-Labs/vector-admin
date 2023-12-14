@@ -11,7 +11,7 @@ import UploadDocumentModal from './UploadModal';
 import UploadModalNoKey from './UploadModal/UploadModalNoKey';
 import Document from '../../../models/document';
 import useQuery from '../../../hooks/useQuery';
-import { APP_NAME, SEARCH_MODES } from '../../../utils/constants';
+import { APP_NAME, ISearchTypes, SEARCH_MODES } from '../../../utils/constants';
 import { useParams } from 'react-router-dom';
 import DocumentListPagination from '../../../components/DocumentPaginator';
 import SearchView from './SearchView';
@@ -40,6 +40,8 @@ export default function DocumentsList({
   const [documents, setDocuments] = useState([]);
   const [totalDocuments, setTotalDocuments] = useState(0);
   const [canUpload, setCanUpload] = useState(false);
+  const [searchBy, setSearchBy] = useState<ISearchTypes>('exactText');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(
     Number(query.get('docPage')) || 1
   );
@@ -69,6 +71,11 @@ export default function DocumentsList({
     document.getElementById(`document-row-${documentId}`)?.remove();
   };
 
+  const handleSearchResults = (results: any[]) => {
+    setSearchResults(results);
+    setSearchMode(true);
+  };
+
   useEffect(() => {
     async function getDocs(orgSlug: string, wsSlug?: string) {
       if (!orgSlug || !wsSlug) return false;
@@ -87,7 +94,7 @@ export default function DocumentsList({
 
   if (loading) {
     return (
-      <div className="col-span-12 flex-1 rounded-sm border border-stroke bg-white py-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
+      <div className="col-span-12 flex-1 rounded-sm border border-stroke bg-main py-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
         <div className="flex items-start justify-between px-4">
           <div>
             <h4 className="mb-6 px-4 text-xl font-semibold text-black dark:text-white">
@@ -102,17 +109,6 @@ export default function DocumentsList({
     );
   }
 
-  if (searchMode)
-    return (
-      <SearchView
-        organization={organization}
-        workspace={workspace}
-        workspaces={workspaces}
-        stopSearching={() => setSearchMode(false)}
-        deleteDocument={deleteDocument}
-      />
-    );
-
   return (
     <>
       <div
@@ -120,7 +116,7 @@ export default function DocumentsList({
         style={{ height: `calc(100vh - ${searchMode ? '130px' : '130px'})` }}
       >
         <div className="flex items-start justify-between px-4">
-          <div className="mb-6 flex items-center gap-x-2">
+          <div className="mb-6 flex items-center gap-x-6">
             <div className="flex items-center gap-x-1">
               <span className="font-['Plus Jakarta Sans'] text-sm font-bold uppercase leading-[18px] tracking-wide text-white">
                 Documents
@@ -132,343 +128,106 @@ export default function DocumentsList({
                 ({workspace?.documentCount})
               </span>
             </div>
-            {/* <button
-              onClick={() => setSearchMode(true)}
-              className="group flex items-center gap-2 rounded-lg bg-transparent px-4 py-2 hover:bg-blue-300/20"
-            >
-              <Search
-                size={20}
-                className="text-gray-600 group-hover:text-blue-600"
-              />
-              <p className="pointer-events-none text-gray-600 transition-all duration-[300ms] group-hover:text-blue-600">
-                Search documents
-              </p>
-            </button> */}
-            <>
-              <div className="w-full flex-1">
-                <div className="flex items-center">
-                  <form
-                    ref={formEl}
-                    onSubmit={() => console.log('search')}
-                    className="w-full"
-                  >
-                    <div className="relative flex">
-                      <button
-                        onClick={() => setShowSearchMethods(!showSearchMethods)}
-                        className="z-10 inline-flex h-9 flex-shrink-0 items-center rounded-[100px] bg-zinc-700 px-5 text-center text-sm font-medium text-white transition-all duration-300 hover:bg-zinc-800 focus:outline-none"
-                        type="button"
-                      >
-                        {SEARCH_MODES['exactText'].display}
-                        <div
-                          className={`ml-2 transition-all duration-300 ${
-                            showSearchMethods ? '' : 'rotate-180'
-                          }`}
-                        >
-                          <CaretDown size={16} weight="bold" />
-                        </div>
-                      </button>
-                      <div
-                        className={`absolute left-0 top-12 z-99 w-44 divide-y divide-gray-100 rounded-lg bg-zinc-700 shadow ${
-                          showSearchMethods ? 'slide-down' : 'slide-up'
-                        }`}
-                        style={{
-                          animationDuration: '0.15s',
-                        }}
-                      >
-                        <ul
-                          className="py-2 text-sm text-white"
-                          aria-labelledby="dropdown-button"
-                        >
-                          {Object.keys(SEARCH_MODES).map((_key, i) => {
-                            const method = _key as ISearchTypes;
-                            return (
-                              <li key={i}>
-                                <button
-                                  onClick={() => {
-                                    setSearchBy(method);
-                                    setShowSearchMethods(false);
-                                    setSearchMode(false);
-                                  }}
-                                  type="button"
-                                  className="inline-flex w-full px-4 py-2  hover:bg-zinc-800"
-                                >
-                                  {SEARCH_MODES[method].display}
-                                </button>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </div>
-                      <div className="relative w-full">
-                        <input
-                          name="query"
-                          className="z-20 -ml-4 block h-9 w-full rounded-r-[100px] bg-main-2 pl-8 text-sm text-white focus:outline-none"
-                          required
-                        />
-                        {false ? (
-                          <div className="absolute right-0 top-0 mr-4.5 flex h-full p-2.5 text-sm font-medium text-white focus:outline-none">
-                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-solid border-white border-t-transparent" />
-                          </div>
-                        ) : searchMode ? (
-                          <button
-                            // onClick={clearSearch}
-                            className="absolute right-0 top-0 mr-4.5 flex h-full items-center justify-center p-2.5 text-sm font-medium text-white focus:outline-none"
-                          >
-                            <X
-                              size={16}
-                              className="text-sky-400 transition-all duration-300 hover:text-sky-700"
-                              weight="bold"
-                            />
-                          </button>
-                        ) : (
-                          <button
-                            type="submit"
-                            className="absolute -right-1 top-0 mr-4.5 flex h-full items-center justify-center rounded-r-[100px] bg-[#303237] p-2.5 text-sm font-medium text-white focus:outline-none"
-                          >
-                            <MagnifyingGlass
-                              className="text-sky-400 transition-all duration-300 hover:text-sky-700"
-                              size={18}
-                              weight="bold"
-                            />
-                          </button>
-                        )}
-                      </div>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          window.document
-                            ?.getElementById('upload-document-modal')
-                            ?.showModal();
-                        }}
-                        className="flex w-18 items-center justify-center rounded-[100px] bg-sky-400 px-2.5 text-xs"
-                      >
-                        <div className="font-bold uppercase text-black">
-                          Upload
-                        </div>
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </>
+            <SearchView
+              searchMode={searchMode}
+              organization={organization}
+              workspace={workspace}
+              workspaces={workspaces}
+              stopSearching={() => setSearchMode(false)}
+              deleteDocument={deleteDocument}
+              setSearchMode={setSearchMode}
+              handleSearchResults={handleSearchResults}
+            />
           </div>
-          {!!knownConnector ? (
-            <button
-              onClick={() => {
-                document.getElementById('upload-document-modal')?.showModal();
-              }}
-              className="rounded-lg px-2 py-1 text-sm text-slate-800  hover:bg-slate-200"
-            >
-              Add Document
-            </button>
-          ) : (
-            <button
-              type="button"
-              disabled={true}
-              className="flex items-center gap-x-1 rounded-lg bg-red-50 px-2 py-1 text-sm text-red-800"
-            >
-              <AlertOctagon className="h4- w-4" /> Requires Vector Database
-              Connection
-            </button>
-          )}
         </div>
 
-        {documents.length > 0 ? (
-          <div className="flex-grow overflow-y-auto rounded-xl border-2 border-white/20 bg-main">
-            <table className="w-full rounded-xl text-left text-xs font-medium text-white text-opacity-80">
-              <thead className="sticky top-0 w-full bg-main">
-                <tr className="mt-10">
-                  <th
-                    scope="col"
-                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
-                  >
-                    Name
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
-                  >
-                    Date
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
-                  >
-                    Vectors
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
-                  >
-                    {' '}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
+        <div className="flex-grow overflow-y-auto rounded-xl border-2 border-white/20 bg-main">
+          <table className="w-full rounded-xl text-left text-xs font-medium text-white text-opacity-80">
+            <thead className="sticky top-0 w-full border-b-2 border-white/20 bg-main ">
+              <tr className="mt-10">
+                <th
+                  scope="col"
+                  className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                >
+                  Name
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                >
+                  Date
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                >
+                  Vectors
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                >
+                  {' '}
+                </th>
+              </tr>
+            </thead>
+            {!searchMode && documents?.length > 0 && (
+              <tbody className="bg-main">
                 {documents.map((document, index) => (
-                  <>
-                    <tr
-                      key={document?.id}
-                      id={`document-row-${document?.id}`}
-                      className={`h-9 hover:bg-white/10 ${
-                        index % 2 === 0 ? 'bg-main-2' : 'bg-main'
-                      }`}
-                    >
-                      <td className="flex items-center gap-x-1 px-6 py-2 text-sm font-light text-white">
-                        <File size={16} weight="fill" />
-                        <p>{truncate(document?.name, 35)}</p>
-                      </td>
-                      <td className="px-6 ">
-                        {moment(document?.createdAt).format('lll')}
-                      </td>
-                      <td className="px-6 ">Cached</td>
-                      <td className="px-6">
-                        <div className="flex items-center gap-x-4">
-                          <div className=" flex items-center gap-x-6">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                window.document
-                                  .getElementById(
-                                    `copy-document-${document?.id}-modal`
-                                  )
-                                  ?.showModal()
-                              }
-                              className="rounded-lg px-2 py-1 text-gray-400 transition-all duration-300 hover:bg-gray-50 hover:text-gray-600"
-                            >
-                              Clone
-                            </button>
-                            <a
-                              href={paths.document(
-                                organization.slug,
-                                document?.workspace.slug,
-                                document?.id
-                              )}
-                              className="rounded-lg px-2 py-1 text-sky-400 transition-all duration-300 hover:bg-blue-50"
-                            >
-                              Details
-                            </a>
-                            <button
-                              type="button"
-                              onClick={() => deleteDocument(document?.id)}
-                              className="rounded-lg px-2 py-1 text-white transition-all duration-300 hover:bg-red-50 hover:text-red-600"
-                            >
-                              <Trash size={16} />
-                            </button>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <CopyDocToModal
-                      key={`copy-document-${document?.id}`}
-                      document={document}
-                      workspace={workspace}
-                      workspaces={workspaces}
-                    />
-                  </>
+                  <Fragment
+                    key={document?.id}
+                    document={document}
+                    index={index}
+                    deleteDocument={deleteDocument}
+                    organization={organization}
+                    workspace={workspace}
+                    workspaces={workspaces}
+                  />
                 ))}
               </tbody>
-            </table>
-            {/* <>
-              {documents.map((document) => {
-                console.log(document);
-                return (
-                  <div
-                    id={`document-row-${document.id}`}
-                    key={document.id}
-                    className="flex w-full items-center gap-5 px-7.5 py-3 text-white"
-                  >
-                    <div className="flex w-full items-center gap-3">
-                      <div className="w-2/12 xl:w-3/12">
-                        <div className="flex items-center gap-x-1">
-                          <File className="h-4 w-4" weight="fill" />
-                          <span className="hidden font-medium xl:block">
-                            {truncate(document.name, 20)}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="w-6/12 2xsm:w-5/12 md:w-3/12">
-                        <span className="font-medium">
-                          {document.workspace.name || ''}
-                        </span>
-                      </div>
-                      <div className="hidden w-3/12 overflow-x-scroll md:block xl:w-3/12">
-                        <span className="font-medium">
-                          {moment(document.createdAt).format('lll')}
-                        </span>
-                      </div>
-                      <div className="w-5/12 2xsm:w-4/12 md:w-3/12 xl:w-2/12">
-                        <span className="inline-block rounded bg-green-500 bg-opacity-25 px-2.5 py-0.5 text-sm font-medium text-green-500">
-                          Cached
-                        </span>
-                      </div>
+            )}
+            {searchMode && searchResults?.length > 0 && (
+              <tbody className="bg-main">
+                {searchResults.map((document, index) => (
+                  <Fragment
+                    key={document?.id}
+                    document={document}
+                    index={index}
+                    deleteDocument={deleteDocument}
+                    organization={organization}
+                    workspace={workspace}
+                    workspaces={workspaces}
+                  />
+                ))}
+              </tbody>
+            )}
+          </table>
 
-                      <div className=" flex items-center gap-x-2">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            window.document
-                              .getElementById(
-                                `copy-document-${document.id}-modal`
-                              )
-                              ?.showModal()
-                          }
-                          className="rounded-lg px-2 py-1 text-gray-400 transition-all duration-300 hover:bg-gray-50 hover:text-gray-600"
-                        >
-                          Clone
-                        </button>
-                        <a
-                          href={paths.document(
-                            organization.slug,
-                            document.workspace.slug,
-                            document.id
-                          )}
-                          className="rounded-lg px-2 py-1 text-blue-400 transition-all duration-300 hover:bg-blue-50 hover:text-blue-600"
-                        >
-                          Details
-                        </a>
-                        <button
-                          type="button"
-                          onClick={() => deleteDocument(document.id)}
-                          className="rounded-lg px-2 py-1 text-red-400 transition-all duration-300 hover:bg-red-50 hover:text-red-600"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                    <CopyDocToModal
-                      key={`copy-document-${document.id}`}
-                      document={document}
-                      workspace={workspace}
-                      workspaces={workspaces}
-                    />
-                  </div>
-                );
-              })}
-            </> */}
-          </div>
-        ) : (
-          <>
-            <div>
-              <div className="flex min-h-[40vh] w-full px-8">
-                <div className="flex flex h-auto w-full flex-col items-center justify-center gap-y-2 rounded-lg bg-slate-50">
-                  <p>You have no documents in any workspaces!</p>
-                  <p>
-                    Get started managing documents by adding them to workspaces
-                    via the UI or code.
-                  </p>
-                  <button
-                    type="button"
-                    className="text-xl text-blue-500 underline"
-                  >
-                    Show code example (coming soon)
-                  </button>
+          {documents?.length === 0 && (
+            <div className="-mt-10 flex h-full w-full items-center justify-center">
+              <div className="flex flex-col items-center justify-center gap-y-4 text-center">
+                <div className="text-center font-medium text-white text-opacity-40">
+                  0 Documents
                 </div>
+                <div className="text-center text-sm font-light text-white text-opacity-80">
+                  Upload documents to your workspace
+                </div>
+                <button
+                  onClick={() => {
+                    window.document
+                      ?.getElementById('upload-document-modal')
+                      ?.showModal();
+                  }}
+                  className="mt-4 inline-flex items-center justify-center gap-2.5 rounded-lg bg-white p-2.5 px-36 shadow"
+                >
+                  <div className="text-center text-sm font-bold leading-tight text-zinc-900">
+                    Upload Documents
+                  </div>
+                </button>
               </div>
             </div>
-            {/* <CodeExampleModal organization={organization} /> */}
-          </>
-        )}
+          )}
+        </div>
       </div>
       <DocumentListPagination
         pageCount={Math.ceil(totalDocuments! / Workspace.documentPageSize)}
@@ -483,6 +242,81 @@ export default function DocumentsList({
     </>
   );
 }
+
+const Fragment = ({
+  document,
+  index,
+  deleteDocument,
+  organization,
+  workspace,
+  workspaces,
+}: {
+  document: any;
+  index: number;
+  deleteDocument: any;
+  organization: any;
+  workspace: any;
+  workspaces: any[];
+}) => {
+  return (
+    <>
+      <tr
+        key={document?.id}
+        id={`document-row-${document?.id}`}
+        className={`h-9 hover:bg-white/10 ${
+          index % 2 === 0 ? 'bg-main-2' : 'bg-main'
+        }`}
+      >
+        <td className="flex items-center gap-x-1 px-6 py-2 text-sm font-light text-white">
+          <File size={16} weight="fill" />
+          <p>{truncate(document?.name, 35)}</p>
+        </td>
+        <td className="px-6 ">{moment(document?.createdAt).format('lll')}</td>
+        <td className="px-6 ">Cached</td>
+        <td className="px-6">
+          <div className="flex items-center gap-x-4">
+            <div className=" flex items-center gap-x-6">
+              <button
+                type="button"
+                onClick={() =>
+                  window.document
+                    .getElementById(`copy-document-${document?.id}-modal`)
+                    ?.showModal()
+                }
+                className="rounded-lg px-2 py-1 text-gray-400 transition-all duration-300 hover:bg-gray-50 hover:text-gray-600"
+              >
+                Clone
+              </button>
+              <a
+                href={paths.document(
+                  organization.slug,
+                  workspace?.slug,
+                  document?.id
+                )}
+                className="rounded-lg px-2 py-1 text-sky-400 transition-all duration-300 hover:bg-blue-50"
+              >
+                Details
+              </a>
+              <button
+                type="button"
+                onClick={() => deleteDocument(document?.id)}
+                className="rounded-lg px-2 py-1 text-white transition-all duration-300 hover:bg-red-50 hover:text-red-600"
+              >
+                <Trash size={16} />
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>
+      <CopyDocToModal
+        key={`copy-document-${document?.id}`}
+        document={document}
+        workspace={workspace}
+        workspaces={workspaces}
+      />
+    </>
+  );
+};
 
 export const CopyDocToModal = memo(
   ({
