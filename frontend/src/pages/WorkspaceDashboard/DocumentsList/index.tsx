@@ -300,11 +300,13 @@ export default function DocumentsList({
           )}
         </div>
       </div>
-      <DocumentListPagination
-        pageCount={Math.ceil(totalDocuments! / Workspace.documentPageSize)}
-        currentPage={currentPage}
-        gotoPage={updatePage}
-      />
+      <div className="pb-4">
+        <DocumentListPagination
+          pageCount={Math.ceil(totalDocuments! / Workspace.documentPageSize)}
+          currentPage={currentPage}
+          gotoPage={updatePage}
+        />
+      </div>
       {canUpload ? (
         <UploadDocumentModal workspace={workspace} />
       ) : (
