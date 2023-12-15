@@ -170,12 +170,13 @@ const WorkspaceDocument = {
         include: { organization: true },
       });
 
+
       const connector = await OrganizationConnection.get({
         organization_id: workspace.organization.id
       });
 
       const vectorDb = selectConnector(connector);
-      const dimensions = await vectorDb.indexDimensions();
+      const dimensions = await vectorDb.indexDimensions(workspace.fname);
 
       return dimensions;
     } catch (e) {

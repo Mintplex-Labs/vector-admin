@@ -27,7 +27,7 @@ const Statistics = ({
   });
   const [dimensions, setDimensions] = useState({
     status: 'loading',
-    value: 0,
+    value: '-',
   });
 
   const [clipboardMessage, setClipboardMessage] = useState('');

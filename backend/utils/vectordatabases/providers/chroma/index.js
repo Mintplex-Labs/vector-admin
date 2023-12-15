@@ -72,6 +72,11 @@ class Chroma {
     return { result: totalVectors, error: null };
   }
 
+  async indexDimensions() {
+    // Chroma does not support this, defaulting to openai's 1536
+    return 1536;
+  }
+
   // Collections === namespaces for Chroma to normalize interfaces
   async collections() {
     return await this.namespaces();
