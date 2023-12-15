@@ -79,6 +79,7 @@ async function validatePinecone({ environment, index, apiKey }) {
 
     // TODO: CHECK INDEX SIZE (client.indexDimensions()) and store in return so we can store it in the database
 
+
     if (!status.ready) throw new Error("Pinecone::Index not ready or found.");
     return { valid: true, message: null };
   } catch (e) {

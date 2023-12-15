@@ -305,6 +305,7 @@ function workspaceEndpoints(app) {
           documents: "countForEntity",
           vectors: "calcVectors",
           "cache-size": "calcVectorCache",
+          "dimensions": "calcDimensions",
         };
 
         if (!Object.keys(methods).includes(statistic)) {
