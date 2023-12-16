@@ -18,6 +18,16 @@ const Organization = {
         };
       var slug = slugify(orgName, { lower: true });
 
+      const validNameRegex = /^[a-zA-Z0-9]+$/;
+
+      // Validate orgName against the regular expression
+      if (!validNameRegex.test(orgName)) {
+        return {
+          organization: null,
+          message: "Organization name contains invalid characters. Only alphanumeric characters are allowed.",
+        };
+      }
+
       const existingBySlug = await this.get({ slug });
       if (!!existingBySlug) {
         const slugSeed = Math.floor(10000000 + Math.random() * 90000000);
