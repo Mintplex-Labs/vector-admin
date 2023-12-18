@@ -17,7 +17,8 @@ import { CaretDown } from '@phosphor-icons/react';
 import truncate from 'truncate';
 
 import ChromaLogo from '../../images/vectordbs/chroma.png';
-import PineconeLogo from '../../images/vectordbs/pinecone-inverted.png';
+import PineconeLogoInverted from '../../images/vectordbs/pinecone-inverted.png';
+import PineconeLogo from '../../images/vectordbs/pinecone.png';
 import qDrantLogo from '../../images/vectordbs/qdrant.png';
 import WeaviateLogo from '../../images/vectordbs/weaviate.png';
 
@@ -795,7 +796,7 @@ function WorkspaceViewHeader({
       logo = WeaviateLogo;
       break;
     default:
-      logo = PineconeLogo;
+      logo = PineconeLogoInverted;
   }
 
   return (
