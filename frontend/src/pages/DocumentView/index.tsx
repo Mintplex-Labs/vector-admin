@@ -169,7 +169,7 @@ function DocumentViewHeader({ organization, workspace, document }: any) {
   return (
     <>
       <div className=" mr-10 w-full rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
-        <div className="flex items-center gap-x-2">
+        <div className="flex items-center gap-x-2 text-lg">
           <a
             href={paths.organization(organization)}
             className="text-sky-400 hover:cursor-pointer hover:underline"
@@ -188,7 +188,9 @@ function DocumentViewHeader({ organization, workspace, document }: any) {
           <div className="text-sky-400" style={{ transform: 'rotate(270deg)' }}>
             <CaretDown weight="bold" />
           </div>
-          <span className="text-white">{truncate(document?.name, 30)}</span>
+          <span className="text-lg font-medium text-white">
+            {truncate(document?.name, 30)}
+          </span>
         </div>
       </div>
       <div className="flex gap-x-3">
