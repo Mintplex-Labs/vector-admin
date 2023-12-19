@@ -19,7 +19,7 @@ const Organization = {
 
       // If the new name contains bad characters
       // replace them with spaces and continue creation.
-      const newOrgName = orgName.replace(/[:\.,<>@]/, " ");
+      const newOrgName = orgName.replace(/[:.,<>@]/, " ");
       var slug = slugify(newOrgName, { lower: true });
 
       const existingBySlug = await this.get({ slug });
