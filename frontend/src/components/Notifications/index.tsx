@@ -47,21 +47,18 @@ export default function Notifications() {
       setShowNotifs(false);
     }
   }
-  // Close notifications when clicking outside
   useEffect(() => {
     function handleClickOutside(event: any) {
       if (
         bellButtonRef.current &&
         bellButtonRef.current.contains(event.target)
       ) {
-        // Click is inside bell button, do nothing
         return;
       }
       if (
         notificationRef.current &&
         !notificationRef.current.contains(event.target)
       ) {
-        // Click is outside notification menu, close it
         setShowNotifs(false);
       }
     }
