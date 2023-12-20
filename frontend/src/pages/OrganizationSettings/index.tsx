@@ -100,10 +100,6 @@ function OrganizationHeader({ organization, connector }: any) {
       break;
   }
 
-  console.log(organization);
-  console.log(paths.organization(organization?.slug));
-  console.log(organization.slug);
-
   return (
     <>
       <div className=" mr-10 w-full rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
