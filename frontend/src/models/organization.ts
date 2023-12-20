@@ -1,4 +1,4 @@
-import { INotification } from '../components/Header/Notifications';
+import { INotification } from '../components/Notifications';
 import { API_BASE } from '../utils/constants';
 import { baseHeaders, getAPIUrlString } from '../utils/request';
 

@@ -1,6 +1,8 @@
 import { ReactNode, useState } from 'react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
+import Notifications from '../components/Notifications';
+import useUser from '../hooks/useUser';
 
 interface DefaultLayoutProps {
   headerEntity: any;
@@ -30,6 +32,7 @@ const AppLayout = ({
   hasQuickActions = false,
 }: DefaultLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user } = useUser();
 
   return (
     <div className="bg-main-bg px-4 pt-4">
@@ -58,6 +61,14 @@ const AppLayout = ({
               />
             </div>
           )}
+
+          <div className="absolute right-0 top-0 mr-9 mt-7 flex items-center gap-x-2">
+            <Notifications />
+            {/* first 2 chars of user.email */}
+            <div className="flex h-[29px] w-[29px] items-center justify-center rounded-full bg-sky-400 bg-opacity-20 text-sm font-medium text-sky-400">
+              {user?.email?.slice(0, 2).toUpperCase()}
+            </div>
+          </div>
           <main>
             <div className="mx-auto rounded-tr-xl bg-main pr-6 pt-6">
               {children}

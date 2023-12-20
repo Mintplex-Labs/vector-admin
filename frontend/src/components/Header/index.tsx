@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import paths from '../../utils/paths';
 import { STORE_TOKEN, STORE_USER } from '../../utils/constants';
 import truncate from 'truncate';
-import Notifications from './Notifications';
+import Notifications from '../Notifications';
 
 export default function Header(props: {
   entity?: any | null;
@@ -134,9 +134,13 @@ export default function Header(props: {
     <header
       className={`${
         quickActions ? 'mr-[235px]' : 'mr-[104px]'
-      } flex h-[76px] w-full rounded-t-xl bg-main`}
+      } relative flex h-[76px] w-full rounded-t-xl bg-main`}
     >
       <div className="flex w-full justify-between p-4">{extendedItems}</div>
+      {/* Container for notifications */}
+      {/* <div className="absolute right-0 top-0 bg-white">
+        <Notifications />
+      </div> */}
     </header>
   );
 }
