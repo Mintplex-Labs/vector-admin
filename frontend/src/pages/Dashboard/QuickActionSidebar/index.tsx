@@ -15,6 +15,7 @@ import truncate from 'truncate';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { debounce } from 'lodash';
 import Organization from '../../../models/organization';
+import useUser from '../../../hooks/useUser';
 
 const debouncedSearch = debounce(
   async (searchTerm, setResults, setIsSearching, slug) => {
@@ -50,6 +51,7 @@ export default function QuickActionsSidebar({
   hasMoreWorkspaces: boolean;
 }) {
   const { slug } = useParams();
+  const { user } = useUser();
   const [quickActionsOpen, setQuickActionsOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -107,27 +109,30 @@ export default function QuickActionsSidebar({
           animationDuration: '0.15s',
         }}
       >
-        <NavLink to={paths.toolsHome(organization)}>
-          <div className="mt-5 flex items-center gap-x-2 text-white hover:cursor-pointer hover:text-sky-400 hover:underline">
-            <Toolbox size={18} weight="bold" />
-            <div className="text-sm font-medium">Tools</div>
-          </div>
-        </NavLink>
+        {user?.role === 'admin' && (
+          <>
+            <NavLink to={paths.toolsHome(organization)}>
+              <div className="mt-5 flex items-center gap-x-2 text-white hover:cursor-pointer hover:text-sky-400 hover:underline">
+                <Toolbox size={18} weight="bold" />
+                <div className="text-sm font-medium">Tools</div>
+              </div>
+            </NavLink>
 
-        <NavLink to={paths.users()}>
-          <div className="mt-5 flex items-center gap-x-2 text-white hover:cursor-pointer hover:text-sky-400 hover:underline">
-            <User size={18} weight="bold" />
-            <div className="text-sm font-medium">Add User</div>
-          </div>
-        </NavLink>
+            <NavLink to={paths.users()}>
+              <div className="mt-5 flex items-center gap-x-2 text-white hover:cursor-pointer hover:text-sky-400 hover:underline">
+                <User size={18} weight="bold" />
+                <div className="text-sm font-medium">Add User</div>
+              </div>
+            </NavLink>
 
-        <NavLink to={paths.settings()}>
-          <div className="mt-5 flex items-center gap-x-2 text-white hover:cursor-pointer hover:text-sky-400 hover:underline">
-            <Key size={18} weight="bold" />
-            <div className="text-sm font-medium">OpenAI Key</div>
-          </div>
-        </NavLink>
-
+            <NavLink to={paths.settings()}>
+              <div className="mt-5 flex items-center gap-x-2 text-white hover:cursor-pointer hover:text-sky-400 hover:underline">
+                <Key size={18} weight="bold" />
+                <div className="text-sm font-medium">OpenAI Key</div>
+              </div>
+            </NavLink>
+          </>
+        )}
         <NavLink to={paths.jobs(organization)}>
           <div className="mt-5 flex items-center gap-x-2 text-white hover:cursor-pointer hover:text-sky-400 hover:underline">
             <SpinnerGap size={18} weight="bold" />
