@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import paths from '../../../utils/paths';
 import moment from 'moment';
 import { AlertOctagon, FileText } from 'react-feather';
-// import { CodeBlock, vs2015 } from 'react-code-blocks';
 import { useEffect, useState } from 'react';
 import Organization from '../../../models/organization';
 import truncate from 'truncate';
@@ -316,7 +315,32 @@ export default function DocumentsList({
             )}
           </table>
 
-          {workspaces?.length === 0 && (
+          {!!!knownConnector && (
+            <div className="-mt-10 flex h-full w-full items-center justify-center">
+              <div className="flex flex-col items-center justify-center gap-y-4 text-center">
+                <div className="text-center font-medium text-white text-opacity-40">
+                  Connect a Vector Database to get started
+                </div>
+                <div className="text-center text-sm font-light text-white text-opacity-80">
+                  Begin by connecting a Vector Database to your organization
+                </div>
+                <button
+                  onClick={() => {
+                    window.document
+                      ?.getElementById('new-connector-modal')
+                      ?.showModal();
+                  }}
+                  className="mt-4 inline-flex items-center justify-center gap-2.5 rounded-lg bg-white p-2.5 px-36 shadow"
+                >
+                  <div className="text-center text-sm font-bold leading-tight text-zinc-900">
+                    Connect Vector Database
+                  </div>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {!!knownConnector && workspaces?.length === 0 && (
             <div className="-mt-10 flex h-full w-full items-center justify-center">
               <div className="flex flex-col items-center justify-center gap-y-4 text-center">
                 <div className="text-center font-medium text-white text-opacity-40">
