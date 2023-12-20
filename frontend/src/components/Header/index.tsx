@@ -137,10 +137,6 @@ export default function Header(props: {
       } relative flex h-[76px] w-full rounded-t-xl bg-main`}
     >
       <div className="flex w-full justify-between p-4">{extendedItems}</div>
-      {/* Container for notifications */}
-      {/* <div className="absolute right-0 top-0 bg-white">
-        <Notifications />
-      </div> */}
     </header>
   );
 }

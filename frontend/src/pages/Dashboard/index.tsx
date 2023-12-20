@@ -9,8 +9,6 @@ import { NavLink, useParams } from 'react-router-dom';
 import Statistics from './Statistics';
 import DocumentsList from './DocumentsList';
 import Organization from '../../models/organization';
-import ApiKeyCard from './ApiKey';
-import ConnectorCard from './Connector';
 import truncate from 'truncate';
 
 import ChromaLogo from '../../images/vectordbs/chroma.png';
@@ -20,7 +18,6 @@ import qDrantLogo from '../../images/vectordbs/qdrant.png';
 import WeaviateLogo from '../../images/vectordbs/weaviate.png';
 import { GearSix, Prohibit } from '@phosphor-icons/react';
 import { titleCase } from 'title-case';
-import CreateWorkspaceModal from './WorkspacesList/CreateWorkspaceModal';
 import QuickActionsSidebar from './QuickActionSidebar';
 import { APP_NAME } from '../../utils/constants';
 

@@ -64,7 +64,8 @@ const AppLayout = ({
 
           <div className="absolute right-0 top-0 mr-9 mt-7 flex items-center gap-x-2">
             <Notifications />
-            {/* first 2 chars of user.email */}
+
+            {/* CONVERT TO A COMPONENT AND ADD LOGOUT */}
             <div className="flex h-[29px] w-[29px] items-center justify-center rounded-full bg-sky-400 bg-opacity-20 text-sm font-medium text-sky-400">
               {user?.email?.slice(0, 2).toUpperCase()}
             </div>
