@@ -6,7 +6,7 @@ import User from '../../models/user';
 import paths from '../../utils/paths';
 import AppLayout from '../../layout/AppLayout';
 import OrgSettings from './Settings';
-import { NavLink, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import ChromaLogo from '../../images/vectordbs/chroma.png';
 import PineconeLogoInverted from '../../images/vectordbs/pinecone-inverted.png';
@@ -18,7 +18,6 @@ import Organization from '../../models/organization';
 import { APP_NAME } from '../../utils/constants';
 import { titleCase } from 'title-case';
 import truncate from 'truncate';
-import { Edit } from 'react-feather';
 
 export default function OrganizationSettingsView() {
   const { user } = useUser();
