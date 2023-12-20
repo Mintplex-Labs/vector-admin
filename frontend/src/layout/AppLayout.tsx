@@ -33,7 +33,6 @@ const AppLayout = ({
   hasQuickActions = false,
 }: DefaultLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user } = useUser();
 
   return (
     <div className="bg-main-bg px-4 pt-4">
