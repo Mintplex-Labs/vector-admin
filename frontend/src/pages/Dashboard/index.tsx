@@ -5,9 +5,8 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import User from '../../models/user';
 import paths from '../../utils/paths';
 import AppLayout from '../../layout/AppLayout';
-import { useParams } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import Statistics from './Statistics';
-import WorkspacesList from './WorkspacesList';
 import DocumentsList from './DocumentsList';
 import Organization from '../../models/organization';
 import ApiKeyCard from './ApiKey';
@@ -21,6 +20,8 @@ import qDrantLogo from '../../images/vectordbs/qdrant.png';
 import WeaviateLogo from '../../images/vectordbs/weaviate.png';
 import { GearSix } from '@phosphor-icons/react';
 import { titleCase } from 'title-case';
+import CreateWorkspaceModal from './WorkspacesList/CreateWorkspaceModal';
+import QuickActionsSidebar from './QuickActionSidebar';
 
 export default function Dashboard() {
   const { slug } = useParams();
@@ -114,6 +115,7 @@ export default function Dashboard() {
           deleteWorkspace={() => {}}
         />
       }
+      hasQuickActions={true}
     >
       {!!organization && (
         <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
@@ -134,7 +136,7 @@ export default function Dashboard() {
           {/* <ApiKeyCard organization={organization} /> */}
         </div>
       )}
-      <Statistics organization={organization} />
+      <Statistics organization={organization} workspaces={workspaces} />
       <div className="mt-4 flex w-full">
         <div className="mr-6.5 w-full">
           <DocumentsList
@@ -143,11 +145,12 @@ export default function Dashboard() {
             workspaces={workspaces}
           />
         </div>
-        <WorkspacesList
+        <QuickActionsSidebar
           knownConnector={connector}
           organization={organization}
           workspaces={workspaces}
           totalWorkspaces={totalWorkspaces}
+          loadMoreWorkspaces={fetchWorkspaces}
         />
       </div>
     </AppLayout>
@@ -208,12 +211,13 @@ function OrganizationHeader({
             Sync
           </div>
         </button>
-        <button
-          onClick={() => alert('Settings clicked.')}
+
+        <NavLink
           className="flex h-11 w-11 items-center justify-center rounded-lg border-2 border-white border-opacity-20 text-white transition-all duration-300 hover:bg-opacity-5"
+          to={paths.organizationSettings(organization)}
         >
           <GearSix size={28} />
-        </button>
+        </NavLink>
       </div>
     </>
   );
