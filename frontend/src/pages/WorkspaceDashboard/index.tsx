@@ -821,11 +821,7 @@ function WorkspaceViewHeader({
           }
           className="flex h-11 w-11 items-center justify-center rounded-lg border-2 border-white border-opacity-20 transition-all duration-300 hover:bg-opacity-5"
         >
-          <img
-            src={logo}
-            alt="Connector logo"
-            className="h-full p-1 grayscale"
-          />
+          <img src={logo} alt="Connector logo" className="h-full p-1" />
         </button>
 
         <button

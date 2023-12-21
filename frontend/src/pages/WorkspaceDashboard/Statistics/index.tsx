@@ -1,5 +1,4 @@
 import { memo, useState, useEffect } from 'react';
-import PreLoader from '../../../components/Preloader';
 import { humanFileSize, nFormatter } from '../../../utils/numbers';
 import pluralize from 'pluralize';
 import Workspace from '../../../models/workspace';
@@ -13,10 +12,6 @@ const Statistics = ({
   organization: any;
   workspace: any;
 }) => {
-  const [documents, setDocuments] = useState({
-    status: 'loading',
-    value: 0,
-  });
   const [vectors, setVectors] = useState({
     status: 'loading',
     value: 0,
@@ -45,11 +40,6 @@ const Statistics = ({
     async function collectStats() {
       if (!workspace?.slug) return false;
 
-      Workspace.stats(organization.slug, workspace.slug, 'documents').then(
-        (json) => {
-          setDocuments({ status: 'complete', value: json.value });
-        }
-      );
       Workspace.stats(organization.slug, workspace.slug, 'vectors').then(
         (json) => {
           setVectors({ status: 'complete', value: json.value });
