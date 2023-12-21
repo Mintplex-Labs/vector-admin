@@ -1,5 +1,4 @@
 import { memo, useState, useEffect } from 'react';
-import PreLoader from '../../../components/Preloader';
 import { humanFileSize, nFormatter } from '../../../utils/numbers';
 import pluralize from 'pluralize';
 import Workspace from '../../../models/workspace';
@@ -13,10 +12,6 @@ const Statistics = ({
   organization: any;
   workspace: any;
 }) => {
-  const [documents, setDocuments] = useState({
-    status: 'loading',
-    value: 0,
-  });
   const [vectors, setVectors] = useState({
     status: 'loading',
     value: 0,
@@ -45,11 +40,6 @@ const Statistics = ({
     async function collectStats() {
       if (!workspace?.slug) return false;
 
-      Workspace.stats(organization.slug, workspace.slug, 'documents').then(
-        (json) => {
-          setDocuments({ status: 'complete', value: json.value });
-        }
-      );
       Workspace.stats(organization.slug, workspace.slug, 'vectors').then(
         (json) => {
           setVectors({ status: 'complete', value: json.value });
@@ -94,7 +84,7 @@ const Statistics = ({
 
       <div className=" -mt-6 ml-4 mr-24 w-fit min-w-[303px] rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
         <div className="flex items-center justify-between">
-          <span className="whitespace-nowrap font-jetbrains text-white">
+          <span className="font-jetbrains whitespace-nowrap text-white">
             ID:{' '}
             <span
               className={`font-jetbrainsbold transition-all duration-300 ${
