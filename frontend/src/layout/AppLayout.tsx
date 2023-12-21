@@ -1,6 +1,8 @@
 import { ReactNode, useState } from 'react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
+import Notifications from '../components/Notifications';
+import UserMenu from '../components/UserMenu';
 
 interface DefaultLayoutProps {
   headerEntity: any;
@@ -58,6 +60,11 @@ const AppLayout = ({
               />
             </div>
           )}
+
+          <div className="absolute right-0 top-0 mr-9 mt-7 flex items-center gap-x-2">
+            <Notifications />
+            <UserMenu />
+          </div>
           <main>
             <div className="mx-auto rounded-tr-xl bg-main pr-6 pt-6">
               {children}

@@ -2,18 +2,16 @@ import { useState } from 'react';
 import Organization from '../../../models/organization';
 import { Loader } from 'react-feather';
 import paths from '../../../utils/paths';
+import { CaretDown } from '@phosphor-icons/react';
+import showToast from '../../../utils/toast';
 
 export default function OrgSettings({ organization }: { organization: any }) {
   const [hasOrgChanges, setHasOrgChanges] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [result, setResult] = useState<{
-    show: boolean;
-    success: boolean;
-    error: null | string;
-  }>({ show: false, success: false, error: null });
+
   const handleOrgUpdate = async (e: any) => {
     e.preventDefault();
-    setResult({ show: false, success: false, error: null });
+
     const form = new FormData(e.target);
     const newOrgName =
       (form.get('organization_name') as string) || organization?.name;
@@ -23,11 +21,20 @@ export default function OrgSettings({ organization }: { organization: any }) {
       organization.slug,
       data
     );
-    setResult({ show: true, success, error });
+
+    if (success) {
+      showToast('Organization updated successfully, reloading...', 'success');
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } else {
+      showToast(error, 'error');
+    }
     success && setHasOrgChanges(false);
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (e: any) => {
+    e.preventDefault();
     if (
       !confirm(
         'Are you sure you want to do this. All associated information will be deleted.\n\nThis operation will ONLY remove information from Vector Admin and will not remove any data from your connected vector database.'
@@ -46,72 +53,56 @@ export default function OrgSettings({ organization }: { organization: any }) {
   };
 
   return (
-    <div className="col-span-12 flex-1 rounded-sm bg-white pb-6 xl:col-span-4">
-      <div className="flex items-start justify-between">
-        <div>
-          <h4 className="mb-6 px-7.5 text-3xl font-semibold text-black dark:text-white">
+    <div className="col-span-12 h-screen flex-1 rounded-sm bg-main pb-6 xl:col-span-4">
+      <div className="flex flex-col">
+        <div className="-mt-10 flex items-center gap-x-4">
+          <button
+            onClick={() => window.history.back()}
+            className="flex h-[34px] w-[34px] rotate-90 items-center justify-center rounded-full border border-transparent  bg-zinc-900 text-white transition-all duration-300 hover:border-white/20 hover:bg-opacity-5 hover:text-white"
+          >
+            <CaretDown weight="bold" size={18} />
+          </button>
+          <div className="text-lg font-medium text-white">
             Organization Settings
-          </h4>
+          </div>
         </div>
-      </div>
-
-      <div className="px-6">
-        {result.show && (
-          <>
-            {result.success ? (
-              <p className="my-2 w-full rounded-lg border-green-800 bg-green-50 px-4 py-2 text-lg text-green-800">
-                Settings updated successfully.
-              </p>
-            ) : (
-              <p className="my-2 w-full rounded-lg border-red-800 bg-red-50 px-4 py-2 text-lg text-red-800">
-                {result.error}
-              </p>
-            )}
-          </>
-        )}
-
         <form
           onChange={() => setHasOrgChanges(true)}
           onSubmit={handleOrgUpdate}
-          className="border-b border-gray-200 pb-4"
         >
-          <div className="my-4">
-            <label className=" block flex items-center gap-x-1 font-medium text-black dark:text-white">
-              Organization name
-            </label>
-            <p className="mb-2.5 text-sm text-slate-600">
+          <div className="ml-13">
+            <div className="mt-8.5 text-sm font-medium text-white">
+              Organization Name
+            </div>
+            <div className="mt-1 text-sm text-white text-opacity-60">
               This will only change the display name of the organization.
-            </p>
-            <div className="relative flex w-1/2 items-center gap-x-4">
+            </div>
+            <div className="mt-2 flex items-center gap-x-4">
               <input
                 type="text"
                 name="organization_name"
+                required={true}
                 placeholder="My Organization"
                 defaultValue={organization.name}
-                required={true}
-                className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                className="mt-2 inline-flex h-11 w-[210px] items-center justify-start gap-2.5 rounded-lg bg-white bg-opacity-10 p-2.5 text-sm font-medium leading-tight text-white text-opacity-60"
               />
               <button
                 hidden={!hasOrgChanges}
                 type="submit"
-                className="rounded-lg border border-primary px-8 py-3 text-lg text-blue-500 transition-all duration-300 hover:bg-primary hover:text-white"
+                className="text-center text-sm font-medium text-sky-400"
               >
                 Save
               </button>
             </div>
+            <button
+              onClick={handleDelete}
+              className="mt-5 w-fit rounded-lg p-1 text-sm leading-tight text-red-500 hover:bg-red-500 hover:text-white"
+            >
+              <Loader hidden={!deleting} size={16} className="animate-spin" />
+              {deleting ? 'Removing Organization' : 'Delete Organization'}
+            </button>
           </div>
         </form>
-
-        <div className="my-2 flex w-full">
-          <button
-            disabled={deleting}
-            onClick={handleDelete}
-            className="flex items-center gap-x-1 rounded-lg bg-red-100 px-4 py-2 text-red-400 hover:bg-red-600 hover:text-white disabled:cursor-wait disabled:bg-red-600 disabled:text-white"
-          >
-            <Loader hidden={!deleting} size={16} className="animate-spin" />
-            {deleting ? 'Removing Organization' : 'Delete Organization'}
-          </button>
-        </div>
       </div>
     </div>
   );
