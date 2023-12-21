@@ -341,7 +341,7 @@ const FullTextWindow = memo(
     return (
       <dialog id={`${fragment.id}-text`} className="w-1/2 rounded-lg">
         <div className="flex flex-col overflow-y-scroll p-[20px]">
-          <pre className="font-mono whitespace-pre-line rounded-lg bg-slate-100 p-2">
+          <pre className="whitespace-pre-line rounded-lg bg-slate-100 p-2 font-mono">
             {data?.metadata?.text ||
               '[ERROR] Could not parse text key from embedding'}
           </pre>

@@ -49,7 +49,7 @@ function FileUploadProgressComponent({
           <XCircle className="h-6 h-full w-6 w-full rounded-full bg-red-500 stroke-white p-1" />
         </div>
         <div className="flex flex-col">
-          <p className="font-mono overflow-x-scroll text-sm text-black dark:text-stone-200">
+          <p className="overflow-x-scroll font-mono text-sm text-black dark:text-stone-200">
             {truncate(file.name, 30)}
           </p>
           <p className="font-mono text-xs text-red-700 dark:text-red-400">
@@ -70,7 +70,7 @@ function FileUploadProgressComponent({
         )}
       </div>
       <div className="flex flex-col">
-        <p className="font-mono overflow-x-scroll text-sm text-black dark:text-stone-200">
+        <p className="overflow-x-scroll font-mono text-sm text-black dark:text-stone-200">
           {truncate(file.name, 30)}
         </p>
         <p className="font-mono text-xs text-gray-700 dark:text-stone-400">

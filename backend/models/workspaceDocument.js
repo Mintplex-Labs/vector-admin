@@ -170,9 +170,8 @@ const WorkspaceDocument = {
         include: { organization: true },
       });
 
-
       const connector = await OrganizationConnection.get({
-        organization_id: workspace.organization.id
+        organization_id: workspace.organization.id,
       });
 
       const vectorDb = selectConnector(connector);
@@ -204,7 +203,6 @@ const WorkspaceDocument = {
       return 0;
     }
   },
-
 };
 
 module.exports.WorkspaceDocument = WorkspaceDocument;

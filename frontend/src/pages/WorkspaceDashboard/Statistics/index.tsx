@@ -94,7 +94,7 @@ const Statistics = ({
 
       <div className=" -mt-6 ml-4 mr-24 w-fit min-w-[303px] rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
         <div className="flex items-center justify-between">
-          <span className="whitespace-nowrap font-jetbrains text-white">
+          <span className="font-jetbrains whitespace-nowrap text-white">
             ID:{' '}
             <span
               className={`font-jetbrainsbold transition-all duration-300 ${
