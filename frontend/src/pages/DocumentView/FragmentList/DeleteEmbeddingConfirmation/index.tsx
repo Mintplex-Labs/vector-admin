@@ -36,7 +36,7 @@ const DeleteEmbeddingConfirmation = memo(
           </p>
         </div>
         <div className="flex w-full flex-col overflow-y-scroll px-4">
-          <pre className="font-mono w-full whitespace-pre-line rounded-lg bg-slate-100 p-2">
+          <pre className="w-full whitespace-pre-line rounded-lg bg-slate-100 p-2 font-mono">
             {data.metadata.text}
           </pre>
           <div className="mt-4 flex flex-col gap-y-2">

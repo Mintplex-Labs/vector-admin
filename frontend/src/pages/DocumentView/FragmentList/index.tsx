@@ -106,7 +106,7 @@ export default function FragmentList({
             </div>
           ) : (
             <table className="w-full rounded-xl text-left text-xs font-medium text-white text-opacity-80">
-              <thead className="sticky top-0 w-full bg-main">
+              <thead className="sticky top-0 w-full border-b-2 border-white/20 bg-main">
                 <tr className="mt-10">
                   <th
                     scope="col"
@@ -174,11 +174,13 @@ export default function FragmentList({
           )}
         </div>
         {!searchMode && (
-          <DocumentListPagination
-            pageCount={totalPages}
-            currentPage={currentPage}
-            gotoPage={handlePageChange}
-          />
+          <div className="mt-14">
+            <DocumentListPagination
+              pageCount={totalPages}
+              currentPage={currentPage}
+              gotoPage={handlePageChange}
+            />
+          </div>
         )}
       </div>
     </>
@@ -219,7 +221,7 @@ const Fragment = ({
     <>
       <tr
         id={`embedding-row-${fragment.id}`}
-        className={`h-9 transition-all duration-300 ${
+        className={`h-9 hover:bg-white/10 ${
           index % 2 === 0 ? 'bg-main-2' : 'bg-main'
         }`}
       >
@@ -240,7 +242,7 @@ const Fragment = ({
           ) : (
             <>
               {loading ? (
-                <div className="h-[20px] w-[80px] animate-pulse rounded-md bg-slate-200" />
+                <div className="h-[20px] w-[80px] animate-pulse rounded-md bg-white/20" />
               ) : (
                 <p>no text found.</p>
               )}
@@ -266,7 +268,7 @@ const Fragment = ({
           ) : (
             <>
               {loading ? (
-                <div className="h-[20px] w-[80px] animate-pulse rounded-md bg-slate-200" />
+                <div className="h-[20px] w-[80px] animate-pulse rounded-md bg-white/20" />
               ) : (
                 <button
                   onClick={() => {
@@ -339,7 +341,7 @@ const FullTextWindow = memo(
     return (
       <dialog id={`${fragment.id}-text`} className="w-1/2 rounded-lg">
         <div className="flex flex-col overflow-y-scroll p-[20px]">
-          <pre className="font-mono whitespace-pre-line rounded-lg bg-slate-100 p-2">
+          <pre className="whitespace-pre-line rounded-lg bg-slate-100 p-2 font-mono">
             {data?.metadata?.text ||
               '[ERROR] Could not parse text key from embedding'}
           </pre>

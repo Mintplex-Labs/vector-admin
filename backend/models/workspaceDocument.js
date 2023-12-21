@@ -4,6 +4,7 @@ const { v5 } = require("uuid");
 const { fetchMetadata } = require("../utils/storage");
 const { DocumentVectors } = require("./documentVectors");
 const { selectConnector } = require("../utils/vectordatabases/providers");
+const { OrganizationWorkspace } = require("./organizationWorkspace");
 
 const WorkspaceDocument = {
   vectorFilenameRaw: function (documentName, workspaceId) {
@@ -159,6 +160,30 @@ const WorkspaceDocument = {
 
     return totalBytes;
   },
+
+  calcDimensions: async function (field = "workspace_id", value = null) {
+    try {
+      const { OrganizationConnection } = require("./organizationConnection");
+
+      const workspace = await prisma.organization_workspaces.findUnique({
+        where: { id: value },
+        include: { organization: true },
+      });
+
+      const connector = await OrganizationConnection.get({
+        organization_id: workspace.organization.id,
+      });
+
+      const vectorDb = selectConnector(connector);
+      const dimensions = await vectorDb.indexDimensions(workspace.fname);
+
+      return dimensions;
+    } catch (e) {
+      console.error(e);
+      return 0;
+    }
+  },
+
   // Will get both the remote and local count of vectors to see if the numbers match.
   vectorCount: async function (field = "organization_id", value = null) {
     try {
