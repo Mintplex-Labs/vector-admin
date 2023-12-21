@@ -3,7 +3,6 @@ import PreLoader from '../../../components/Preloader';
 import Document from '../../../models/document';
 import truncate from 'truncate';
 import pluralize from 'pluralize';
-import { useParams } from 'react-router-dom';
 import DocumentListPagination from '../../../components/DocumentPaginator';
 import SearchView from './SearchView';
 import MetadataEditor from './MetadataEditor';

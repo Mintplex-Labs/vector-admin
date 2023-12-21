@@ -409,7 +409,6 @@ function documentEndpoints(app) {
           method,
           query
         );
-
         response.status(200).json({ fragments, error });
       } catch (e) {
         console.log(e.message, e);
