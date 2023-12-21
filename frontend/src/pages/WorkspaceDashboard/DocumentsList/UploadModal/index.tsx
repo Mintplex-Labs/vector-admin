@@ -138,7 +138,7 @@ export default function UploadDocumentModal({ workspace }: { workspace: any }) {
         </div>
         <p className="text-xs text-gray-600 dark:text-stone-400 ">
           supported file extensions are{' '}
-          <code className="font-mono rounded-sm bg-gray-200 px-1 text-xs text-gray-800 dark:bg-stone-800 dark:text-slate-400">
+          <code className="rounded-sm bg-gray-200 px-1 font-mono text-xs text-gray-800 dark:bg-stone-800 dark:text-slate-400">
             {Object.values(fileTypes).flat().join(' ')}
           </code>
         </p>

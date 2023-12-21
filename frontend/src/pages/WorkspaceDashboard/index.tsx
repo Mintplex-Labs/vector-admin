@@ -7,7 +7,6 @@ import paths from '../../utils/paths';
 import AppLayout from '../../layout/AppLayout';
 import { useParams } from 'react-router-dom';
 import Organization from '../../models/organization';
-import ApiKeyCard from './ApiKey';
 import Statistics from './Statistics';
 import DocumentsList from './DocumentsList';
 import Workspace from '../../models/workspace';
@@ -824,11 +823,7 @@ function WorkspaceViewHeader({
           }
           className="flex h-11 w-11 items-center justify-center rounded-lg border-2 border-white border-opacity-20 transition-all duration-300 hover:bg-opacity-5"
         >
-          <img
-            src={logo}
-            alt="Connector logo"
-            className="h-full p-1 grayscale"
-          />
+          <img src={logo} alt="Connector logo" className="h-full p-1" />
         </button>
 
         <button
@@ -837,7 +832,7 @@ function WorkspaceViewHeader({
           }
           className="inline-flex h-11 w-[74px] flex-col items-center justify-center gap-2.5 rounded-lg bg-white bg-opacity-10 px-5 py-2.5 transition-all duration-300 hover:bg-opacity-5"
         >
-          <div className="h-[25.53px] w-11 text-center font-['Satoshi'] text-base font-bold text-white">
+          <div className="font-satoshi h-[25.53px] w-11 text-center text-base font-bold text-white">
             Sync
           </div>
         </button>
@@ -849,7 +844,7 @@ function WorkspaceViewHeader({
           }
           className="inline-flex h-11 w-[74px] flex-col items-center justify-center gap-2.5 rounded-lg bg-white bg-opacity-10 px-5 py-2.5 transition-all duration-300 hover:bg-opacity-5"
         >
-          <div className="h-[25.53px] w-11 text-center font-['Satoshi'] text-base font-bold text-white">
+          <div className="font-satoshi h-[25.53px] w-11 text-center text-base font-bold text-white">
             Clone
           </div>
         </button>
@@ -857,7 +852,7 @@ function WorkspaceViewHeader({
           onClick={deleteWorkspace}
           className="inline-flex h-11 w-[74px] flex-col items-center justify-center gap-2.5 rounded-lg border-2 border-white border-opacity-20 px-3.5 py-2.5 transition-all duration-300 hover:bg-red-500"
         >
-          <div className="h-[25.53px] w-[59px] text-center font-['Satoshi'] text-base font-bold text-white">
+          <div className="font-satoshi h-[25.53px] w-[59px] text-center text-base font-bold text-white">
             Delete
           </div>
         </button>

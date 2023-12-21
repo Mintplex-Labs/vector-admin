@@ -1,6 +1,41 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;700&display=swap');
+
+@font-face {
+  font-family: 'Satoshi-Bold';
+  src: url('./fonts/Satoshi-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('./fonts/Satoshi-Regular.ttf') format('truetype');
+  font-weight: 300;
+  font-display: swap;
+  font-style: normal;
+}
+
+.font-satoshi.font-bold {
+  font-family: 'Satoshi-Bold', sans-serif;
+}
+
+.font-satoshi {
+  font-family: 'Satoshi', sans-serif;
+}
+
+.font-jetbrains {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 300;
+}
+
+.font-jetbrainsbold {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+}
 
 /* Chrome, Safari and Opera */
 .no-scrollbar::-webkit-scrollbar {

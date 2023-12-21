@@ -125,7 +125,7 @@ const EditEmbeddingConfirmation = memo(
               </form>
             </div>
           </div>
-          <pre className="font-mono whitespace-pre-line rounded-lg bg-slate-100 p-2">
+          <pre className="whitespace-pre-line rounded-lg bg-slate-100 p-2 font-mono">
             {data.metadata.text}
           </pre>
         </dialog>
@@ -165,7 +165,7 @@ const EditEmbeddingConfirmation = memo(
               name="embeddingText"
               defaultValue={data.metadata.text}
               spellCheck="true"
-              className="font-mono h-fit w-full overflow-y-scroll rounded-lg bg-slate-100 p-2"
+              className="h-fit w-full overflow-y-scroll rounded-lg bg-slate-100 p-2 font-mono"
             />
             <div className="mt-4 flex flex-col gap-y-2">
               <button

@@ -38,14 +38,12 @@ export default function SearchView({
 }) {
   const formEl = useRef<HTMLFormElement>(null);
   const [showSearchMethods, setShowSearchMethods] = useState(false);
-  const [sourceDoc, setSourceDoc] = useState(null);
 
   const clearSearch = (e: SyntheticEvent<HTMLElement, SubmitEvent>) => {
     e.preventDefault();
     setSearchBy('exactText');
     setSearching(false);
     setSearchMode(false);
-    setSourceDoc(null);
     (formEl.current as HTMLFormElement).reset();
   };
   const handleSearch = async (e: SyntheticEvent<HTMLElement, SubmitEvent>) => {
@@ -69,8 +67,6 @@ export default function SearchView({
       setSearchFragments([]);
       return;
     }
-    const metadataForIds = await Document.metadatas(document.id, vectorIds);
-    setSourceDoc(metadataForIds);
     setSearchFragments(matches);
     setSearching(false);
   };
