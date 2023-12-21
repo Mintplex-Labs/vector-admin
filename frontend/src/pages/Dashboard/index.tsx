@@ -33,7 +33,6 @@ export default function Dashboard() {
   const [workspaces, setWorkspaces] = useState<object[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [hasMoreWorkspaces, setHasMoreWorkspaces] = useState<boolean>(true);
-  const [totalWorkspaces, setTotalWorkspaces] = useState<number>(0);
 
   async function fetchWorkspaces(focusedOrg?: { slug: string }) {
     const org = focusedOrg || organization;
@@ -52,11 +51,9 @@ export default function Dashboard() {
 
       setWorkspaces(uniques);
       setHasMoreWorkspaces(uniques.length < totalWorkspaces);
-      setTotalWorkspaces(totalWorkspaces);
     } else {
       setWorkspaces(_workspaces);
       setHasMoreWorkspaces(totalWorkspaces > Organization.workspacePageSize);
-      setTotalWorkspaces(totalWorkspaces);
     }
     setCurrentPage(currentPage + 1);
     return true;
@@ -126,12 +123,6 @@ export default function Dashboard() {
             organization={organization}
             connector={connector}
           />
-          {/* <ConnectorCard
-            knownConnector={connector}
-            organization={organization}
-            workspaces={workspaces}
-          /> */}
-          {/* <ApiKeyCard organization={organization} /> */}
         </div>
       )}
       <Statistics organization={organization} workspaces={workspaces} />
@@ -143,13 +134,7 @@ export default function Dashboard() {
             workspaces={workspaces}
           />
         </div>
-        <QuickActionsSidebar
-          knownConnector={connector}
-          organization={organization}
-          workspaces={workspaces}
-          totalWorkspaces={totalWorkspaces}
-          loadMoreWorkspaces={fetchWorkspaces}
-        />
+        <QuickActionsSidebar organization={organization} />
       </div>
     </AppLayout>
   );
@@ -189,11 +174,7 @@ function OrganizationHeader({ organization, connector }: any) {
           className="flex h-11 w-11 items-center justify-center rounded-lg border-2 border-white border-opacity-20 transition-all duration-300 hover:bg-opacity-5"
         >
           {!!connector?.type ? (
-            <img
-              src={logo}
-              alt="Connector logo"
-              className="h-full p-1 grayscale"
-            />
+            <img src={logo} alt="Connector logo" className="h-full p-1" />
           ) : (
             <>
               <NewConnectorModal
@@ -213,7 +194,7 @@ function OrganizationHeader({ organization, connector }: any) {
           }
           className="inline-flex h-11 w-[74px] flex-col items-center justify-center gap-2.5 rounded-lg bg-white bg-opacity-10 px-5 py-2.5 transition-all duration-300 hover:bg-opacity-5"
         >
-          <div className="h-[25.53px] w-11 text-center font-['Satoshi'] text-base font-bold text-white">
+          <div className="font-satoshi h-[25.53px] w-11 text-center text-base font-bold text-white">
             Sync
           </div>
         </button>
