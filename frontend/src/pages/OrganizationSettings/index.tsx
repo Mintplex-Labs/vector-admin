@@ -74,7 +74,6 @@ export default function OrganizationSettingsView() {
           <SyncConnectorModal
             organization={organization}
             connector={connector}
-            onUpdate={(newConnector) => setConnector(newConnector)}
           />
         </div>
       </div>
