@@ -7,7 +7,6 @@ import paths from '../../utils/paths';
 import AppLayout from '../../layout/AppLayout';
 import { useParams } from 'react-router-dom';
 import Organization from '../../models/organization';
-import ApiKeyCard from './ApiKey';
 import Statistics from './Statistics';
 import DocumentsList from './DocumentsList';
 import Workspace from '../../models/workspace';
