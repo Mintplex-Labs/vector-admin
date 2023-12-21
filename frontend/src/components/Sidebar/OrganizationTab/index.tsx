@@ -82,7 +82,7 @@ export default function OrganizationTab({
         to={paths.organization(organization)}
         className={({ isActive: active }) => {
           setIsActive(active);
-          return `group relative flex w-[13vw] items-center justify-between rounded-lg border border-transparent bg-main-2 px-4 py-3 font-medium text-white duration-300 ease-in-out hover:border-sky-400 hover:text-white ${
+          return `group relative flex w-full items-center justify-between rounded-lg border border-transparent bg-main-2 px-4 py-3 font-medium text-white duration-300 ease-in-out hover:border-sky-400 hover:text-white ${
             active ? 'border-sky-400 !text-white' : ''
           }`;
         }}
@@ -102,9 +102,18 @@ export default function OrganizationTab({
           </div>
         </div>
       </NavLink>
-      {isActive && menuOpen && (
-        <>
-          <div className="mb-3.5 mt-4 flex items-center justify-between px-3">
+      {isActive && (
+        <div
+          className={`${
+            menuOpen
+              ? 'slide-down mb-4 mt-4 transition-all duration-300'
+              : 'slide-up'
+          }`}
+          style={{
+            animationDuration: '0.15s',
+          }}
+        >
+          <div className="mb-3.5 flex items-center justify-between px-3">
             <div className="flex w-full items-center gap-x-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -150,7 +159,7 @@ export default function OrganizationTab({
           {isSearching ? (
             <LoadingWorkspaceItem />
           ) : searchTerm !== '' && searchResults.length > 0 ? (
-            <div className="mt-2">
+            <div className="mt-2 max-h-[150px] overflow-y-auto">
               {searchResults.map((workspace, idx) => (
                 <WorkspaceItem key={idx} workspace={workspace} slug={slug} />
               ))}
@@ -195,7 +204,7 @@ export default function OrganizationTab({
             </div>
           )}
           <CreateWorkspaceModal organization={organization} />
-        </>
+        </div>
       )}
     </li>
   );
@@ -212,7 +221,7 @@ function WorkspaceItem({ workspace, slug }: any) {
           }`;
         }}
       >
-        {truncate(workspace.name, 24)}
+        {truncate(workspace.name, 23)}
       </NavLink>
     </li>
   );

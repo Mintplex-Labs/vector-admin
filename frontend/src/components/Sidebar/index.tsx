@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
-import Logo from '../../images/logo/logo-light.png';
+import LogoSky from '../../images/logo/logo-sky.svg';
 import SidebarLinkGroup from '../SidebarLinkGroup';
 import paths from '../../utils/paths';
 import useUser from '../../hooks/useUser';
@@ -90,7 +90,7 @@ export default function Sidebar({
     <>
       <aside
         ref={sidebar}
-        className={`max-w-72.5 absolute left-0 top-0 z-9999 flex h-screen min-w-[220px] flex-col overflow-y-hidden bg-main duration-300 ease-linear lg:static lg:translate-x-0 ${
+        className={`max-w-72.5 absolute left-0 top-0 z-9999 flex h-screen min-w-[300px] flex-col overflow-y-hidden bg-main duration-300 ease-linear lg:static lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -100,12 +100,8 @@ export default function Sidebar({
             to={paths.dashboard()}
             className="flex w-full shrink-0 justify-center"
           >
-            <div className="flex w-full justify-center rounded-br-[14px] bg-main-bg">
-              <img
-                src={Logo}
-                alt="Logo"
-                className="w-full max-w-[180px] object-cover p-4"
-              />
+            <div className="flex h-[62px] w-full items-center justify-center rounded-br-xl bg-main-bg">
+              <img src={LogoSky} alt="Logo" className="w-[170px]" />
             </div>
           </NavLink>
 
@@ -134,9 +130,9 @@ export default function Sidebar({
         </div>
         {/* <!-- SIDEBAR HEADER --> */}
 
-        <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
+        <div className="no-scrollbar flex flex-col overflow-y-auto rounded-tl-xl bg-main duration-300 ease-linear">
           {/* <!-- Sidebar Menu --> */}
-          <div className="no-scrollbar m-4 h-screen flex-grow overflow-y-auto rounded-xl border-2 border-white/20">
+          <div className="no-scrollbar mx-4 mb-8 mt-4 h-screen flex-grow overflow-y-auto rounded-xl border-2 border-white/20">
             <nav className="p-4 px-4 py-4 lg:px-6">
               {/* <!-- Menu Group --> */}
               <div>

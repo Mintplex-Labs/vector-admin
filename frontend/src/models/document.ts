@@ -1,5 +1,4 @@
-import { ISearchTypes } from '../pages/DocumentView/FragmentList/SearchView';
-import { API_BASE } from '../utils/constants';
+import { API_BASE, ISearchTypes } from '../utils/constants';
 import { baseHeaders, getAPIUrlString } from '../utils/request';
 
 const Document = {

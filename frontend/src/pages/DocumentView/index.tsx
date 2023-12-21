@@ -11,6 +11,10 @@ import Document from '../../models/document';
 import System from '../../models/system';
 import Organization from '../../models/organization';
 import { APP_NAME } from '../../utils/constants';
+import { CaretDown } from '@phosphor-icons/react';
+import truncate from 'truncate';
+import UploadDocumentModal from './UploadModal';
+import UploadModalNoKey from './UploadModal/UploadModalNoKey';
 
 export default function DocumentView() {
   const { user } = useUser();
@@ -109,9 +113,16 @@ export default function DocumentView() {
       workspaces={workspaces}
       hasMoreWorkspaces={hasMoreWorkspaces}
       loadMoreWorkspaces={fetchWorkspaces}
+      headerExtendedItems={
+        <DocumentViewHeader
+          organization={organization}
+          workspace={workspace}
+          document={document}
+        />
+      }
     >
-      <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-        <div className="col-span-12 xl:col-span-12">
+      <div className="grid grid-cols-12">
+        <div className="col-span-12 h-screen bg-main xl:col-span-12">
           <FragmentList
             connector={connector}
             document={document}
@@ -124,7 +135,81 @@ export default function DocumentView() {
         workspace={workspace}
         workspaces={workspaces}
       />
+
+      {canEdit ? (
+        <UploadDocumentModal workspaces={workspaces} />
+      ) : (
+        <UploadModalNoKey />
+      )}
     </AppLayout>
+  );
+}
+
+function DocumentViewHeader({ organization, workspace, document }: any) {
+  const { slug, workspaceSlug } = useParams();
+  const deleteDocument = async () => {
+    if (!document) return false;
+    if (
+      !confirm(
+        'Are you sure you want to delete this document? This will remove the document from your vector database and remove it from the cache. This process cannot be undone.'
+      )
+    )
+      return false;
+    const success = await Document.delete(document.id);
+    if (!success) return false;
+    window.location.replace(paths.workspace(slug, workspaceSlug));
+  };
+
+  const cloneDocument = async () => {
+    window.document
+      .getElementById(`copy-document-${document.id}-modal`)
+      ?.showModal();
+  };
+
+  return (
+    <>
+      <div className=" mr-10 w-full rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
+        <div className="flex items-center gap-x-2">
+          <a
+            href={paths.organization(organization)}
+            className="text-sky-400 hover:cursor-pointer hover:underline"
+          >
+            {truncate(organization?.name, 20)}
+          </a>
+          <div className="text-sky-400" style={{ transform: 'rotate(270deg)' }}>
+            <CaretDown weight="bold" />
+          </div>
+          <a
+            href={paths.workspace(slug, workspaceSlug)}
+            className="text-sky-400 hover:cursor-pointer hover:underline"
+          >
+            {truncate(workspace?.name, 20)}
+          </a>
+          <div className="text-sky-400" style={{ transform: 'rotate(270deg)' }}>
+            <CaretDown weight="bold" />
+          </div>
+          <span className="text-white">{truncate(document?.name, 30)}</span>
+        </div>
+      </div>
+      <div className="flex gap-x-3">
+        <button
+          onClick={cloneDocument}
+          className="inline-flex h-11 w-[74px] flex-col items-center justify-center gap-2.5 rounded-lg bg-white bg-opacity-10 px-5 py-2.5 transition-all duration-300 hover:bg-opacity-5"
+        >
+          <div className="h-[25.53px] w-11 text-center font-['Satoshi'] text-base font-bold text-white">
+            Clone
+          </div>
+        </button>
+        <button
+          onClick={deleteDocument}
+          className="inline-flex h-11 w-[74px] flex-col items-center justify-center gap-2.5 rounded-lg border border-white border-opacity-20 px-3.5 py-2.5 transition-all duration-300 hover:bg-red-500"
+        >
+          <div className="h-[25.53px] w-[59px] text-center font-['Satoshi'] text-base font-bold text-white">
+            Delete
+          </div>
+        </button>
+      </div>
+    </>
   );
 }
 
@@ -162,7 +247,7 @@ const CopyDocToModal = memo(
 
     return (
       <dialog
-        id={`copy-document-${document.id}-modal`}
+        id={`copy-document-${document?.id}-modal`}
         className="w-1/2 rounded-lg outline-none"
         onClick={(event) => {
           event.target == event.currentTarget && event.currentTarget?.close();
@@ -198,7 +283,7 @@ const CopyDocToModal = memo(
         <div className="my-2 flex w-full justify-center p-[20px]">
           <form onSubmit={copyToWorkspace} className="flex flex-col gap-y-1">
             <p className="my-2 text-sm text-gray-800">
-              Clone {document.name} and it's embeddings to...
+              Clone {document?.name} and it's embeddings to...
             </p>
             <select
               name="workspaceId"

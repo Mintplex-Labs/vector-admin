@@ -30,7 +30,7 @@ const AppLayout = ({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="dark:bg-boxdark-2 dark:text-bodydark">
+    <div className="bg-main-bg px-4 pt-4">
       <div className="flex h-screen overflow-hidden">
         <Sidebar
           workspaces={workspaces}
@@ -42,7 +42,7 @@ const AppLayout = ({
           loadMoreWorkspaces={loadMoreWorkspaces}
         />
 
-        <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+        <div className="no-scrollbar w-full overflow-x-hidden">
           {!!headerEntity && (
             <div className="flex w-full items-center">
               <Header
@@ -56,7 +56,7 @@ const AppLayout = ({
             </div>
           )}
           <main>
-            <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+            <div className="mx-auto rounded-tr-xl bg-main pr-6 pt-6">
               {children}
             </div>
           </main>

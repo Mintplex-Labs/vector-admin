@@ -2,13 +2,12 @@ import { lazy, memo, useEffect, useState } from 'react';
 import PreLoader from '../../../components/Preloader';
 import Document from '../../../models/document';
 import truncate from 'truncate';
-import moment from 'moment';
 import pluralize from 'pluralize';
-import { useParams } from 'react-router-dom';
-import paths from '../../../utils/paths';
 import DocumentListPagination from '../../../components/DocumentPaginator';
 import SearchView from './SearchView';
 import MetadataEditor from './MetadataEditor';
+import { Trash } from '@phosphor-icons/react';
+import { ISearchTypes, SEARCH_MODES } from '../../../utils/constants';
 const DeleteEmbeddingConfirmation = lazy(
   () => import('./DeleteEmbeddingConfirmation')
 );
@@ -26,30 +25,20 @@ export default function FragmentList({
   document: any;
   canEdit: boolean;
 }) {
-  const { slug, workspaceSlug } = useParams();
   const [loading, setLoading] = useState(true);
   const [searchMode, setSearchMode] = useState(false);
   const [fragments, setFragments] = useState([]);
   const [sourceDoc, setSourceDoc] = useState(null);
   const [totalFragments, setTotalFragments] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchFragments, setSearchFragments] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [searchBy, setSearchBy] = useState<ISearchTypes>('exactText');
+  const [searchTerm, setSearchTerm] = useState('');
   const totalPages = Math.ceil(totalFragments / PAGE_SIZE);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-  };
-
-  const deleteDocument = async () => {
-    if (!document) return false;
-    if (
-      !confirm(
-        'Are you sure you want to delete this document? This will remove the document from your vector database and remove it from the cache. This process cannot be undone.'
-      )
-    )
-      return false;
-    const success = await Document.delete(document.id);
-    if (!success) return false;
-    window.location.replace(paths.workspace(slug, workspaceSlug));
   };
 
   const getFragments = async (page = 1) => {
@@ -72,89 +61,116 @@ export default function FragmentList({
   useEffect(() => {
     getFragments(currentPage);
   }, [document, currentPage]);
-
   return (
     <>
-      <div className="col-span-12 flex-1 rounded-sm dark:border-strokedark dark:bg-boxdark xl:col-span-4">
-        <div className="flex items-start justify-between">
-          <div className="mb-6 flex flex-col gap-y-1 px-7.5 ">
-            <div className="flex items-center gap-x-2">
-              <h4 className="text-3xl font-semibold text-black dark:text-white">
-                Embeddings Overview for Document #{document.id}
-              </h4>
-              <button
-                type="button"
-                onClick={() =>
-                  window.document
-                    .getElementById(`copy-document-${document.id}-modal`)
-                    ?.showModal()
-                }
-                className="rounded-lg px-4 py-2 text-sm text-blue-400 hover:bg-blue-50 hover:text-blue-600"
-              >
-                Clone Document
-              </button>
-              <button
-                onClick={deleteDocument}
-                className="rounded-lg px-4 py-2 text-sm text-slate-400 hover:bg-red-50 hover:text-red-600"
-              >
-                Delete Document
-              </button>
+      <div
+        className="flex h-screen flex-col overflow-hidden bg-main transition-all duration-300"
+        style={{ height: `calc(100vh - ${searchMode ? '130px' : '100px'})` }}
+      >
+        <div className="">
+          <div className="flex flex-col">
+            <div className="mb-6 flex w-full items-center justify-between gap-x-12">
+              <div className="ml-4 w-48 text-sm font-bold uppercase tracking-wide text-white">
+                embeddings overview
+              </div>
+              <SearchView
+                searchMode={searchMode}
+                setSearchMode={setSearchMode}
+                document={document}
+                FragmentItem={Fragment}
+                canEdit={canEdit}
+                setSearchFragments={setSearchFragments}
+                setSearching={setSearching}
+                searching={searching}
+                searchBy={searchBy}
+                setSearchBy={setSearchBy}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
             </div>
-
-            <p className="text-sm text-slate-500">{document?.name}</p>
           </div>
         </div>
 
-        <SearchView
-          searchMode={searchMode}
-          setSearchMode={setSearchMode}
-          document={document}
-          FragmentItem={Fragment}
-          canEdit={canEdit}
-        />
-        <div hidden={searchMode} className="px-6">
-          {loading ? (
-            <div>
-              <PreLoader />
+        <div className="flex-grow overflow-y-auto rounded-xl border-2 border-white/20 bg-main">
+          {loading || searching ? (
+            <div className="flex h-full w-full items-center justify-center">
+              <div className="flex flex-col items-center justify-center gap-y-4 text-center">
+                <PreLoader />
+                {searching && (
+                  <p className="text-white text-opacity-80">
+                    Running {SEARCH_MODES[searchBy].display} for{' '}
+                    <code className="px-2">"{searchTerm}"</code>
+                  </p>
+                )}
+              </div>
             </div>
           ) : (
-            <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-              <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                  <th scope="col" className="px-6 py-3">
-                    #
+            <table className="w-full rounded-xl text-left text-xs font-medium text-white text-opacity-80">
+              <thead className="sticky top-0 w-full bg-main">
+                <tr className="mt-10">
+                  <th
+                    scope="col"
+                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                  >
+                    Vector ID
                   </th>
-                  <th scope="col" className="px-6 py-3">
-                    Vector DB Id
-                  </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th
+                    scope="col"
+                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                  >
                     Text Chunk
                   </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th
+                    scope="col"
+                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                  >
                     Metadata
                   </th>
-                  <th scope="col" className="px-6 py-3">
-                    Last Updated
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Actions
+                  <th
+                    scope="col"
+                    className="px-6 pb-2 pt-6 text-xs font-light text-white text-opacity-80"
+                  >
+                    {' '}
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {fragments.map((fragment) => {
-                  return (
-                    <Fragment
-                      key={fragment.id}
-                      fragment={fragment}
-                      sourceDoc={sourceDoc}
-                      canEdit={canEdit}
-                      connector={connector}
-                    />
-                  );
-                })}
+                {(searchMode ? searchFragments : fragments).map(
+                  (fragment, index) => {
+                    return (
+                      <Fragment
+                        key={fragment.id}
+                        index={index}
+                        fragment={fragment}
+                        sourceDoc={sourceDoc}
+                        canEdit={canEdit}
+                        connector={connector}
+                      />
+                    );
+                  }
+                )}
               </tbody>
             </table>
+          )}
+          {searchMode && searchFragments.length === 0 && !searching && (
+            <div className="flex h-full w-full items-center justify-center">
+              <div className="flex flex-col items-center justify-center gap-y-4 text-center">
+                <p className="text-white text-opacity-80">
+                  No results found on {SEARCH_MODES[searchBy].display} for{' '}
+                  <code className="px-2">"{searchTerm}"</code>
+                </p>
+              </div>
+            </div>
+          )}
+          {!searchMode && fragments.length === 0 && !searching && !loading && (
+            <div className="flex h-full w-full items-center justify-center">
+              <div className="flex flex-col items-center justify-center gap-y-4 text-center">
+                <p className="text-white text-opacity-80">
+                  No vectors found for this document.
+                  <code className="px-2">"{searchTerm}"</code>
+                </p>
+              </div>
+            </div>
           )}
         </div>
         {!searchMode && (
@@ -174,11 +190,13 @@ const Fragment = ({
   sourceDoc,
   canEdit,
   connector,
+  index,
 }: {
   fragment: any;
   sourceDoc: any;
   canEdit: boolean;
   connector: any;
+  index: number;
 }) => {
   const [data, setData] = useState(null);
   const [metadata, setMetadata] = useState({});
@@ -201,20 +219,18 @@ const Fragment = ({
     <>
       <tr
         id={`embedding-row-${fragment.id}`}
-        className="border-b bg-white transition-all duration-300 dark:border-gray-700 dark:bg-gray-800"
+        className={`h-9 transition-all duration-300 ${
+          index % 2 === 0 ? 'bg-main-2' : 'bg-main'
+        }`}
       >
-        <th
-          scope="row"
-          className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
-        >
-          {fragment.id}
-        </th>
-        <td className="px-6 py-4">{fragment.vectorId}</td>
-        <td className="px-6 py-4">
-          {truncate(data?.metadata?.text, 40)}
+        <td className="px-6 text-sm font-bold text-white">
+          {fragment.vectorId}
+        </td>
+        <td className="px-6 ">
+          {truncate(data?.metadata?.text, 30)}
           {!!data?.metadata?.text ? (
             <button
-              className="text-blue-400"
+              className="rounded-lg px-2 py-1 text-sky-400 transition-all duration-300 hover:text-opacity-80"
               onClick={() => {
                 document.getElementById(`${fragment.id}-text`)?.showModal();
               }}
@@ -231,18 +247,21 @@ const Fragment = ({
             </>
           )}
         </td>
-        <td className="px-6 py-4">
+        <td className="px-6 ">
           {Object.keys(metadata)?.length > 0 ? (
             <button
-              onClick={() => {
+              onClick={() =>
                 document
                   .getElementById(`${fragment.id}-metadata-editor`)
-                  ?.showModal();
-              }}
-              className="rounded-full bg-blue-200 px-2 py-[1px] text-center text-blue-700 hover:bg-blue-300"
+                  ?.showModal()
+              }
             >
-              +{Object.keys(metadata).length} metadata{' '}
-              {pluralize('item', Object.keys(metadata).length)}
+              <div className="flex h-5 items-center justify-center rounded-[84px] bg-white bg-opacity-10 px-2 py-1 hover:opacity-75">
+                <div className="whitespace-nowrap text-[10px] text-white">
+                  +{Object.keys(metadata).length}{' '}
+                  {pluralize('item', Object.keys(metadata).length)}
+                </div>
+              </div>
             </button>
           ) : (
             <>
@@ -255,40 +274,39 @@ const Fragment = ({
                       .getElementById(`${fragment.id}-metadata-editor`)
                       ?.showModal();
                   }}
-                  className="rounded-full bg-blue-200 px-2 py-[1px] text-center text-blue-700 hover:bg-blue-300"
+                  className="flex h-5 items-center justify-center rounded-[84px] bg-white bg-opacity-10 px-2 py-1"
                 >
-                  <p>none</p>
+                  <p className="text-[10px] text-white">none</p>
                 </button>
               )}
             </>
           )}
         </td>
-        <td className="px-6 py-4">
-          {moment(fragment.lastUpdatedAt).fromNow()}
-        </td>
-        <td className="flex items-center gap-x-4 px-6 py-4">
-          <button
-            type="button"
-            onClick={() => {
-              document
-                .getElementById(`${fragment.id}-edit-embedding`)
-                ?.showModal();
-            }}
-            className="rounded-lg px-2 py-1 text-blue-400 transition-all duration-300 hover:bg-blue-50 hover:text-blue-600"
-          >
-            Edit
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              document
-                .getElementById(`${fragment.id}-delete-embedding`)
-                ?.showModal();
-            }}
-            className="rounded-lg px-2 py-1 text-red-400 transition-all duration-300 hover:bg-red-50 hover:text-red-600"
-          >
-            Delete
-          </button>
+        <td>
+          <div className="flex items-center gap-x-4 px-4">
+            <button
+              type="button"
+              onClick={() => {
+                document
+                  .getElementById(`${fragment.id}-edit-embedding`)
+                  ?.showModal();
+              }}
+              className="rounded-lg px-2 py-1 text-sky-400 transition-all duration-300 hover:bg-blue-50"
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                document
+                  .getElementById(`${fragment.id}-delete-embedding`)
+                  ?.showModal();
+              }}
+              className="rounded-lg px-2 py-1 text-white transition-all duration-300 hover:bg-red-50 hover:text-red-600"
+            >
+              <Trash size={16} />
+            </button>
+          </div>
         </td>
       </tr>
       {!!data && !!fragment && (
