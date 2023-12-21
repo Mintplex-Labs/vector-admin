@@ -16,17 +16,21 @@ const Organization = {
           organization: null,
           message: "No Organization name provided.",
         };
-      var slug = slugify(orgName, { lower: true });
+
+      // If the new name contains bad characters 
+      // replace them with spaces and continue creation.
+      const newOrgName = orgName.replace(/[:\.,<>@]/g, ' ');
+      var slug = slugify(newOrgName, { lower: true });
 
       const existingBySlug = await this.get({ slug });
       if (!!existingBySlug) {
         const slugSeed = Math.floor(10000000 + Math.random() * 90000000);
-        slug = slugify(`${orgName}-${slugSeed}`, { lower: true });
+        slug = slugify(`${newOrgName}-${slugSeed}`, { lower: true });
       }
 
       const organization = await prisma.organizations.create({
         data: {
-          name: orgName,
+          name: newOrgName,
           slug,
           uuid: this.makeKey(),
         },
