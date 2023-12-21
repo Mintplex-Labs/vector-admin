@@ -13,6 +13,7 @@ interface DefaultLayoutProps {
   children: ReactNode;
   hasMoreWorkspaces?: boolean;
   loadMoreWorkspaces?: VoidFunction;
+  hasQuickActions?: boolean;
 }
 
 const AppLayout = ({
@@ -26,6 +27,7 @@ const AppLayout = ({
   children,
   hasMoreWorkspaces,
   loadMoreWorkspaces,
+  hasQuickActions = false,
 }: DefaultLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -52,6 +54,7 @@ const AppLayout = ({
                 sidebarOpen={sidebarOpen}
                 setSidebarOpen={setSidebarOpen}
                 extendedItems={headerExtendedItems}
+                quickActions={hasQuickActions}
               />
             </div>
           )}

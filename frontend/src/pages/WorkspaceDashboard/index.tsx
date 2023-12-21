@@ -7,7 +7,6 @@ import paths from '../../utils/paths';
 import AppLayout from '../../layout/AppLayout';
 import { useParams } from 'react-router-dom';
 import Organization from '../../models/organization';
-import ApiKeyCard from './ApiKey';
 import Statistics from './Statistics';
 import DocumentsList from './DocumentsList';
 import Workspace from '../../models/workspace';
@@ -17,7 +16,8 @@ import { CaretDown } from '@phosphor-icons/react';
 import truncate from 'truncate';
 
 import ChromaLogo from '../../images/vectordbs/chroma.png';
-import PineconeLogo from '../../images/vectordbs/pinecone-inverted.png';
+import PineconeLogoInverted from '../../images/vectordbs/pinecone-inverted.png';
+import PineconeLogo from '../../images/vectordbs/pinecone.png';
 import qDrantLogo from '../../images/vectordbs/qdrant.png';
 import WeaviateLogo from '../../images/vectordbs/weaviate.png';
 
@@ -795,13 +795,13 @@ function WorkspaceViewHeader({
       logo = WeaviateLogo;
       break;
     default:
-      logo = PineconeLogo;
+      logo = PineconeLogoInverted;
   }
 
   return (
     <>
       <div className=" mr-10 w-full rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
-        <div className="flex items-center gap-x-2">
+        <div className="flex items-center gap-x-2 text-lg">
           <a
             href={paths.organization(organization)}
             className="text-sky-400 hover:cursor-pointer hover:underline"
@@ -811,7 +811,9 @@ function WorkspaceViewHeader({
           <div className="text-sky-400" style={{ transform: 'rotate(270deg)' }}>
             <CaretDown weight="bold" />
           </div>
-          <span className="text-white">{truncate(workspace?.name, 20)}</span>
+          <span className="text-lg font-medium text-white">
+            {truncate(workspace?.name, 20)}
+          </span>
         </div>
       </div>
       <div className="flex gap-x-3">

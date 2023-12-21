@@ -7,6 +7,7 @@ export default function Header(props: {
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
   extendedItems?: any;
+  quickActions: boolean;
 }) {
   const [copied, setCopied] = useState(false);
   if (!props.entity) return null;
