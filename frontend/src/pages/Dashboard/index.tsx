@@ -683,17 +683,17 @@ const UpdateConnectorModal = ({
   return (
     <dialog
       id="edit-connector-modal"
-      className="w-1/2 rounded-lg"
+      className="rounded-xl border-2 border-white/20 bg-main shadow"
       onClick={(event) =>
         event.target == event.currentTarget && event.currentTarget?.close()
       }
     >
-      <div className="rounded-sm bg-white p-[20px]">
+      <div className="rounded-sm p-[20px]">
         <div className="px-6.5 py-4">
-          <h3 className="font-medium text-black dark:text-white">
+          <h3 className="text-lg font-medium text-white">
             Update Vector Database Connection
           </h3>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-white/60">
             Currently connected to a {connector.type} vector database instance.
             You can update your configuration settings here if they have
             changed.
@@ -717,7 +717,15 @@ const UpdateConnectorModal = ({
                   checked={type === 'chroma'}
                   formNoValidate={true}
                 />
-                <label className="inline-flex h-full w-full cursor-pointer items-center justify-between rounded-lg border-2 border-gray-200 bg-white p-5 text-gray-500 hover:bg-gray-50 hover:text-gray-600 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 dark:peer-checked:text-gray-300">
+                <label
+                  style={{
+                    background:
+                      type === 'chroma'
+                        ? `linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.06) 100%)`
+                        : `linear-gradient(180deg, #313236 0%, rgba(63, 65, 70, 0.00) 100%)`,
+                  }}
+                  className="inline-flex h-full w-full cursor-pointer items-center justify-between rounded-xl border-2 border-transparent p-5 text-white shadow-md transition-all duration-300 hover:border-sky-400 hover:shadow-lg peer-checked:border-sky-400"
+                >
                   <div className="block">
                     <img
                       src={ChromaLogo}
@@ -725,7 +733,7 @@ const UpdateConnectorModal = ({
                     />
                     <div className="w-full text-lg font-semibold">Chroma</div>
                     <div className="flex w-full flex-col gap-y-1 text-sm">
-                      <p className="text-xs text-slate-400">trychroma.com</p>
+                      <p className="text-xs text-white/80">trychroma.com</p>
                       Open source vector database you can host yourself.
                     </div>
                   </div>
@@ -740,15 +748,23 @@ const UpdateConnectorModal = ({
                   checked={type === 'pinecone'}
                   formNoValidate={true}
                 />
-                <label className="inline-flex h-full w-full cursor-pointer items-center justify-between rounded-lg border-2 border-gray-200 bg-white p-5 text-gray-500 hover:bg-gray-50 hover:text-gray-600 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 dark:peer-checked:text-gray-300">
+                <label
+                  style={{
+                    background:
+                      type === 'pinecone'
+                        ? `linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.06) 100%)`
+                        : `linear-gradient(180deg, #313236 0%, rgba(63, 65, 70, 0.00) 100%)`,
+                  }}
+                  className="inline-flex h-full w-full cursor-pointer items-center justify-between rounded-xl border-2 border-transparent p-5 text-white shadow-md transition-all duration-300 hover:border-sky-400 hover:shadow-lg peer-checked:border-sky-400"
+                >
                   <div className="block">
                     <img
-                      src={PineconeLogo}
+                      src={PineconeLogoInverted}
                       className="mb-2 h-10 w-10 rounded-full"
                     />
                     <div className="w-full text-lg font-semibold">Pinecone</div>
                     <div className="flex w-full flex-col gap-y-1 text-sm">
-                      <p className="text-xs text-slate-400">pinecone.io</p>
+                      <p className="text-xs text-white/80">pinecone.io</p>
                       Cloud-hosted vector database.
                     </div>
                   </div>
@@ -763,7 +779,15 @@ const UpdateConnectorModal = ({
                   checked={type === 'qdrant'}
                   formNoValidate={true}
                 />
-                <label className="inline-flex h-full w-full cursor-pointer items-center justify-between rounded-lg border-2 border-gray-200 bg-white p-5 text-gray-500 hover:bg-gray-50 hover:text-gray-600 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 dark:peer-checked:text-gray-300">
+                <label
+                  style={{
+                    background:
+                      type === 'qdrant'
+                        ? `linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.06) 100%)`
+                        : `linear-gradient(180deg, #313236 0%, rgba(63, 65, 70, 0.00) 100%)`,
+                  }}
+                  className="inline-flex h-full w-full cursor-pointer items-center justify-between rounded-xl border-2 border-transparent p-5 text-white shadow-md transition-all duration-300 hover:border-sky-400 hover:shadow-lg peer-checked:border-sky-400"
+                >
                   <div className="block">
                     <img
                       src={qDrantLogo}
@@ -771,7 +795,7 @@ const UpdateConnectorModal = ({
                     />
                     <div className="w-full text-lg font-semibold">qDrant</div>
                     <div className="flex w-full flex-col gap-y-1 text-sm">
-                      <p className="text-xs text-slate-400">qdrant.tech</p>
+                      <p className="text-xs text-white/80">qdrant.tech</p>
                       Open-source & hosted vector database.
                     </div>
                   </div>
@@ -786,7 +810,15 @@ const UpdateConnectorModal = ({
                   checked={type === 'weaviate'}
                   formNoValidate={true}
                 />
-                <label className="inline-flex h-full w-full cursor-pointer items-center justify-between rounded-lg border-2 border-gray-200 bg-white p-5 text-gray-500 hover:bg-gray-50 hover:text-gray-600 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 dark:peer-checked:text-gray-300">
+                <label
+                  style={{
+                    background:
+                      type === 'weaviate'
+                        ? `linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.06) 100%)`
+                        : `linear-gradient(180deg, #313236 0%, rgba(63, 65, 70, 0.00) 100%)`,
+                  }}
+                  className="inline-flex h-full w-full cursor-pointer items-center justify-between rounded-xl border-2 border-transparent p-5 text-white shadow-md transition-all duration-300 hover:border-sky-400 hover:shadow-lg peer-checked:border-sky-400"
+                >
                   <div className="block">
                     <img
                       src={WeaviateLogo}
@@ -794,7 +826,7 @@ const UpdateConnectorModal = ({
                     />
                     <div className="w-full text-lg font-semibold">Weaviate</div>
                     <div className="flex w-full flex-col gap-y-1 text-sm">
-                      <p className="text-xs text-slate-400">weaviate.io</p>
+                      <p className="text-xs text-white/80">weaviate.io</p>
                       Open-source & hosted vector database.
                     </div>
                   </div>
@@ -808,11 +840,11 @@ const UpdateConnectorModal = ({
                   <div className="mb-2 flex flex-col gap-y-1">
                     <label
                       htmlFor="settings::instanceURL"
-                      className="block text-sm font-medium text-gray-900 dark:text-white"
+                      className="block text-sm font-medium text-white"
                     >
                       Instance URL
                     </label>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm text-white/60">
                       This is the URL your chroma instance is reachable at.
                     </p>
                   </div>
@@ -821,7 +853,7 @@ const UpdateConnectorModal = ({
                     autoComplete="off"
                     type="url"
                     defaultValue={settings.instanceURL}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    className="block h-11 w-full min-w-[350px] items-center justify-start gap-2.5 rounded-lg bg-white bg-opacity-10 p-2.5 text-sm font-medium leading-tight text-white placeholder:text-opacity-60"
                     placeholder="https://my-domain.com:8000"
                     required={true}
                   />
@@ -830,11 +862,11 @@ const UpdateConnectorModal = ({
                   <div className="mb-2 flex flex-col gap-y-1">
                     <label
                       htmlFor="settings::authToken"
-                      className="block text-sm font-medium text-gray-900 dark:text-white"
+                      className="block text-sm font-medium text-white"
                     >
                       API Header & Key
                     </label>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm text-white/60">
                       If your hosted Chroma instance is protected by an API key
                       - enter the header and api key here.
                     </p>
@@ -845,7 +877,7 @@ const UpdateConnectorModal = ({
                       autoComplete="off"
                       type="text"
                       defaultValue={settings.authTokenHeader}
-                      className="block w-[20%] rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                      className="block h-11 w-[20%] items-center justify-start gap-2.5 rounded-lg bg-white bg-opacity-10 p-2.5 text-sm font-medium leading-tight text-white placeholder:text-opacity-60"
                       placeholder="X-Api-Key"
                     />
                     <input
@@ -853,7 +885,7 @@ const UpdateConnectorModal = ({
                       autoComplete="off"
                       type="password"
                       defaultValue={settings.authToken}
-                      className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                      className="block h-11 w-full min-w-[350px] items-center justify-start gap-2.5 rounded-lg bg-white bg-opacity-10 p-2.5 text-sm font-medium leading-tight text-white placeholder:text-opacity-60"
                       placeholder="sk-myApiKeyToAccessMyChromaInstance"
                     />
                   </div>
@@ -867,11 +899,11 @@ const UpdateConnectorModal = ({
                   <div className="mb-2 flex flex-col gap-y-1">
                     <label
                       htmlFor="settings::environment"
-                      className="block text-sm font-medium text-gray-900 dark:text-white"
+                      className="block text-sm font-medium text-white"
                     >
                       Pinecone Environment
                     </label>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm text-white/60">
                       You can find this on your Pinecone index.
                     </p>
                   </div>
@@ -880,7 +912,7 @@ const UpdateConnectorModal = ({
                     autoComplete="off"
                     type="text"
                     defaultValue={settings.environment}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    className="block h-11 w-full min-w-[350px] items-center justify-start gap-2.5 rounded-lg bg-white bg-opacity-10 p-2.5 text-sm font-medium leading-tight text-white placeholder:text-opacity-60"
                     placeholder="us-west4-gcp-free"
                     required={true}
                   />
@@ -890,11 +922,11 @@ const UpdateConnectorModal = ({
                   <div className="mb-2 flex flex-col gap-y-1">
                     <label
                       htmlFor="settings::index"
-                      className="block text-sm font-medium text-gray-900 dark:text-white"
+                      className="block text-sm font-medium text-white"
                     >
                       Pinecone Index
                     </label>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm text-white/60">
                       You can find this on your Pinecone index.
                     </p>
                   </div>
@@ -903,7 +935,7 @@ const UpdateConnectorModal = ({
                     autoComplete="off"
                     type="text"
                     defaultValue={settings.index}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    className="block h-11 w-full min-w-[350px] items-center justify-start gap-2.5 rounded-lg bg-white bg-opacity-10 p-2.5 text-sm font-medium leading-tight text-white placeholder:text-opacity-60"
                     placeholder="my-index"
                     required={true}
                   />
@@ -913,13 +945,12 @@ const UpdateConnectorModal = ({
                   <div className="mb-2 flex flex-col gap-y-1">
                     <label
                       htmlFor="settings::apiKey"
-                      className="block text-sm font-medium text-gray-900 dark:text-white"
+                      className="block text-sm font-medium text-white"
                     >
                       API Key
                     </label>
-                    <p className="text-xs text-gray-500">
-                      If your hosted Chroma instance is protected by an API key
-                      - enter it here.
+                    <p className="text-sm text-white/60">
+                      You can find this on your Pinecone index.
                     </p>
                   </div>
                   <input
@@ -927,7 +958,7 @@ const UpdateConnectorModal = ({
                     autoComplete="off"
                     type="password"
                     defaultValue={settings.apiKey}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    className="block h-11 w-full min-w-[350px] items-center justify-start gap-2.5 rounded-lg bg-white bg-opacity-10 p-2.5 text-sm font-medium leading-tight text-white placeholder:text-opacity-60"
                     placeholder="ee1051-xxxx-xxxx-xxxx"
                   />
                 </div>
@@ -940,11 +971,11 @@ const UpdateConnectorModal = ({
                   <div className="mb-2 flex flex-col gap-y-1">
                     <label
                       htmlFor="settings::clusterUrl"
-                      className="block text-sm font-medium text-gray-900 dark:text-white"
+                      className="block text-sm font-medium text-white"
                     >
                       qDrant Cluster URL
                     </label>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm text-white/60">
                       You can find this in your cloud hosted qDrant cluster or
                       just using the URL to your local docker container.
                     </p>
@@ -954,7 +985,7 @@ const UpdateConnectorModal = ({
                     autoComplete="off"
                     type="url"
                     defaultValue={settings.clusterUrl}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    className="block h-11 w-full min-w-[350px] items-center justify-start gap-2.5 rounded-lg bg-white bg-opacity-10 p-2.5 text-sm font-medium leading-tight text-white placeholder:text-opacity-60"
                     placeholder="https://6b3a2d01-3b3f-4339-84e9-ead94f28a844.us-east-1-0.aws.cloud.qdrant.io"
                     required={true}
                   />
@@ -964,11 +995,11 @@ const UpdateConnectorModal = ({
                   <div className="mb-2 flex flex-col gap-y-1">
                     <label
                       htmlFor="settings::apiKey"
-                      className="block text-sm font-medium text-gray-900 dark:text-white"
+                      className="block text-sm font-medium text-white"
                     >
                       API Key
                     </label>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm text-white/60">
                       (optional) If you are using qDrant cloud you will need an
                       API key.
                     </p>
@@ -978,7 +1009,7 @@ const UpdateConnectorModal = ({
                     autoComplete="off"
                     type="password"
                     defaultValue={settings.apiKey}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    className="block h-11 w-full min-w-[350px] items-center justify-start gap-2.5 rounded-lg bg-white bg-opacity-10 p-2.5 text-sm font-medium leading-tight text-white placeholder:text-opacity-60"
                     placeholder="ee1051-xxxx-xxxx-xxxx"
                   />
                 </div>
@@ -991,11 +1022,11 @@ const UpdateConnectorModal = ({
                   <div className="mb-2 flex flex-col gap-y-1">
                     <label
                       htmlFor="settings::clusterUrl"
-                      className="block text-sm font-medium text-gray-900 dark:text-white"
+                      className="block text-sm font-medium text-white"
                     >
                       Weaviate Cluster URL
                     </label>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm text-white/60">
                       You can find this in your cloud hosted Weaviate cluster or
                       just using the URL to your local docker container.
                     </p>
@@ -1005,7 +1036,7 @@ const UpdateConnectorModal = ({
                     autoComplete="off"
                     type="url"
                     defaultValue={settings.clusterUrl}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    className="block h-11 w-full min-w-[350px] items-center justify-start gap-2.5 rounded-lg bg-white bg-opacity-10 p-2.5 text-sm font-medium leading-tight text-white placeholder:text-opacity-60"
                     placeholder="https://my-sandbox-b5vipdmw.weaviate.network"
                     required={true}
                   />
@@ -1015,11 +1046,11 @@ const UpdateConnectorModal = ({
                   <div className="mb-2 flex flex-col gap-y-1">
                     <label
                       htmlFor="settings::apiKey"
-                      className="block text-sm font-medium text-gray-900 dark:text-white"
+                      className="block text-sm font-medium text-white"
                     >
                       API Key
                     </label>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm text-white/60">
                       (optional) If you are using Weaviate cloud you will need
                       an API key.
                     </p>
@@ -1029,7 +1060,7 @@ const UpdateConnectorModal = ({
                     autoComplete="off"
                     type="password"
                     defaultValue={settings.apiKey}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    className="block h-11 w-full min-w-[350px] items-center justify-start gap-2.5 rounded-lg bg-white bg-opacity-10 p-2.5 text-sm font-medium leading-tight text-white placeholder:text-opacity-60"
                     placeholder="ee1051-xxxx-xxxx-xxxx"
                   />
                 </div>
@@ -1047,12 +1078,14 @@ const UpdateConnectorModal = ({
                   Connector changes saved
                 </p>
               )}
-              <button
-                type="submit"
-                className="w-full rounded-lg border border-blue-600 py-2 text-center text-blue-600 hover:bg-blue-600 hover:text-white"
-              >
-                Connect to Vector Database
-              </button>
+              <div className="flex items-center justify-center">
+                <button
+                  type="submit"
+                  className="mb-4 mt-4 h-10 w-full items-center rounded-lg bg-white p-2 text-center text-sm font-bold text-neutral-700 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
+                >
+                  Connect to Vector Database
+                </button>
+              </div>
             </div>
           </form>
         )}
