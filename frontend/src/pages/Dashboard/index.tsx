@@ -1122,7 +1122,7 @@ const SyncConnectorModal = ({
         </div>
         <div className="w-full px-6">
           {error && (
-            <p className="my-2 w-full rounded-lg border-red-800 bg-red-50 px-4 py-2 text-red-800">
+            <p className="my-2 w-full rounded-lg border-red-800 bg-red-50 px-4 py-2 text-sm text-red-800">
               {error}
             </p>
           )}
