@@ -1093,17 +1093,17 @@ const SyncConnectorModal = ({
   return (
     <dialog
       id="sync-connector-modal"
-      className="w-1/3 rounded-lg"
+      className="w-1/3 rounded-xl border-2 border-white/20 bg-main shadow"
       onClick={(event) =>
         event.target == event.currentTarget && event.currentTarget?.close()
       }
     >
-      <div className="overflow-y-scroll rounded-sm bg-white p-[20px]">
+      <div className="overflow-y-scroll rounded-sm bg-main p-[20px]">
         <div className="px-6.5 py-4">
-          <h3 className="font-medium text-black dark:text-white">
+          <h3 className="text-lg font-medium text-white">
             Sync Vector Database Connection
           </h3>
-          <p className="text-sm text-gray-500">
+          <p className="mt-4 text-sm text-white/60">
             Automatically sync existing information in your{' '}
             {titleCase(connector.type)}{' '}
             {connector.type === 'chroma' ? 'collections' : 'namespaces'} so you
@@ -1114,7 +1114,7 @@ const SyncConnectorModal = ({
             Once you start this process you can check on its progress in the{' '}
             <a
               href={paths.jobs(organization)}
-              className="font-semibold text-blue-500"
+              className="font-semibold text-sky-400 hover:underline"
             >
               job queue.
             </a>
@@ -1139,7 +1139,7 @@ const SyncConnectorModal = ({
               type="button"
               disabled={loading}
               onClick={sync}
-              className="w-full rounded-lg bg-blue-600 py-2 text-center text-white"
+              className="mb-4 h-11 w-full items-center rounded-lg bg-white p-2 text-center text-sm font-bold text-neutral-700 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
             >
               {loading ? 'Synchronizing...' : 'Synchronize embeddings'}
             </button>
