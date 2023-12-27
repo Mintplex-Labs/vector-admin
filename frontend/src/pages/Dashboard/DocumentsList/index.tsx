@@ -130,7 +130,7 @@ export default function DocumentsList({
                     }}
                     className="inline-flex h-[26px] w-[98px] items-center justify-center gap-2.5 rounded-[100px] bg-white bg-opacity-10 px-2.5 py-1"
                   >
-                    <div className="font-satoshi text-xs font-black tracking-tight text-sky-400">
+                    <div className="font-satoshi text-xs font-bold tracking-tight text-sky-400">
                       UPLOAD
                     </div>
                   </button>
