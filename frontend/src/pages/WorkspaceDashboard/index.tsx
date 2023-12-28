@@ -20,7 +20,7 @@ import PineconeLogoInverted from '../../images/vectordbs/pinecone-inverted.png';
 import qDrantLogo from '../../images/vectordbs/qdrant.png';
 import WeaviateLogo from '../../images/vectordbs/weaviate.png';
 import SyncConnectorModal from '../../components/Modals/SyncConnectorModal';
-import { UpdateConnectorModal } from '../../components/Modals/UpdateConnectorModal';
+import UpdateConnectorModal from '../../components/Modals/UpdateConnectorModal';
 
 export default function WorkspaceDashboard() {
   const { user } = useUser();

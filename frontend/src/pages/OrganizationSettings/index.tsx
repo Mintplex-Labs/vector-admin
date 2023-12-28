@@ -16,7 +16,7 @@ import { GearSix, Prohibit } from '@phosphor-icons/react';
 import Organization from '../../models/organization';
 import truncate from 'truncate';
 import SyncConnectorModal from '../../components/Modals/SyncConnectorModal';
-import { UpdateConnectorModal } from '../../components/Modals/UpdateConnectorModal';
+import UpdateConnectorModal from '../../components/Modals/UpdateConnectorModal';
 import NewConnectorModal from '../../components/Modals/NewConnectorModal';
 
 export default function OrganizationSettingsView() {
