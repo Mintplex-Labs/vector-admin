@@ -17,7 +17,7 @@ import Organization from '../../models/organization';
 import truncate from 'truncate';
 import { SyncConnectorModal } from '../../components/Modals/SyncConnectorModal';
 import { UpdateConnectorModal } from '../../components/Modals/UpdateConnectorModal';
-import { NewConnectorModal } from '../../components/Modals/NewConnectorModal';
+import NewConnectorModal from '../../components/Modals/NewConnectorModal';
 
 export default function OrganizationSettingsView() {
   const { user } = useUser();

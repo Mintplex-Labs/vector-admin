@@ -19,7 +19,7 @@ import { GearSix, Prohibit } from '@phosphor-icons/react';
 import QuickActionsSidebar from './QuickActionSidebar';
 import { SyncConnectorModal } from '../../components/Modals/SyncConnectorModal';
 import { UpdateConnectorModal } from '../../components/Modals/UpdateConnectorModal';
-import { NewConnectorModal } from '../../components/Modals/NewConnectorModal';
+import NewConnectorModal from '../../components/Modals/NewConnectorModal';
 
 export default function Dashboard() {
   const { slug } = useParams();

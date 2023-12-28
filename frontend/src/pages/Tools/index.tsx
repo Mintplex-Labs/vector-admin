@@ -17,7 +17,7 @@ import truncate from 'truncate';
 import { GearSix, Prohibit } from '@phosphor-icons/react';
 import { SyncConnectorModal } from '../../components/Modals/SyncConnectorModal';
 import { UpdateConnectorModal } from '../../components/Modals/UpdateConnectorModal';
-import { NewConnectorModal } from '../../components/Modals/NewConnectorModal';
+import NewConnectorModal from '../../components/Modals/NewConnectorModal';
 
 export default function OrganizationToolsView() {
   const { user } = useUser();

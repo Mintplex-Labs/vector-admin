@@ -5,7 +5,7 @@ import { SUPPORTED_VECTOR_DBS } from '../../../utils/constants';
 import { titleCase } from 'title-case';
 import { SyncConnectorModal } from '../../../components/Modals/SyncConnectorModal';
 import { UpdateConnectorModal } from '../../../components/Modals/UpdateConnectorModal';
-import { NewConnectorModal } from '../../../components/Modals/NewConnectorModal';
+import NewConnectorModal from '../../../components/Modals/NewConnectorModal';
 
 export default function ConnectorCard({
   knownConnector,
