@@ -17,7 +17,6 @@ import truncate from 'truncate';
 
 import ChromaLogo from '../../images/vectordbs/chroma.png';
 import PineconeLogoInverted from '../../images/vectordbs/pinecone-inverted.png';
-import PineconeLogo from '../../images/vectordbs/pinecone.png';
 import qDrantLogo from '../../images/vectordbs/qdrant.png';
 import WeaviateLogo from '../../images/vectordbs/weaviate.png';
 import { SyncConnectorModal } from '../../components/Modals/SyncConnectorModal';
