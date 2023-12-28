@@ -716,14 +716,14 @@ const CloneWorkspaceModal = memo(({ workspace }: { workspace: any }) => {
   return (
     <dialog
       id={`clone-workspace-${workspace.id}-modal`}
-      className="w-1/2 rounded-lg outline-none"
+      className="w-1/2 rounded-xl border-2 border-white/20 bg-main shadow"
       onClick={(event) => {
         event.target == event.currentTarget && event.currentTarget?.close();
       }}
     >
-      <div className="my-4 flex w-full flex-col gap-y-1 p-[20px]">
-        <p className="text-lg font-semibold text-blue-600">Clone workspace</p>
-        <p className="text-base text-slate-800">
+      <div className="flex w-full flex-col gap-y-1 p-[20px]">
+        <p className="text-lg font-medium text-white">Clone workspace</p>
+        <p className="text-sm text-white/60">
           This action will copy your entire workspace and current embeddings
           into a new workspace. This will automatically sync with your connected
           vector database. This action will not incur any OpenAI embedding
@@ -735,12 +735,12 @@ const CloneWorkspaceModal = memo(({ workspace }: { workspace: any }) => {
           {result.success ? (
             <a
               href={paths.jobs({ slug })}
-              className="my-2 w-full rounded-lg border-green-800 bg-green-50 px-4 py-2 text-lg text-green-800"
+              className="mx-2 my-2 w-full rounded-lg bg-green-600/10 px-4 py-2 text-lg text-green-600"
             >
               Workspace clone job created. View progress &rarr;
             </a>
           ) : (
-            <p className="my-2 w-full rounded-lg border-red-800 bg-red-50 px-4 py-2 text-lg text-red-800">
+            <p className="my-2 w-full rounded-lg border-red-800 bg-red-600/10 px-4 py-2 text-lg text-red-600">
               {result.error}
             </p>
           )}
@@ -749,8 +749,8 @@ const CloneWorkspaceModal = memo(({ workspace }: { workspace: any }) => {
       <div className="my-2 flex w-full justify-center p-[20px]">
         {!result.show || result.success === false ? (
           <form onSubmit={cloneWorkspace} className="flex flex-col gap-y-1">
-            <p className="my-2 text-sm text-gray-800">
-              Clone {workspace.name} and it's embeddings to...
+            <p className="my-2 text-sm text-white/60">
+              Clone {workspace.name} and its embeddings to...
             </p>
             <div className="mb-4.5">
               <input
@@ -760,13 +760,13 @@ const CloneWorkspaceModal = memo(({ workspace }: { workspace: any }) => {
                 placeholder="Cloned workspace"
                 autoComplete="off"
                 defaultValue={`${titleCase(workspace.name)} Copy`}
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                className="placeholder-text-white/60 w-full rounded-lg border border-white/10 bg-main-2 px-2.5 py-2 text-sm text-white"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="my-2 rounded-lg px-4 py-2 text-blue-800 hover:bg-blue-50"
+              className="my-2 w-full rounded-lg bg-white p-2 text-center text-sm font-bold text-neutral-700 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
             >
               {loading ? 'Cloning workspace...' : <>Clone Workspace &rarr;</>}
             </button>
