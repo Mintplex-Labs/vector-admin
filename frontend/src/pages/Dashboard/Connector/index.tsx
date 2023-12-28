@@ -9,6 +9,7 @@ import qDrantLogo from '../../../images/vectordbs/qdrant.png';
 import WeaviateLogo from '../../../images/vectordbs/weaviate.png';
 import paths from '../../../utils/paths';
 import { titleCase } from 'title-case';
+import { SyncConnectorModal } from '../../../components/Modals/SyncConnectorModal';
 
 export default function ConnectorCard({
   knownConnector,
@@ -1031,95 +1032,6 @@ const UpdateConnectorModal = ({
             </div>
           </form>
         )}
-      </div>
-    </dialog>
-  );
-};
-
-const SyncConnectorModal = ({
-  organization,
-  connector,
-}: {
-  organization: any;
-  connector: any;
-}) => {
-  const [synced, setSynced] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<null | string>(null);
-  const sync = async () => {
-    setError(null);
-    setLoading(true);
-    const { job, error } = await Organization.syncConnector(
-      organization.slug,
-      connector.id
-    );
-
-    if (!job) {
-      setError(error);
-      setLoading(false);
-      setSynced(false);
-      return;
-    }
-
-    setLoading(false);
-    setSynced(true);
-  };
-
-  return (
-    <dialog
-      id="sync-connector-modal"
-      className="w-1/3 rounded-lg"
-      onClick={(event) =>
-        event.target == event.currentTarget && event.currentTarget?.close()
-      }
-    >
-      <div className="overflow-y-scroll rounded-sm bg-white p-[20px]">
-        <div className="px-6.5 py-4">
-          <h3 className="font-medium text-black dark:text-white">
-            Sync Vector Database Connection
-          </h3>
-          <p className="text-sm text-gray-500">
-            {APP_NAME} can automatically sync existing information in your{' '}
-            {titleCase(connector.type)}{' '}
-            {connector.type === 'chroma' ? 'collections' : 'namespaces'} so you
-            can manage it more easily. This process can take a long time to
-            complete depending on how much data you have embedded already.
-            <br />
-            <br />
-            Once you start this process you can check on its progress in the{' '}
-            <a
-              href={paths.jobs(organization)}
-              className="font-semibold text-blue-500"
-            >
-              job queue.
-            </a>
-          </p>
-        </div>
-        <div className="w-full px-6">
-          {error && (
-            <p className="my-2 w-full rounded-lg border-red-800 bg-red-50 px-4 py-2 text-red-800">
-              {error}
-            </p>
-          )}
-          {synced ? (
-            <button
-              type="button"
-              onClick={() => window.location.replace(paths.jobs(organization))}
-              className="w-full rounded-lg py-2 text-center text-gray-600 hover:bg-gray-400 hover:text-white"
-            >
-              Check progress
-            </button>
-          ) : (
-            <button
-              type="button"
-              disabled={loading}
-              onClick={sync}
-              className="w-full rounded-lg bg-blue-600 py-2 text-center text-white"
-            >
-              {loading ? 'Synchronizing...' : 'Synchronize embeddings'}
-            </button>
-          )}
-        </div>
       </div>
     </dialog>
   );
