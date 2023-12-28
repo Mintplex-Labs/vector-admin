@@ -3,7 +3,7 @@ import { CheckCircle, Circle, XCircle } from 'react-feather';
 import Organization from '../../../models/organization';
 import { SUPPORTED_VECTOR_DBS } from '../../../utils/constants';
 import { titleCase } from 'title-case';
-import { SyncConnectorModal } from '../../../components/Modals/SyncConnectorModal';
+import SyncConnectorModal from '../../../components/Modals/SyncConnectorModal';
 import { UpdateConnectorModal } from '../../../components/Modals/UpdateConnectorModal';
 import NewConnectorModal from '../../../components/Modals/NewConnectorModal';
 
