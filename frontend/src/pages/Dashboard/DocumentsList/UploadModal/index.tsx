@@ -3,9 +3,9 @@ import { APP_NAME } from '../../../../utils/constants';
 import { useDropzone } from 'react-dropzone';
 import { v4 } from 'uuid';
 import System from '../../../../models/system';
-import { Frown } from 'react-feather';
 import FileUploadProgress from './FileUploadProgress';
 import { useParams } from 'react-router-dom';
+import { SmileySad } from '@phosphor-icons/react';
 
 export default function UploadDocumentModal({
   workspaces,
@@ -78,8 +78,8 @@ export default function UploadDocumentModal({
     return (
       <ModalWrapper>
         <div className="flex h-[20rem] w-full overflow-x-hidden overflow-y-scroll rounded-lg bg-red-200 outline-none transition-all duration-300">
-          <div className="flex h-full w-full flex-col items-center justify-center gap-y-1 px-2 md:px-0">
-            <Frown className="h-8 w-8 text-red-800" />
+          <div className="flex h-full w-full flex-col items-center justify-center gap-y-1 px-2 text-red-800 md:px-0">
+            <SmileySad size={32} />
             <p className="text-center text-xs text-red-800">
               Document processor is offline.
             </p>
@@ -135,7 +135,7 @@ export default function UploadDocumentModal({
       <div className="flex w-full flex-col gap-y-1">
         <div
           {...getRootProps()}
-          className="flex h-[20rem] w-full cursor-pointer overflow-x-hidden overflow-y-scroll rounded-lg bg-stone-400 bg-opacity-20 outline-none transition-all duration-300 hover:bg-opacity-40"
+          className="flex h-[20rem] w-full cursor-pointer overflow-x-hidden overflow-y-scroll rounded-lg border-2 border-dashed border-white/20 bg-main-2 shadow outline-none transition-all duration-300 hover:bg-white/10"
         >
           <input {...getInputProps()} />
           {files.length === 0 ? (
@@ -143,7 +143,7 @@ export default function UploadDocumentModal({
               <div className="flex flex-col items-center justify-center pb-6 pt-5">
                 <svg
                   aria-hidden="true"
-                  className="mb-3 h-10 w-10 text-gray-600 dark:text-slate-300"
+                  className="mb-3 h-10 w-10 text-white/60"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -156,8 +156,8 @@ export default function UploadDocumentModal({
                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                   ></path>
                 </svg>
-                <p className="mb-2 text-sm text-gray-600 dark:text-slate-300">
-                  <span className="font-semibold">Click to upload</span> or drag
+                <p className="mb-2 text-sm text-white/60">
+                  <span className="font-normal">Click to upload</span> or drag
                   and drop
                 </p>
                 <p className="text-xs text-gray-600 dark:text-slate-300"></p>
@@ -178,9 +178,9 @@ export default function UploadDocumentModal({
             </div>
           )}
         </div>
-        <p className="text-xs text-gray-600 dark:text-stone-400 ">
-          supported file extensions are{' '}
-          <code className="rounded-sm bg-gray-200 px-1 font-mono text-xs text-gray-800 dark:bg-stone-800 dark:text-slate-400">
+        <p className="mt-2 text-xs text-white/60 ">
+          Supported file extensions are{' '}
+          <code className="rounded-md bg-white/80 px-1 font-mono text-xs text-main">
             {Object.values(fileTypes).flat().join(' ')}
           </code>
         </p>
