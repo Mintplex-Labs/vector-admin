@@ -46,6 +46,8 @@ export default function CreateWorkspaceModal({
     }
 
     setImported(true);
+
+    window.location.replace(paths.workspace(organization.slug, workspace.slug));
   };
 
   const handleSubmit = async (e: any) => {
@@ -62,7 +64,7 @@ export default function CreateWorkspaceModal({
       return false;
     }
 
-    window.location.reload();
+    window.location.replace(paths.workspace(organization.slug, workspace.slug));
   };
 
   if (imported) {
@@ -103,14 +105,14 @@ export default function CreateWorkspaceModal({
           <div className="px-6.5">
             <div className="mb-4.5">
               <div className="mb-2.5 flex flex-col">
-                <label className="block text-black dark:text-white">
+                <label className="block text-sm font-medium text-white">
                   Workspace Name
                 </label>
-                <p className="text-xs text-gray-600">
+                {/* <p className="text-xs text-gray-600">
                   if a workspace with a matching name is found in your vector
                   database we will ask you to confirm before creating it in{' '}
                   {APP_NAME}.
-                </p>
+                </p> */}
               </div>
               <input
                 required={true}
@@ -119,10 +121,10 @@ export default function CreateWorkspaceModal({
                 placeholder="My workspace"
                 autoComplete="off"
                 onChange={debouncedOnChange}
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                className="placeholder-text-white/60 w-full rounded-lg border border-white/10 bg-main-2 px-2.5 py-2 text-sm text-white"
               />
               {error && (
-                <p className="my-1 rounded-lg border border-red-800 bg-red-600/10 p-1 px-2 text-sm text-red-600">
+                <p className="my-2 rounded-lg border border-red-800 bg-red-600/10 p-2 px-2 text-sm text-red-600">
                   Error: {error}
                 </p>
               )}
@@ -133,7 +135,7 @@ export default function CreateWorkspaceModal({
                   <button
                     type="submit"
                     disabled={searching}
-                    className="flex w-full justify-center rounded bg-blue-500 p-3 font-medium text-white disabled:bg-gray-400"
+                    className="w-full rounded-lg bg-white p-2 font-medium text-main shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
                   >
                     Create new workspace
                   </button>
@@ -145,7 +147,7 @@ export default function CreateWorkspaceModal({
                         .getElementById('workspace-creation-modal')
                         ?.close();
                     }}
-                    className="flex w-full justify-center rounded bg-transparent p-3 font-medium text-slate-500 hover:bg-slate-200"
+                    className="w-full rounded-lg bg-transparent p-2 font-medium text-white transition-all duration-300 hover:bg-red-500/80 hover:bg-opacity-90 hover:text-white"
                   >
                     Cancel
                   </button>
@@ -171,7 +173,7 @@ export default function CreateWorkspaceModal({
 
                   <button
                     type="submit"
-                    className="flex w-full justify-center rounded bg-transparent p-3 font-medium text-slate-500 hover:bg-slate-200"
+                    className="w-full rounded-lg bg-transparent p-2 font-medium text-white transition-all duration-300 hover:bg-red-500/80 hover:bg-opacity-90 hover:text-white"
                   >
                     No, create new workspace
                   </button>
@@ -187,21 +189,22 @@ export default function CreateWorkspaceModal({
 
 const ModalWrapper = ({ children }: { children: React.ReactElement }) => {
   return (
-    <dialog id="workspace-creation-modal" className="w-1/2 rounded-lg">
-      <div className="overflow-y-scroll rounded-sm bg-white p-[20px]">
+    <dialog
+      id="workspace-creation-modal"
+      className="w-1/3 rounded-xl border-2 border-white/20 bg-main shadow"
+    >
+      <div className="w-full overflow-y-scroll rounded-sm p-[20px]">
         <div className="px-6.5 py-4">
-          <h3 className="font-medium text-black dark:text-white">
+          <h3 className="text-lg font-medium text-white">
             Create or find a new workspace
           </h3>
-          <p className="text-sm text-gray-500">
-            Workspaces are collections of documents inside of your organization.
+          <p className="text-sm text-white/60">
+            {/* Workspaces are collections of documents inside of your organization.
             They allow you to control permissions and documents with ultimate
             visibility.
-            <br />
-            <b>
-              They should match with what you are calling your namespaces or
-              collections in your vector database.
-            </b>
+            <br /> */}
+            Workspaces should match with what you are calling your namespaces or
+            collections in your vector database.
           </p>
         </div>
         {children}
