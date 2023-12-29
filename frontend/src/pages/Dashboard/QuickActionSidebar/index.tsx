@@ -1,6 +1,6 @@
 import {
   CaretDown,
-  Key,
+  ShieldCheckered,
   SpinnerGap,
   Toolbox,
   User,
@@ -50,6 +50,13 @@ export default function QuickActionsSidebar({
       >
         {user?.role === 'admin' && (
           <>
+            <NavLink to={paths.settings()}>
+              <div className="mt-5 flex items-center gap-x-2 text-white hover:cursor-pointer hover:text-sky-400 hover:underline">
+                <ShieldCheckered size={18} weight="fill" />
+                <div className="text-sm font-medium">System Settings</div>
+              </div>
+            </NavLink>
+
             <NavLink to={paths.toolsHome(organization)}>
               <div className="mt-5 flex items-center gap-x-2 text-white hover:cursor-pointer hover:text-sky-400 hover:underline">
                 <Toolbox size={18} weight="bold" />
@@ -61,13 +68,6 @@ export default function QuickActionsSidebar({
               <div className="mt-5 flex items-center gap-x-2 text-white hover:cursor-pointer hover:text-sky-400 hover:underline">
                 <User size={18} weight="bold" />
                 <div className="text-sm font-medium">Add User</div>
-              </div>
-            </NavLink>
-
-            <NavLink to={paths.settings()}>
-              <div className="mt-5 flex items-center gap-x-2 text-white hover:cursor-pointer hover:text-sky-400 hover:underline">
-                <Key size={18} weight="bold" />
-                <div className="text-sm font-medium">OpenAI Key</div>
               </div>
             </NavLink>
           </>
