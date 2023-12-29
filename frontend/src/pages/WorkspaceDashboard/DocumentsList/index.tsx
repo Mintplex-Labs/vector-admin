@@ -1,12 +1,10 @@
 import { memo } from 'react';
 import paths from '../../../utils/paths';
 import moment from 'moment';
-// import { CodeBlock, vs2015 } from 'react-code-blocks';
 import { useEffect, useState } from 'react';
 import truncate from 'truncate';
 import Workspace from '../../../models/workspace';
 import System from '../../../models/system';
-import UploadDocumentModal from './UploadModal';
 import Document from '../../../models/document';
 import useQuery from '../../../hooks/useQuery';
 import { APP_NAME } from '../../../utils/constants';
@@ -16,6 +14,7 @@ import SearchView from './SearchView';
 import { File, Trash } from '@phosphor-icons/react';
 import PreLoader from '../../../components/Preloader';
 import UploadModalNoKey from '../../../components/Modals/UploadModalNoKey';
+import UploadDocumentModal from '../../../components/Modals/UploadDocumentModal';
 
 export default function DocumentsList({
   knownConnector,
