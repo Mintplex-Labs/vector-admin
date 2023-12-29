@@ -3,9 +3,9 @@ import { APP_NAME } from '../../../utils/constants';
 import { useDropzone } from 'react-dropzone';
 import { v4 } from 'uuid';
 import System from '../../../models/system';
-import { Frown } from 'react-feather';
 import FileUploadProgress from './FileUploadProgress';
 import { useParams } from 'react-router-dom';
+import { SmileySad } from '@phosphor-icons/react';
 
 export default function UploadDocumentModal({
   workspaces,
@@ -60,12 +60,12 @@ export default function UploadDocumentModal({
   if (ready === null || !slug) {
     return (
       <ModalWrapper>
-        <div className="flex h-[20rem] w-full cursor-wait overflow-x-hidden overflow-y-scroll rounded-lg bg-stone-400 bg-opacity-20 outline-none transition-all duration-300">
+        <div className="flex h-[20rem] w-full cursor-wait overflow-x-hidden overflow-y-scroll rounded-xl border-2 border-white/20 bg-main shadow transition-all duration-300">
           <div className="flex h-full w-full flex-col items-center justify-center gap-y-1">
             <p className="text-xs text-slate-400">
               Checking document processor is online - please wait.
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-white/60">
               this should only take a few moments.
             </p>
           </div>
@@ -78,8 +78,8 @@ export default function UploadDocumentModal({
     return (
       <ModalWrapper>
         <div className="flex h-[20rem] w-full overflow-x-hidden overflow-y-scroll rounded-lg bg-red-200 outline-none transition-all duration-300">
-          <div className="flex h-full w-full flex-col items-center justify-center gap-y-1 px-2 md:px-0">
-            <Frown className="h-8 w-8 text-red-800" />
+          <div className="flex h-full w-full flex-col items-center justify-center gap-y-1 px-2 text-red-800 md:px-0">
+            <SmileySad size={32} />
             <p className="text-center text-xs text-red-800">
               Document processor is offline.
             </p>
@@ -193,16 +193,14 @@ const ModalWrapper = ({ children }: { children: ReactNode }) => {
   return (
     <dialog
       id="upload-document-modal"
-      className="w-1/2 rounded-lg outline-none"
+      className="w-1/2 rounded-xl border-2 border-white/20 bg-main shadow"
       onClick={(event) => {
         event.target == event.currentTarget && event.currentTarget?.close();
       }}
     >
-      <div className="my-4 flex w-full flex-col gap-y-1 p-[20px]">
-        <p className="text-lg font-semibold text-blue-600">
-          Upload new document
-        </p>
-        <p className="text-base text-slate-800">
+      <div className="flex w-full flex-col gap-y-1 p-[20px]">
+        <p className="text-lg font-medium text-white">Upload new document</p>
+        <p className="text-sm text-white/60">
           Select a workspace and document you wish to upload and {APP_NAME} will
           process, embed and store the data for you automatically.
         </p>
