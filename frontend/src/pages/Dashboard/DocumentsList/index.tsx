@@ -5,11 +5,11 @@ import Organization from '../../../models/organization';
 import truncate from 'truncate';
 import System from '../../../models/system';
 import UploadDocumentModal from './UploadModal';
-import UploadModalNoKey from './UploadModal/UploadModalNoKey';
 import DocumentListPagination from '../../../components/DocumentPaginator';
 import useQuery from '../../../hooks/useQuery';
 import Document from '../../../models/document';
 import { File, Trash } from '@phosphor-icons/react';
+import UploadModalNoKey from '../../../components/Modals/UploadModalNoKey';
 
 export default function DocumentsList({
   organization,

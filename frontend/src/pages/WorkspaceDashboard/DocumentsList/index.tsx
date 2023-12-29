@@ -1,4 +1,4 @@
-import { memo, useRef } from 'react';
+import { memo } from 'react';
 import paths from '../../../utils/paths';
 import moment from 'moment';
 // import { CodeBlock, vs2015 } from 'react-code-blocks';
@@ -7,15 +7,15 @@ import truncate from 'truncate';
 import Workspace from '../../../models/workspace';
 import System from '../../../models/system';
 import UploadDocumentModal from './UploadModal';
-import UploadModalNoKey from './UploadModal/UploadModalNoKey';
 import Document from '../../../models/document';
 import useQuery from '../../../hooks/useQuery';
-import { APP_NAME, ISearchTypes, SEARCH_MODES } from '../../../utils/constants';
+import { APP_NAME } from '../../../utils/constants';
 import { useParams } from 'react-router-dom';
 import DocumentListPagination from '../../../components/DocumentPaginator';
 import SearchView from './SearchView';
 import { File, Trash } from '@phosphor-icons/react';
 import PreLoader from '../../../components/Preloader';
+import UploadModalNoKey from '../../../components/Modals/UploadModalNoKey';
 
 export default function DocumentsList({
   knownConnector,

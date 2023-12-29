@@ -1,6 +1,6 @@
 import { AlertTriangle } from 'react-feather';
-import { APP_NAME } from '../../../../utils/constants';
-import System from '../../../../models/system';
+import { APP_NAME } from '../../utils/constants';
+import System from '../../models/system';
 import { ReactNode } from 'react';
 
 export default function UploadModalNoKey() {

@@ -14,7 +14,7 @@ import { APP_NAME } from '../../utils/constants';
 import { CaretDown } from '@phosphor-icons/react';
 import truncate from 'truncate';
 import UploadDocumentModal from './UploadModal';
-import UploadModalNoKey from './UploadModal/UploadModalNoKey';
+import UploadModalNoKey from '../../components/Modals/UploadModalNoKey';
 
 export default function DocumentView() {
   const { user } = useUser();
