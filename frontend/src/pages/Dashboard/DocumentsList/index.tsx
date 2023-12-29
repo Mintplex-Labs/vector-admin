@@ -5,11 +5,11 @@ import Organization from '../../../models/organization';
 import truncate from 'truncate';
 import System from '../../../models/system';
 import UploadDocumentModal from './UploadModal';
-import UploadModalNoKey from './UploadModal/UploadModalNoKey';
 import DocumentListPagination from '../../../components/DocumentPaginator';
 import useQuery from '../../../hooks/useQuery';
 import Document from '../../../models/document';
 import { File, Trash } from '@phosphor-icons/react';
+import UploadModalNoKey from '../../../components/Modals/UploadModalNoKey';
 
 export default function DocumentsList({
   organization,
@@ -130,7 +130,7 @@ export default function DocumentsList({
                     }}
                     className="inline-flex h-[26px] w-[98px] items-center justify-center gap-2.5 rounded-[100px] bg-white bg-opacity-10 px-2.5 py-1"
                   >
-                    <div className="font-satoshi text-xs font-black tracking-tight text-sky-400">
+                    <div className="font-satoshi text-xs font-bold tracking-tight text-sky-400">
                       UPLOAD
                     </div>
                   </button>

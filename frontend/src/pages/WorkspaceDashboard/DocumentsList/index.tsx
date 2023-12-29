@@ -1,4 +1,4 @@
-import { memo, useRef } from 'react';
+import { memo } from 'react';
 import paths from '../../../utils/paths';
 import moment from 'moment';
 // import { CodeBlock, vs2015 } from 'react-code-blocks';
@@ -7,15 +7,15 @@ import truncate from 'truncate';
 import Workspace from '../../../models/workspace';
 import System from '../../../models/system';
 import UploadDocumentModal from './UploadModal';
-import UploadModalNoKey from './UploadModal/UploadModalNoKey';
 import Document from '../../../models/document';
 import useQuery from '../../../hooks/useQuery';
-import { APP_NAME, ISearchTypes, SEARCH_MODES } from '../../../utils/constants';
+import { APP_NAME } from '../../../utils/constants';
 import { useParams } from 'react-router-dom';
 import DocumentListPagination from '../../../components/DocumentPaginator';
 import SearchView from './SearchView';
 import { File, Trash } from '@phosphor-icons/react';
 import PreLoader from '../../../components/Preloader';
+import UploadModalNoKey from '../../../components/Modals/UploadModalNoKey';
 
 export default function DocumentsList({
   knownConnector,
@@ -413,17 +413,17 @@ export const CopyDocToModal = memo(
 
     return (
       <dialog
-        id={`copy-document-${document.id}-modal`}
-        className="w-1/2 rounded-lg outline-none"
+        id={`copy-document-${document?.id}-modal`}
+        className="w-1/2 rounded-xl border-2 border-white/20 bg-main shadow"
         onClick={(event) => {
           event.target == event.currentTarget && event.currentTarget?.close();
         }}
       >
-        <div className="my-4 flex w-full flex-col gap-y-1 p-[20px]">
-          <p className="text-lg font-semibold text-blue-600">
+        <div className="flex w-full flex-col gap-y-1 p-[20px]">
+          <p className="text-lg font-medium text-white">
             Clone document to workspace
           </p>
-          <p className="text-base text-slate-800">
+          <p className="text-sm text-white/60">
             Select a target workspace and {APP_NAME} will clone it to that new
             workspace and update your vector database automatically. This will
             not incur an OpenAI embedding charge as we have already cached your
@@ -435,12 +435,12 @@ export const CopyDocToModal = memo(
             {result.success ? (
               <a
                 href={paths.jobs({ slug })}
-                className="my-2 w-full rounded-lg border-green-800 bg-green-50 px-4 py-2 text-lg text-green-800"
+                className="mx-2 my-2 w-full rounded-lg bg-green-600/10 px-4 py-2 text-lg text-green-600"
               >
                 Document clone job created. View progress &rarr;
               </a>
             ) : (
-              <p className="my-2 w-full rounded-lg border-red-800 bg-red-50 px-4 py-2 text-lg text-red-800">
+              <p className="my-2 w-full rounded-lg border-red-800 bg-red-600/10 px-4 py-2 text-lg text-red-600">
                 {result.error}
               </p>
             )}
@@ -448,12 +448,12 @@ export const CopyDocToModal = memo(
         )}
         <div className="my-2 flex w-full justify-center p-[20px]">
           <form onSubmit={copyToWorkspace} className="flex flex-col gap-y-1">
-            <p className="my-2 text-sm text-gray-800">
-              Clone {document.name} and it's embeddings to...
+            <p className="my-2 text-sm text-white/60">
+              Clone {document?.name} and its embeddings to...
             </p>
             <select
               name="workspaceId"
-              className="rounded-lg bg-gray-50 px-4 py-2 text-2xl text-gray-800 outline-none"
+              className="rounded-lg border border-white/10 bg-main-2 px-2 py-2 text-white/60"
             >
               {workspaces
                 .filter((ws) => ws.id !== workspace.id)
@@ -464,7 +464,7 @@ export const CopyDocToModal = memo(
             <button
               type="submit"
               disabled={loading}
-              className="my-2 rounded-lg px-4 py-2 text-blue-800 hover:bg-blue-50"
+              className="my-2 w-full rounded-lg bg-white p-2 text-center text-sm font-bold text-neutral-700 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
             >
               {loading ? 'Cloning document...' : <>Clone &rarr;</>}
             </button>

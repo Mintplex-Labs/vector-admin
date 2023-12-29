@@ -4,7 +4,6 @@ const { v5 } = require("uuid");
 const { fetchMetadata } = require("../utils/storage");
 const { DocumentVectors } = require("./documentVectors");
 const { selectConnector } = require("../utils/vectordatabases/providers");
-const { OrganizationWorkspace } = require("./organizationWorkspace");
 
 const WorkspaceDocument = {
   vectorFilenameRaw: function (documentName, workspaceId) {

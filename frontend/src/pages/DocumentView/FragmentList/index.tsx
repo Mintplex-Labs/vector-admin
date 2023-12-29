@@ -339,19 +339,22 @@ const Fragment = ({
 const FullTextWindow = memo(
   ({ data, fragment }: { data: any; fragment: any }) => {
     return (
-      <dialog id={`${fragment.id}-text`} className="w-1/2 rounded-lg">
-        <div className="flex flex-col overflow-y-scroll p-[20px]">
-          <pre className="whitespace-pre-line rounded-lg bg-slate-100 p-2 font-mono">
+      <dialog
+        id={`${fragment.id}-text`}
+        className="min-w-[200px] max-w-[30%] rounded-xl border-2 border-white/20 bg-main shadow"
+      >
+        <div className="w-full overflow-y-scroll rounded-sm p-[20px]">
+          <pre className="whitespace-pre-line rounded-lg bg-main-2 p-2 font-mono text-white">
             {data?.metadata?.text ||
               '[ERROR] Could not parse text key from embedding'}
           </pre>
-          <div className="mt-4 flex flex-col gap-y-2">
+          <div className="mt-4 flex flex-col gap-y-2 px-6.5">
             <button
               type="button"
               onClick={() => {
                 document.getElementById(`${fragment.id}-text`)?.close();
               }}
-              className="flex w-full justify-center rounded bg-transparent p-3 font-medium text-slate-500 hover:bg-slate-200"
+              className="w-full rounded-lg bg-white p-2 font-medium text-main shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
             >
               Close Preview
             </button>
