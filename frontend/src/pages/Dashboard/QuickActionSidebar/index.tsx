@@ -1,6 +1,5 @@
 import {
   CaretDown,
-  Key,
   ShieldCheckered,
   SpinnerGap,
   Toolbox,
