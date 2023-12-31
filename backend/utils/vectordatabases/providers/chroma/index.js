@@ -36,12 +36,12 @@ class Chroma {
       path: settings.instanceURL,
       ...(settings?.authToken
         ? {
-            fetchOptions: {
-              headers: {
-                [settings.authTokenHeader || "X-Api-Key"]: settings.authToken,
-              },
+          fetchOptions: {
+            headers: {
+              [settings.authTokenHeader || "X-Api-Key"]: settings.authToken,
             },
-          }
+          },
+        }
         : {}),
     });
 
@@ -114,13 +114,23 @@ class Chroma {
   }
 
   async rawGet(collectionId, pageSize = 10, offset = 0) {
+    const { settings } = this.config;
     return await fetch(
       `${this.config.settings.instanceURL}/api/v1/collections/${collectionId}/get`,
       {
         method: "POST",
         headers: {
+
           accept: "application/json",
           "Content-Type": "application/json",
+          ...(settings?.authToken
+            ? {
+              [settings.authTokenHeader || "X-Api-Key"]:
+                settings.authTokenHeader === 'Authorization'
+                  ? `Bearer ${settings.authToken}` :
+                  settings.authToken,
+            }
+            : {}),
         },
         body: JSON.stringify({
           limit: pageSize,
