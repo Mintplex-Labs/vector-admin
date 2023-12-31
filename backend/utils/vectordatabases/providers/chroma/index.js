@@ -12,6 +12,34 @@ class Chroma {
     this.config = this.setConfig(connector);
   }
 
+  // For use with ChromaClient SDK only.
+  #appendClientAuthHeaders() {
+    const { settings } = this.config
+    if (!settings?.authToken) return {};
+
+    const headerName = settings.authTokenHeader || "X-Api-Key";
+    const authToken = headerName === 'Authorization' ? `Bearer ${settings.authToken}` : settings.authToken
+    return {
+      fetchOptions: {
+        headers: {
+          [headerName]: authToken,
+        },
+      },
+    }
+  }
+
+  // For use with fetch API endpoints only.
+  #appendRawAuthHeaders() {
+    const { settings } = this.config
+    if (!settings?.authToken) return {};
+
+    const headerName = settings.authTokenHeader || "X-Api-Key";
+    const authToken = headerName === 'Authorization' ? `Bearer ${settings.authToken}` : settings.authToken
+    return {
+      [headerName]: authToken,
+    }
+  }
+
   setConfig(config) {
     var { type, settings } = config;
     if (typeof settings === "string") settings = JSON.parse(settings);
@@ -34,15 +62,7 @@ class Chroma {
 
     const client = new ChromaClient({
       path: settings.instanceURL,
-      ...(settings?.authToken
-        ? {
-          fetchOptions: {
-            headers: {
-              [settings.authTokenHeader || "X-Api-Key"]: settings.authToken,
-            },
-          },
-        }
-        : {}),
+      ...this.#appendClientAuthHeaders(),
     });
 
     const isAlive = await client.heartbeat();
@@ -114,23 +134,14 @@ class Chroma {
   }
 
   async rawGet(collectionId, pageSize = 10, offset = 0) {
-    const { settings } = this.config;
     return await fetch(
       `${this.config.settings.instanceURL}/api/v1/collections/${collectionId}/get`,
       {
         method: "POST",
         headers: {
-
           accept: "application/json",
           "Content-Type": "application/json",
-          ...(settings?.authToken
-            ? {
-              [settings.authTokenHeader || "X-Api-Key"]:
-                settings.authTokenHeader === 'Authorization'
-                  ? `Bearer ${settings.authToken}` :
-                  settings.authToken,
-            }
-            : {}),
+          ...this.#appendRawAuthHeaders(),
         },
         body: JSON.stringify({
           limit: pageSize,
