@@ -1,4 +1,4 @@
-const dbAdmin = require("express-admin");
+const dbAdmin = require("@mintplex-labs/express-admin");
 const path = require("path");
 const { SystemSettings } = require("../../models/systemSettings");
 
