@@ -14,30 +14,36 @@ class Chroma {
 
   // For use with ChromaClient SDK only.
   #appendClientAuthHeaders() {
-    const { settings } = this.config
+    const { settings } = this.config;
     if (!settings?.authToken) return {};
 
     const headerName = settings.authTokenHeader || "X-Api-Key";
-    const authToken = headerName === 'Authorization' ? `Bearer ${settings.authToken}` : settings.authToken
+    const authToken =
+      headerName === "Authorization"
+        ? `Bearer ${settings.authToken}`
+        : settings.authToken;
     return {
       fetchOptions: {
         headers: {
           [headerName]: authToken,
         },
       },
-    }
+    };
   }
 
   // For use with fetch API endpoints only.
   #appendRawAuthHeaders() {
-    const { settings } = this.config
+    const { settings } = this.config;
     if (!settings?.authToken) return {};
 
     const headerName = settings.authTokenHeader || "X-Api-Key";
-    const authToken = headerName === 'Authorization' ? `Bearer ${settings.authToken}` : settings.authToken
+    const authToken =
+      headerName === "Authorization"
+        ? `Bearer ${settings.authToken}`
+        : settings.authToken;
     return {
       [headerName]: authToken,
-    }
+    };
   }
 
   setConfig(config) {
