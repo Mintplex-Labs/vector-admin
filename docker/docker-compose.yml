@@ -22,7 +22,6 @@ services:
   vector-admin:
     container_name: vector-admin
     image: vector-admin:latest
-    platform: linux/amd64
     build:
       context: ../.
       dockerfile: ./docker/Dockerfile
