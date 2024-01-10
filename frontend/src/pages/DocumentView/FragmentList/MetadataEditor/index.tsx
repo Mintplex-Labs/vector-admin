@@ -63,7 +63,7 @@ const MetadataEditor = memo(
           id={`${fragment.id}-metadata-editor`}
           className="max-w-180 rounded-xl border-2 border-white/20 bg-main shadow"
         >
-          <div className="mt-40 rounded-sm p-[20px]">
+          <div className="rounded-sm p-[20px]">
             <div className="px-6.5 py-4">
               <p className="text-lg font-medium text-white">
                 Edit metadata for embedding
