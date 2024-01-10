@@ -66,7 +66,7 @@ const AppLayout = ({
             <UserMenu />
           </div>
           <main>
-            <div className="mx-auto rounded-tr-xl bg-main pr-6 pt-6">
+            <div className="mx-auto overflow-y-auto rounded-tr-xl bg-main pr-6 pt-6">
               {children}
             </div>
           </main>
