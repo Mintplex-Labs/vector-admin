@@ -2,15 +2,20 @@ const fs = require('fs');
 const path = require('path');
 
 const serverEnvTemplate = path.resolve(__dirname, 'backend/.env.example');
-const serverEnv = path.resolve(__dirname, 'backend/.env.development')
+const serverDevEnv = path.resolve(__dirname, 'backend/.env.development')
+const serverEnv = path.resolve(__dirname, 'backend/.env')
+
 const frontendEnvTemplate = path.resolve(__dirname, 'frontend/.env.example');
 const frontendEnv = path.resolve(__dirname, 'frontend/.env')
 const workerEnvTemplate = path.resolve(__dirname, 'workers/.env.example');
 const workerEnv = path.resolve(__dirname, 'workers/.env')
 
-if (!fs.existsSync(serverEnv)) {
-  console.log("Copying server env file template.");
+if (!fs.existsSync(serverEnv) || !fs.existsSync(serverDevEnv)) {
+  console.log("Copying server env & env.development file template.");
+  fs.writeFileSync(serverDevEnv, '');
   fs.writeFileSync(serverEnv, '');
+
+  fs.copyFileSync(serverEnvTemplate, serverDevEnv);
   fs.copyFileSync(serverEnvTemplate, serverEnv);
   console.log("Server env file created.");
 }

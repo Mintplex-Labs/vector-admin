@@ -1,44 +1,10 @@
 process.env.NODE_ENV === "development"
   ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
   : require("dotenv").config();
-const { DocumentVectors } = require("../../models/documentVectors");
-const { Organization } = require("../../models/organization");
-const { OrganizationApiKey } = require("../../models/organizationApiKey");
-const {
-  OrganizationConnection,
-} = require("../../models/organizationConnection");
-const { OrganizationUser } = require("../../models/organizationUser");
-const { OrganizationWorkspace } = require("../../models/organizationWorkspace");
-const { Queue } = require("../../models/queue");
-const { SystemSettings } = require("../../models/systemSettings");
+
 const { Telemetry } = require("../../models/telemetry");
 const { User } = require("../../models/user");
-const { WorkspaceDocument } = require("../../models/workspaceDocument");
 const { getGitVersion } = require("../metrics");
-
-// function findOrCreateDBFile() {
-//   const fs = require("fs");
-//   const path = require("path");
-//   const storageFolder = path.resolve(__dirname, `../../storage/`);
-//   const dbPath = `${storageFolder}/vdbms.db`;
-//   if (!fs.existsSync(storageFolder)) fs.mkdirSync(storageFolder);
-//   if (fs.existsSync(dbPath)) return;
-//   fs.writeFileSync(dbPath, "");
-//   console.log("SQLite db created on boot.");
-//   return;
-// }
-
-// function findOrCreateJobDBFile() {
-//   const path = require("path");
-//   const fs = require("fs");
-//   const storageFolder = path.resolve(__dirname, `../../storage/`);
-//   const dbPath = `${storageFolder}/job_queue.db`;
-//   if (!fs.existsSync(storageFolder)) fs.mkdirSync(storageFolder);
-//   if (fs.existsSync(dbPath)) return;
-//   fs.writeFileSync(dbPath, "");
-//   console.log("SQLite jobs db created on boot.");
-//   return;
-// }
 
 function setupVectorCacheStorage() {
   const fs = require("fs");
@@ -49,21 +15,6 @@ function setupVectorCacheStorage() {
   console.log("Storage folder for vector-cache created.");
   return;
 }
-
-// Init all tables so to not try to reference foreign key
-// tables that may not exist and also have their schema available.
-// async function initTables() {
-//   (await SystemSettings.db()).close();
-//   (await User.db()).close();
-//   (await Organization.db()).close();
-//   (await OrganizationApiKey.db()).close();
-//   (await OrganizationConnection.db()).close();
-//   (await OrganizationUser.db()).close();
-//   (await OrganizationWorkspace.db()).close();
-//   (await WorkspaceDocument.db()).close();
-//   (await DocumentVectors.db()).close();
-//   (await Queue.db()).close();
-// }
 
 // Telemetry is anonymized and your data is never read. This can be disabled by setting
 // DISABLE_TELEMETRY=true in the `.env` of however you setup. Telemetry helps us determine use

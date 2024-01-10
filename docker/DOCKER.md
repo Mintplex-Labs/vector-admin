@@ -14,7 +14,7 @@ Run this command first to get a dockerized Postgres container running:
 `docker-compose up -d --build postgres`
 
 ## Run from Docker pre-built image
-- `docker pull mintplexlabs/vectoradmin:master` to pull in latest image
+- `docker pull mintplexlabs/vectoradmin` to pull in latest image
 - Run the command with env variables and image defined.
 `docker run -d -p 3001:3001 \
 -e SERVER_PORT="3001" \
@@ -25,7 +25,7 @@ Run this command first to get a dockerized Postgres container running:
 -e INNGEST_SIGNING_KEY="random-string-goes-here" \
 -e INNGEST_LANDING_PAGE="true" \
 -e DATABASE_CONNECTION_STRING="postgresql://vectoradmin:password@xxxxxxx:5432/vdbms" \
-mintplexlabs/vectoradmin:master`
+mintplexlabs/vectoradmin`
 
 
 ## Build docker image from source
