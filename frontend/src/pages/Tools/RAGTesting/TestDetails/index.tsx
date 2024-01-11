@@ -5,7 +5,7 @@ export default function TestDetailsModal({ test }: { test: IRagTest }) {
   return (
     <dialog
       id={`test-${test.id}-details-modal`}
-      className="my-4 h-fit w-1/2 rounded-lg px-4"
+      className="my-4 h-fit w-1/2 rounded-lg bg-main px-4"
     >
       <TestDetails test={test} />
       <button
@@ -13,7 +13,7 @@ export default function TestDetailsModal({ test }: { test: IRagTest }) {
         onClick={() => {
           document.getElementById(`test-${test.id}-details-modal`)?.close();
         }}
-        className="my-2 flex w-full justify-center rounded bg-transparent p-3 font-medium text-slate-500 hover:bg-slate-200"
+        className="my-2 flex w-full justify-center rounded bg-transparent p-3 font-medium text-white hover:bg-slate-200 hover:text-black"
       >
         Close
       </button>
@@ -24,7 +24,7 @@ export default function TestDetailsModal({ test }: { test: IRagTest }) {
 function TestDetails({ test }: { test: IRagTest }) {
   return (
     <div className="mx-auto w-full overflow-scroll p-4">
-      <h2 className="mb-4 text-2xl font-bold text-gray-900">
+      <h2 className="mb-4 text-lg font-bold text-white">
         Test settings for Test #{test.id}
       </h2>
 
@@ -45,10 +45,10 @@ function FrequencySelection({ test }: { test: IRagTest }) {
   return (
     <div className="w-full">
       <div className="mb-2 w-full ">
-        <label className="block text-sm font-medium text-gray-900">
+        <label className="block text-sm font-medium text-white">
           Testing frequency
         </label>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-white/60">
           The frequency in which this test is running.
         </p>
       </div>
@@ -56,7 +56,7 @@ function FrequencySelection({ test }: { test: IRagTest }) {
         name="frequency"
         disabled={true}
         value={test.frequencyType}
-        className={`block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500`}
+        className={`block w-fit rounded-lg border border-white/10 bg-main-2/10 px-2 py-2 text-sm text-white outline-none`}
       >
         <option value="demand">Do not run automatically</option>
         <option value="hourly">Hourly</option>
@@ -72,17 +72,17 @@ function WorkspaceSelection({ test }: { test: IRagTest }) {
   return (
     <div className="w-full">
       <div className="mb-2 w-full ">
-        <label className="block text-sm font-medium text-gray-900">
+        <label className="block text-sm font-medium text-white">
           Workspace to test
         </label>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-white/60">
           This is the name of the workspace you are running tests against.
         </p>
       </div>
       <input
         type="input"
         disabled={true}
-        className="focus:ring-primary-600 focus:border-primary-600 block w-1/2 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+        className="rounded-lg border border-white/10 bg-main-2/10 px-2 py-2 text-sm text-white outline-none"
         placeholder="Search workspace name"
         autoComplete="off"
         value={test.workspace.name}
@@ -95,10 +95,10 @@ function TopKSelection({ test }: { test: IRagTest }) {
   return (
     <div className="w-full">
       <div className="mb-2 w-full ">
-        <label className="block text-sm font-medium text-gray-900">
+        <label className="block text-sm font-medium text-white">
           TopK to test
         </label>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-white/60">
           The number of embeddings to reference for each test run.
         </p>
       </div>
@@ -108,7 +108,7 @@ function TopKSelection({ test }: { test: IRagTest }) {
         disabled={true}
         readOnly={true}
         value={test.topK}
-        className="focus:ring-primary-600 focus:border-primary-600 block w-fit rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-lg text-gray-900"
+        className="rounded-lg border border-white/10 bg-main-2/10 px-2 py-2 text-sm text-white outline-none"
         placeholder="TopK embeddings to test"
       />
     </div>
@@ -123,17 +123,17 @@ function PromptSelection({ test }: { test: IRagTest }) {
   return (
     <div className="w-full">
       <div className="mb-2 w-full ">
-        <label className="block text-sm font-medium text-gray-900">
+        <label className="block text-sm font-medium text-white">
           Using this input for similarity search
         </label>
         <div className="flex w-full items-center justify-between">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-white/60">
             This is the information that is being used for comparison analysis.
           </p>
           <select
             value={selection}
             onChange={(e) => setSelection(e.target.value)}
-            className="rounded-lg border border-gray-100 p-2 text-sm text-gray-600"
+            className="block w-fit rounded-lg border border-white/10 bg-main-2/10 px-2 py-2 text-sm text-white outline-none"
           >
             <option value="text">Showing as text</option>
             <option value="vector">Showing as vector</option>
@@ -145,7 +145,7 @@ function PromptSelection({ test }: { test: IRagTest }) {
         required={true}
         disabled={true}
         rows={8}
-        className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+        className="mt-2 block w-full rounded-lg border border-white/10 bg-main-2/10 px-2 py-2 text-sm text-white outline-none"
         placeholder="ex: 'What is VectorAdmin?' or [0.2,0.81,0.89,...,0.05,0.93,0.91,0.17]"
         value={
           selection === 'text'
@@ -160,7 +160,7 @@ function PromptSelection({ test }: { test: IRagTest }) {
 function EmbeddingSample({ test }: { test: IRagTest }) {
   return (
     <div className="flex w-full flex-col">
-      <p className="text-sm text-gray-600">
+      <p className="mb-2 text-sm text-white">
         These are the samples being compared to for each run.
       </p>
       <div className="flex flex-col gap-y-2">
@@ -172,14 +172,14 @@ function EmbeddingSample({ test }: { test: IRagTest }) {
                 value={JSON.stringify(embedding)}
                 type="hidden"
               />
-              <div className="flex w-full flex-col rounded-lg border border-gray-300 bg-gray-50 p-2 px-4">
-                <div className="flex w-full items-center justify-between border-b border-gray-200 py-1">
-                  <p className="text-sm text-gray-600">{embedding.vectorId}</p>
-                  <p className="text-sm text-gray-600">
+              <div className="flex w-full flex-col rounded-lg border border-white/20 bg-main-2 p-2 px-4">
+                <div className="flex w-full items-center justify-between py-1">
+                  <p className="text-sm text-white">{embedding.vectorId}</p>
+                  <p className="text-sm text-white">
                     Original Similarity {(embedding.score * 100.0).toFixed(2)}%
                   </p>
                 </div>
-                <pre className="whitespace-break my-2 overflow-scroll text-gray-600">
+                <pre className="overflow-scroll rounded-lg bg-main-2 p-2 text-white shadow-sm">
                   {JSON.stringify(embedding.metadata || {}, null, 2)}
                 </pre>
               </div>
