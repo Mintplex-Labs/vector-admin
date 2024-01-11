@@ -26,7 +26,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     curl -L https://github.com/jgm/pandoc/releases/download/3.1.3/pandoc-3.1.3-1-amd64.deb > pandoc-3.1.3-1.deb; \
     fi \
     && dpkg -i pandoc-3.1.3-1.deb \
-    && rm pandoc-3.1.3-1.deb &&
+    && rm pandoc-3.1.3-1.deb && \
     rm -rf /var/lib/apt/lists/* /usr/share/icons && \
     dpkg-reconfigure -f noninteractive tzdata && \
     python3 -m pip install --no-cache-dir virtualenv
