@@ -62,7 +62,7 @@ app
     await systemInit();
     setupDebugger(apiRouter);
     console.log(
-      `Example app listening on port ${process.env.SERVER_PORT || 3001}`
+      `Backend server listening on port ${process.env.SERVER_PORT || 3001}`
     );
   })
   .on("error", function (err) {
