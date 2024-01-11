@@ -12,6 +12,8 @@ type ConnectVectorDBProps = {
   organization: any;
   setLoading: (loading: boolean) => void;
   setConnector: (connector: any) => void;
+  stepIdx: number;
+  stepCount: number;
 };
 
 export default function ConnectVectorDB({
@@ -19,6 +21,8 @@ export default function ConnectVectorDB({
   organization,
   setLoading,
   setConnector,
+  stepIdx,
+  stepCount,
 }: ConnectVectorDBProps) {
   const [vectorDB, setVectorDB] = useState('chroma');
 
@@ -48,9 +52,11 @@ export default function ConnectVectorDB({
     );
 
     if (connector) {
-      showToast('Vector database connected successfully', 'success');
+      showToast('Vector database connected successfully', 'success', {
+        clear: true,
+      });
       setConnector(connector);
-      setCurrentStep('sync_vector_db');
+      setCurrentStep('survey');
     } else {
       showToast(`Error connecting vector database: ${error}`, 'error');
     }
@@ -61,8 +67,8 @@ export default function ConnectVectorDB({
   return (
     <div>
       <div className="mb-8 font-semibold uppercase text-white">
-        Step 04/
-        <span className="text-white text-opacity-40">05</span>
+        Step 0{stepIdx}/
+        <span className="text-white text-opacity-40">0{stepCount}</span>
       </div>
       <div className="mb-5 text-2xl font-medium text-white">
         Connect your vector database

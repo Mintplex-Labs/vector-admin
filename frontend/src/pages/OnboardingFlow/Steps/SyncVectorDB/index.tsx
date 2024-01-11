@@ -9,12 +9,16 @@ type SyncVectorDBProps = {
   connector: any;
   organization: any;
   setLoading: (loading: boolean) => void;
+  stepIdx: number;
+  stepCount: number;
 };
 
 export default function SyncVectorDB({
   connector,
   organization,
   setLoading,
+  stepIdx,
+  stepCount,
 }: SyncVectorDBProps) {
   const [canSync, setCanSync] = useState(false);
   const [remoteCount, setRemoteCount] = useState(0);
@@ -58,7 +62,8 @@ export default function SyncVectorDB({
     if (job) {
       showToast(
         'Syncing vector database and taking you to dashboard...',
-        'success'
+        'success',
+        { clear: true }
       );
       await new Promise((resolve) => setTimeout(resolve, 2000));
       window.location.replace(paths.organization({ slug: organization.slug }));
@@ -71,8 +76,8 @@ export default function SyncVectorDB({
     return (
       <div>
         <div className="mb-8 font-semibold uppercase text-white">
-          Step 05/
-          <span className="text-white text-opacity-40">05</span>
+          Step 0{stepIdx}/
+          <span className="text-white text-opacity-40">0{stepCount}</span>
         </div>
         <div className="mb-3 text-2xl font-medium text-white">
           Your vector database is connected
@@ -100,8 +105,8 @@ export default function SyncVectorDB({
   return (
     <div>
       <div className="mb-8 font-semibold uppercase text-white">
-        Step 05/
-        <span className="text-white text-opacity-40">05</span>
+        Step 0{stepIdx}/
+        <span className="text-white text-opacity-40">0{stepCount}</span>
       </div>
       <div className="mb-3 text-2xl font-medium text-white">
         Sync your connection

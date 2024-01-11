@@ -19,9 +19,14 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     curl -LO https://github.com/yarnpkg/yarn/releases/download/v1.22.19/yarn_1.22.19_all.deb \
         && dpkg -i yarn_1.22.19_all.deb \
         && rm yarn_1.22.19_all.deb && \
-    curl -LO https://github.com/jgm/pandoc/releases/download/3.1.3/pandoc-3.1.3-1-amd64.deb \
-        && dpkg -i pandoc-3.1.3-1-amd64.deb \
-        && rm pandoc-3.1.3-1-amd64.deb && \
+    if [ "$(uname -m)" =  "aarch64" ] || [ "$(uname -m)" =  "arm64" ] || [ "$(uname -m)" = "armv7l" ]; \
+    then \
+    curl -L https://github.com/jgm/pandoc/releases/download/3.1.3/pandoc-3.1.3-1-arm64.deb > pandoc-3.1.3-1.deb; \
+    else \
+    curl -L https://github.com/jgm/pandoc/releases/download/3.1.3/pandoc-3.1.3-1-amd64.deb > pandoc-3.1.3-1.deb; \
+    fi \
+    && dpkg -i pandoc-3.1.3-1.deb \
+    && rm pandoc-3.1.3-1.deb && \
     rm -rf /var/lib/apt/lists/* /usr/share/icons && \
     dpkg-reconfigure -f noninteractive tzdata && \
     python3 -m pip install --no-cache-dir virtualenv
@@ -43,12 +48,12 @@ USER root
 # Install frontend dependencies
 FROM base as frontend-deps
 COPY ./frontend/package.json ./frontend/yarn.lock ./frontend/
-RUN cd ./frontend/ && yarn install && yarn cache clean
+RUN cd ./frontend/ && yarn install  --network-timeout 100000 && yarn cache clean
 
 # Install server dependencies
 FROM base as server-deps
 COPY ./backend/package.json ./backend/yarn.lock ./backend/
-RUN cd ./backend/ && yarn install --production && yarn cache clean 
+RUN cd ./backend/ && yarn install --production  --network-timeout 100000 && yarn cache clean 
 
 # Build the frontend
 FROM frontend-deps as build-stage
@@ -67,9 +72,9 @@ COPY ./workers/ ./workers/
 
 # Install worker dependencies
 RUN cd /app/workers && \
-    yarn install --production && \
+    yarn install --production --network-timeout 100000 && \
     yarn cache clean && \
-    yarn add global inngest-cli
+    yarn add global inngest-cli --network-timeout 100000
 
 # Copy the document-processor
 COPY ./document-processor/ ./document-processor/

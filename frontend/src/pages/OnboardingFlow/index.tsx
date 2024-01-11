@@ -8,6 +8,7 @@ import SecuritySettings from './Steps/SecuritySettings';
 import CreateOrganization from './Steps/CreateOrganization';
 import ConnectVectorDB from './Steps/ConnectVectorDB';
 import SyncVectorDB from './Steps/SyncVectorDB';
+import OnboardingSurvey from './Steps/OnboardingSurvey';
 
 type Step = {
   title: string;
@@ -43,6 +44,11 @@ const STEPS: Steps = {
     description: '',
     component: ConnectVectorDB,
   },
+  survey: {
+    title: 'Help us make VectorAdmin better',
+    description: 'This optional survey helps us build VectorAdmin.',
+    component: OnboardingSurvey,
+  },
   sync_vector_db: {
     title: 'Sync your vector database',
     description:
@@ -60,6 +66,7 @@ const OnboardingFlow = () => {
   const [connector, setConnector] = useState();
 
   const CurrentStep = STEPS[currentStep].component;
+  const stepIdx = Object.keys(STEPS).indexOf(currentStep) + 1;
 
   return (
     <DefaultLayout>
@@ -98,6 +105,8 @@ const OnboardingFlow = () => {
                 setLoading={setLoading}
                 connector={connector}
                 setConnector={setConnector}
+                stepIdx={stepIdx}
+                stepCount={Object.keys(STEPS).length}
               />
             )}
           </div>

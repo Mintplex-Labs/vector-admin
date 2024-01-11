@@ -6,12 +6,16 @@ type CreateOrganizationProps = {
   setCurrentStep: (step: string) => void;
   setOrganization: (organization: any) => void;
   setLoading: (loading: boolean) => void;
+  stepIdx: number;
+  stepCount: number;
 };
 
 export default function CreateOrganization({
   setCurrentStep,
   setOrganization,
   setLoading,
+  stepIdx,
+  stepCount,
 }: CreateOrganizationProps) {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -22,7 +26,9 @@ export default function CreateOrganization({
 
     const { organization, error } = await Organization.create(name);
     if (organization) {
-      showToast('Organization created successfully', 'success');
+      showToast('Organization created successfully', 'success', {
+        clear: true,
+      });
       setOrganization(organization);
       setCurrentStep('connect_vector_db');
     } else {
@@ -34,8 +40,8 @@ export default function CreateOrganization({
   return (
     <div>
       <div className="mb-8 font-semibold uppercase text-white">
-        Step 03/
-        <span className="text-white text-opacity-40">05</span>
+        Step 0{stepIdx}/
+        <span className="text-white text-opacity-40">0{stepCount}</span>
       </div>
       <div className="mb-3 text-2xl font-medium text-white">
         Create an organization
