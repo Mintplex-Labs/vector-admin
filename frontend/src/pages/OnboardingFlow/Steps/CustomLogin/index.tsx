@@ -6,11 +6,15 @@ import { STORE_TOKEN, STORE_USER } from '../../../../utils/constants';
 type CustomLoginProps = {
   setCurrentStep: (step: string) => void;
   setLoading: (loading: boolean) => void;
+  stepIdx: number;
+  stepCount: number;
 };
 
 export default function CustomLogin({
   setCurrentStep,
   setLoading,
+  stepIdx,
+  stepCount,
 }: CustomLoginProps) {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,7 +33,7 @@ export default function CustomLogin({
     if (!!token) {
       window.localStorage.setItem(STORE_USER, JSON.stringify(user));
       window.localStorage.setItem(STORE_TOKEN, token);
-      showToast('Login created successfully', 'success');
+      showToast('Login created successfully', 'success', { clear: true });
       setCurrentStep('security_settings');
     } else {
       showToast(`Error creating login: ${error}`, 'error');
@@ -40,8 +44,8 @@ export default function CustomLogin({
   return (
     <div>
       <div className="mb-8 font-semibold uppercase text-white">
-        Step 01/
-        <span className="text-white text-opacity-40">05</span>
+        Step 0{stepIdx}/
+        <span className="text-white text-opacity-40">0{stepCount}</span>
       </div>
       <div className="mb-3 text-2xl font-medium text-white">
         Create your custom login

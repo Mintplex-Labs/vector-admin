@@ -5,11 +5,15 @@ import showToast from '../../../../utils/toast';
 type SecuritySettingsProps = {
   setCurrentStep: (step: string) => void;
   setLoading: (loading: boolean) => void;
+  stepIdx: number;
+  stepCount: number;
 };
 
 export default function SecuritySettings({
   setCurrentStep,
   setLoading,
+  stepIdx,
+  stepCount,
 }: SecuritySettingsProps) {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,7 +27,9 @@ export default function SecuritySettings({
     const { success, error } = await System.updateSettings(data);
 
     if (success) {
-      showToast('Security settings saved successfully', 'success');
+      showToast('Security settings saved successfully', 'success', {
+        clear: true,
+      });
       setCurrentStep('create_organization');
     } else {
       showToast(`Error setting security settings: ${error}`, 'error');
@@ -35,8 +41,8 @@ export default function SecuritySettings({
   return (
     <div>
       <div className="mb-8 font-semibold uppercase text-white">
-        Step 02/
-        <span className="text-white text-opacity-40">05</span>
+        Step 0{stepIdx}/
+        <span className="text-white text-opacity-40">0{stepCount}</span>
       </div>
       <div className="mb-3 text-2xl font-medium text-white">
         Security Settings
