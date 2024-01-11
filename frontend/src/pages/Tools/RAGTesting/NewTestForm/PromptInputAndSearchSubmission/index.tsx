@@ -54,10 +54,10 @@ export default function PromptInputAndSearchSubmission({
     <>
       <div className="sm:col-span-2">
         <div className="mb-2 w-full ">
-          <label className="block text-sm font-medium text-gray-900">
+          <label className="block text-sm font-medium text-white">
             Using this prompt or vector
           </label>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-white/60">
             Enter a text prompt or vector directly that will be used for
             similarity searching.
             <br />
@@ -77,7 +77,7 @@ export default function PromptInputAndSearchSubmission({
           required={true}
           onChange={debouncedInput}
           rows={8}
-          className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+          className="mt-2 block w-full rounded-lg border border-white/10 bg-main-2/10 px-2 py-2 text-sm text-white outline-none"
           placeholder="ex: 'What is VectorAdmin?' or [0.2,0.81,0.89,...,0.05,0.93,0.91,0.17]"
         ></textarea>
         {!!error && (
@@ -126,9 +126,9 @@ function CurrentSimilaritySearch({ organization, prompt, formData }) {
   if (!formData || !prompt.input || !workspaceId) return null;
   if (loading) {
     return (
-      <div className="flex w-full animate-pulse items-center justify-center rounded-lg bg-gray-100 p-4">
+      <div className="flex w-full animate-pulse items-center justify-center rounded-lg bg-gray-100 p-2">
         <p className="animate-none text-gray-600">
-          finding top {topK} similar embeddings for {workspaceName}.
+          Finding top {topK} similar embeddings for {workspaceName}.
         </p>
       </div>
     );
@@ -152,7 +152,7 @@ function CurrentSimilaritySearch({ organization, prompt, formData }) {
 
   return (
     <div className="flex w-full flex-col">
-      <p className="text-sm text-gray-600">
+      <p className="mb-4 mt-8 text-sm text-white/60">
         If these results look okay to you - click "Create test" to save this
         test.
       </p>
@@ -165,14 +165,14 @@ function CurrentSimilaritySearch({ organization, prompt, formData }) {
                 value={JSON.stringify(embedding)}
                 type="hidden"
               />
-              <div className="flex w-full flex-col rounded-lg border border-gray-300 bg-gray-50 p-2 px-4">
-                <div className="flex w-full items-center justify-between border-b border-gray-200 py-1">
-                  <p className="text-sm text-gray-600">{embedding.vectorId}</p>
-                  <p className="text-sm text-gray-600">
+              <div className="flex w-full flex-col rounded-lg border border-white/20 bg-main-2 p-2 px-4">
+                <div className="flex w-full items-center justify-between py-1">
+                  <p className="text-sm text-white">{embedding.vectorId}</p>
+                  <p className="text-sm text-white">
                     Similarity {(embedding.score * 100.0).toFixed(2)}%
                   </p>
                 </div>
-                <pre className="whitespace-break my-2 overflow-scroll text-gray-600">
+                <pre className="overflow-scroll rounded-lg bg-main-2 p-2 text-white shadow-sm">
                   {JSON.stringify(embedding.metadata || {}, null, 2)}
                 </pre>
               </div>
@@ -182,7 +182,7 @@ function CurrentSimilaritySearch({ organization, prompt, formData }) {
       </div>
       <button
         type="submit"
-        className="my-2 w-full rounded-lg bg-blue-600 py-2 text-white hover:bg-blue-700"
+        className="my-4 h-11 w-full items-center rounded-lg bg-white p-2 text-center text-sm font-bold text-neutral-700 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
       >
         Create test
       </button>
