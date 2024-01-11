@@ -27,48 +27,6 @@ const DeleteEmbeddingConfirmation = memo(
           event.target === event.currentTarget && event.currentTarget?.close()
         }
       >
-        {/* <div className="flex flex-col justify-center overflow-y-scroll rounded-sm bg-main p-[20px]">
-          <div className="px-4 py-4">
-            <h3 className="text-lg font-medium text-white">
-              Delete this embedding?
-            </h3>
-            <p className="mt-4 text-sm text-white/60">
-              Once you delete this embedding it will remove it from your
-              connected Vector Database as well. This process is non-reversible
-              and if you want to add it back will require you to manually insert
-              it or re-embed the document.
-            </p>
-            <pre className="mx-4 w-full whitespace-pre-line rounded-lg bg-slate-100 font-mono">
-              {data.metadata.text}
-            </pre>
-          </div>
-          <div className="w-full px-6">
-            <button
-              type="button"
-              disabled={loading}
-              onClick={deleteEmbedding}
-              className="mb-4 h-11 w-full items-center rounded-lg bg-white p-2 text-center text-sm font-bold text-neutral-700 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
-            >
-              {loading ? (
-                <Loader className="animate-spin" />
-              ) : (
-                'Yes, delete this embedding'
-              )}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                document
-                  .getElementById(`${fragment.id}-delete-embedding`)
-                  ?.close();
-              }}
-              className="h-11 w-full items-center rounded-lg bg-white p-2 text-center text-sm font-bold text-neutral-700 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
-            >
-              Nevermind
-            </button>
-          </div>
-        </div> */}
-
         <div className="my-4 flex w-full flex-col justify-center px-8">
           <h3 className="text-lg font-medium text-white">
             Delete this embedding?
