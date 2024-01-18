@@ -21,6 +21,7 @@ import qDrantLogo from '../../images/vectordbs/qdrant.png';
 import WeaviateLogo from '../../images/vectordbs/weaviate.png';
 import SyncConnectorModal from '../../components/Modals/SyncConnectorModal';
 import UpdateConnectorModal from '../../components/Modals/UpdateConnectorModal';
+import QuickActionsSidebar from '../Dashboard/QuickActionSidebar';
 
 export default function WorkspaceDashboard() {
   const { user } = useUser();
@@ -130,8 +131,8 @@ export default function WorkspaceDashboard() {
           deleteWorkspace={deleteWorkspace}
         />
       }
+      hasQuickActions={true}
     >
-      <Statistics organization={organization} workspace={workspace} />
       {!!organization && (
         <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
           <SyncConnectorModal
@@ -146,12 +147,18 @@ export default function WorkspaceDashboard() {
         </div>
       )}
 
-      <DocumentsList
-        knownConnector={connector}
-        organization={organization}
-        workspace={workspace}
-        workspaces={workspaces}
-      />
+      <Statistics organization={organization} workspace={workspace} />
+      <div className="mt-4 flex w-full">
+        <div className="mr-6.5 w-full">
+          <DocumentsList
+            knownConnector={connector}
+            organization={organization}
+            workspace={workspace}
+            workspaces={workspaces}
+          />
+        </div>
+        <QuickActionsSidebar organization={organization} />
+      </div>
       <CloneWorkspaceModal workspace={workspace} />
     </AppLayout>
   );

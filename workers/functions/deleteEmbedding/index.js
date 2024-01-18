@@ -221,18 +221,15 @@ async function cleanupCacheFile(documentVector) {
   const document = await WorkspaceDocument.get({
     id: Number(documentVector.document_id),
   });
-  console.log({ document });
   if (!document) return;
   const digestFilename = WorkspaceDocument.vectorFilename(document);
   const existingInfo = await cachedVectorInformation(digestFilename);
-
-  console.log({ digestFilename, existingInfoExists: existingInfo.exists });
   if (!existingInfo.exists) return;
 
   const updatedData = existingInfo.chunks.filter(
     (obj) => obj.vectorDbId !== documentVector.vectorId
   );
-  console.log({ updatedData: updatedData });
+
   await storeVectorResult(updatedData, digestFilename);
   return;
 }
