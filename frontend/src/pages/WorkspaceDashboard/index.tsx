@@ -7,13 +7,21 @@ import paths from '../../utils/paths';
 import AppLayout from '../../layout/AppLayout';
 import { useParams } from 'react-router-dom';
 import Organization from '../../models/organization';
-import ConnectorCard from './Connector';
-import ApiKeyCard from './ApiKey';
 import Statistics from './Statistics';
 import DocumentsList from './DocumentsList';
 import Workspace from '../../models/workspace';
 import { APP_NAME } from '../../utils/constants';
 import { titleCase } from 'title-case';
+import { CaretDown } from '@phosphor-icons/react';
+import truncate from 'truncate';
+
+import ChromaLogo from '../../images/vectordbs/chroma.png';
+import PineconeLogoInverted from '../../images/vectordbs/pinecone-inverted.png';
+import qDrantLogo from '../../images/vectordbs/qdrant.png';
+import WeaviateLogo from '../../images/vectordbs/weaviate.png';
+import SyncConnectorModal from '../../components/Modals/SyncConnectorModal';
+import UpdateConnectorModal from '../../components/Modals/UpdateConnectorModal';
+import QuickActionsSidebar from '../Dashboard/QuickActionSidebar';
 
 export default function WorkspaceDashboard() {
   const { user } = useUser();
@@ -116,41 +124,32 @@ export default function WorkspaceDashboard() {
       hasMoreWorkspaces={hasMoreWorkspaces}
       loadMoreWorkspaces={fetchWorkspaces}
       headerExtendedItems={
-        <div className="flex items-center gap-x-4">
-          <button
-            type="button"
-            onClick={() =>
-              document
-                .getElementById(`clone-workspace-${workspace?.id}-modal`)
-                ?.showModal()
-            }
-            className="rounded-lg px-4 py-2 text-sm text-blue-400 hover:bg-blue-50 hover:text-blue-600"
-          >
-            Clone Workspace
-          </button>
-          <button
-            onClick={deleteWorkspace}
-            className="rounded-lg px-4 py-2 text-sm text-slate-400 hover:bg-red-50 hover:text-red-600"
-          >
-            Delete Workspace
-          </button>
-        </div>
+        <WorkspaceViewHeader
+          organization={organization}
+          workspace={workspace}
+          connector={connector}
+          deleteWorkspace={deleteWorkspace}
+        />
       }
+      hasQuickActions={true}
     >
       {!!organization && (
         <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
-          <ConnectorCard
-            knownConnector={connector}
+          <SyncConnectorModal
             organization={organization}
-            workspace={workspace}
+            connector={connector}
           />
-          <ApiKeyCard organization={organization} />
+          <UpdateConnectorModal
+            organization={organization}
+            connector={connector}
+            onUpdate={setConnector}
+          />
         </div>
       )}
 
       <Statistics organization={organization} workspace={workspace} />
-      <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-        <div className="col-span-12 xl:col-span-12">
+      <div className="mt-4 flex w-full">
+        <div className="mr-6.5 w-full">
           <DocumentsList
             knownConnector={connector}
             organization={organization}
@@ -158,6 +157,7 @@ export default function WorkspaceDashboard() {
             workspaces={workspaces}
           />
         </div>
+        <QuickActionsSidebar organization={organization} />
       </div>
       <CloneWorkspaceModal workspace={workspace} />
     </AppLayout>
@@ -205,14 +205,14 @@ const CloneWorkspaceModal = memo(({ workspace }: { workspace: any }) => {
   return (
     <dialog
       id={`clone-workspace-${workspace.id}-modal`}
-      className="w-1/2 rounded-lg outline-none"
+      className="w-1/2 rounded-xl border-2 border-white/20 bg-main shadow"
       onClick={(event) => {
         event.target == event.currentTarget && event.currentTarget?.close();
       }}
     >
-      <div className="my-4 flex w-full flex-col gap-y-1 p-[20px]">
-        <p className="text-lg font-semibold text-blue-600">Clone workspace</p>
-        <p className="text-base text-slate-800">
+      <div className="flex w-full flex-col gap-y-1 p-[20px]">
+        <p className="text-lg font-medium text-white">Clone workspace</p>
+        <p className="text-sm text-white/60">
           This action will copy your entire workspace and current embeddings
           into a new workspace. This will automatically sync with your connected
           vector database. This action will not incur any OpenAI embedding
@@ -224,12 +224,12 @@ const CloneWorkspaceModal = memo(({ workspace }: { workspace: any }) => {
           {result.success ? (
             <a
               href={paths.jobs({ slug })}
-              className="my-2 w-full rounded-lg border-green-800 bg-green-50 px-4 py-2 text-lg text-green-800"
+              className="mx-2 my-2 w-full rounded-lg bg-green-600/10 px-4 py-2 text-lg text-green-600"
             >
               Workspace clone job created. View progress &rarr;
             </a>
           ) : (
-            <p className="my-2 w-full rounded-lg border-red-800 bg-red-50 px-4 py-2 text-lg text-red-800">
+            <p className="my-2 w-full rounded-lg border-red-800 bg-red-600/10 px-4 py-2 text-lg text-red-600">
               {result.error}
             </p>
           )}
@@ -238,8 +238,8 @@ const CloneWorkspaceModal = memo(({ workspace }: { workspace: any }) => {
       <div className="my-2 flex w-full justify-center p-[20px]">
         {!result.show || result.success === false ? (
           <form onSubmit={cloneWorkspace} className="flex flex-col gap-y-1">
-            <p className="my-2 text-sm text-gray-800">
-              Clone {workspace.name} and it's embeddings to...
+            <p className="my-2 text-sm text-white/60">
+              Clone {workspace.name} and its embeddings to...
             </p>
             <div className="mb-4.5">
               <input
@@ -249,13 +249,13 @@ const CloneWorkspaceModal = memo(({ workspace }: { workspace: any }) => {
                 placeholder="Cloned workspace"
                 autoComplete="off"
                 defaultValue={`${titleCase(workspace.name)} Copy`}
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                className="placeholder-text-white/60 w-full rounded-lg border border-white/10 bg-main-2 px-2.5 py-2 text-sm text-white"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="my-2 rounded-lg px-4 py-2 text-blue-800 hover:bg-blue-50"
+              className="my-2 w-full rounded-lg bg-white p-2 text-center text-sm font-bold text-neutral-700 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
             >
               {loading ? 'Cloning workspace...' : <>Clone Workspace &rarr;</>}
             </button>
@@ -265,3 +265,87 @@ const CloneWorkspaceModal = memo(({ workspace }: { workspace: any }) => {
     </dialog>
   );
 });
+
+function WorkspaceViewHeader({
+  organization,
+  workspace,
+  connector,
+  deleteWorkspace,
+}: any) {
+  let logo;
+  switch (connector?.type) {
+    case 'chroma':
+      logo = ChromaLogo;
+      break;
+    case 'qdrant':
+      logo = qDrantLogo;
+      break;
+    case 'weaviate':
+      logo = WeaviateLogo;
+      break;
+    default:
+      logo = PineconeLogoInverted;
+  }
+
+  return (
+    <>
+      <div className=" mr-10 w-full rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
+        <div className="flex items-center gap-x-2 text-lg">
+          <a
+            href={paths.organization(organization)}
+            className="text-sky-400 hover:cursor-pointer hover:underline"
+          >
+            {truncate(organization?.name, 20)}
+          </a>
+          <div className="text-sky-400" style={{ transform: 'rotate(270deg)' }}>
+            <CaretDown weight="bold" />
+          </div>
+          <span className="text-lg font-medium text-white">
+            {truncate(workspace?.name, 20)}
+          </span>
+        </div>
+      </div>
+      <div className="flex gap-x-3">
+        <button
+          onClick={() =>
+            window.document?.getElementById('edit-connector-modal')?.showModal()
+          }
+          className="flex h-11 w-11 items-center justify-center rounded-lg border-2 border-white border-opacity-20 transition-all duration-300 hover:bg-opacity-5"
+        >
+          <img src={logo} alt="Connector logo" className="h-full p-1" />
+        </button>
+
+        <button
+          onClick={() =>
+            document?.getElementById('sync-connector-modal')?.showModal()
+          }
+          className="inline-flex h-11 w-[74px] flex-col items-center justify-center gap-2.5 rounded-lg bg-white bg-opacity-10 px-5 py-2.5 transition-all duration-300 hover:bg-opacity-5"
+        >
+          <div className="font-satoshi h-[25.53px] w-11 text-center text-base font-bold text-white">
+            Sync
+          </div>
+        </button>
+        <button
+          onClick={() =>
+            window.document
+              ?.getElementById(`clone-workspace-${workspace.id}-modal`)
+              ?.showModal()
+          }
+          className="inline-flex h-11 w-[74px] flex-col items-center justify-center gap-2.5 rounded-lg bg-white bg-opacity-10 px-5 py-2.5 transition-all duration-300 hover:bg-opacity-5"
+        >
+          <div className="font-satoshi h-[25.53px] w-11 text-center text-base font-bold text-white">
+            Clone
+          </div>
+        </button>
+        <button
+          onClick={deleteWorkspace}
+          className="inline-flex h-11 w-[74px] flex-col items-center justify-center gap-2.5 rounded-lg border-2 border-white border-opacity-20 px-3.5 py-2.5 transition-all duration-300 hover:bg-red-500"
+        >
+          <div className="font-satoshi h-[25.53px] w-[59px] text-center text-base font-bold text-white">
+            Delete
+          </div>
+        </button>
+      </div>
+    </>
+  );
+}

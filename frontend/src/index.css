@@ -1,6 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: 'Satoshi-Bold';
+  src: url('./fonts/Satoshi-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('./fonts/Satoshi-Regular.ttf') format('truetype');
+  font-weight: 300;
+  font-display: swap;
+  font-style: normal;
+}
+
+.font-satoshi.font-bold {
+  font-family: 'Satoshi-Bold', sans-serif;
+}
+
+.font-satoshi {
+  font-family: 'Satoshi', sans-serif;
+}
+
+.font-jetbrains {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 300;
+}
+
+.font-jetbrainsbold {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+}
 
 /* Chrome, Safari and Opera */
 .no-scrollbar::-webkit-scrollbar {
@@ -26,7 +61,7 @@ dialog {
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.2s;
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -34,10 +69,52 @@ dialog {
 
 dialog[open] {
   opacity: 1;
+  display: flex;
   pointer-events: inherit;
 }
 
 dialog::backdrop {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(2px);
+}
+
+.login-input-gradient {
+  background: linear-gradient(
+    180deg,
+    rgba(61, 65, 71, 0.3) 0%,
+    rgba(44, 47, 53, 0.3) 100%
+  ) !important;
+  box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.25);
+}
+
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  to {
+    max-height: 200px;
+    opacity: 1;
+  }
+}
+
+.slide-down {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from {
+    max-height: 200px;
+    opacity: 1;
+  }
+
+  to {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out forwards;
 }

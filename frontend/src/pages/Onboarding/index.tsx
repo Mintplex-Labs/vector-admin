@@ -60,7 +60,8 @@ const SignIn = () => {
         window.location.replace(paths.organization(orgs[0]));
         return;
       }
-      setStage('ready');
+      // Redirect to onboarding if no orgs exist
+      window.location.replace(paths.onboardingSetup());
     }
     checkOnboardingStage();
   }, []);

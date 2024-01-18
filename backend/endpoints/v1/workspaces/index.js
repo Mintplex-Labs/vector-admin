@@ -305,6 +305,7 @@ function workspaceEndpoints(app) {
           documents: "countForEntity",
           vectors: "calcVectors",
           "cache-size": "calcVectorCache",
+          dimensions: "calcDimensions",
         };
 
         if (!Object.keys(methods).includes(statistic)) {
@@ -314,7 +315,6 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        console.log(workspace);
         const value = await WorkspaceDocument[methods[statistic]](
           "workspace_id",
           workspace.id

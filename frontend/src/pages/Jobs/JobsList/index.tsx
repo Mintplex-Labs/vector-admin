@@ -1,42 +1,39 @@
 import { memo, useState } from 'react';
-import { ChevronDown } from 'react-feather';
 import moment from 'moment';
 import Jobs from '../../../models/jobs';
 import useUser from '../../../hooks/useUser';
+import { CaretDown } from '@phosphor-icons/react';
 
 export default function JobsList({ jobs }: { jobs: any[] }) {
   const { user } = useUser();
 
   return (
-    <div className="col-span-12 flex-1 rounded-sm bg-white pb-6 xl:col-span-4">
-      <div className="flex items-start justify-between">
-        <div>
-          <h4 className="mb-6 px-7.5 text-3xl font-semibold text-black dark:text-white">
-            Organization Background Jobs
-          </h4>
+    <div className="col-span-12 h-screen flex-1 rounded-sm bg-main pb-6 xl:col-span-4">
+      <div className="-mt-10 flex items-center gap-x-4">
+        <button
+          onClick={() => window.history.back()}
+          className="flex h-[34px] w-[34px] rotate-90 items-center justify-center rounded-full border border-transparent  bg-zinc-900 text-white transition-all duration-300 hover:border-white/20 hover:bg-opacity-5 hover:text-white"
+        >
+          <CaretDown weight="bold" size={18} />
+        </button>
+        <div className="text-lg font-medium text-white">
+          Organization Background Jobs
         </div>
       </div>
 
-      <div className="px-6">
+      <div className="ml-13 pr-6">
         {jobs.length === 0 ? (
-          <div>
-            <p className="text-center text-gray-600">
-              no background jobs have been run yet.
+          <div className="mt-10">
+            <p className="text-sm text-white text-opacity-60">
+              No background jobs have been run yet.
             </p>
           </div>
         ) : (
-          <>
-            <div
-              id="accordion-flush"
-              data-accordion="collapse"
-              data-active-classes="bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-              data-inactive-classes="text-gray-500 dark:text-gray-400"
-            >
-              {jobs.map((job, i) => (
-                <JobRun key={i} job={job} user={user} />
-              ))}
-            </div>
-          </>
+          <div className="mt-0 overflow-y-auto">
+            {jobs.map((job, i) => (
+              <JobRun key={i} job={job} user={user} />
+            ))}
+          </div>
         )}
       </div>
     </div>
@@ -47,6 +44,7 @@ const JobRun = ({ job, user }: { job: any; user: any }) => {
   const [loaded, setLoaded] = useState(false);
   const [show, setShow] = useState(false);
   const { id, status, taskName } = job;
+
   return (
     <>
       <button
@@ -55,21 +53,27 @@ const JobRun = ({ job, user }: { job: any; user: any }) => {
           setShow(!show);
         }}
         type="button"
-        className="flex w-full items-center justify-between border-b border-gray-200 py-5 text-left font-medium text-gray-500 dark:border-gray-700 dark:text-gray-400"
+        className="flex w-full items-center justify-between border-b border-white/20 py-5 text-left text-white"
       >
         <div className="flex w-full items-center justify-between pr-4">
           <div className="flex items-center gap-x-8">
-            <span className="text-xl">Job #{id}</span>
+            <span className="text-md font-medium">{`Job #${id}`}</span>
             <Status status={status} />
-            <span className="font-regular rounded-full bg-slate-100 px-4 py-1">
+            <span className="rounded-full bg-white/10 px-2 py-0.5 text-sm font-medium text-white shadow-sm">
               {taskName}
             </span>
           </div>
-          <p className="text-sm font-normal text-slate-400">
+          <p className="text-sm text-white/60">
             last updated {moment(job.lastUpdatedAt).fromNow()}
           </p>
         </div>
-        <ChevronDown className="h-6 w-6 text-gray-500" />
+        <div
+          className={`${
+            show ? 'rotate-0' : 'rotate-90'
+          } transition-all duration-300`}
+        >
+          <CaretDown weight="bold" size={20} />
+        </div>
       </button>
       <div hidden={!show}>
         {loaded && <JobDetail key={job.id} job={job} user={user} />}
@@ -81,19 +85,19 @@ const JobRun = ({ job, user }: { job: any; user: any }) => {
 const Status = ({ status }: { status: 'pending' | 'failed' | 'complete' }) => {
   if (status === 'pending')
     return (
-      <span className="font-regular animate-pulse rounded-full bg-slate-100 px-4 py-1">
-        in progress
+      <span className="rounded-full bg-sky-600/20 px-2 py-0.5 text-sm font-medium text-sky-400 shadow-sm">
+        In progress
       </span>
     );
   if (status === 'failed')
     return (
-      <span className="font-regular rounded-full bg-red-100 px-4 py-1 text-red-600">
+      <span className="rounded-full bg-red-600/20 px-2 py-0.5 text-sm font-medium text-red-600 shadow-sm">
         Failed
       </span>
     );
   if (status === 'complete')
     return (
-      <span className="font-regular rounded-full bg-green-100 px-4 py-1 text-green-600">
+      <span className="rounded-full bg-green-600/20 px-2 py-0.5 text-sm font-medium text-green-600 shadow-sm">
         Completed
       </span>
     );
@@ -130,7 +134,7 @@ const JobDetail = memo(({ job, user }: { job: any; user: any }) => {
   };
 
   return (
-    <div className='p-2" flex w-full flex-col gap-y-2'>
+    <div className="flex w-full flex-col gap-y-2 p-2">
       {user.role === 'admin' && job.status === 'pending' && (
         <button
           onClick={killJob}
@@ -140,28 +144,26 @@ const JobDetail = memo(({ job, user }: { job: any; user: any }) => {
           {killed ? 'Job is canceled!' : 'Cancel Job'}
         </button>
       )}
-      {user.role === 'admin' &&
-        job.status === 'failed' &&
-        result?.canRetry === true && (
-          <button
-            onClick={rerunJob}
-            disabled={rerun}
-            className="my-2 rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600 disabled:bg-green-500 disabled:hover:bg-green-500"
-          >
-            {rerun ? 'Job is queued!' : 'Re-run Failed Job'}
-          </button>
-        )}
+      {user.role === 'admin' && job.status === 'failed' && result?.canRetry && (
+        <button
+          onClick={rerunJob}
+          disabled={rerun}
+          className="my-2 rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600 disabled:bg-green-500 disabled:hover:bg-green-500"
+        >
+          {rerun ? 'Job is queued!' : 'Re-run Failed Job'}
+        </button>
+      )}
       <div className="flex w-full items-start gap-x-10 p-2">
         <div className="flex w-1/2 flex-col gap-y-1">
-          <p className="text-lg font-semibold">Job Data</p>
-          <pre className="overflow-scroll rounded-lg bg-stone-100 p-2 text-stone-800">
+          <p className="text-md font-semibold text-white">Job Data</p>
+          <pre className="overflow-scroll rounded-lg bg-main-2 p-2 text-white shadow-sm">
             {JSON.stringify(data, null, 2)}
           </pre>
         </div>
 
         <div className="flex w-1/2 flex-col gap-y-1">
-          <p className="text-lg font-semibold">Job Response</p>
-          <pre className="overflow-scroll rounded-lg bg-stone-100 p-2 text-stone-800">
+          <p className="text-md font-semibold text-white">Job Response</p>
+          <pre className="overflow-scroll whitespace-pre-wrap rounded-lg bg-main-2 p-2 text-white shadow-sm">
             {JSON.stringify(result, null, 2)}
           </pre>
         </div>

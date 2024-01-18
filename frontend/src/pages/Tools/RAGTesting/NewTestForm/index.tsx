@@ -4,6 +4,7 @@ import { debounce } from 'lodash';
 import WorkspaceSearch from './WorkspaceSearch';
 import PromptInputAndSearchSubmission from './PromptInputAndSearchSubmission';
 import { IOrganization } from '../../../../models/organization';
+import { Loader } from 'react-feather';
 
 export default function NewTestForm({
   title,
@@ -63,22 +64,22 @@ export default function NewTestForm({
     <div
       className={
         classOverrides ??
-        'w-full rounded-lg border border-gray-200 bg-gray-50/20 p-2'
+        'mt-4 h-screen w-full flex-1 rounded-sm bg-main pb-6 xl:col-span-4'
       }
     >
-      <h2 className="mb-4 text-2xl font-bold text-gray-900">
+      <h2 className="mb-4 text-lg font-medium text-white">
         {title || 'Create your first Context Drift test'}
       </h2>
 
       {error && (
-        <div className="my-4 flex w-3/4 rounded-lg border border-red-600 bg-red-100 p-4">
-          <p className="animate-none text-red-600">{error}</p>
+        <div className="my-4 ml-13 flex w-3/4 rounded-lg bg-red-600/20 p-4 text-center text-sm text-red-800">
+          <p>{error}</p>
         </div>
       )}
 
       <form onSubmit={handleSubmit} onChange={debouncedFormChange}>
-        <div hidden={saving}>
-          <div className="flex flex-col gap-y-6">
+        <div hidden={saving} className="pr-6">
+          <div className="flex w-full flex-col gap-y-2">
             <FrequencySelection />
             <WorkspaceSearch organization={organization} />
             <TopKSelection />
@@ -89,9 +90,10 @@ export default function NewTestForm({
           </div>
         </div>
 
-        <div hidden={!saving}>
-          <div className="flex h-[200px] w-full animate-pulse items-center justify-center rounded-lg bg-gray-100 p-4">
-            <p className="animate-none text-gray-600">Saving test...</p>
+        <div hidden={!saving} className="ml-13 mt-4 pr-6">
+          <div className="flex h-11 w-full items-center justify-center rounded-lg bg-white p-2 text-center text-sm font-bold text-neutral-700 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90">
+            <Loader size={14} className="animate-spin" />
+            <p>Saving test...</p>
           </div>
         </div>
       </form>
@@ -103,10 +105,10 @@ function FrequencySelection() {
   return (
     <div className="w-full">
       <div className="mb-2 w-full ">
-        <label className="block text-sm font-medium text-gray-900">
+        <label className="block text-sm font-medium text-white">
           Testing frequency
         </label>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-white/60">
           The frequency in which this test will be run. Times are in server
           timezone.
         </p>
@@ -114,7 +116,7 @@ function FrequencySelection() {
       <select
         name="frequency"
         required={true}
-        className={`block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500`}
+        className={`block w-fit rounded-lg border border-white/10 bg-main-2/10 px-2 py-2 text-sm text-white outline-none`}
       >
         <option value="demand" selected>
           Do not run automatically
@@ -132,10 +134,10 @@ function TopKSelection() {
   return (
     <div className="w-full">
       <div className="mb-2 w-full ">
-        <label className="block text-sm font-medium text-gray-900">
+        <label className="block text-sm font-medium text-white">
           TopK to test
         </label>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-white/60">
           How many embeddings do you want to test against? Maximum of 10.
         </p>
       </div>
@@ -146,7 +148,7 @@ function TopKSelection() {
         max={10}
         onWheel={(e) => e.target.blur()}
         defaultValue={3}
-        className="focus:ring-primary-600 focus:border-primary-600 block w-fit rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-lg text-gray-900"
+        className="w-212 rounded-lg border border-white/10 bg-main-2/10 px-2 py-2 text-sm text-white outline-none"
         placeholder="TopK embeddings to test"
         required={true}
       />
@@ -164,7 +166,7 @@ export function NewTestFormModal({
   return (
     <dialog
       id={`new-rag-test-modal`}
-      className="my-4 h-fit w-1/2 rounded-lg px-4"
+      className="my-4 h-fit w-1/2 rounded-lg bg-main px-4"
     >
       <NewTestForm
         title="Create a new test"

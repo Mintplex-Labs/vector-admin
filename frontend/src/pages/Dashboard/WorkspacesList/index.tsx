@@ -5,7 +5,6 @@ import moment from 'moment';
 import { nFormatter } from '../../../utils/numbers';
 import { FileText } from 'react-feather';
 import truncate from 'truncate';
-import CreateWorkspaceModal from './CreateWorkspaceModal';
 import Organization from '../../../models/organization';
 import WorkspaceSearch from '../../../components/Sidebar/WorkspaceSearch';
 
@@ -21,7 +20,7 @@ export default function WorkspacesList({
   totalWorkspaces?: number;
 }) {
   return (
-    <div className="col-span-12 flex-1 rounded-sm border border-stroke bg-white py-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
+    <div className="col-span-12 max-w-[217px] flex-1 rounded-sm border border-stroke bg-white py-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
       <div className=" top-0 z-10 bg-white">
         <div className="mb-6 flex w-full items-center justify-between px-7.5">
           <h4 className="text-xl font-semibold text-black dark:text-white">
@@ -89,7 +88,6 @@ export default function WorkspacesList({
           )}
         </div>
       </WorkspaceSearch>
-      <CreateWorkspaceModal organization={organization} />
     </div>
   );
 }

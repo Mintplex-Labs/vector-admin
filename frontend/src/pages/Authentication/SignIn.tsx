@@ -1,11 +1,9 @@
 import { Link } from 'react-router-dom';
-import LogoDark from '../../images/logo/logo-dark.png';
-import Logo from '../../images/logo/logo-light.png';
 import DefaultLayout from '../../layout/DefaultLayout';
-import ManageSvg from '../../images/undraws/manage.svg';
+import SignInImg from '../../images/undraws/sign-in.png';
 import PreLoader from '../../components/Preloader';
 import { useEffect, useState } from 'react';
-import { CheckCircle, Key, Mail, XCircle } from 'react-feather';
+import { CheckCircle, XCircle } from 'react-feather';
 import User from '../../models/user';
 import { APP_NAME, STORE_TOKEN, STORE_USER } from '../../utils/constants';
 import paths from '../../utils/paths';
@@ -55,7 +53,7 @@ const SignIn = () => {
       window.localStorage.setItem(STORE_USER, JSON.stringify(user));
       window.localStorage.setItem(STORE_TOKEN, token);
       window.location.replace(
-        user.role === 'root' ? paths.systemSetup() : paths.dashboard()
+        user.role === 'root' ? paths.onboardingSetup() : paths.dashboard()
       );
     }
   };
@@ -77,35 +75,15 @@ const SignIn = () => {
 
   return (
     <DefaultLayout>
-      <div className="bg-white">
+      <div className="">
         <div className="flex flex-wrap items-center">
           <div className="hidden w-full xl:block xl:w-1/2">
-            <div className="px-26 py-17.5 text-center">
-              <Link className="mb-5.5 inline-block" to="/">
-                <img
-                  className="hidden h-[50px] dark:block"
-                  src={Logo}
-                  alt="Logo"
-                />
-                <img
-                  className="h-[50px] dark:hidden"
-                  src={LogoDark}
-                  alt="Logo"
-                />
-              </Link>
-
-              <p className="2xl:px-20">
-                Did you know using {APP_NAME} can save you 75% on embedding
-                costs?
-              </p>
-
-              <span className="mt-15 inline-block">
-                <img src={ManageSvg} />
-              </span>
+            <div>
+              <img src={SignInImg} alt="Sign In" />
             </div>
           </div>
 
-          <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
+          <div className="w-full border-stroke xl:w-1/2">
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
               {stage !== 'ready' ? (
                 <ShowStatus
@@ -175,65 +153,77 @@ function ShowStatus({
 function LoginForm({ handleSubmit }: { handleSubmit: any }) {
   return (
     <>
-      <span className="mb-1.5 block text-2xl font-medium">Sign back in</span>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="mb-2.5 block font-medium text-black dark:text-white">
-            Email
-          </label>
-          <div className="relative">
-            <input
-              required={true}
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-            />
-
-            <span className="absolute right-4 top-4">
-              <Mail className="h-[22px] w-[22px] text-gray-500" />
-            </span>
+      <div
+        style={{
+          background: `
+    radial-gradient(circle at center, transparent 40%, black 100%),
+    linear-gradient(180deg, #85F8FF 0%, #65A6F2 100%)
+  `,
+          width: '575px',
+          filter: 'blur(150px)',
+          opacity: '0.5',
+        }}
+        className="absolute right-0 top-0 z-0 h-full w-full"
+      />
+      <div className="relative z-10 flex flex-col items-center">
+        <div className="mb-3 flex justify-center gap-x-2 text-center">
+          <span className="text-2xl font-bold text-white">Log in to</span>
+          <span className="text-2xl font-bold text-sky-300"> VectorAdmin</span>
+        </div>
+        <div className="mb-11 w-[308.65px] text-center">
+          <span className="mt-3 text-sm text-white text-opacity-90">
+            Welcome back, please log in to your account.
+          </span>
+        </div>
+        <form onSubmit={handleSubmit} className="z-10">
+          <div className="mb-3.5">
+            <div className="">
+              <input
+                required={true}
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                className="h-11 w-[300px] rounded-lg bg-neutral-800/60 p-2.5 text-white shadow-lg transition-all duration-300 focus:scale-105"
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="mb-4">
-          <label className="mb-2.5 block font-medium text-black dark:text-white">
-            Password
-          </label>
-          <div className="relative">
-            <input
-              required={true}
-              type="password"
-              name="password"
-              min={8}
-              placeholder={`Your ${APP_NAME} account password`}
-              className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-            />
-
-            <span className="absolute right-4 top-4">
-              <Key className="h-[22px] w-[22px] text-gray-500" />
-            </span>
+          <div className="mb-9">
+            <div className="">
+              <input
+                required={true}
+                type="password"
+                name="password"
+                min={8}
+                placeholder={`Your ${APP_NAME} password`}
+                className="h-11 w-[300px] rounded-lg bg-neutral-800/60 p-2.5 text-white shadow-lg transition-all duration-300 focus:scale-105"
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="mb-5">
-          <button
-            type="submit"
-            className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
-          >
-            Sign In
-          </button>
-        </div>
+          <div className="mb-5">
+            <button
+              type="submit"
+              className="h-11
+               w-[300px] items-center rounded-lg bg-white p-2 text-center text-sm font-bold leading-tight text-neutral-700 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
+            >
+              Sign In
+            </button>
+          </div>
 
-        <div className="mt-6 text-center">
-          <p>
-            Don't have a {APP_NAME} account?{' '}
-            <Link to={paths.signUp()} className="text-primary">
-              Sign Up
-            </Link>
-          </p>
-        </div>
-      </form>
+          <div className="mt-6 text-center text-sm text-white/90">
+            <p>
+              Don't have a {APP_NAME} account?{' '}
+              <Link
+                to={paths.signUp()}
+                className="font-semibold transition-all duration-300 hover:underline"
+              >
+                Sign Up
+              </Link>
+            </p>
+          </div>
+        </form>
+      </div>
     </>
   );
 }

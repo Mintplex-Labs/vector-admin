@@ -69,132 +69,117 @@ const EditEmbeddingConfirmation = memo(
       return (
         <dialog
           id={`${fragment.id}-edit-embedding`}
-          className="w-1/2 rounded-lg"
+          className="min-w-[200px] max-w-[65%] rounded-xl border-2 border-white/20 bg-main shadow"
           onClick={(event) =>
             event.target == event.currentTarget && event.currentTarget?.close()
           }
         >
-          <div className="my-4 flex w-full flex-col gap-y-1 p-[20px]">
-            <p className="text-lg font-semibold text-blue-600">
-              Edit embedding
-            </p>
-            <p className="text-sm text-slate-800">
-              You can edit your embedding chunk to be more inclusive of a chunk
-              of text if it was split incorrectly or simply just to provide more
-              context.
-            </p>
-          </div>
-          <div className="my-2 flex w-full p-[20px]">
-            <div className="flex flex w-full flex-col items-center gap-y-2 rounded-lg border border-orange-800 bg-orange-50 px-4 py-2 text-orange-800">
-              <div className="flex w-full items-center gap-x-2 text-lg">
-                <AlertTriangle /> You cannot edit embeddings without an OpenAI
-                API key set for your instance.
-              </div>
-              <p>
-                {APP_NAME} currently only supports editing and changes of
-                embeddings using OpenAI text embedding. If you did not embed
-                this data originally using OpenAI you will be unable to use this
-                feature.
+          <div className="w-full overflow-y-scroll rounded-sm p-[20px]">
+            <div className="px-6.5 py-4">
+              <p className="text-lg font-medium text-white">Edit embedding</p>
+              <p className="text-sm text-white/60">
+                You can edit your embedding chunk to be more inclusive of a
+                chunk of text if it was split incorrectly or simply just to
+                provide more context.
               </p>
-              <form onSubmit={updateSystemSetting} className="w-full">
-                <div className="">
+            </div>
+            <div className="flex w-full justify-center p-[20px]">
+              <div className="npr flex flex-col items-center gap-y-2 rounded-lg px-4 py-2 text-white">
+                <div className="my-4 flex flex-col items-center justify-center rounded-lg border border-red-500 p-4">
+                  <AlertTriangle className="h-6 w-6 text-red-500" />
+                  <p className="text-lg">
+                    You cannot edit embeddings without an OpenAI API key set for
+                    your instance.
+                  </p>
+                </div>
+                <p>
+                  {APP_NAME} currently only supports editing and changes of
+                  embeddings using OpenAI text embedding. If you did not embed
+                  this data originally using OpenAI you will be unable to use
+                  this feature.
+                </p>
+                <form onSubmit={updateSystemSetting} className="w-full">
                   <div className="mb-4.5">
-                    <label className="mb-2.5 block">Your OpenAI API Key</label>
+                    <label className="mb-2.5 block text-sm font-medium">
+                      Your OpenAI API Key
+                    </label>
                     <input
                       required={true}
                       type="password"
                       name="open_ai_api_key"
                       placeholder="sk-xxxxxxxxxx"
                       autoComplete="off"
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      className="w-full rounded-lg border border-white/10 bg-main-2 px-2.5 py-2 text-sm text-white"
                     />
                   </div>
-                  <div className="flex flex-col gap-y-2">
-                    <button
-                      type="submit"
-                      className="flex w-full justify-center rounded bg-orange-500 p-3 font-medium text-white"
-                    >
-                      Add OpenAI API Key
-                    </button>
-                  </div>
-                </div>
-                <p className="my-2 p-2 text-center text-sm text-orange-800">
-                  This key will only be used for the embedding of changes or
-                  additions you make via {APP_NAME}.
-                </p>
-              </form>
+                  <button
+                    type="submit"
+                    className="w-full rounded-lg bg-white p-2 font-medium text-main shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
+                  >
+                    Add OpenAI API Key
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
-          <pre className="font-mono whitespace-pre-line rounded-lg bg-slate-100 p-2">
-            {data.metadata.text}
-          </pre>
         </dialog>
       );
     }
 
     const debouncedTokenLengthCheck = debounce(checkTokenSize, 500);
     return (
-      <dialog id={`${fragment.id}-edit-embedding`} className="w-1/2 rounded-lg">
-        <div className="my-4 flex w-full flex-col gap-y-1 p-[20px]">
-          <p className="text-lg font-semibold text-blue-600">Edit embedding</p>
-          <p className="text-sm text-slate-800">
-            You can edit your embedding chunk to be more inclusive of a chunk of
-            text if it was split incorrectly or simply just to provide more
-            context.
-          </p>
-        </div>
-        <form
-          onSubmit={handleSubmit}
-          className="flex h-full w-full flex-col gap-y-1"
-        >
-          <div className="flex w-full items-center justify-between px-4">
-            <p className="font-semibold text-red-600">{error || ''}</p>
-            <p
-              className={`text-sm ${
-                error ? 'font-semibold text-red-600' : 'text-slate-600'
-              }`}
-            >
-              {numberWithCommas(tokenLength)}/
-              {numberWithCommas(MAX_TOKENS.cl100k_base)}{' '}
+      <dialog
+        id={`${fragment.id}-edit-embedding`}
+        className="min-w-[200px] max-w-[65%] rounded-xl border-2 border-white/20 bg-main shadow"
+      >
+        <div className="w-full overflow-y-scroll rounded-sm p-[20px]">
+          <div className="px-6.5 py-4">
+            <p className="text-lg font-medium text-white">Edit embedding</p>
+            <p className="text-sm text-white/60">
+              You can edit your embedding chunk to be more inclusive of a chunk
+              of text if it was split incorrectly or simply just to provide more
+              context.
             </p>
           </div>
-          <div className="flex max-h-[700px] w-full flex-col overflow-y-scroll px-4">
-            <textarea
-              ref={inputEl}
-              onChange={debouncedTokenLengthCheck}
-              name="embeddingText"
-              defaultValue={data.metadata.text}
-              spellCheck="true"
-              className="font-mono h-fit w-full overflow-y-scroll rounded-lg bg-slate-100 p-2"
-            />
-            <div className="mt-4 flex flex-col gap-y-2">
-              <button
-                type="submit"
-                disabled={loading || !!error}
-                className="flex w-full justify-center rounded bg-transparent p-3 font-medium text-blue-500 hover:bg-blue-200 disabled:cursor-not-allowed disabled:bg-slate-200"
-              >
-                {loading ? (
-                  <Loader className="h-6 w-6 animate-spin" />
-                ) : !!error ? (
-                  error
-                ) : (
-                  'Update embedding'
-                )}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  document
-                    .getElementById(`${fragment.id}-edit-embedding`)
-                    ?.close();
-                }}
-                className="flex w-full justify-center rounded bg-transparent p-3 font-medium text-slate-500 hover:bg-slate-200"
-              >
-                Nevermind
-              </button>
+          <form onSubmit={handleSubmit} className="px-6.5">
+            <div className="mb-4.5">
+              <textarea
+                ref={inputEl}
+                onChange={debouncedTokenLengthCheck}
+                name="embeddingText"
+                defaultValue={data.metadata.text}
+                spellCheck="true"
+                className="w-full rounded-lg border border-white/10 bg-main-2 px-2.5 py-2 text-sm text-white"
+              />
             </div>
-          </div>
-        </form>
+            {loading ? (
+              <div className="flex w-full justify-center">
+                <Loader className="h-6 w-6 animate-spin" />
+              </div>
+            ) : (
+              <div className="flex flex-col gap-y-2">
+                <button
+                  type="submit"
+                  disabled={!!error}
+                  className="w-full rounded-lg bg-white p-2 font-medium text-main shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
+                >
+                  Update embedding
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    document
+                      .getElementById(`${fragment.id}-edit-embedding`)
+                      ?.close();
+                  }}
+                  className="w-full rounded-lg bg-transparent p-2 font-medium text-white transition-all duration-300 hover:bg-red-500/80 hover:bg-opacity-90 hover:text-white"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
+          </form>
+        </div>
       </dialog>
     );
   }

@@ -2,23 +2,27 @@ import { useState } from 'react';
 import { Info } from 'react-feather';
 import { APP_NAME } from '../../../utils/constants';
 import paths from '../../../utils/paths';
+import { CaretDown } from '@phosphor-icons/react';
 
 export default function ToolsList({ organization }: { organization: any }) {
   return (
-    <div className="col-span-12 flex-1 rounded-sm bg-white pb-6 xl:col-span-4">
-      <div className="flex items-start justify-between">
-        <div className="mb-6 px-6">
-          <h4 className="text-3xl font-semibold text-black dark:text-white">
-            Advanced management tools
-          </h4>
-          <p className="text-gray-600">
-            below are a list of advanced {APP_NAME} only tools and services that
-            you can use to manage your connected vector database.
-          </p>
-        </div>
+    <div className="col-span-12 h-screen flex-1 rounded-sm bg-main pb-6 xl:col-span-4">
+      <div className="-mt-10 flex items-center gap-x-4">
+        <button
+          onClick={() => window.history.back()}
+          className="flex h-[34px] w-[34px] rotate-90 items-center justify-center rounded-full border border-transparent  bg-zinc-900 text-white transition-all duration-300 hover:border-white/20 hover:bg-opacity-5 hover:text-white"
+        >
+          <CaretDown weight="bold" size={18} />
+        </button>
+        <div className="text-lg font-medium text-white">Organization Tools</div>
       </div>
 
-      <div className="px-6">
+      <div className="ml-13 pr-6">
+        <div className="mt-1 w-125 text-sm text-white text-opacity-60">
+          Below are a list of advanced {APP_NAME} only tools and services that
+          you can use to manage your connected vector database.
+        </div>
+
         <ToolItem
           title="Automatic context drift detection"
           description={`Catch "context drift" by detecting changes in your vector databases similarity searches before they cause problems.`}
@@ -64,25 +68,25 @@ const ToolItem = ({
 }) => {
   const [show, setShow] = useState(false);
   return (
-    <div className="flex w-full items-center justify-between border-b border-gray-200 py-5 text-left text-gray-500 dark:border-gray-700 dark:text-gray-400">
+    <div className="flex w-full items-center justify-between border-b border-white/20 py-5 text-left ">
       <div className="flex w-full items-center justify-between pr-4">
         <div className="flex items-center gap-x-8">
           <div className="flex flex-col gap-y-2">
-            <span className="text-xl font-bold text-gray-800">{title}</span>
-            <span className="font-regular rounded-full py-1 text-sm text-gray-500">
+            <span className="text-sm font-medium text-white ">{title}</span>
+            <span className="rounded-full text-sm text-white/60">
               {description}
             </span>
           </div>
         </div>
         {!available ? (
-          <div className="flex items-center gap-x-1 rounded-md bg-gray-100 px-4 py-1.5 text-slate-600 ">
+          <div className="flex items-center gap-x-1 rounded-md px-4 py-1.5 text-white/60 ">
             <Info size={14} />
-            <p className="text-sm font-normal">feature under development.</p>
+            <p className="text-sm font-normal">Feature under development.</p>
           </div>
         ) : (
           <a
             href={linkTo}
-            className="flex items-center gap-x-1 rounded-md bg-blue-600 px-4 py-1.5 text-slate-600 text-white hover:bg-blue-700 "
+            className="flex items-center gap-x-1 rounded-md px-2 py-1.5 text-sky-400 hover:bg-white"
           >
             <p className="text-sm font-normal ">Open tool &rarr;</p>
           </a>

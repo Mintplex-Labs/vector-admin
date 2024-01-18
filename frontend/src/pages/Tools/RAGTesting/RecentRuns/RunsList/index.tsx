@@ -1,11 +1,5 @@
-import {
-  AlertTriangle,
-  ChevronDown,
-  ExternalLink,
-  Loader,
-  RefreshCw,
-} from 'react-feather';
-import Tools, { IRagTest } from '../../../../../models/tools';
+import { AlertTriangle, ChevronDown } from 'react-feather';
+import { IRagTest } from '../../../../../models/tools';
 import moment from 'moment';
 import paths from '../../../../../utils/paths';
 import showToast from '../../../../../utils/toast';
@@ -25,20 +19,19 @@ export default function RunsList({
       <TestDetails test={test} />
       <div className="w-full">
         <div className="mt-4 flex flex-col">
-          <div className="border-b border-stroke px-4 pb-5 md:px-6 xl:px-7.5">
-            <div className="flex items-center gap-3">
-              <div className="w-2/12 ">
-                <span className="font-medium">Run at</span>
-              </div>
-              <div className="w-2/12">
-                <span className="font-medium">Run result</span>
-              </div>
-              <div className="w-4/12 text-center">
-                <span className="font-medium">Issues</span>
-              </div>
-              <div className="w-4/12 text-center">
-                <span className="font-medium"></span>
-              </div>
+          <div className="grid grid-cols-12 gap-3 border-b border-white/20 px-4 pb-5 text-white md:px-6 xl:px-7.5">
+            <div className="col-span-2">
+              <span className="font-medium">Run at</span>
+            </div>
+            <div className="col-span-2">
+              <span className="font-medium">Run result</span>
+            </div>
+            <div className="col-span-6 text-center">
+              <span className="font-medium">Issues</span>
+            </div>
+            <div className="col-span-2 text-center">
+              <span className="font-medium"></span>{' '}
+              {/* This is intentionally blank */}
             </div>
           </div>
           {runs.map((run, i) => (
@@ -57,11 +50,11 @@ export default function RunsList({
 
 function TestDetails({ test }: { test: IRagTest }) {
   return (
-    <details className="my-4 flex flex-col rounded-lg bg-gray-50 p-4 hover:bg-gray-100">
-      <summary className="w-full cursor-pointer text-lg font-semibold text-gray-700">
+    <details className="flex w-fit flex-col rounded-lg border-2 border-white/20 bg-main-2 px-4 py-2">
+      <summary className="text-md w-full cursor-pointer font-semibold text-white">
         Show test parameters
       </summary>
-      <div className="mt-4 overflow-hidden">
+      <div className="mt-4 overflow-hidden text-white">
         <ul className="flex flex-col gap-y-2">
           <li className="flex items-center gap-x-2">
             <b>Run Schedule:</b> {test.frequencyType}
@@ -73,10 +66,9 @@ function TestDetails({ test }: { test: IRagTest }) {
                 test.organization.slug,
                 test.workspace.slug
               )}
-              className="flex items-center gap-x-1 text-blue-600 underline"
+              className="flex items-center gap-x-1 text-sky-400 underline"
             >
               {test.workspace.name}
-              <ExternalLink size={12} />
             </a>
           </li>
           <li className="flex items-center gap-x-2">
@@ -99,7 +91,7 @@ function TestDetails({ test }: { test: IRagTest }) {
                 );
                 showToast('Test prompt vector copied to clipboard!', 'info');
               }}
-              className="text-blue-600 hover:underline"
+              className="text-sm text-sky-400 hover:underline"
             >
               Copy to clipboard
             </button>
@@ -143,36 +135,28 @@ function TestRunItem({
           e.stopPropagation();
           setExpanded(!expanded);
         }}
-        className="flex w-full items-center gap-5 px-7.5 py-3 text-gray-600 hover:bg-gray-3 dark:hover:bg-meta-4"
+        className="grid grid-cols-12 gap-3 px-7.5 py-3 text-white hover:bg-main-2/10"
       >
-        <div className="flex w-full items-center gap-3">
-          <div className="flex w-2/12 ">
-            <div className="flex items-center gap-x-1 overflow-x-hidden">
-              <span className="font-medium xl:block">
-                {moment(run.createdAt).fromNow()}
-              </span>
-            </div>
-          </div>
-          <div className="flex w-2/12">
-            <RunResultBadge run={run} />
-          </div>
-          <div className="flex w-4/12">
-            <RunIssueList run={run} />
-          </div>
-          <div className="flex w-4/12 items-center justify-end">
-            <div>
-              <ChevronDown
-                className={`duration-300ms transition-all ${
-                  expanded ? 'rotate-180' : 'rotate-0'
-                }`}
-                size={20}
-              />
-            </div>
-          </div>
+        <div className="col-span-2">
+          <span>{moment(run.createdAt).fromNow()}</span>
+        </div>
+        <div className="col-span-2">
+          <RunResultBadge run={run} />
+        </div>
+        <div className="col-span-6">
+          <RunIssueList run={run} />
+        </div>
+        <div className="col-span-2 flex justify-end">
+          <ChevronDown
+            className={`duration-300ms transition-all ${
+              expanded ? 'rotate-180' : 'rotate-0'
+            }`}
+            size={20}
+          />
         </div>
       </button>
       <div hidden={!expanded}>
-        <div className="my-2 flex w-full flex-col gap-y-4 rounded-lg border border-gray-100 bg-gray-50 p-4">
+        <div className="my-2 flex w-full flex-col gap-y-4 rounded-lg border-2 border-white/20 bg-main-2 p-4">
           <ChangeLog run={run} />
           <ScoreComp run={run} />
           <TextComp run={run} comparisons={test.comparisons} />
@@ -187,7 +171,7 @@ function TestRunItem({
 function RunIssueList({ run }: { run: IRagTestRun }) {
   if (run.status !== 'deviation_alert') {
     return (
-      <span className="inline-block rounded bg-gray-500 bg-opacity-25 px-2.5 py-0.5 text-sm font-medium text-gray-500">
+      <span className="inline-block rounded-full bg-gray-500/20 px-2 py-0.5 text-sm font-medium text-gray-500 shadow-sm">
         None found
       </span>
     );
@@ -218,19 +202,19 @@ function RunResultBadge({ run }: { run: IRagTestRun }) {
   switch (run.status) {
     case 'running':
       return (
-        <span className="inline-block rounded bg-blue-500 bg-opacity-25 px-2.5 py-0.5 text-sm font-medium text-blue-500">
+        <span className="inline-block rounded-full bg-sky-600/20 px-2 py-0.5 text-sm font-medium text-sky-400 shadow-sm">
           Running
         </span>
       );
     case 'failed':
       return (
-        <span className="inline-block rounded bg-red-500 bg-opacity-25 px-2.5 py-0.5 text-sm font-medium text-red-500">
+        <span className="inline-block rounded-full bg-red-500/25 px-2 py-0.5 text-sm font-medium text-red-500 shadow-sm">
           Exited
         </span>
       );
     case 'complete':
       return (
-        <span className="inline-block rounded bg-green-500 bg-opacity-25 px-2.5 py-0.5 text-sm font-medium text-green-500">
+        <span className="inline-block rounded-full bg-green-600/20 px-2 py-0.5 text-sm font-medium text-green-500 shadow-sm">
           Passing
         </span>
       );
@@ -255,22 +239,19 @@ function ChangeLog({ run }: { run: IRagTestRun }) {
 
   return (
     <div className="flex w-full flex-col gap-y-2">
-      <p className="text-lg font-semibold text-gray-700">Reported errors:</p>
+      <p className="text-lg font-semibold text-white">Reported errors:</p>
       {errorLog.length > 0 ? (
         <ul className="ml-4 list-disc">
           {errorLog.map((error, i) => {
             return (
-              <li
-                key={`${run.id}_error_${i}`}
-                className="text-sm text-gray-600"
-              >
+              <li key={`${run.id}_error_${i}`} className="text-sm text-white">
                 {error.message}
               </li>
             );
           })}
         </ul>
       ) : (
-        <p className="text-sm text-gray-600">no reported errors on this run.</p>
+        <p className="text-sm text-white">no reported errors on this run.</p>
       )}
     </div>
   );
@@ -281,7 +262,7 @@ function ScoreComp({ run }: { run: IRagTestRun }) {
 
   return (
     <div className="flex w-full flex-col gap-y-2">
-      <p className="text-lg font-semibold text-gray-700">Relevancy Scores:</p>
+      <p className="text-lg font-semibold text-white">Relevancy Scores:</p>
       {Object.keys(vectorMap).length > 0 ? (
         <ul className="ml-4 list-disc">
           {Object.entries(vectorMap).map(([key, values], i) => {
@@ -293,13 +274,13 @@ function ScoreComp({ run }: { run: IRagTestRun }) {
             return (
               <li
                 key={`${run.id}_score_${i}`}
-                className="flex items-center gap-x-1 text-sm"
+                className="flex items-center gap-x-1 pb-1 text-sm"
               >
-                <p className="text-gray-600 ">
+                <p className="text-white ">
                   <b>{key}</b>: {(newScore * 100).toFixed(2)}%
                 </p>
                 <p
-                  className={`w-fit rounded-full px-2 py-1 text-xs font-semibold text-${color}-800 bg-${color}-100`}
+                  className={`w-fit rounded-full px-2 py-1 text-xs font-semibold text-${color}-500 bg-${color}-500 bg-opacity-20`}
                 >
                   {(deltaScore * 100).toFixed(2)}% from baseline
                 </p>
@@ -336,7 +317,7 @@ function TextComp({
 
   return (
     <div className="flex w-full flex-col gap-y-2">
-      <p className="text-lg font-semibold text-gray-700">Text chunk diffs</p>
+      <p className="text-lg font-semibold text-white">Text chunk diffs</p>
       {hasDiffs ? (
         <ul className="ml-4 list-disc">
           {Object.entries(vectorMap).map(([key, values], i) => {
@@ -358,7 +339,7 @@ function TextComp({
                 className="flex items-center gap-x-1 text-sm"
               >
                 <details className="flex flex-col">
-                  <summary className="w-full cursor-pointer text-sm text-gray-700">
+                  <summary className="w-full cursor-pointer text-sm text-white">
                     Text chunk diff for <b>{key}</b>
                   </summary>
                   <div className="mt-2 rounded-lg border border-gray-500 bg-gray-100 p-2">
@@ -398,7 +379,7 @@ function TextComp({
           })}
         </ul>
       ) : (
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-white">
           no reported text chunk diffs on this run.
         </p>
       )}
@@ -411,7 +392,7 @@ function NewVectorsFound({ run }: { run: IRagTestRun }) {
 
   return (
     <div className="flex w-full flex-col gap-y-2">
-      <p className="text-lg font-semibold text-gray-700">
+      <p className="text-lg font-semibold text-white">
         Newly Referenced vectors:
       </p>
       {newVectorIds.length > 0 ? (
@@ -420,7 +401,7 @@ function NewVectorsFound({ run }: { run: IRagTestRun }) {
             return (
               <li
                 key={`${run.id}_new_vector_${i}`}
-                className="text-sm text-gray-600"
+                className="text-sm text-white"
               >
                 {vectorId}
               </li>
@@ -428,7 +409,7 @@ function NewVectorsFound({ run }: { run: IRagTestRun }) {
           })}
         </ul>
       ) : (
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-white">
           no new vectors were referenced in this run.
         </p>
       )}
@@ -441,14 +422,14 @@ function MissingVector({ run }: { run: IRagTestRun }) {
 
   return (
     <div className="flex w-full flex-col gap-y-2">
-      <p className="text-lg font-semibold text-gray-700">Missing vectors:</p>
+      <p className="text-lg font-semibold text-white">Missing vectors:</p>
       {missingVectorIds.length > 0 ? (
         <ul className="ml-4 list-disc">
           {missingVectorIds.map((vectorId, i) => {
             return (
               <li
                 key={`${run.id}_missing_vector_${i}`}
-                className="text-sm text-gray-600"
+                className="text-sm text-white"
               >
                 {vectorId}
               </li>
@@ -456,7 +437,7 @@ function MissingVector({ run }: { run: IRagTestRun }) {
           })}
         </ul>
       ) : (
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-white">
           no expected vectors were missing in this run.
         </p>
       )}

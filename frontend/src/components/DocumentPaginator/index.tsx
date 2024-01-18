@@ -1,3 +1,4 @@
+import { CaretDown } from '@phosphor-icons/react';
 import { numberWithCommas } from '../../utils/numbers';
 
 function generatePageItems(total: number, current: number) {
@@ -30,17 +31,39 @@ export default function DocumentListPagination({
   gotoPage,
 }: IPaginationProps) {
   const pageItems = generatePageItems(pageCount, currentPage);
+
+  const hasPrevious = currentPage > 1;
+  const hasNext = currentPage < pageCount;
+
+  const goToPrevious = () => {
+    if (currentPage > 1) gotoPage(currentPage - 1);
+  };
+
+  const goToNext = () => {
+    if (currentPage < pageCount) gotoPage(currentPage + 1);
+  };
+
+  if (pageCount < 2) return <div className="mb-18"></div>;
+
   return (
-    <div className="my-4 flex justify-center">
+    <div className="my-4 -mt-8 mb-8 flex justify-center">
+      {hasPrevious && (
+        <button
+          onClick={goToPrevious}
+          className="rotate-90 px-2 text-white/20 transition-all duration-300 hover:text-sky-400"
+        >
+          <CaretDown size={20} weight="bold" />
+        </button>
+      )}
       <ul className="pagination pagination-sm">
         {pageItems.map((item, i) =>
           typeof item === 'number' ? (
             <button
               key={item}
-              className={`border px-3 py-2 text-sm ${
+              className={`border px-3 py-2 text-sm transition-all duration-300 hover:border-sky-400 hover:bg-sky-400/20 ${
                 currentPage === item
-                  ? 'border-blue-500 text-blue-500'
-                  : 'border-gray-300 text-gray-500'
+                  ? 'border-sky-400 bg-sky-400 bg-opacity-20 text-white'
+                  : 'border-white border-opacity-20 text-white text-opacity-60'
               } ${i === 0 ? 'rounded-l-lg' : ''} ${
                 i === pageItems.length - 1 ? 'rounded-r-lg' : ''
               }`}
@@ -51,13 +74,21 @@ export default function DocumentListPagination({
           ) : (
             <button
               key={item}
-              className={`border border-gray-300 px-3 py-2 text-sm text-gray-500`}
+              className={`border border-white border-opacity-20 px-3 py-2 text-sm text-gray-500`}
             >
               ...
             </button>
           )
         )}
       </ul>
+      {hasNext && (
+        <button
+          onClick={goToNext}
+          className="-rotate-90 px-2 text-white/20 transition-all duration-300 hover:text-sky-400"
+        >
+          <CaretDown size={20} weight="bold" />
+        </button>
+      )}
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import { ReactNode, useState } from 'react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
+import Notifications from '../components/Notifications';
+import UserMenu from '../components/UserMenu';
 
 interface DefaultLayoutProps {
   headerEntity: any;
@@ -13,6 +15,7 @@ interface DefaultLayoutProps {
   children: ReactNode;
   hasMoreWorkspaces?: boolean;
   loadMoreWorkspaces?: VoidFunction;
+  hasQuickActions?: boolean;
 }
 
 const AppLayout = ({
@@ -26,11 +29,12 @@ const AppLayout = ({
   children,
   hasMoreWorkspaces,
   loadMoreWorkspaces,
+  hasQuickActions = false,
 }: DefaultLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="dark:bg-boxdark-2 dark:text-bodydark">
+    <div className="bg-main-bg px-4 pt-4">
       <div className="flex h-screen overflow-hidden">
         <Sidebar
           workspaces={workspaces}
@@ -42,7 +46,7 @@ const AppLayout = ({
           loadMoreWorkspaces={loadMoreWorkspaces}
         />
 
-        <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+        <div className="no-scrollbar w-full overflow-x-hidden">
           {!!headerEntity && (
             <div className="flex w-full items-center">
               <Header
@@ -52,11 +56,17 @@ const AppLayout = ({
                 sidebarOpen={sidebarOpen}
                 setSidebarOpen={setSidebarOpen}
                 extendedItems={headerExtendedItems}
+                quickActions={hasQuickActions}
               />
             </div>
           )}
+
+          <div className="absolute right-0 top-0 mr-9 mt-7 flex items-center gap-x-2">
+            <Notifications />
+            <UserMenu />
+          </div>
           <main>
-            <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+            <div className="mx-auto overflow-y-auto rounded-tr-xl bg-main pr-6 pt-6">
               {children}
             </div>
           </main>

@@ -61,71 +61,63 @@ const MetadataEditor = memo(
       <>
         <dialog
           id={`${fragment.id}-metadata-editor`}
-          className="w-1/2 rounded-lg"
+          className="max-w-180 rounded-xl border-2 border-white/20 bg-main shadow"
         >
-          <div className="my-4 flex w-full flex-col gap-y-1 px-[20px]">
-            <p className="text-lg font-semibold text-blue-600">
-              Edit metadata for embedding
-            </p>
-            <p className="text-sm text-slate-800">
-              Listed below is all of the current metadata keys and values. You
-              can delete or create new key-value pairs. Metadata is useful if
-              your application of vector data requires filtering based on
-              non-embedded information.
-            </p>
-
-            {connector?.type === 'weaviate' && (
-              <div className="flex w-full items-center justify-center gap-x-2 rounded-lg border border-orange-600 bg-orange-50 px-4 py-2 text-lg text-orange-800">
-                <AlertTriangle size={18} />
-                <p>
-                  Deletion of metadata keys is disabled for Weaviate databases.
-                </p>
-              </div>
-            )}
-          </div>
-
-          <div className="flex w-full flex-col overflow-y-scroll px-[20px] py-0">
-            {!!error && (
-              <p className="mb-4 w-full rounded-lg bg-red-200 px-4 py-2 text-lg text-red-600">
-                {error}
+          <div className="rounded-sm p-[20px]">
+            <div className="px-6.5 py-4">
+              <p className="text-lg font-medium text-white">
+                Edit metadata for embedding
               </p>
-            )}
-            <JSONFormBuilder
-              fragment={fragment}
-              onSubmit={handleSubmit}
-              onChange={setHasChanges}
-              metadata={editableMetadata}
-              canEdit={canEdit}
-              canDelete={connector?.type !== 'weaviate'}
-            />
-            <NewEntry addKeyPair={addNewKeyValue} />
+              <p className="text-sm text-white/60">
+                Delete or create new key-value pairs. Metadata is useful if your
+                application of vector data requires filtering based on
+                non-embedded information.
+              </p>
+            </div>
 
-            <div className="mt-4 flex flex-col gap-y-2">
-              <div hidden={!hasChanges || !canEdit}>
+            <div className="flex w-full flex-col overflow-y-scroll px-[20px] py-0">
+              {!!error && (
+                <p className="mb-4 w-full rounded-lg bg-red-600/10 px-4 py-2 text-lg text-red-600">
+                  {error}
+                </p>
+              )}
+              <JSONFormBuilder
+                fragment={fragment}
+                onSubmit={handleSubmit}
+                onChange={setHasChanges}
+                metadata={editableMetadata}
+                canEdit={canEdit}
+                canDelete={connector?.type !== 'weaviate'}
+              />
+              <NewEntry addKeyPair={addNewKeyValue} />
+
+              <div className="mt-4 flex flex-col gap-y-2">
+                <div hidden={!hasChanges || !canEdit}>
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={() =>
+                      document
+                        .getElementById(`${fragment.id}-submit-metadata`)
+                        ?.click()
+                    }
+                    className="flex w-full justify-center rounded-lg bg-white p-2 font-medium text-main shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
+                  >
+                    {saving ? 'Saving changes...' : 'Save changes'}
+                  </button>
+                </div>
                 <button
                   type="button"
-                  disabled={saving}
-                  onClick={() =>
+                  onClick={() => {
                     document
-                      .getElementById(`${fragment.id}-submit-metadata`)
-                      ?.click()
-                  }
-                  className="flex w-full justify-center rounded border border-blue-100 bg-blue-50 bg-transparent p-3 font-medium text-blue-500 hover:bg-blue-600 hover:text-white"
+                      .getElementById(`${fragment.id}-metadata-editor`)
+                      ?.close();
+                  }}
+                  className="flex w-full justify-center rounded-lg bg-transparent p-2 font-medium text-white transition-all duration-300 hover:bg-red-500/80 hover:bg-opacity-90 hover:text-white"
                 >
-                  {saving ? 'Saving changes...' : 'Save changes'}
+                  Close
                 </button>
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  document
-                    .getElementById(`${fragment.id}-metadata-editor`)
-                    ?.close();
-                }}
-                className="flex w-full justify-center rounded bg-transparent p-3 font-medium text-slate-500 hover:bg-slate-200"
-              >
-                Close
-              </button>
             </div>
           </div>
         </dialog>
@@ -167,16 +159,16 @@ function JSONFormBuilder({
 
     return (
       <div key={key} id={containerId} className="mb-4">
-        <label className="mb-2 flex items-center gap-x-1 text-sm text-gray-700">
+        <label className="mb-2 flex items-center gap-x-1 text-sm text-white">
           <p className="font-bold">{key}</p>
-          <i className="font-regular text-xs text-gray-600">
+          <i className="font-regular text-xs text-white/60">
             ({value === null ? 'string' : typeof value})
           </i>
         </label>
         <div className="flex w-full items-center gap-x-2">
           <input
             disabled={!canEdit}
-            className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
+            className="focus:shadow-outline w-full appearance-none rounded border border-white/20 bg-main-2 px-3 py-2 leading-tight text-white placeholder-white/60 shadow focus:outline-none"
             name={name ? `${name}.${key}` : key}
             type={typeof value === 'number' ? 'number' : 'text'}
             data-output-type={value === null ? 'string' : typeof value}
@@ -204,7 +196,10 @@ function JSONFormBuilder({
   const renderObject = (obj = {}, parentKey = '', name = '') => {
     if (!obj) return null;
     return (
-      <fieldset key={parentKey} className="mb-4 rounded border p-4">
+      <fieldset
+        key={parentKey}
+        className="mb-4 rounded-lg border border-white/20 bg-main-2 p-4"
+      >
         <legend className="mb-2 text-sm font-bold text-gray-800">
           {parentKey}
         </legend>
@@ -263,10 +258,14 @@ const NewEntry = ({
         <button
           type="button"
           onClick={() => setShowing(true)}
-          className="flex w-full items-center  justify-center gap-x-2 rounded bg-transparent p-3 font-medium text-blue-500 hover:bg-blue-600 hover:text-white"
+          className="mb-4 mt-4 h-10 w-full items-center rounded-lg p-2 text-center text-sm font-bold text-white  hover:bg-white hover:text-black"
         >
-          <PlusCircle size={18} />
-          Add new metadata item
+          <div className="flex items-center justify-center gap-x-2">
+            <p className="inline">
+              <PlusCircle size={18} />
+            </p>
+            <p className="inline text-xs font-medium">Add new metadata item</p>
+          </div>
         </button>
       </div>
 
@@ -274,43 +273,43 @@ const NewEntry = ({
         <form
           onSubmit={handleSubmit}
           id="newMetadata"
-          className="flex w-full flex-col gap-y-2 rounded-lg border border-gray-200 px-6 py-4"
+          className="flex w-full flex-col gap-y-2 rounded-xl border-2 border-white/20 bg-main p-[20px] shadow"
         >
           <div className="flex w-full items-center justify-between">
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-white/60">
               Enter the information below to add a new metadata item to this
               embedding.
             </p>
             <button
               onClick={() => setShowing(false)}
               type="button"
-              className="rounded-lg p-2 text-gray-700 hover:bg-gray-100 hover:text-red-500"
+              className="rounded-lg bg-transparent p-2 font-medium text-white transition-all duration-300 hover:bg-red-500/80 hover:bg-opacity-90 hover:text-white"
             >
               <X size={18} />
             </button>
           </div>
           <div className="flex items-center gap-x-2">
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+              <label className="mb-2 block text-sm font-medium text-white">
                 Metadata key
               </label>
               <input
                 pattern="[a-zA-Z0-9]*"
                 type="text"
                 name="metadata_key"
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                className="block w-full rounded-lg border border-white/10 bg-main-2 px-2.5 py-2 text-sm text-white placeholder:text-white/60"
                 placeholder="MyKey"
                 required
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+              <label className="mb-2 block text-sm font-medium text-white">
                 Value data type
               </label>
               <select
                 name="metadata_value_type"
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                className="block w-full rounded-lg border border-white/10 bg-main-2 px-2.5 py-2 text-white placeholder:text-white/60"
               >
                 <option value="string">String</option>
                 <option value="number">Number</option>
@@ -319,13 +318,13 @@ const NewEntry = ({
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+              <label className="mb-2 block text-sm font-medium text-white">
                 Value
               </label>
               <input
                 type="text"
                 name="metadata_value"
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                className="block w-full rounded-lg border border-white/10 bg-main-2 px-2.5 py-2 text-sm text-white placeholder:text-white/60"
                 placeholder="My Special Value"
                 required
               />
@@ -335,7 +334,7 @@ const NewEntry = ({
               <button
                 type="submit"
                 form="newMetadata"
-                className="flex w-fit items-center justify-center gap-x-2 rounded-lg bg-blue-50 px-4 py-2 text-blue-700 hover:bg-blue-600 hover:text-white"
+                className="flex w-fit items-center justify-center gap-x-2 rounded-lg bg-white p-2 font-medium text-main shadow-lg transition-all duration-300 hover:scale-105 hover:bg-opacity-90"
               >
                 <PlusCircle size={18} />
                 <p>Add</p>

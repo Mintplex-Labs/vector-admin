@@ -15,23 +15,23 @@ export default function RecentTestRuns({
 }) {
   return (
     <>
-      <div className="w-full">
+      <div className="mt-4 w-full">
         <div className="flex items-center gap-x-2">
-          <p className="text-xl font-semibold text-gray-800">
+          <p className="text-xl font-semibold text-white">
             Recently Run Context Drift tests
           </p>
           <button
             onClick={() => {
               document.getElementById('new-rag-test-modal')?.showModal();
             }}
-            className="rounded-lg px-2 py-1 text-blue-400 transition-all duration-300 hover:bg-blue-50 hover:text-blue-600"
+            className="rounded-lg px-2 py-1 text-sky-400 transition-all duration-300 hover:bg-blue-50 hover:text-sky-600"
           >
             + New test
           </button>
         </div>
 
         <div className="mt-4 flex flex-col">
-          <div className="border-b border-stroke px-4 pb-5 dark:border-strokedark md:px-6 xl:px-7.5">
+          <div className="border-b border-white/20 px-4 pb-5 text-white md:px-6 xl:px-7.5">
             <div className="flex items-center gap-3">
               <div className="w-3/12 ">
                 <span className="font-medium">Target workspace</span>
@@ -91,7 +91,7 @@ const TestItem = memo(
         <div
           id={`test-${test.id}`}
           key={test.id}
-          className="flex w-full items-center gap-5 px-7.5 py-3 text-gray-600 hover:bg-gray-3 dark:hover:bg-meta-4"
+          className="flex w-full items-center gap-5 px-7.5 py-3 text-white dark:hover:bg-meta-4"
         >
           <div className="flex w-full items-center gap-3">
             <div className="flex w-3/12 ">
@@ -124,7 +124,7 @@ const TestItem = memo(
                     .getElementById(`test-${test.id}-details-modal`)
                     ?.showModal();
                 }}
-                className="rounded-lg px-2 py-1 text-blue-400 transition-all duration-300 hover:bg-blue-50 hover:text-blue-600"
+                className="rounded-lg px-2 py-1 text-sky-400 transition-all duration-300 hover:bg-sky-50 hover:text-sky-600"
               >
                 Details
               </button>
@@ -211,14 +211,14 @@ export function RunNowButton({ test }: { test: IRagTest }) {
     const { job, error } = await Tools.runRagTest(test);
     if (job) {
       showToast(
-        `Context Drift text is now running in background jobs`,
+        `Context Drift test is now running in background jobs`,
         'success'
       );
       setLoading(false);
       return;
     }
 
-    showToast(error || 'Context Drift text could not be run.', 'error');
+    showToast(error || 'Context Drift test could not be run.', 'error');
     setLoading(false);
   };
 
@@ -256,19 +256,19 @@ function TestResultBadge({ test }: { test: IRagTest }) {
   switch (recentRun.status) {
     case 'running':
       return (
-        <span className="inline-block rounded bg-blue-500 bg-opacity-25 px-2.5 py-0.5 text-sm font-medium text-blue-500">
+        <span className="inline-block rounded-full bg-sky-600/20 px-2 py-0.5 text-sm font-medium text-sky-400 shadow-sm">
           Running
         </span>
       );
     case 'failed':
       return (
-        <span className="inline-block rounded bg-red-500 bg-opacity-25 px-2.5 py-0.5 text-sm font-medium text-red-500">
+        <span className="inline-block rounded-full bg-red-500/25 px-2 py-0.5 text-sm font-medium text-red-500 shadow-sm">
           Exited
         </span>
       );
     case 'complete':
       return (
-        <span className="inline-block rounded bg-green-500 bg-opacity-25 px-2.5 py-0.5 text-sm font-medium text-green-500">
+        <span className="inline-block rounded-full bg-green-600/20 px-2 py-0.5 text-sm font-medium text-green-500 shadow-sm">
           Passing
         </span>
       );
