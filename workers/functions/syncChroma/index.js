@@ -13,6 +13,7 @@ const {
 } = require('../../../backend/models/workspaceDocument');
 const { DocumentVectors } = require('../../../backend/models/documentVectors');
 const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
+const { Notification } = require('../../../backend/models/notification');
 
 const syncChromaInstance = InngestClient.createFunction(
   { name: 'Sync Chroma Instance' },
@@ -77,6 +78,13 @@ const syncChromaInstance = InngestClient.createFunction(
         } of ${collections.length - failedToSync.length} collections.`,
         failedToSync,
       };
+
+      await Notification.create(organization.id, {
+        textContent: 'Your Chroma instance has been fully synced.',
+        symbol: Notification.symbols.chroma,
+        link: `/dashboard/${organization.slug}`,
+        target: '_blank',
+      });
       await Queue.updateJob(jobId, Queue.status.complete, result);
       await vectorSpaceMetric();
       return { result };
@@ -87,6 +95,12 @@ const syncChromaInstance = InngestClient.createFunction(
         error: e.message,
         details: e,
       };
+      await Notification.create(organization.id, {
+        textContent: 'Your Chroma instance failed to sync.',
+        symbol: Notification.symbols.error,
+        link: `/dashboard/${organization.slug}/jobs`,
+        target: '_blank',
+      });
       await Queue.updateJob(jobId, Queue.status.failed, result);
     }
   }

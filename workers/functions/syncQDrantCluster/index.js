@@ -13,6 +13,7 @@ const {
   QDrant,
 } = require('../../../backend/utils/vectordatabases/providers/qdrant');
 const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
+const { Notification } = require('../../../backend/models/notification');
 
 const syncQDrantCluster = InngestClient.createFunction(
   { name: 'Sync Qdrant Instance' },
@@ -77,6 +78,13 @@ const syncQDrantCluster = InngestClient.createFunction(
         } of ${collections.length - failedToSync.length} collections.`,
         failedToSync,
       };
+
+      await Notification.create(organization.id, {
+        textContent: 'Your QDrant cluster has been fully synced.',
+        symbol: Notification.symbols.qdrant,
+        link: `/dashboard/${organization.slug}/workspace/${workspace.fname}`,
+        target: '_blank',
+      });
       await Queue.updateJob(jobId, Queue.status.complete, result);
       await vectorSpaceMetric();
       return { result };
@@ -87,6 +95,12 @@ const syncQDrantCluster = InngestClient.createFunction(
         error: e.message,
         details: e,
       };
+      await Notification.create(organization.id, {
+        textContent: 'Your QDrant cluster failed to sync.',
+        symbol: Notification.symbols.qdrant,
+        link: `/dashboard/${organization.slug}/jobs`,
+        target: '_blank',
+      });
       await Queue.updateJob(jobId, Queue.status.failed, result);
     }
   }
