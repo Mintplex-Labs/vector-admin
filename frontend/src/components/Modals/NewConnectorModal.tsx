@@ -1,12 +1,11 @@
 import { useState, memo } from 'react';
-import Organization from '../../models/organization';
-import PreLoader from '../Preloader';
-
-import ChromaLogo from '../../images/vectordbs/chroma.png';
-import PineconeLogoInverted from '../../images/vectordbs/pinecone-inverted.png';
-import qDrantLogo from '../../images/vectordbs/qdrant.png';
-import WeaviateLogo from '../../images/vectordbs/weaviate.png';
-import { APP_NAME } from '../../utils/constants';
+import PreLoader from '@/components/Preloader';
+import ChromaLogo from '@/images/vectordbs/chroma.png';
+import PineconeLogoInverted from '@/images/vectordbs/pinecone-inverted.png';
+import qDrantLogo from '@/images/vectordbs/qdrant.png';
+import WeaviateLogo from '@/images/vectordbs/weaviate.png';
+import { APP_NAME } from '@/utils/constants';
+import Organization from '@/models/organization';
 const NewConnectorModal = memo(
   ({
     organization,

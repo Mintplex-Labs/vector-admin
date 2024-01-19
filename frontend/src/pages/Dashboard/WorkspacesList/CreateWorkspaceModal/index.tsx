@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import Workspace from '../../../../models/workspace';
-import PreLoader from '../../../../components/Preloader';
-import { APP_NAME } from '../../../../utils/constants';
-import Organization from '../../../../models/organization';
+import Workspace from '@/models/workspace';
+import PreLoader from '@/components/Preloader';
+import { APP_NAME } from '@/utils/constants';
+import Organization from '@/models/organization';
 import { debounce } from 'lodash';
 import { AlertCircle } from 'react-feather';
-import paths from '../../../../utils/paths';
+import paths from '@/utils/paths';
 
 export default function CreateWorkspaceModal({
   organization,

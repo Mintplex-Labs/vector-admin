@@ -1,6 +1,6 @@
-import DefaultLayout from '../../layout/DefaultLayout';
-import Onboarding from '../../images/undraws/onboarding.png';
-import PreLoader from '../../components/Preloader';
+import DefaultLayout from '@/layout/DefaultLayout';
+import Onboarding from '@/images/undraws/onboarding.png';
+import PreLoader from '@/components/Preloader';
 import { useState } from 'react';
 
 import CustomLogin from './Steps/CustomLogin';

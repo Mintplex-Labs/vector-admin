@@ -1,6 +1,6 @@
 import { FormEvent } from 'react';
-import Organization from '../../../../models/organization';
-import showToast from '../../../../utils/toast';
+import Organization from '@/models/organization';
+import showToast from '@/utils/toast';
 
 type CreateOrganizationProps = {
   setCurrentStep: (step: string) => void;

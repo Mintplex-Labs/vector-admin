@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { APP_NAME } from '../../../utils/constants';
-import System from '../../../models/system';
-import paths from '../../../utils/paths';
+import { APP_NAME } from '@/utils/constants';
+import System from '@/models/system';
+import paths from '@/utils/paths';
 import {
   CaretDown,
   EyeSlash,
   Eye,
   ArrowSquareOut,
 } from '@phosphor-icons/react';
-import showToast from '../../../utils/toast';
+import showToast from '@/utils/toast';
 
 export default function Settings({ settings }: { settings: any[] }) {
   const [hasChanges, setHasChanges] = useState(false);

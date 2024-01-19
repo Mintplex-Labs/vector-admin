@@ -1,8 +1,8 @@
 import { ReactNode, useState } from 'react';
-import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
-import Notifications from '../components/Notifications';
-import UserMenu from '../components/UserMenu';
+import Header from '@/components/Header';
+import Sidebar from '@/components/Sidebar';
+import Notifications from '@/components/Notifications';
+import UserMenu from '@/components/UserMenu';
 
 interface DefaultLayoutProps {
   headerEntity: any;

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import Tools from '../../../../models/tools';
+import Tools from '@/models/tools';
 import { debounce } from 'lodash';
 import WorkspaceSearch from './WorkspaceSearch';
 import PromptInputAndSearchSubmission from './PromptInputAndSearchSubmission';
-import { IOrganization } from '../../../../models/organization';
+import { IOrganization } from '@/models/organization';
 import { Loader } from 'react-feather';
 
 export default function NewTestForm({

@@ -1,5 +1,5 @@
 import { useState, createContext } from 'react';
-import { STORE_TOKEN, STORE_USER } from './utils/constants';
+import { STORE_TOKEN, STORE_USER } from '@/utils/constants';
 
 export const AuthContext = createContext(null);
 export function ContextWrapper(props: any) {

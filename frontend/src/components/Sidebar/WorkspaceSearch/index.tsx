@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
-import paths from '../../../utils/paths';
-import Organization from '../../../models/organization';
+import paths from '@/utils/paths';
+import Organization from '@/models/organization';
 import { debounce } from 'lodash';
 import truncate from 'truncate';
 

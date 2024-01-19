@@ -1,12 +1,12 @@
-import { FullScreenLoader } from '../../components/Preloader';
-import useUser from '../../hooks/useUser';
+import { FullScreenLoader } from '@/components/Preloader';
+import useUser from '@/hooks/useUser';
 import { useState, useEffect } from 'react';
-import DefaultLayout from '../../layout/DefaultLayout';
-import User from '../../models/user';
-import AppLayout from '../../layout/AppLayout';
+import DefaultLayout from '@/layout/DefaultLayout';
+import User from '@/models/user';
+import AppLayout from '@/layout/AppLayout';
 import UserList from './UserList';
-import Organization from '../../models/organization';
-import NewUserModal from './NewUser';
+import Organization from '@/models/organization';
+import NewUserModal from '@/pages/UsersView/NewUser';
 
 export default function UserManagementView() {
   const { user } = useUser();

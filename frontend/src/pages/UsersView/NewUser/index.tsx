@@ -1,7 +1,7 @@
 import { memo, useState } from 'react';
-import { APP_NAME } from '../../../utils/constants';
+import { APP_NAME } from '@/utils/constants';
 import { Key, Mail } from 'react-feather';
-import User from '../../../models/user';
+import User from '@/models/user';
 
 const NewUserModal = memo(() => {
   const [loading, setLoading] = useState(false);

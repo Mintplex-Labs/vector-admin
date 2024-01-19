@@ -1,11 +1,11 @@
 import { FormEvent, useState } from 'react';
-import VectorDBOption from '../../../../components/VectorDBOption';
-import ChromaLogo from '../../../../images/vectordbs/chroma.png';
-import PineconeLogo from '../../../../images/vectordbs/pinecone.png';
-import QDrantLogo from '../../../../images/vectordbs/qdrant.png';
-import WeaviateLogo from '../../../../images/vectordbs/weaviate.png';
-import Organization from '../../../../models/organization';
-import showToast from '../../../../utils/toast';
+import VectorDBOption from '@/components/VectorDBOption';
+import ChromaLogo from '@/images/vectordbs/chroma.png';
+import PineconeLogo from '@/images/vectordbs/pinecone.png';
+import QDrantLogo from '@/images/vectordbs/qdrant.png';
+import WeaviateLogo from '@/images/vectordbs/weaviate.png';
+import Organization from '@/models/organization';
+import showToast from '@/utils/toast';
 
 type ConnectVectorDBProps = {
   setCurrentStep: (step: string) => void;

@@ -1,9 +1,9 @@
 import { FormEvent, useEffect, useState } from 'react';
-import { SUPPORTED_VECTOR_DBS } from '../../../../utils/constants';
-import Organization from '../../../../models/organization';
-import { nFormatter } from '../../../../utils/numbers';
-import paths from '../../../../utils/paths';
-import showToast from '../../../../utils/toast';
+import { SUPPORTED_VECTOR_DBS } from '@/utils/constants';
+import Organization from '@/models/organization';
+import { nFormatter } from '@/utils/numbers';
+import paths from '@/utils/paths';
+import showToast from '@/utils/toast';
 
 type SyncVectorDBProps = {
   connector: any;

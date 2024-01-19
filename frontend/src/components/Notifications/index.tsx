@@ -1,11 +1,11 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Organization from '../../models/organization';
-import { databaseTimestampFromNow } from '../../utils/data';
-import ChromaLogo from '../../images/vectordbs/chroma.png';
-import PineconeLogo from '../../images/vectordbs/pinecone-inverted.png';
-import qDrantLogo from '../../images/vectordbs/qdrant.png';
-import WeaviateLogo from '../../images/vectordbs/weaviate.png';
+import Organization from '@/models/organization';
+import { databaseTimestampFromNow } from '@/utils/data';
+import ChromaLogo from '@/images/vectordbs/chroma.png';
+import PineconeLogo from '@/images/vectordbs/pinecone-inverted.png';
+import qDrantLogo from '@/images/vectordbs/qdrant.png';
+import WeaviateLogo from '@/images/vectordbs/weaviate.png';
 import { Bell, Info, Warning, WarningOctagon } from '@phosphor-icons/react';
 
 const POLLING_INTERVAL = 30_000;

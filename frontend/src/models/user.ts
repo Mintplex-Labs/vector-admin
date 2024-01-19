@@ -1,5 +1,5 @@
-import { API_BASE, COMPLETE_ONBOARDING } from '../utils/constants';
-import { baseHeaders } from '../utils/request';
+import { API_BASE, COMPLETE_ONBOARDING } from '@/utils/constants';
+import { baseHeaders } from '@/utils/request';
 
 const User = {
   autoOnboard: async (): Promise<{

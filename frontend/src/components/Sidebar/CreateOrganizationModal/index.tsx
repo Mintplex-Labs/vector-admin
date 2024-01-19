@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import paths from '../../../utils/paths';
-import Organization from '../../../models/organization';
-import PreLoader from '../../Preloader';
+import paths from '@/utils/paths';
+import Organization from '@/models/organization';
+import PreLoader from '@/components/Preloader';
 
 export default function CreateOrganizationModal() {
   const [loading, setLoading] = useState(false);

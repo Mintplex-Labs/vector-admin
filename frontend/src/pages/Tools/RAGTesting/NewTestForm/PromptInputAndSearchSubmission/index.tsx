@@ -1,8 +1,8 @@
 import { useState, useEffect, Fragment } from 'react';
-import paths from '../../../../../utils/paths';
-import Tools from '../../../../../models/tools';
+import paths from '@/utils/paths';
+import Tools from '@/models/tools';
 import { debounce } from 'lodash';
-import { IOrganization } from '../../../../../models/organization';
+import { IOrganization } from '@/models/organization';
 
 export default function PromptInputAndSearchSubmission({
   organization,

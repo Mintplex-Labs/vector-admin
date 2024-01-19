@@ -1,8 +1,8 @@
 import { memo, useState } from 'react';
-import { AlertTriangle, PlusCircle, Trash, X } from 'react-feather';
+import { PlusCircle, Trash, X } from 'react-feather';
 import { castToType, constructModifiedMetadata } from './utils';
-import Document from '../../../../models/document';
-import showToast from '../../../../utils/toast';
+import Document from '@/models/document';
+import showToast from '@/utils/toast';
 
 const MetadataEditor = memo(
   ({

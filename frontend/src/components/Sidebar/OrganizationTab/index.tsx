@@ -1,12 +1,12 @@
 import { NavLink, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import paths from '../../../utils/paths';
+import paths from '@/utils/paths';
 import { CaretDown, Plus, MagnifyingGlass } from '@phosphor-icons/react';
 import truncate from 'truncate';
-import Organization from '../../../models/organization';
+import Organization from '@/models/organization';
 import { debounce } from 'lodash';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import CreateWorkspaceModal from '../../../pages/Dashboard/WorkspacesList/CreateWorkspaceModal';
+import CreateWorkspaceModal from '@/pages/Dashboard/WorkspacesList/CreateWorkspaceModal';
 
 type OrganizationTabProps = {
   organization: any;

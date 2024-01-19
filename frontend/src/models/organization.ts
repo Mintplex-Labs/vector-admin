@@ -1,6 +1,6 @@
-import { INotification } from '../components/Notifications';
-import { API_BASE } from '../utils/constants';
-import { baseHeaders, getAPIUrlString } from '../utils/request';
+import { INotification } from '@/components/Notifications';
+import { API_BASE } from '@/utils/constants';
+import { baseHeaders, getAPIUrlString } from '@/utils/request';
 
 const Organization = {
   documentPageSize: 10,

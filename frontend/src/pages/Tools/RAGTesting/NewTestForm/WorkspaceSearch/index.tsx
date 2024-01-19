@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
-import Organization, {
-  IOrganization,
-} from '../../../../../models/organization';
+import Organization, { IOrganization } from '@/models/organization';
 import { Circle, Loader, X } from 'react-feather';
 import { debounce } from 'lodash';
-import { IWorkspace } from '../../../../../models/workspace';
+import { IWorkspace } from '@/models/workspace';
 
 export default function WorkspaceSearch({
   organization,

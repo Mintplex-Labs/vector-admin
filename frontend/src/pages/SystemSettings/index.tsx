@@ -1,11 +1,11 @@
-import { FullScreenLoader } from '../../components/Preloader';
-import useUser from '../../hooks/useUser';
+import { FullScreenLoader } from '@/components/Preloader';
+import useUser from '@/hooks/useUser';
 import { useState, useEffect } from 'react';
-import DefaultLayout from '../../layout/DefaultLayout';
-import User from '../../models/user';
-import paths from '../../utils/paths';
-import AppLayout from '../../layout/AppLayout';
-import System from '../../models/system';
+import DefaultLayout from '@/layout/DefaultLayout';
+import User from '@/models/user';
+import paths from '@/utils/paths';
+import AppLayout from '@/layout/AppLayout';
+import System from '@/models/system';
 import Settings from './Settings';
 
 export default function SystemSettingsView() {

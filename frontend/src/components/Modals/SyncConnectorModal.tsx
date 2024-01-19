@@ -1,7 +1,7 @@
 import { useState, memo } from 'react';
-import Organization from '../../models/organization';
+import Organization from '@/models/organization';
+import paths from '@/utils/paths';
 import { titleCase } from 'title-case';
-import paths from '../../utils/paths';
 
 const SyncConnectorModal = memo(
   ({ organization, connector }: { organization: any; connector: any }) => {

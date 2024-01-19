@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { FullScreenLoader } from '../Preloader';
-import validateSessionTokenForUser from '../../utils/session';
-import paths from '../../utils/paths';
-import { STORE_TOKEN, STORE_USER } from '../../utils/constants';
+import { FullScreenLoader } from '@/components/Preloader';
+import validateSessionTokenForUser from '@/utils/session';
+import paths from '@/utils/paths';
+import { STORE_TOKEN, STORE_USER } from '@/utils/constants';
 
 function useIsAuthenticated() {
   const [isAuthd, setIsAuthed] = useState<Boolean | null>(null);

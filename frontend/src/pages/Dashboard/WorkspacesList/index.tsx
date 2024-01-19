@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
-import Jazzicon from '../../../components/Jazzicon';
-import paths from '../../../utils/paths';
+import Jazzicon from '@/components/Jazzicon';
+import paths from '@/utils/paths';
 import moment from 'moment';
-import { nFormatter } from '../../../utils/numbers';
+import { nFormatter } from '@/utils/numbers';
 import { FileText } from 'react-feather';
 import truncate from 'truncate';
-import Organization from '../../../models/organization';
-import WorkspaceSearch from '../../../components/Sidebar/WorkspaceSearch';
+import Organization from '@/models/organization';
+import WorkspaceSearch from '@/components/Sidebar/WorkspaceSearch';
 
 export default function WorkspacesList({
   knownConnector,

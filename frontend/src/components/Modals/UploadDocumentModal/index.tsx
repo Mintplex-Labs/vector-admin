@@ -1,11 +1,11 @@
 import { useCallback, useState, useEffect, ReactNode } from 'react';
-import { APP_NAME } from '../../../utils/constants';
 import { useDropzone } from 'react-dropzone';
 import { v4 } from 'uuid';
-import System from '../../../models/system';
-import FileUploadProgress from './FileUploadProgress';
 import { useParams } from 'react-router-dom';
 import { SmileySad } from '@phosphor-icons/react';
+import System from '@/models/system';
+import { APP_NAME } from '@/utils/constants';
+import FileUploadProgress from './FileUploadProgress';
 
 export default function UploadDocumentModal({
   workspaces,

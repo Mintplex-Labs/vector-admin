@@ -1,14 +1,13 @@
 import { Link } from 'react-router-dom';
-import DefaultLayout from '../../layout/DefaultLayout';
-import SignInImg from '../../images/undraws/sign-in.png';
-import PreLoader from '../../components/Preloader';
+import DefaultLayout from '@/layout/DefaultLayout';
+import SignInImg from '@/images/undraws/sign-in.png';
+import PreLoader from '@/components/Preloader';
 import { useEffect, useState } from 'react';
 import { CheckCircle, XCircle } from 'react-feather';
-import User from '../../models/user';
-import { APP_NAME, STORE_TOKEN, STORE_USER } from '../../utils/constants';
-import paths from '../../utils/paths';
-import validateSessionTokenForUser from '../../utils/session';
-import System from '../../models/system';
+import User from '@/models/user';
+import { APP_NAME, STORE_TOKEN, STORE_USER } from '@/utils/constants';
+import paths from '@/utils/paths';
+import validateSessionTokenForUser from '@/utils/session';
 
 type IStages = 'loading' | 'failed' | 'success' | 'ready';
 type FormTypes = {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import Organization from '../../../models/organization';
-import { SUPPORTED_VECTOR_DBS } from '../../../utils/constants';
-import SyncConnectorModal from '../../../components/Modals/SyncConnectorModal';
+import Organization from '@/models/organization';
+import { SUPPORTED_VECTOR_DBS } from '@/utils/constants';
+import SyncConnectorModal from '@/components/Modals/SyncConnectorModal';
 
 export default function ConnectorCard({
   knownConnector,
