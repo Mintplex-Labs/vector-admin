@@ -11,6 +11,7 @@ const {
   Weaviate,
 } = require('../../../backend/utils/vectordatabases/providers/weaviate');
 const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
+const { Notification } = require('../../../backend/models/notification');
 
 const syncWeaviateWorkspace = InngestClient.createFunction(
   { name: 'Sync Weaviate Workspace' },
@@ -56,6 +57,13 @@ const syncWeaviateWorkspace = InngestClient.createFunction(
         message:
           'Weaviate instance vector data has been synced. Workspaces data synced.',
       };
+
+      await Notification.create(organization.id, {
+        textContent: 'Your Weaviate namespace has been fully synced.',
+        symbol: Notification.symbols.weaviate,
+        link: `/dashboard/${organization.slug}/workspace/${workspace.fname}`,
+        target: '_blank',
+      });
       await Queue.updateJob(jobId, Queue.status.complete, result);
       await vectorSpaceMetric();
       return { result };
@@ -66,6 +74,13 @@ const syncWeaviateWorkspace = InngestClient.createFunction(
         error: e.message,
         details: e,
       };
+
+      await Notification.create(organization.id, {
+        textContent: 'Your Weaviate namespace failed to sync.',
+        symbol: Notification.symbols.weaviate,
+        link: `/dashboard/${organization.slug}/jobs`,
+        target: '_blank',
+      });
       await Queue.updateJob(jobId, Queue.status.failed, result);
     }
   }

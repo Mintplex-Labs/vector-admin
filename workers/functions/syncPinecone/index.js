@@ -13,6 +13,7 @@ const {
 } = require('../../../backend/models/workspaceDocument');
 const { DocumentVectors } = require('../../../backend/models/documentVectors');
 const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
+const { Notification } = require('../../../backend/models/notification');
 
 const syncPineconeIndex = InngestClient.createFunction(
   { name: 'Sync Pinecone Instance' },
@@ -84,6 +85,13 @@ const syncPineconeIndex = InngestClient.createFunction(
         } of ${collections.length - failedToSync.length} namespaces.`,
         failedToSync,
       };
+
+      await Notification.create(organization.id, {
+        textContent: 'Your Pinecone instance has been fully synced.',
+        symbol: Notification.symbols.pinecone,
+        link: `/dashboard/${organization.slug}/workspace/${workspace.fname}`,
+        target: '_blank',
+      });
       await Queue.updateJob(jobId, Queue.status.complete, result);
       await vectorSpaceMetric();
       return { result };
@@ -94,6 +102,12 @@ const syncPineconeIndex = InngestClient.createFunction(
         error: e.message,
         details: e,
       };
+      await Notification.create(organization.id, {
+        textContent: 'Your Pinecone instance failed to sync.',
+        symbol: Notification.symbols.pinecone,
+        link: `/dashboard/${organization.slug}/jobs`,
+        target: '_blank',
+      });
       await Queue.updateJob(jobId, Queue.status.failed, result);
     }
   }

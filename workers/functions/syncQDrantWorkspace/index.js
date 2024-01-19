@@ -11,6 +11,7 @@ const {
   QDrant,
 } = require('../../../backend/utils/vectordatabases/providers/qdrant');
 const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
+const { Notification } = require('../../../backend/models/notification');
 
 const syncQDrantWorkspace = InngestClient.createFunction(
   { name: 'Sync QDrant Workspace' },
@@ -51,6 +52,13 @@ const syncQDrantWorkspace = InngestClient.createFunction(
         message:
           'QDrant instance vector data has been synced. Workspaces data synced.',
       };
+
+      await Notification.create(organization.id, {
+        textContent: 'Your QDrant namespace has been fully synced.',
+        symbol: Notification.symbols.qdrant,
+        link: `/dashboard/${organization.slug}/workspace/${workspace.fname}`,
+        target: '_blank',
+      });
       await Queue.updateJob(jobId, Queue.status.complete, result);
       await vectorSpaceMetric();
       return { result };
@@ -61,6 +69,13 @@ const syncQDrantWorkspace = InngestClient.createFunction(
         error: e.message,
         details: e,
       };
+
+      await Notification.create(organization.id, {
+        textContent: 'Your QDrant namespace failed to sync.',
+        symbol: Notification.symbols.qdrant,
+        link: `/dashboard/${organization.slug}/jobs`,
+        target: '_blank',
+      });
       await Queue.updateJob(jobId, Queue.status.failed, result);
     }
   }

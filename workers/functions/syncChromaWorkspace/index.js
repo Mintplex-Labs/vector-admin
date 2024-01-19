@@ -11,6 +11,7 @@ const {
 const { DocumentVectors } = require('../../../backend/models/documentVectors');
 const { deleteVectorCacheFile } = require('../../../backend/utils/storage');
 const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
+const { Notification } = require('../../../backend/models/notification');
 
 const syncChromaWorkspace = InngestClient.createFunction(
   { name: 'Sync Chroma Workspace' },
@@ -47,6 +48,12 @@ const syncChromaWorkspace = InngestClient.createFunction(
         message:
           'Chroma instance vector data has been synced. Workspaces data synced.',
       };
+      await Notification.create(organization.id, {
+        textContent: 'Your Chroma workspace has been fully synced.',
+        symbol: Notification.symbols.chroma,
+        link: `/dashboard/${organization.slug}/workspace/${workspace.fname}`,
+        target: '_blank',
+      });
       await Queue.updateJob(jobId, Queue.status.complete, result);
       await vectorSpaceMetric();
       return { result };
@@ -57,6 +64,12 @@ const syncChromaWorkspace = InngestClient.createFunction(
         error: e.message,
         details: e,
       };
+      await Notification.create(organization.id, {
+        textContent: 'Your Chroma workspace failed to sync.',
+        symbol: Notification.symbols.chroma,
+        link: `/dashboard/${organization.slug}/jobs`,
+        target: '_blank',
+      });
       await Queue.updateJob(jobId, Queue.status.failed, result);
     }
   }
