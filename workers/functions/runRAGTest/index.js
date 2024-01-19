@@ -135,7 +135,7 @@ const runRAGTest = InngestClient.createFunction(
         await Notification.create(test.organization_id, {
           textContent: 'Your Context Drift test did not pass.',
           symbol: Notification.symbols.error,
-          link: `dashboard/${organization.slug}/tools/rag-testing/${test.id}`,
+          link: `/dashboard/${organization.slug}/tools/rag-testing/${test.id}`,
           target: '_blank',
         });
       }
@@ -151,6 +151,10 @@ const runRAGTest = InngestClient.createFunction(
         error: e.message,
         details: e,
       };
+      await Notification.create(organization.id, {
+        textContent: 'Your Context Drift test failed to run.',
+        symbol: Notification.symbols.error,
+      });
       await RagTest.updateRun(run?.id, {
         status: RagTest.status.failed,
         results: {

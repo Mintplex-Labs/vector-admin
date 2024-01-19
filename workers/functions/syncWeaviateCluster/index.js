@@ -13,6 +13,7 @@ const {
   Weaviate,
 } = require('../../../backend/utils/vectordatabases/providers/weaviate');
 const { vectorSpaceMetric } = require('../../utils/telemetryHelpers');
+const { Notification } = require('../../../backend/models/notification');
 
 const syncWeaviateCluster = InngestClient.createFunction(
   { name: 'Sync Weaviate Instance' },
@@ -77,6 +78,13 @@ const syncWeaviateCluster = InngestClient.createFunction(
         } of ${collections.length - failedToSync.length} collections.`,
         failedToSync,
       };
+
+      await Notification.create(organization.id, {
+        textContent: 'Your Weaviate cluster has been fully synced.',
+        symbol: Notification.symbols.weaviate,
+        link: `/dashboard/${organization.slug}/workspace/${workspace.fname}`,
+        target: '_blank',
+      });
       await Queue.updateJob(jobId, Queue.status.complete, result);
       await vectorSpaceMetric();
       return { result };
@@ -87,6 +95,13 @@ const syncWeaviateCluster = InngestClient.createFunction(
         error: e.message,
         details: e,
       };
+
+      await Notification.create(organization.id, {
+        textContent: 'Your Weaviate cluster failed to sync.',
+        symbol: Notification.symbols.weaviate,
+        link: `/dashboard/${organization.slug}/jobs`,
+        target: '_blank',
+      });
       await Queue.updateJob(jobId, Queue.status.failed, result);
     }
   }

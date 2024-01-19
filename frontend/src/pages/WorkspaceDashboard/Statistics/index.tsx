@@ -60,7 +60,7 @@ const Statistics = ({
   }, [organization?.slug, workspace?.slug]);
 
   return (
-    <div className="flex w-full justify-between">
+    <div className="flex w-[calc(100%-217px)] justify-between">
       <div className="-mt-6 ml-4 w-full rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
         <div className="flex items-center justify-between whitespace-nowrap">
           <span className="font-jetbrains uppercase text-white">
@@ -82,7 +82,7 @@ const Statistics = ({
         </div>
       </div>
 
-      <div className=" -mt-6 ml-4 mr-24 w-fit min-w-[303px] rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
+      <div className=" -mt-6 ml-4 w-fit min-w-[303px] rounded-xl border-2 border-white/20 px-5 py-2 text-sky-400">
         <div className="flex items-center justify-between">
           <span className="font-jetbrains whitespace-nowrap text-white">
             ID:{' '}

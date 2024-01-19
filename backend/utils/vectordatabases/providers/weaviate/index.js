@@ -66,7 +66,6 @@ class Weaviate {
     var totalVectors = 0;
     for (const collection of collections) {
       if (!collection || !collection.name) continue;
-      console.log({ dim: await this.indexDimensions(collection.name) });
       totalVectors +=
         (await this.namespaceWithClient(client, collection.name))
           ?.vectorCount || 0;

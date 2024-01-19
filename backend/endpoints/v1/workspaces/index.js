@@ -315,7 +315,6 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        console.log(workspace);
         const value = await WorkspaceDocument[methods[statistic]](
           "workspace_id",
           workspace.id

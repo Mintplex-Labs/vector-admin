@@ -211,14 +211,14 @@ export function RunNowButton({ test }: { test: IRagTest }) {
     const { job, error } = await Tools.runRagTest(test);
     if (job) {
       showToast(
-        `Context Drift text is now running in background jobs`,
+        `Context Drift test is now running in background jobs`,
         'success'
       );
       setLoading(false);
       return;
     }
 
-    showToast(error || 'Context Drift text could not be run.', 'error');
+    showToast(error || 'Context Drift test could not be run.', 'error');
     setLoading(false);
   };
 
