@@ -10,6 +10,36 @@ const bcrypt = require("bcrypt");
 function authenticationEndpoints(app) {
   if (!app) return;
 
+  app.get("/auth/auto-onboard", async (_, response) => {
+    try {
+      const completeSetup = (await User.count({ role: "admin" })) > 0;
+      if (completeSetup) {
+        response.status(200).json({ completed: true });
+        return;
+      }
+
+      const onboardingUser = await User.get({ role: "root" });
+      if (!onboardingUser) {
+        response.status(200).json({ completed: true });
+        return;
+      }
+
+      await Telemetry.sendTelemetry("onboarding_complete"); // Have to send here since we have no other hooks.
+      response.status(200).json({
+        valid: true,
+        user: onboardingUser,
+        token: makeJWT(
+          { id: onboardingUser.id, email: onboardingUser.email },
+          "1hr"
+        ),
+        message: null,
+      });
+    } catch (e) {
+      console.log(e.message, e);
+      response.sendStatus(500).end();
+    }
+  });
+
   app.post("/auth/login", async (request, response) => {
     try {
       const { email, password } = reqBody(request);
