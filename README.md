@@ -85,7 +85,7 @@ In separate terminal windows from project root:
   - `yarn dev:workers`
   - `cd document-processor && flask run --host '0.0.0.0' --port 8888`
 
-On first boot of the system you will be prompted to login. Consult the `backend/.env.development` and set or use the `SYS_EMAIL` and `SYS_PASSWORD` values. Once your new account is setup the root credentials will no longer work and you can use your admin account.
+On first boot and visiting of the homepage, you will be automatically redirected to create your primary admin account, organization, and database connection.
 
 ## Contributing
 - create issue

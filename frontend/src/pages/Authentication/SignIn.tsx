@@ -8,6 +8,7 @@ import User from '../../models/user';
 import { APP_NAME, STORE_TOKEN, STORE_USER } from '../../utils/constants';
 import paths from '../../utils/paths';
 import validateSessionTokenForUser from '../../utils/session';
+import System from '../../models/system';
 
 type IStages = 'loading' | 'failed' | 'success' | 'ready';
 type FormTypes = {
@@ -69,8 +70,23 @@ const SignIn = () => {
         return false;
       }
       window.location.replace(paths.dashboard());
+      return true;
     }
-    checkAuth();
+
+    async function autoOnboard() {
+      const { user, token } = await User.autoOnboard();
+      if (!!token && !!user) {
+        window.localStorage.setItem(STORE_USER, JSON.stringify(user));
+        window.localStorage.setItem(STORE_TOKEN, token);
+        window.location.replace(paths.onboardingSetup());
+      }
+      return;
+    }
+
+    checkAuth().then((res) => {
+      if (res) return;
+      autoOnboard();
+    });
   }, []);
 
   return (

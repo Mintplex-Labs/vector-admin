@@ -48,8 +48,8 @@ async function systemInit() {
     const completeSetup = (await User.count({ role: "admin" })) > 0;
     if (completeSetup) return;
 
-    process.env.SYS_EMAIL = process.env.SYS_EMAIL ?? "root@vectoradmin.com";
-    process.env.SYS_PASSWORD = process.env.SYS_PASSWORD ?? "password";
+    process.env.SYS_EMAIL = "root@vectoradmin.com";
+    process.env.SYS_PASSWORD = "password";
 
     const existingRootUser = await User.get({
       email: process.env.SYS_EMAIL,

@@ -19,8 +19,6 @@ Run this command first to get a dockerized Postgres container running:
 `docker run -d -p 3001:3001 \
 -e SERVER_PORT="3001" \
 -e JWT_SECRET="your-random-string-here" \
--e SYS_EMAIL="root@vectoradmin.com" \
--e SYS_PASSWORD="password" \
 -e INNGEST_EVENT_KEY="background_workers" \
 -e INNGEST_SIGNING_KEY="random-string-goes-here" \
 -e INNGEST_LANDING_PAGE="true" \
@@ -36,8 +34,6 @@ mintplexlabs/vectoradmin`
 - Edit `.env` file and update the variables. **please** update all of the following:
 ```shell
 JWT_SECRET="some-random-string"
-SYS_EMAIL="root@vectoradmin.com"
-SYS_PASSWORD="password"
 DATABASE_CONNECTION_STRING="postgresql://vectoradmin:password@host.docker.internal:5433/vdbms" # Valid PG Connection string.
 INNGEST_SIGNING_KEY="some-random-string"
 ```
@@ -46,7 +42,7 @@ INNGEST_SIGNING_KEY="some-random-string"
 
 ## How to use the user interface and login for the first time.
 - To access the full application, visit `http://localhost:3001` in your browser.
-- You first login will require you to use the `SYS_EMAIL` and `SYS_PASSWORD` set via ENV during build or run. After onboarding this login will be permanently disabled.
+- You will automatically be redirected into onboarding to create your primary admin account, organization, and vector database connection.
 
 # Connecting to a Vector Database
 

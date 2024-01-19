@@ -1,7 +1,32 @@
-import { API_BASE } from '../utils/constants';
+import { API_BASE, COMPLETE_ONBOARDING } from '../utils/constants';
 import { baseHeaders } from '../utils/request';
 
 const User = {
+  autoOnboard: async (): Promise<{
+    user: object | null;
+    token: string | null;
+  }> => {
+    if (!!window.localStorage.getItem(COMPLETE_ONBOARDING))
+      return { user: null, token: null };
+    return fetch(`${API_BASE}/auth/auto-onboard`, {
+      method: 'GET',
+      cache: 'no-cache',
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        // If special key for `completed` is set, we will stop checking this for the client.
+        if (res.hasOwnProperty('completed')) {
+          window.localStorage.setItem(COMPLETE_ONBOARDING, 'true');
+          return { user: null, token: null };
+        }
+
+        return res;
+      })
+      .catch((e) => {
+        console.error(e);
+        return { user: null, token: null };
+      });
+  },
   login: async (email: string, password: string) => {
     let error;
     const { user, valid, token } = await fetch(`${API_BASE}/auth/login`, {
