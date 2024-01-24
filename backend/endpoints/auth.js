@@ -160,18 +160,17 @@ function authenticationEndpoints(app) {
       const domainRestriction = await SystemSettings.get({
         label: "account_creation_domain_scope",
       });
-      if (
-        !!domainRestriction &&
-        domainRestriction.value !== null &&
-        !email.includes(domainRestriction.value)
-      ) {
-        response.status(200).json({
-          user: null,
-          valid: false,
-          token: null,
-          message: "[003] Invalid account creation values.",
-        });
-        return;
+      if (domainRestriction && domainRestriction.value) {
+        const emailDomain = email.substring(email.lastIndexOf("@") + 1);
+        if (emailDomain !== domainRestriction.value) {
+          response.status(200).json({
+            user: null,
+            valid: false,
+            token: null,
+            message: "[003] Invalid account creation values.",
+          });
+          return;
+        }
       }
 
       const { user, message } = await User.create({ email, password });
