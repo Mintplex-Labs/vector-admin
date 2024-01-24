@@ -1,20 +1,20 @@
-import { FullScreenLoader } from '../../components/Preloader';
-import useUser from '../../hooks/useUser';
+import { FullScreenLoader } from '@/components/Preloader';
+import useUser from '@/hooks/useUser';
 import { useState, useEffect, memo } from 'react';
-import DefaultLayout from '../../layout/DefaultLayout';
-import User from '../../models/user';
-import paths from '../../utils/paths';
-import AppLayout from '../../layout/AppLayout';
+import DefaultLayout from '@/layout/DefaultLayout';
+import User from '@/models/user';
+import paths from '@/utils/paths';
+import AppLayout from '@/layout/AppLayout';
 import { useParams } from 'react-router-dom';
 import FragmentList from './FragmentList';
-import Document from '../../models/document';
-import System from '../../models/system';
-import Organization from '../../models/organization';
-import { APP_NAME } from '../../utils/constants';
+import Document from '@/models/document';
+import System from '@/models/system';
+import Organization from '@/models/organization';
+import { APP_NAME } from '@/utils/constants';
 import { CaretDown } from '@phosphor-icons/react';
 import truncate from 'truncate';
-import UploadModalNoKey from '../../components/Modals/UploadModalNoKey';
-import UploadDocumentModal from '../../components/Modals/UploadDocumentModal';
+import UploadModalNoKey from '@/components/Modals/UploadModalNoKey';
+import UploadDocumentModal from '@/components/Modals/UploadDocumentModal';
 
 export default function DocumentView() {
   const { user } = useUser();

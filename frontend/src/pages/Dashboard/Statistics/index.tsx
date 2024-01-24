@@ -1,8 +1,8 @@
 import { memo, useState, useEffect } from 'react';
-import { humanFileSize, nFormatter } from '../../../utils/numbers';
-import Organization from '../../../models/organization';
+import { humanFileSize, nFormatter } from '@/utils/numbers';
+import Organization from '@/models/organization';
 import pluralize from 'pluralize';
-import Workspace from '../../../models/workspace';
+import Workspace from '@/models/workspace';
 
 const Statistics = ({
   organization,

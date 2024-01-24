@@ -1,7 +1,7 @@
 import { memo, useState, useEffect } from 'react';
-import { humanFileSize, nFormatter } from '../../../utils/numbers';
+import { humanFileSize, nFormatter } from '@/utils/numbers';
 import pluralize from 'pluralize';
-import Workspace from '../../../models/workspace';
+import Workspace from '@/models/workspace';
 import { Copy } from '@phosphor-icons/react';
 import truncate from 'truncate';
 

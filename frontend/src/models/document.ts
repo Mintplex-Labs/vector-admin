@@ -1,5 +1,5 @@
-import { API_BASE, ISearchTypes } from '../utils/constants';
-import { baseHeaders, getAPIUrlString } from '../utils/request';
+import { API_BASE, ISearchTypes } from '@/utils/constants';
+import { baseHeaders, getAPIUrlString } from '@/utils/request';
 
 const Document = {
   get: async (id: string | number) => {

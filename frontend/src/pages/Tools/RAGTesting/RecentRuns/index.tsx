@@ -1,27 +1,30 @@
-import PreLoader, { FullScreenLoader } from '../../../../components/Preloader';
-import useUser from '../../../../hooks/useUser';
+import PreLoader, { FullScreenLoader } from '@/components/Preloader';
+import useUser from '@/hooks/useUser';
 import { useState, useEffect } from 'react';
-import DefaultLayout from '../../../../layout/DefaultLayout';
-import User from '../../../../models/user';
-import paths from '../../../../utils/paths';
-import AppLayout from '../../../../layout/AppLayout';
+import DefaultLayout from '@/layout/DefaultLayout';
+import User from '@/models/user';
+import paths from '@/utils/paths';
+import AppLayout from '@/layout/AppLayout';
 import { NavLink, useParams } from 'react-router-dom';
-import Organization, { IOrganization } from '../../../../models/organization';
-import Tools, { IRagTest, IRagTestRun } from '../../../../models/tools';
+import Organization, { IOrganization } from '@/models/organization';
+import Tools, { IRagTest, IRagTestRun } from '@/models/tools';
 import RunsList from './RunsList';
-import { EnableDisableButton, RunNowButton } from '../RecentTests';
-import showToast from '../../../../utils/toast';
+import {
+  EnableDisableButton,
+  RunNowButton,
+} from '@/pages/Tools/RAGTesting/RecentTests';
+import showToast from '@/utils/toast';
 import { Loader } from 'react-feather';
 
-import ChromaLogo from '../../../../images/vectordbs/chroma.png';
-import PineconeLogoInverted from '../../../../images/vectordbs/pinecone-inverted.png';
-import qDrantLogo from '../../../../images/vectordbs/qdrant.png';
-import WeaviateLogo from '../../../../images/vectordbs/weaviate.png';
+import ChromaLogo from '@/images/vectordbs/chroma.png';
+import PineconeLogoInverted from '@/images/vectordbs/pinecone-inverted.png';
+import qDrantLogo from '@/images/vectordbs/qdrant.png';
+import WeaviateLogo from '@/images/vectordbs/weaviate.png';
 import truncate from 'truncate';
 import { CaretDown, GearSix, Prohibit } from '@phosphor-icons/react';
-import SyncConnectorModal from '../../../../components/Modals/SyncConnectorModal';
-import UpdateConnectorModal from '../../../../components/Modals/UpdateConnectorModal';
-import NewConnectorModal from '../../../../components/Modals/NewConnectorModal';
+import SyncConnectorModal from '@/components/Modals/SyncConnectorModal';
+import UpdateConnectorModal from '@/components/Modals/UpdateConnectorModal';
+import NewConnectorModal from '@/components/Modals/NewConnectorModal';
 
 export default function RAGDriftTestRuns() {
   const { user } = useUser();

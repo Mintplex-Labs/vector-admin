@@ -1,9 +1,9 @@
 import { AlertTriangle, Box, Loader, Trash } from 'react-feather';
-import Tools, { IRagTest } from '../../../../models/tools';
+import Tools, { IRagTest } from '@/models/tools';
 import moment from 'moment';
-import paths from '../../../../utils/paths';
-import showToast from '../../../../utils/toast';
-import TestDetailsModal from '../TestDetails';
+import paths from '@/utils/paths';
+import showToast from '@/utils/toast';
+import TestDetailsModal from '@/pages/Tools/RAGTesting/TestDetails';
 import { memo, useEffect, useRef, useState } from 'react';
 
 export default function RecentTestRuns({

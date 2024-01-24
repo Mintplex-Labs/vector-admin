@@ -1,7 +1,7 @@
 import { memo, useState } from 'react';
 import { Loader } from 'react-feather';
-import User from '../../../../models/user';
-import { APP_NAME } from '../../../../utils/constants';
+import User from '@/models/user';
+import { APP_NAME } from '@/utils/constants';
 
 const DeleteUserConfirmation = memo(({ user }: { user: any }) => {
   const [loading, setLoading] = useState(false);

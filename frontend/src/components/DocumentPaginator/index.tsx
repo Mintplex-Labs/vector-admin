@@ -1,5 +1,5 @@
 import { CaretDown } from '@phosphor-icons/react';
-import { numberWithCommas } from '../../utils/numbers';
+import { numberWithCommas } from '@/utils/numbers';
 
 function generatePageItems(total: number, current: number) {
   if (total <= 1) return [];

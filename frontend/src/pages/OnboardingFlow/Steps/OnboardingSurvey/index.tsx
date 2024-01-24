@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { COMPLETE_QUESTIONNAIRE } from '../../../../utils/constants';
+import { COMPLETE_QUESTIONNAIRE } from '@/utils/constants';
 
 type OnboardingSurveyProps = {
   setCurrentStep: (step: string) => void;

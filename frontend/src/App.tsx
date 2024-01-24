@@ -1,39 +1,39 @@
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { ContextWrapper } from './AuthContext';
-import PrivateRoute from './components/PrivateRoute';
-import AdminRoute from './components/AdminRoute';
+import { ContextWrapper } from '@/AuthContext';
+import PrivateRoute from '@/components/PrivateRoute';
+import AdminRoute from '@/components/AdminRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import SignIn from './pages/Authentication/SignIn';
-import SignUp from './pages/Authentication/SignUp';
+import SignIn from '@/pages/Authentication/SignIn';
+import SignUp from '@/pages/Authentication/SignUp';
 
-const UserManagementView = lazy(() => import('./pages/UsersView'));
-const OnboardingHome = lazy(() => import('./pages/Onboarding'));
+const UserManagementView = lazy(() => import('@/pages/UsersView'));
+const OnboardingHome = lazy(() => import('@/pages/Onboarding'));
 const OrganizationSettingsView = lazy(
-  () => import('./pages/OrganizationSettings')
+  () => import('@/pages/OrganizationSettings')
 );
-const OrganizationDashboard = lazy(() => import('./pages/Dashboard'));
-const WorkspaceDashboard = lazy(() => import('./pages/WorkspaceDashboard'));
-const DocumentView = lazy(() => import('./pages/DocumentView'));
+const OrganizationDashboard = lazy(() => import('@/pages/Dashboard'));
+const WorkspaceDashboard = lazy(() => import('@/pages/WorkspaceDashboard'));
+const DocumentView = lazy(() => import('@/pages/DocumentView'));
 const OnboardingSecuritySetup = lazy(
-  () => import('./pages/Onboarding/security')
+  () => import('@/pages/Onboarding/security')
 );
 
 // Onboarding v2
-const OnboardingFlow = lazy(() => import('./pages/OnboardingFlow'));
+const OnboardingFlow = lazy(() => import('@/pages/OnboardingFlow'));
 
-const OrganizationJobsView = lazy(() => import('./pages/Jobs'));
-const OrganizationToolsView = lazy(() => import('./pages/Tools'));
-const SystemSettingsView = lazy(() => import('./pages/SystemSettings'));
+const OrganizationJobsView = lazy(() => import('@/pages/Jobs'));
+const OrganizationToolsView = lazy(() => import('@/pages/Tools'));
+const SystemSettingsView = lazy(() => import('@/pages/SystemSettings'));
 const MigrateConnectionView = lazy(
-  () => import('./pages/Tools/MigrateConnection')
+  () => import('@/pages/Tools/MigrateConnection')
 );
-const ResetConnectionView = lazy(() => import('./pages/Tools/ResetConnection'));
-const RAGTestingView = lazy(() => import('./pages/Tools/RAGTesting'));
+const ResetConnectionView = lazy(() => import('@/pages/Tools/ResetConnection'));
+const RAGTestingView = lazy(() => import('@/pages/Tools/RAGTesting'));
 const RAGDriftTestRunsView = lazy(
-  () => import('./pages/Tools/RAGTesting/RecentRuns')
+  () => import('@/pages/Tools/RAGTesting/RecentRuns')
 );
 
 function App() {

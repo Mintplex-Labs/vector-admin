@@ -1,7 +1,7 @@
 import { AlertTriangle } from 'react-feather';
-import { APP_NAME } from '../../utils/constants';
-import System from '../../models/system';
 import { ReactNode } from 'react';
+import { APP_NAME } from '@/utils/constants';
+import System from '@/models/system';
 
 export default function UploadModalNoKey() {
   const updateSystemSetting = async (e: any) => {

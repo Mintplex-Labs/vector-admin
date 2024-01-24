@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom';
-import LogoDark from '../../images/logo/logo-dark.png';
-import Logo from '../../images/logo/logo-light.png';
-import DefaultLayout from '../../layout/DefaultLayout';
-import ManageSvg from '../../images/undraws/manage.svg';
-import PreLoader, { FullScreenLoader } from '../../components/Preloader';
+import LogoDark from '@/images/logo/logo-dark.png';
+import Logo from '@/images/logo/logo-light.png';
+import DefaultLayout from '@/layout/DefaultLayout';
+import ManageSvg from '@/images/undraws/manage.svg';
+import PreLoader, { FullScreenLoader } from '@/components/Preloader';
 import { useEffect, useState } from 'react';
 import { CheckCircle, XCircle } from 'react-feather';
-import Organization from '../../models/organization';
-import paths from '../../utils/paths';
-import User from '../../models/user';
+import Organization from '@/models/organization';
+import paths from '@/utils/paths';
+import User from '@/models/user';
 
 type IStages = 'preflight' | 'loading' | 'failed' | 'success' | 'ready';
 type FormTypes = {

@@ -1,13 +1,13 @@
 import { lazy, memo, useEffect, useState } from 'react';
-import PreLoader from '../../../components/Preloader';
-import Document from '../../../models/document';
+import PreLoader from '@/components/Preloader';
+import Document from '@/models/document';
 import truncate from 'truncate';
 import pluralize from 'pluralize';
-import DocumentListPagination from '../../../components/DocumentPaginator';
+import DocumentListPagination from '@/components/DocumentPaginator';
 import SearchView from './SearchView';
 import MetadataEditor from './MetadataEditor';
 import { Trash } from '@phosphor-icons/react';
-import { ISearchTypes, SEARCH_MODES } from '../../../utils/constants';
+import { ISearchTypes, SEARCH_MODES } from '@/utils/constants';
 const DeleteEmbeddingConfirmation = lazy(
   () => import('./DeleteEmbeddingConfirmation')
 );

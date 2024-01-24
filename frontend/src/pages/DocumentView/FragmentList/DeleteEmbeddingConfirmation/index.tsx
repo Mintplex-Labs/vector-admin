@@ -1,5 +1,5 @@
 import { memo, useState } from 'react';
-import Document from '../../../../models/document';
+import Document from '@/models/document';
 import { Loader } from 'react-feather';
 
 const DeleteEmbeddingConfirmation = memo(

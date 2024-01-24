@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import useUser from '../../hooks/useUser';
-import paths from '../../utils/paths';
-import { STORE_TOKEN, STORE_USER } from '../../utils/constants';
+import useUser from '@/hooks/useUser';
+import paths from '@/utils/paths';
+import { STORE_TOKEN, STORE_USER } from '@/utils/constants';
 
 export default function UserMenu() {
   const { user } = useUser();

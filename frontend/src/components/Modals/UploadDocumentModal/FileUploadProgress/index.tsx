@@ -1,7 +1,7 @@
 import { useState, useEffect, memo } from 'react';
-import Workspace from '../../../../models/workspace';
+import Workspace from '@/models/workspace';
 import truncate from 'truncate';
-import { humanFileSize, milliToHms } from '../../../../utils/numbers';
+import { humanFileSize, milliToHms } from '@/utils/numbers';
 import { CheckCircle, XCircle } from 'react-feather';
 import { Grid } from 'react-loading-icons';
 

@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react';
-import { IRagTest } from '../../../../models/tools';
+import { IRagTest } from '@/models/tools';
 
 export default function TestDetailsModal({ test }: { test: IRagTest }) {
   return (

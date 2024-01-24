@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import Organization from '../../../models/organization';
+import Organization from '@/models/organization';
 import { Loader } from 'react-feather';
-import paths from '../../../utils/paths';
+import paths from '@/utils/paths';
 import { CaretDown } from '@phosphor-icons/react';
-import showToast from '../../../utils/toast';
+import showToast from '@/utils/toast';
 
 export default function OrgSettings({ organization }: { organization: any }) {
   const [hasOrgChanges, setHasOrgChanges] = useState(false);

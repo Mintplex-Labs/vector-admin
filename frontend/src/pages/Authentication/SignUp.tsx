@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
-import SignInImg from '../../images/undraws/sign-in.png';
-import DefaultLayout from '../../layout/DefaultLayout';
+import SignInImg from '@/images/undraws/sign-in.png';
+import DefaultLayout from '@/layout/DefaultLayout';
 import { useState } from 'react';
-import PreLoader from '../../components/Preloader';
+import PreLoader from '@/components/Preloader';
 import { CheckCircle, XCircle } from 'react-feather';
-import User from '../../models/user';
-import { APP_NAME, STORE_TOKEN, STORE_USER } from '../../utils/constants';
-import paths from '../../utils/paths';
+import User from '@/models/user';
+import { APP_NAME, STORE_TOKEN, STORE_USER } from '@/utils/constants';
+import paths from '@/utils/paths';
 
 type IStages = 'loading' | 'failed' | 'success' | 'ready';
 type FormTypes = {

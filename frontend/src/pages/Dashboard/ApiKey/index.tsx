@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Copy } from 'react-feather';
-import PreLoader from '../../../components/Preloader';
-import Organization from '../../../models/organization';
-import { APP_NAME } from '../../../utils/constants';
+import PreLoader from '@/components/Preloader';
+import Organization from '@/models/organization';
+import { APP_NAME } from '@/utils/constants';
 
 export default function ApiKeyCard({ organization }: { organization?: any }) {
   const [loading, setLoading] = useState(true);

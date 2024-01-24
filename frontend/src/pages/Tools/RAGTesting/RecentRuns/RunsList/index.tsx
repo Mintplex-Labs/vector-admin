@@ -1,10 +1,10 @@
 import { AlertTriangle, ChevronDown } from 'react-feather';
-import { IRagTest } from '../../../../../models/tools';
+import { IRagTest } from '@/models/tools';
 import moment from 'moment';
-import paths from '../../../../../utils/paths';
-import showToast from '../../../../../utils/toast';
+import paths from '@/utils/paths';
+import showToast from '@/utils/toast';
 import { useState } from 'react';
-import { IRagTestRun } from '../../../../../models/tools';
+import { IRagTestRun } from '@/models/tools';
 import { StringDiff, DiffMethod } from 'react-string-diff';
 
 export default function RunsList({

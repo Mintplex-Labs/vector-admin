@@ -1,6 +1,6 @@
 import { FormEvent } from 'react';
-import System from '../../../../models/system';
-import showToast from '../../../../utils/toast';
+import System from '@/models/system';
+import showToast from '@/utils/toast';
 
 type SecuritySettingsProps = {
   setCurrentStep: (step: string) => void;

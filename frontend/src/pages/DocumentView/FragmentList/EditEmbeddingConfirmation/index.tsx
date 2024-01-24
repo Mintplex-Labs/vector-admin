@@ -1,11 +1,10 @@
 import { memo, useEffect, useRef, useState } from 'react';
-import Document from '../../../../models/document';
+import Document from '@/models/document';
 import { AlertTriangle, Loader } from 'react-feather';
-import { APP_NAME } from '../../../../utils/constants';
-import System from '../../../../models/system';
+import { APP_NAME } from '@/utils/constants';
+import System from '@/models/system';
 import debounce from 'lodash/debounce';
-import { validEmbedding, MAX_TOKENS } from '../../../../utils/tokenizer';
-import { numberWithCommas } from '../../../../utils/numbers';
+import { validEmbedding } from '@/utils/tokenizer';
 
 const EditEmbeddingConfirmation = memo(
   ({

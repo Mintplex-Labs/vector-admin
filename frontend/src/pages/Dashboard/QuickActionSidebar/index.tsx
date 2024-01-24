@@ -7,8 +7,8 @@ import {
 } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import paths from '../../../utils/paths';
-import useUser from '../../../hooks/useUser';
+import paths from '@/utils/paths';
+import useUser from '@/hooks/useUser';
 
 export default function QuickActionsSidebar({
   organization,

@@ -1,7 +1,7 @@
 import { memo, useState } from 'react';
 import moment from 'moment';
-import Jobs from '../../../models/jobs';
-import useUser from '../../../hooks/useUser';
+import Jobs from '@/models/jobs';
+import useUser from '@/hooks/useUser';
 import { CaretDown } from '@phosphor-icons/react';
 
 export default function JobsList({ jobs }: { jobs: any[] }) {

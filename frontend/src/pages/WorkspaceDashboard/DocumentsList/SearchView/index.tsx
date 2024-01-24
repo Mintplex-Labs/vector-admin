@@ -1,6 +1,6 @@
 import { SyntheticEvent, useRef, useState } from 'react';
-import Workspace from '../../../../models/workspace';
-import { SEARCH_MODES, ISearchTypes } from '../../../../utils/constants';
+import Workspace from '@/models/workspace';
+import { SEARCH_MODES, ISearchTypes } from '@/utils/constants';
 import { CaretDown, MagnifyingGlass, X } from '@phosphor-icons/react';
 
 export default function SearchView({

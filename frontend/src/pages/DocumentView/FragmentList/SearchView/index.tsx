@@ -6,8 +6,8 @@ import {
   useState,
 } from 'react';
 import { CaretDown, MagnifyingGlass, X } from '@phosphor-icons/react';
-import Document from '../../../../models/document';
-import { SEARCH_MODES, ISearchTypes } from '../../../../utils/constants';
+import Document from '@/models/document';
+import { SEARCH_MODES, ISearchTypes } from '@/utils/constants';
 
 export default function SearchView({
   searchMode,

@@ -1,27 +1,27 @@
-import { FullScreenLoader } from '../../components/Preloader';
-import useUser from '../../hooks/useUser';
+import { FullScreenLoader } from '@/components/Preloader';
+import useUser from '@/hooks/useUser';
 import { useState, useEffect, memo } from 'react';
-import DefaultLayout from '../../layout/DefaultLayout';
-import User from '../../models/user';
-import paths from '../../utils/paths';
-import AppLayout from '../../layout/AppLayout';
+import DefaultLayout from '@/layout/DefaultLayout';
+import User from '@/models/user';
+import paths from '@/utils/paths';
+import AppLayout from '@/layout/AppLayout';
 import { useParams } from 'react-router-dom';
-import Organization from '../../models/organization';
+import Organization from '@/models/organization';
 import Statistics from './Statistics';
 import DocumentsList from './DocumentsList';
-import Workspace from '../../models/workspace';
-import { APP_NAME } from '../../utils/constants';
+import Workspace from '@/models/workspace';
+import { APP_NAME } from '@/utils/constants';
 import { titleCase } from 'title-case';
 import { CaretDown } from '@phosphor-icons/react';
 import truncate from 'truncate';
 
-import ChromaLogo from '../../images/vectordbs/chroma.png';
-import PineconeLogoInverted from '../../images/vectordbs/pinecone-inverted.png';
-import qDrantLogo from '../../images/vectordbs/qdrant.png';
-import WeaviateLogo from '../../images/vectordbs/weaviate.png';
-import SyncConnectorModal from '../../components/Modals/SyncConnectorModal';
-import UpdateConnectorModal from '../../components/Modals/UpdateConnectorModal';
-import QuickActionsSidebar from '../Dashboard/QuickActionSidebar';
+import ChromaLogo from '@/images/vectordbs/chroma.png';
+import PineconeLogoInverted from '@/images/vectordbs/pinecone-inverted.png';
+import qDrantLogo from '@/images/vectordbs/qdrant.png';
+import WeaviateLogo from '@/images/vectordbs/weaviate.png';
+import SyncConnectorModal from '@/components/Modals/SyncConnectorModal';
+import UpdateConnectorModal from '@/components/Modals/UpdateConnectorModal';
+import QuickActionsSidebar from '@/pages/Dashboard/QuickActionSidebar';
 
 export default function WorkspaceDashboard() {
   const { user } = useUser();

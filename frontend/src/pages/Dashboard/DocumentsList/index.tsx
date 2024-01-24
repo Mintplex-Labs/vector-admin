@@ -1,15 +1,15 @@
-import paths from '../../../utils/paths';
+import paths from '@/utils/paths';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import Organization from '../../../models/organization';
+import Organization from '@/models/organization';
 import truncate from 'truncate';
-import System from '../../../models/system';
-import DocumentListPagination from '../../../components/DocumentPaginator';
-import useQuery from '../../../hooks/useQuery';
-import Document from '../../../models/document';
+import System from '@/models/system';
+import DocumentListPagination from '@/components/DocumentPaginator';
+import useQuery from '@/hooks/useQuery';
+import Document from '@/models/document';
 import { File, Trash } from '@phosphor-icons/react';
-import UploadModalNoKey from '../../../components/Modals/UploadModalNoKey';
-import UploadDocumentModal from '../../../components/Modals/UploadDocumentModal';
+import UploadModalNoKey from '@/components/Modals/UploadModalNoKey';
+import UploadDocumentModal from '@/components/Modals/UploadDocumentModal';
 
 export default function DocumentsList({
   organization,

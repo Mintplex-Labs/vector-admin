@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Info } from 'react-feather';
-import { APP_NAME } from '../../../utils/constants';
-import paths from '../../../utils/paths';
+import { APP_NAME } from '@/utils/constants';
+import paths from '@/utils/paths';
 import { CaretDown } from '@phosphor-icons/react';
 
 export default function ToolsList({ organization }: { organization: any }) {

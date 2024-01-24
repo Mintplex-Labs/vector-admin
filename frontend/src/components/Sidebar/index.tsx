@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
-import LogoSky from '../../images/logo/logo-sky.svg';
-import SidebarLinkGroup from '../SidebarLinkGroup';
-import paths from '../../utils/paths';
-import useUser from '../../hooks/useUser';
+import LogoSky from '@/images/logo/logo-sky.svg';
+import SidebarLinkGroup from '@/components/SidebarLinkGroup';
+import paths from '@/utils/paths';
+import useUser from '@/hooks/useUser';
 import CreateOrganizationModal from './CreateOrganizationModal';
 import OrganizationTab from './OrganizationTab';
 import { SquaresFour, Plus } from '@phosphor-icons/react';

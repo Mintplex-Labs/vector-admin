@@ -1,7 +1,7 @@
 import { FormEvent } from 'react';
-import User from '../../../../models/user';
-import showToast from '../../../../utils/toast';
-import { STORE_TOKEN, STORE_USER } from '../../../../utils/constants';
+import User from '@/models/user';
+import showToast from '@/utils/toast';
+import { STORE_TOKEN, STORE_USER } from '@/utils/constants';
 
 type CustomLoginProps = {
   setCurrentStep: (step: string) => void;
