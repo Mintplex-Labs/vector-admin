@@ -18,12 +18,6 @@ function authenticationEndpoints(app) {
         return;
       }
 
-      // const onboardingUser = await User.get({ role: "root" });
-      // if (!onboardingUser) {
-      //   response.status(200).json({ completed: true });
-      //   return;
-      // }
-
       await Telemetry.sendTelemetry("onboarding_complete"); // Have to send here since we have no other hooks.
       response.status(200).json({
         valid: true,

@@ -84,20 +84,6 @@ const System = {
         return false;
       });
   },
-
-  // getSetting: async (label: string): Promise<{ label: string; value: any }> => {
-  //   return fetch(`${API_BASE}/system/setting/${label}`, {
-  //     method: 'GET',
-  //     cache: 'no-cache',
-  //     headers: baseHeaders(),
-  //   })
-  //     .then((res) => res.json())
-  //     .then((res) => res)
-  //     .catch((e) => {
-  //       console.error(e);
-  //       return { label, value: null, error: e.message };
-  //     });
-  // },
 };
 
 export default System;
