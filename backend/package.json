@@ -14,7 +14,7 @@
     "lint": "yarn prettier --write ./endpoints ./models ./utils index.js"
   },
   "dependencies": {
-    "@pinecone-database/pinecone": "^0.1.6",
+    "@pinecone-database/pinecone": "^2.2.2",
     "@prisma/client": "^5.3.1",
     "@qdrant/js-client-rest": "^1.5.0",
     "bcrypt": "^5.1.0",
@@ -33,7 +33,7 @@
     "multer": "^1.4.5-lts.1",
     "openai": "^3.3.0",
     "pg": "^8.11.3",
-    "pinecone-client": "^1.1.0",
+    "pinecone-client": "^2.0.0",
     "posthog-node": "^3.1.2",
     "prisma": "^5.3.1",
     "slugify": "^1.6.6",
