@@ -27,17 +27,13 @@ class Pinecone {
   }
 
   async connect() {
-    const { PineconeClient } = require("@pinecone-database/pinecone");
+    const { Pinecone } = require("@pinecone-database/pinecone");
     const { type, settings } = this.config;
 
     if (type !== "pinecone")
       throw new Error("Pinecone::Invalid Not a Pinecone connector instance.");
 
-    const client = new PineconeClient();
-    await client.init({
-      apiKey: settings.apiKey,
-      environment: settings.environment,
-    });
+    const client = new Pinecone({ apiKey: settings.apiKey });
 
     const pineconeIndex = client.Index(settings.index);
     const {
@@ -76,7 +72,7 @@ class Pinecone {
     //     }
     // }
     return await fetch(
-      `https://controller.${settings.environment}.pinecone.io/databases/${settings.index}`,
+      `https://api.pinecone.io/indexes/${settings.index}`,
       {
         method: "GET",
         headers: {
