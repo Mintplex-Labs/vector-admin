@@ -35,7 +35,7 @@ We call it **VectorAdmin** and we want to be the best universal GUI for vector d
 [![Watch the video](/images/youtube.png)](https://youtu.be/cW8Eohz6pzs)
 
 ### Product Overview
-VectorAdmin aims to be a full-stack application that gives you total control over your otherwise unwieldy vector data that you are embedding via an API or using tools like LangChain, which don't show you want you just saved into your database.
+VectorAdmin aims to be a full-stack application that gives you total control over your otherwise unwieldy vector data that you are embedding via an API or using tools like LangChain, which don't show you what you just saved into your database.
 
 VectorAdmin is a full capable multi-user product that you can run locally via Docker as well as host remotely and manage multiple vector databases at once.
 
