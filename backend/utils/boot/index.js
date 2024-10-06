@@ -3,7 +3,6 @@ process.env.NODE_ENV === "development"
   : require("dotenv").config();
 
 const { Telemetry } = require("../../models/telemetry");
-const { User } = require("../../models/user");
 const { getGitVersion } = require("../metrics");
 
 function setupVectorCacheStorage() {
@@ -45,31 +44,6 @@ async function systemInit() {
   try {
     setupVectorCacheStorage();
     await setupTelemetry();
-    const completeSetup = (await User.count({ role: "admin" })) > 0;
-    if (completeSetup) return;
-
-    process.env.SYS_EMAIL = "root@vectoradmin.com";
-    process.env.SYS_PASSWORD = "password";
-
-    const existingRootUser = await User.get({
-      email: process.env.SYS_EMAIL,
-      role: "root",
-    });
-    if (existingRootUser) return;
-
-    const rootUser = await User.create({
-      email: process.env.SYS_EMAIL,
-      password: process.env.SYS_PASSWORD,
-      role: "root",
-    });
-
-    if (!rootUser) {
-      console.error("FAILED TO CREATE ROOT USER!", message);
-      return;
-    }
-
-    console.log("Root user created with credentials");
-    return;
   } catch (e) {
     console.error("systemInit", e.message, e);
     return;
