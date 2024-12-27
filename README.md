@@ -87,6 +87,15 @@ In separate terminal windows from project root:
 
 On first boot and visiting of the homepage, you will be automatically redirected to create your primary admin account, organization, and database connection.
 
+
+### Support for OpenAI Compatible API embedding model.
+Use below variables in your server or docker .env settings.
+```
+OPENAI_BASE_PATH="https://api.openai.com/v1"
+OPENAI_MODEL_NAME="text-embedding-ada-002"
+MODEL_DIMENSIONS=1536
+```
+
 ## Contributing
 - create issue
 - create PR with branch name format of `<issue number>-<short name>`
@@ -97,14 +106,6 @@ VectorAdmin by Mintplex Labs Inc contains a telemetry feature that collects anon
 
 ### Why?
 We use this information to help us understand how VectorAdmin is used, to help us prioritize work on new features and bug fixes, and to help us improve VectorAdmin's performance and stability.
-
-### Support for OpenAI Compatible API embedding model.
-Use below variables in your server or docker .env settings.
-```
-OPENAI_BASE_PATH="https://api.openai.com/v1"
-OPENAI_MODEL_NAME="text-embedding-ada-002"
-MODEL_DIMENSIONS=1536
-```
 
 ### Opting out
 Set `DISABLE_TELEMETRY` in your server or docker .env settings to "true" to opt out of telemetry.
