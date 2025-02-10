@@ -16,14 +16,17 @@ Run this command first to get a dockerized Postgres container running:
 ## Run from Docker pre-built image
 - `docker pull mintplexlabs/vectoradmin` to pull in latest image
 - Run the command with env variables and image defined.
-`docker run -d -p 3001:3001 \
+```shell
+docker run -d -p 3001:3001 \
+--name vectoradmin \
 -e SERVER_PORT="3001" \
 -e JWT_SECRET="your-random-string-here" \
 -e INNGEST_EVENT_KEY="background_workers" \
 -e INNGEST_SIGNING_KEY="random-string-goes-here" \
 -e INNGEST_LANDING_PAGE="true" \
 -e DATABASE_CONNECTION_STRING="postgresql://vectoradmin:password@xxxxxxx:5432/vdbms" \
-mintplexlabs/vectoradmin`
+mintplexlabs/vectoradmin
+```
 
 
 ## Build docker image from source
