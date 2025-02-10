@@ -64,7 +64,7 @@ const newWorkspaceCreated = InngestClient.createFunction(
           workspace.fname,
           {
             vectors: {
-              size: 1536, // TODO: Fixed to OpenAI models - when other embeddings exist make variable.
+              size: parseInt(process.env.MODEL_DIMENSIONS) || 1536, // TODO: Fixed to OpenAI models - when other embeddings exist make variable.
               distance: 'Cosine',
             },
           }
