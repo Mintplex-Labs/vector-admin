@@ -8,6 +8,7 @@ import User from '@/models/user';
 import { APP_NAME, STORE_TOKEN, STORE_USER } from '@/utils/constants';
 import paths from '@/utils/paths';
 import validateSessionTokenForUser from '@/utils/session';
+import System from '@/models/system';
 
 type IStages = 'loading' | 'failed' | 'success' | 'ready';
 type FormTypes = {
@@ -52,11 +53,18 @@ const SignIn = () => {
     if (!!token && !!user) {
       window.localStorage.setItem(STORE_USER, JSON.stringify(user));
       window.localStorage.setItem(STORE_TOKEN, token);
-      window.location.replace(
-        user.role === 'root' ? paths.onboardingSetup() : paths.dashboard()
-      );
+      window.location.replace(paths.dashboard());
     }
   };
+
+  useEffect(() => {
+    async function checkOnboardingComplete() {
+      const completed = await System.onboardingComplete();
+      if (completed) return;
+      window.location.replace(paths.onboardingSetup());
+    }
+    checkOnboardingComplete();
+  }, []);
 
   useEffect(() => {
     async function checkAuth() {

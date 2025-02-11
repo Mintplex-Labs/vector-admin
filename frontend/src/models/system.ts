@@ -72,6 +72,18 @@ const System = {
         return null;
       });
   },
+  onboardingComplete: async (): Promise<boolean> => {
+    return fetch(`${API_BASE}/system/onboarding-complete`, {
+      method: 'GET',
+      cache: 'no-cache',
+    })
+      .then((res) => res.json())
+      .then((res) => res.completed)
+      .catch((e) => {
+        console.error(e);
+        return false;
+      });
+  },
 };
 
 export default System;

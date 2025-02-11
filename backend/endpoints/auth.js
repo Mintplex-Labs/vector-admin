@@ -18,12 +18,6 @@ function authenticationEndpoints(app) {
         return;
       }
 
-      const onboardingUser = await User.get({ role: "root" });
-      if (!onboardingUser) {
-        response.status(200).json({ completed: true });
-        return;
-      }
-
       await Telemetry.sendTelemetry("onboarding_complete"); // Have to send here since we have no other hooks.
       response.status(200).json({
         valid: true,
@@ -51,19 +45,6 @@ function authenticationEndpoints(app) {
           message: "[002] No email or password provided.",
         });
         return;
-      }
-
-      if (email === process.env.SYS_EMAIL) {
-        const completeSetup = (await User.count({ role: "admin" })) > 0;
-        if (completeSetup) {
-          response.status(200).json({
-            user: null,
-            valid: false,
-            token: null,
-            message: "[004] Invalid login credentials.",
-          });
-          return;
-        }
       }
 
       const existingUser = await User.get({ email: email });

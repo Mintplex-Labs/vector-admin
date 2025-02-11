@@ -292,7 +292,7 @@ const CopyDocToModal = memo(
               className="rounded-lg border border-white/10 bg-main-2 px-2 py-2 text-white/60"
             >
               {workspaces
-                .filter((ws) => ws.id !== workspace.id)
+                .filter((ws) => ws.id !== workspace?.id)
                 .map((ws: any) => {
                   return <option value={ws.id}>{ws.name}</option>;
                 })}
