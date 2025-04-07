@@ -143,9 +143,9 @@ class QDrant {
             id: v4(),
             vector: vector,
             // [DO NOT REMOVE]
-            // LangChain will be unable to find your text if you embed manually and dont include the `text` key.
+            // LangChain will be unable to find your text if you embed manually and dont include the `page_content` key.
             // https://github.com/hwchase17/langchainjs/blob/2def486af734c0ca87285a48f1a04c057ab74bdf/langchain/src/vectorstores/pinecone.ts#L64
-            payload: { ...metadata, text: textChunks[i] },
+            payload: { ...metadata, page_content: textChunks[i] },
           };
 
           vectors.push(vectorRecord);
@@ -211,7 +211,7 @@ class QDrant {
     });
 
     responses.forEach((response) => {
-      result.contextTexts.push(response?.payload?.text || "");
+      result.contextTexts.push(response?.payload?.page_content || "");
       result.sourceDocuments.push({
         ...(response?.payload || {}),
         id: response.id,

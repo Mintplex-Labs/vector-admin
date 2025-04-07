@@ -85,7 +85,7 @@ const updateSingleChromaEmbedding = InngestClient.createFunction(
         ...existingMetadata,
         wordCount: newText.split(' ').length,
         token_count_estimate: length,
-        text: newText,
+        page_content: newText,
       };
 
       await collection.update({
@@ -102,7 +102,7 @@ const updateSingleChromaEmbedding = InngestClient.createFunction(
       });
       result = {
         message: `Document ${document.id} with Chroma vector ${documentVector.vectorId} updated with newly embedded text.`,
-        oldText: existingMetadata.text,
+        oldText: existingMetadata.page_content,
         newText,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
@@ -188,7 +188,7 @@ const updateSinglePineconeEmbedding = InngestClient.createFunction(
         ...existingMetadata,
         wordCount: newText.split(' ').length,
         token_count_estimate: length,
-        text: newText,
+        page_content: newText,
       };
       const updateRequest = {
         id: documentVector.vectorId,
@@ -206,7 +206,7 @@ const updateSinglePineconeEmbedding = InngestClient.createFunction(
       });
       result = {
         message: `Document ${document.id} with Chroma vector ${documentVector.vectorId} updated with newly embedded text.`,
-        oldText: existingMetadata.text,
+        oldText: existingMetadata.page_content,
         newText,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
@@ -294,7 +294,7 @@ const updateSingleQDrantEmbedding = InngestClient.createFunction(
         ...existingMetadata,
         wordCount: newText.split(' ').length,
         token_count_estimate: length,
-        text: newText,
+        page_content: newText,
       };
 
       await client.upsert(workspace.fname, {
@@ -314,7 +314,7 @@ const updateSingleQDrantEmbedding = InngestClient.createFunction(
       });
       result = {
         message: `Document ${document.id} with QDrant vector ${documentVector.vectorId} updated with newly embedded text.`,
-        oldText: existingMetadata.text,
+        oldText: existingMetadata.page_content,
         newText,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);
@@ -405,7 +405,7 @@ const updateSingleWeaviateEmbedding = InngestClient.createFunction(
         ...existingMetadata,
         wordCount: newText.split(' ').length,
         token_count_estimate: length,
-        text: newText,
+        page_content: newText,
       });
 
       // Weaviate TS-client cannot upsert vector data,
@@ -426,7 +426,7 @@ const updateSingleWeaviateEmbedding = InngestClient.createFunction(
 
       result = {
         message: `Document ${document.id} with Weaviate vector ${documentVector.vectorId} updated with newly embedded text.`,
-        oldText: existingMetadata.text,
+        oldText: existingMetadata.page_content,
         newText,
       };
       await Queue.updateJob(jobId, Queue.status.complete, result);

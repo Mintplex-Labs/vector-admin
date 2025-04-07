@@ -268,7 +268,7 @@ class Pinecone {
         data.ids.push(id);
         data.embeddings.push(values);
         data.metadatas.push(metadata);
-        data.documents.push(metadata?.text ?? "");
+        data.documents.push(metadata?.page_content ?? "");
       });
       return data;
     } catch (error) {
@@ -319,9 +319,9 @@ class Pinecone {
             id: v4(),
             values: vector,
             // [DO NOT REMOVE]
-            // LangChain will be unable to find your text if you embed manually and dont include the `text` key.
+            // LangChain will be unable to find your text if you embed manually and dont include the `page_content` key.
             // https://github.com/hwchase17/langchainjs/blob/2def486af734c0ca87285a48f1a04c057ab74bdf/langchain/src/vectorstores/pinecone.ts#L64
-            metadata: { ...metadata, text: textChunks[i] },
+            metadata: { ...metadata, page_content: textChunks[i] },
           };
 
           submission.ids.push(vectorRecord.id);
@@ -393,7 +393,7 @@ class Pinecone {
 
     response.matches.forEach((match) => {
       result.vectorIds.push(match.id);
-      result.contextTexts.push(match.metadata.text);
+      result.contextTexts.push(match.metadata.page_content);
       result.sourceDocuments.push(match);
       result.scores.push(match.score);
     });

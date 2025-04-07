@@ -205,9 +205,9 @@ class Chroma {
             id: v4(),
             values: vector,
             // [DO NOT REMOVE]
-            // LangChain will be unable to find your text if you embed manually and dont include the `text` key.
+            // LangChain will be unable to find your text if you embed manually and dont include the `page_content` key.
             // https://github.com/hwchase17/langchainjs/blob/2def486af734c0ca87285a48f1a04c057ab74bdf/langchain/src/vectorstores/pinecone.ts#L64
-            metadata: { ...metadata, text: textChunks[i] },
+            metadata: { ...metadata, page_content: textChunks[i] },
           };
 
           submission.ids.push(vectorRecord.id);
@@ -296,7 +296,7 @@ class Chroma {
     const metadatas = result.metadatas.map((metadata) => metadata ?? {});
     metadatas.forEach((metadata, i) => {
       metadata.vectorId = vectorIds[i];
-      metadata.text = result.documents[i];
+      metadata.page_content = result.documents[i];
     });
 
     return metadatas;
