@@ -296,8 +296,8 @@ class Pinecone {
       const openai = new OpenAi(embedderApiKey);
       const { pageContent, id, ...metadata } = documentData;
       const textSplitter = new RecursiveCharacterTextSplitter({
-        chunkSize: 1000,
-        chunkOverlap: 20,
+        chunkSize: 3000,
+        chunkOverlap: 100,
       });
       const textChunks = await textSplitter.splitText(pageContent);
 

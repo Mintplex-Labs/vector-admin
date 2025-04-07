@@ -31,8 +31,8 @@ services:
       - "../document-processor/hotdir/:/app/document-processor/hotdir"
     ports:
       - "3001:3001"
-      - "3355:3355"
-      - "8288:8288"
+      - "3356:3355"
+      - "8289:8288"
     env_file:
       - .env
     networks:
