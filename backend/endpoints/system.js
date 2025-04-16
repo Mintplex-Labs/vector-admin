@@ -2,6 +2,7 @@ process.env.NODE_ENV === "development"
   ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
   : require("dotenv").config();
 const { SystemSettings } = require("../models/systemSettings");
+const { User } = require("../models/user");
 const { systemInit } = require("../utils/boot");
 const { dumpENV } = require("../utils/env");
 const { reqBody, userFromSession } = require("../utils/http");
@@ -124,6 +125,16 @@ function systemEndpoints(app) {
       }
     }
   );
+
+  app.get("/system/onboarding-complete", async (_, response) => {
+    try {
+      const completeSetup = (await User.count({ role: "admin" })) > 0;
+      response.status(200).json({ completed: completeSetup });
+    } catch (e) {
+      console.log(e.message, e);
+      response.sendStatus(500).end();
+    }
+  });
 
   app.get("/boot", async (_, response) => {
     try {
