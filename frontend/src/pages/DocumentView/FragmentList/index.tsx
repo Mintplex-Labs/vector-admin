@@ -210,7 +210,7 @@ const Fragment = ({
       const _data = sourceDoc[fragment.vectorId];
       setData(_data);
       const _metadata = _data?.metadata || {};
-      const { text: _, vectorId: __, ...validMetadata } = _metadata;
+      const { page_content: _, vectorId: __, ...validMetadata } = _metadata;
       setMetadata(validMetadata);
       setLoading(false);
     }
@@ -229,8 +229,8 @@ const Fragment = ({
           {fragment.vectorId}
         </td>
         <td className="px-6 ">
-          {truncate(data?.metadata?.text, 30)}
-          {!!data?.metadata?.text ? (
+          {truncate(data?.metadata?.page_content, 30)}
+          {!!data?.metadata?.page_content ? (
             <button
               className="rounded-lg px-2 py-1 text-sky-400 transition-all duration-300 hover:text-opacity-80"
               onClick={() => {
@@ -345,8 +345,8 @@ const FullTextWindow = memo(
       >
         <div className="w-full overflow-y-scroll rounded-sm p-[20px]">
           <pre className="whitespace-pre-line rounded-lg bg-main-2 p-2 font-mono text-white">
-            {data?.metadata?.text ||
-              '[ERROR] Could not parse text key from embedding'}
+            {data?.metadata?.page_content ||
+              '[ERROR] Could not parse page_content key from embedding'}
           </pre>
           <div className="mt-4 flex flex-col gap-y-2 px-6.5">
             <button

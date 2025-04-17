@@ -1,6 +1,6 @@
 const { getEncoding } = require("js-tiktoken");
 const MAX_TOKENS = {
-  cl100k_base: 8192, // https://platform.openai.com/docs/guides/embeddings/second-generation-models
+  cl100k_base: 8191, // https://platform.openai.com/docs/guides/embeddings/models
 };
 
 function countLLMTokens(input) {

@@ -20,7 +20,7 @@ const EditEmbeddingConfirmation = memo(
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [tokenLength, setTokenLength] = useState<number>(
-      validEmbedding(data?.metadata?.text).length || 0
+      validEmbedding(data?.metadata?.page_content).length || 0
     );
 
     const updateSystemSetting = async (e: any) => {
@@ -146,7 +146,7 @@ const EditEmbeddingConfirmation = memo(
                 ref={inputEl}
                 onChange={debouncedTokenLengthCheck}
                 name="embeddingText"
-                defaultValue={data.metadata.text}
+                defaultValue={data.metadata.page_content}
                 spellCheck="true"
                 className="w-full rounded-lg border border-white/10 bg-main-2 px-2.5 py-2 text-sm text-white"
               />

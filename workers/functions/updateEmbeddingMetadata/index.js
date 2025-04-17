@@ -66,9 +66,9 @@ const updateSingleChromaEmbeddingMetadata = InngestClient.createFunction(
       const updatedMetadata = {
         ...nullifyExisting(existingMetadata), // ensure all existing keys are dropped as new metadata is complete.
         ...newMetadata,
-        ...(existingMetadata.hasOwnProperty('text')
-          ? { text: existingMetadata.text }
-          : {}), // Persist text key if it was present
+        ...(existingMetadata.hasOwnProperty('page_content')
+          ? { page_content: existingMetadata.page_content }
+          : {}), // Persist page_content key if it was present
       };
 
       await collection.update({
@@ -80,7 +80,7 @@ const updateSingleChromaEmbeddingMetadata = InngestClient.createFunction(
         vectorId: documentVector.vectorId,
         cacheFilename: `${WorkspaceDocument.vectorFilename(document)}.json`,
         values: chromaVector.embeddings[0], // in Cache we make sure we keep embeddings in sync
-        metadata: { ...updatedMetadata, text: chromaVector.documents[0] }, // in Cache we make sure to persist text key in metadata directly.
+        metadata: { ...updatedMetadata, page_content: chromaVector.documents[0] }, // in Cache we make sure to persist page_content key in metadata directly.
       });
 
       result = {
@@ -147,9 +147,9 @@ const updateSinglePineconeEmbeddingMetadata = InngestClient.createFunction(
       const existingMetadata = vectors[documentVector.vectorId]?.metadata || {};
       const updatedMetadata = {
         ...newMetadata,
-        ...(existingMetadata.hasOwnProperty('text')
-          ? { text: existingMetadata.text }
-          : {}), // Persist text key if it was present
+        ...(existingMetadata.hasOwnProperty('page_content')
+          ? { page_content: existingMetadata.page_content }
+          : {}), // Persist page_content key if it was present
       };
 
       // Pinecone does not support deletion of metadata keys by nullification
@@ -241,9 +241,9 @@ const updateSingleQDrantEmbeddingMetadata = InngestClient.createFunction(
       const existingMetadata = qdrantVector.payload || {};
       const updatedMetadata = {
         ...newMetadata,
-        ...(existingMetadata.hasOwnProperty('text')
-          ? { text: existingMetadata.text }
-          : {}), // Persist text key if it was present
+        ...(existingMetadata.hasOwnProperty('page_content')
+          ? { page_content: existingMetadata.page_content }
+          : {}), // Persist page_content key if it was present
       };
 
       await client.overwritePayload(workspace.fname, {

@@ -35,7 +35,8 @@ def write_to_server_documents(data, filename):
     json.dump(data, file, ensure_ascii=True, indent=4)
 
 def tokenize(fullText):
-  encoder = tiktoken.encoding_for_model("text-embedding-ada-002")
+  # text-embedding-3-large uses cl100k_base tokenizer
+  encoder = tiktoken.get_encoding("cl100k_base")
   return encoder.encode(fullText)
 
 def ada_v2_cost(tokenCount):

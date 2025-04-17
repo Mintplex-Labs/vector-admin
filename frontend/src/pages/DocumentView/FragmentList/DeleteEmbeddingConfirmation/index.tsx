@@ -38,7 +38,7 @@ const DeleteEmbeddingConfirmation = memo(
             re-embed the document.
           </p>
           <pre className="mt-4 whitespace-pre-line rounded-lg border-2 border-white/10 bg-main-2 p-4 font-mono text-white">
-            {data.metadata.text}
+            {data.metadata.page_content}
           </pre>
         </div>
         <div className="w-full px-6">

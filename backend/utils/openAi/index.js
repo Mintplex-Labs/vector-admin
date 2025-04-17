@@ -10,7 +10,7 @@ class OpenAi {
     const {
       data: { data },
     } = await this.openai.createEmbedding({
-      model: "text-embedding-ada-002",
+      model: "text-embedding-3-large",
       input: textChunk,
     });
     return data.length > 0 && data[0].hasOwnProperty("embedding")
@@ -22,7 +22,7 @@ class OpenAi {
     const {
       data: { data },
     } = await this.openai.createEmbedding({
-      model: "text-embedding-ada-002",
+      model: "text-embedding-3-large",
       input: chunks,
     });
     return data.length > 0 &&

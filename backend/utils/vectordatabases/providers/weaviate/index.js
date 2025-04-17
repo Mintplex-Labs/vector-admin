@@ -313,8 +313,8 @@ class Weaviate {
       const openai = new OpenAi(embedderApiKey);
       const { pageContent, id, ...metadata } = documentData;
       const textSplitter = new RecursiveCharacterTextSplitter({
-        chunkSize: 1000,
-        chunkOverlap: 20,
+        chunkSize: 3000,
+        chunkOverlap: 100,
       });
       const textChunks = await textSplitter.splitText(pageContent);
 
@@ -335,7 +335,7 @@ class Weaviate {
             // https://github.com/hwchase17/langchainjs/blob/2def486af734c0ca87285a48f1a04c057ab74bdf/langchain/src/vectorstores/pinecone.ts#L64
             properties: this.flattenObjectForWeaviate({
               ...metadata,
-              text: textChunks[i],
+              page_content: textChunks[i],
             }),
           };
 
@@ -405,7 +405,7 @@ class Weaviate {
         _additional: { id, certainty },
         ...rest
       } = response;
-      result.contextTexts.push(rest?.text || "");
+      result.contextTexts.push(rest?.page_content || "");
       result.sourceDocuments.push({
         ...(rest || {}),
         id,
