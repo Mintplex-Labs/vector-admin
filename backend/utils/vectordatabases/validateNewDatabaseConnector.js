@@ -66,13 +66,9 @@ async function validateChroma({
 }
 
 async function validatePinecone({ environment, index, apiKey }) {
-  const { PineconeClient } = require("@pinecone-database/pinecone");
+  const { Pinecone } = require("@pinecone-database/pinecone");
   try {
-    const client = new PineconeClient();
-    await client.init({
-      apiKey,
-      environment,
-    });
+    const client = new Pinecone({ apiKey });
     const { status } = await client.describeIndex({
       indexName: index,
     });
