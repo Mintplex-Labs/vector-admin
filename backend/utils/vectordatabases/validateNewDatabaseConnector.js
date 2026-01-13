@@ -71,7 +71,6 @@ async function validatePinecone({ environment, index, apiKey }) {
     const client = new PineconeClient();
     await client.init({
       apiKey,
-      environment,
     });
     const { status } = await client.describeIndex({
       indexName: index,

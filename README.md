@@ -1,3 +1,13 @@
+> [!IMPORTANT]
+> This repo and project is no longer actively maintained by Mintplex Labs. We hope one day to grow the team large enough to restart dedicated support and updates for this project.
+>
+> New issues and PRs _may_ be reviewed, but our main focus has moved to [AnythingLLM](https://github.com/Mintplex-Labs/anything-llm). The application is still self-hostable and will function for most providers as-is, but any changes from those providers may have resulted in breaking changes.
+>
+> We will not be archiving the repo or removing it so that we can return to it one day in the future.
+> Best,
+> Tim.
+
+
 <p align="center">
   <a href="https://vectoradmin.com"><img src="https://github.com/Mintplex-Labs/vector-admin/blob/master/images/logo-light.png?raw=true" alt="VectorAdmin logo"></a>
 </p>
@@ -16,11 +26,8 @@
   <a href="https://github.com/Mintplex-Labs/vector-admin/blob/master/LICENSE" target="_blank">
       <img src="https://img.shields.io/static/v1?label=license&message=MIT&color=white" alt="License">
   </a> |
-  <a href="https://docs.vectoradmin.com/" target="_blank">
+  <a href="https://mintplex-labs-inc.gitbook.io/vectoradmin-by-mintplex-labs" target="_blank">
     Docs
-  </a> |
-  <a href="https://vectoradmin.com" target="_blank">
-    Hosted Instance
   </a>
 </p>
 
