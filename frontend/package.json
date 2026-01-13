@@ -2,6 +2,7 @@
   "name": "vector-admin-frontend",
   "type": "module",
   "license": "MIT",
+  "packageManager": "yarn@1.22.19",
   "scripts": {
     "start": "vite --open",
     "build": "vite build",

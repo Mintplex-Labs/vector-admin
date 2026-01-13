@@ -5,6 +5,7 @@
   "author": "Timothy Carambat (Mintplex Labs)",
   "license": "MIT",
   "private": false,
+  "packageManager": "yarn@1.22.19",
   "engines": {
     "node": ">=18.12.1"
   },

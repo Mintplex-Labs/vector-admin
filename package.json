@@ -4,6 +4,7 @@
   "description": "A better way to manage vector data at scale for both businesses and developers via a normalized programmatic interface.",
   "author": "Timothy Carambat (Mintplex Labs)",
   "license": "MIT",
+  "packageManager": "yarn@1.22.19",
   "engines": {
     "node": ">=18"
   },
