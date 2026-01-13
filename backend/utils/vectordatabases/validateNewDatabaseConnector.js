@@ -73,9 +73,7 @@ async function validatePinecone({ environment, index, apiKey }) {
       apiKey,
     });
     
-    const { status } = await client.describeIndex({
-      indexName: index,
-    });
+    const { status } = await client.describeIndex(index);
 
     if (!status.ready) throw new Error("Pinecone::Index not ready or found.");
     return { valid: true, message: null };
